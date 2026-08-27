@@ -21,9 +21,8 @@ export function GoalsFilter({ goals }: { goals: Goal[] }) {
   return (
     <div className="flex flex-col gap-4">
       <ToggleGroup
-        type="single"
-        value={filter}
-        onValueChange={(value) => value && setFilter(value as Filter)}
+        value={[filter]}
+        onValueChange={(value) => value[0] && setFilter(value[0] as Filter)}
         variant="outline"
         className="w-full"
       >

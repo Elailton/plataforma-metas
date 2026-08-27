@@ -30,7 +30,7 @@ export default function EditalPage() {
         </span>
       </div>
 
-      <Accordion type="multiple" defaultValue={[disciplines[0]?.id]} className="flex flex-col gap-2">
+      <Accordion multiple defaultValue={disciplines[0] ? [disciplines[0].id] : []} className="flex flex-col gap-2">
         {disciplines.map((discipline) => {
           const topics = getTopicsByDiscipline(discipline.id).filter((t) => t.courseId === courseId)
           const progress = getEditalProgressByDiscipline(courseId, discipline.id)

@@ -1,7 +1,7 @@
 "use client"
 
 import { useRouter } from "next/navigation"
-import { useState } from "react"
+import { useRef, useState } from "react"
 import { Plus, Trash2, Save } from "lucide-react"
 import { toast } from "sonner"
 import { Button } from "@/components/ui/button"
@@ -28,9 +28,9 @@ interface DraftItem {
   suggestedQuestions: string
 }
 
-function createEmptyItem(disciplines: Discipline[]): DraftItem {
+function createEmptyItem(disciplines: Discipline[], id: string): DraftItem {
   return {
-    id: crypto.randomUUID(),
+    id,
     disciplineId: disciplines[0]?.id ?? "",
     topicName: "",
     orientation: "",
@@ -41,17 +41,20 @@ function createEmptyItem(disciplines: Discipline[]): DraftItem {
 export function NewGoalForm({ courseId }: { courseId: string }) {
   const router = useRouter()
   const disciplines = getDisciplinesByCourse(courseId)
+  const disciplineSelectItems = disciplines.map((discipline) => ({ label: discipline.name, value: discipline.id }))
+  const nextItemId = useRef(1)
   const [title, setTitle] = useState("")
   const [date, setDate] = useState("")
   const [description, setDescription] = useState("")
-  const [items, setItems] = useState<DraftItem[]>([createEmptyItem(disciplines)])
+  const [items, setItems] = useState<DraftItem[]>([createEmptyItem(disciplines, "item-0")])
 
   function updateItem(id: string, patch: Partial<DraftItem>) {
     setItems((prev) => prev.map((item) => (item.id === id ? { ...item, ...patch } : item)))
   }
 
   function addItem() {
-    setItems((prev) => [...prev, createEmptyItem(disciplines)])
+    const id = `item-${nextItemId.current++}`
+    setItems((prev) => [...prev, createEmptyItem(disciplines, id)])
   }
 
   function removeItem(id: string) {
@@ -133,8 +136,9 @@ export function NewGoalForm({ courseId }: { courseId: string }) {
                     <Field>
                       <FieldLabel>Disciplina</FieldLabel>
                       <Select
+                        items={disciplineSelectItems}
                         value={item.disciplineId}
-                        onValueChange={(value) => updateItem(item.id, { disciplineId: value })}
+                        onValueChange={(value) => value && updateItem(item.id, { disciplineId: value })}
                       >
                         <SelectTrigger className="w-full">
                           <SelectValue placeholder="Selecione a disciplina" />

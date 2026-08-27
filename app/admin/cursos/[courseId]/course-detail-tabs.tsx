@@ -59,11 +59,9 @@ export function CourseDetailTabs({ course, goals }: { course: Course; goals: Goa
 
       <TabsContent value="goals" className="flex flex-col gap-4">
         <div className="flex items-center justify-end">
-          <Button asChild size="sm">
-            <Link href={`/admin/cursos/${course.id}/metas/nova`}>
-              <Plus data-icon="inline-start" />
-              Criar meta
-            </Link>
+          <Button render={<Link href={`/admin/cursos/${course.id}/metas/nova`} />} nativeButton={false} size="sm">
+            <Plus data-icon="inline-start" />
+            Criar meta
           </Button>
         </div>
         {goals.length === 0 ? (

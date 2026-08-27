@@ -51,11 +51,9 @@ export default function AdminDashboardPage() {
       <div className="flex flex-col gap-3">
         <div className="flex items-center justify-between">
           <h2 className="text-sm font-semibold text-foreground">Cursos</h2>
-          <Button asChild variant="ghost" size="sm">
-            <Link href="/admin/cursos">
-              Ver todos
-              <ArrowRight data-icon="inline-end" />
-            </Link>
+          <Button render={<Link href="/admin/cursos" />} nativeButton={false} variant="ghost" size="sm">
+            Ver todos
+            <ArrowRight data-icon="inline-end" />
           </Button>
         </div>
 

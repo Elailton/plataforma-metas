@@ -36,11 +36,14 @@ export function NextGoalCard({ goal }: { goal: Goal }) {
         <span className="text-xs font-medium tabular-nums text-primary-foreground/80">{progress}%</span>
       </div>
 
-      <Button asChild variant="secondary" className="w-full bg-accent text-accent-foreground hover:bg-accent/90">
-        <Link href={`/aluno/metas/${goal.id}`}>
-          Continuar meta
-          <ArrowRight data-icon="inline-end" />
-        </Link>
+      <Button
+        render={<Link href={`/aluno/metas/${goal.id}`} />}
+        nativeButton={false}
+        variant="secondary"
+        className="w-full bg-accent text-accent-foreground hover:bg-accent/90"
+      >
+        Continuar meta
+        <ArrowRight data-icon="inline-end" />
       </Button>
     </div>
   )

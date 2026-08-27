@@ -19,6 +19,10 @@ import type { Course, Material } from "@/lib/types"
 
 export function MaterialsBrowser({ courses, materials }: { courses: Course[]; materials: Material[] }) {
   const [courseId, setCourseId] = useState<string>("all")
+  const courseSelectItems = [
+    { label: "Todos os cursos", value: "all" },
+    ...courses.map((course) => ({ label: course.shortName, value: course.id })),
+  ]
 
   const filtered = useMemo(() => {
     if (courseId === "all") return materials
@@ -28,7 +32,7 @@ export function MaterialsBrowser({ courses, materials }: { courses: Course[]; ma
   return (
     <div className="flex flex-col gap-4">
       <div className="flex items-center justify-between gap-3">
-        <Select value={courseId} onValueChange={setCourseId}>
+        <Select items={courseSelectItems} value={courseId} onValueChange={(value) => setCourseId(value ?? "all")}>
           <SelectTrigger className="w-56">
             <SelectValue placeholder="Filtrar por curso" />
           </SelectTrigger>

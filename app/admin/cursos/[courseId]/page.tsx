@@ -20,10 +20,14 @@ export default async function AdminCourseDetailPage({
   return (
     <div className="flex flex-col gap-6">
       <div className="flex items-center gap-3">
-        <Button asChild variant="ghost" size="icon" className="-ml-2 shrink-0">
-          <Link href="/admin/cursos" aria-label="Voltar">
-            <ArrowLeft />
-          </Link>
+        <Button
+          render={<Link href="/admin/cursos" aria-label="Voltar" />}
+          nativeButton={false}
+          variant="ghost"
+          size="icon"
+          className="-ml-2 shrink-0"
+        >
+          <ArrowLeft />
         </Button>
         <div className="flex min-w-0 flex-1 flex-col">
           <div className="flex items-center gap-2.5">

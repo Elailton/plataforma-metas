@@ -17,10 +17,14 @@ export function PageHeader({
     <div className="flex flex-col gap-3">
       <div className="flex items-center gap-3">
         {backHref ? (
-          <Button asChild variant="ghost" size="icon" className="-ml-2 shrink-0">
-            <Link href={backHref} aria-label="Voltar">
-              <ArrowLeft />
-            </Link>
+          <Button
+            render={<Link href={backHref} aria-label="Voltar" />}
+            nativeButton={false}
+            variant="ghost"
+            size="icon"
+            className="-ml-2 shrink-0"
+          >
+            <ArrowLeft />
           </Button>
         ) : null}
         <div className="flex min-w-0 flex-1 flex-col">

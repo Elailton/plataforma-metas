@@ -50,19 +50,15 @@ export function GoalItemChecklist({ item }: { item: GoalItem }) {
 
       <div className="flex flex-wrap gap-2">
         {item.lessonUrl ? (
-          <Button asChild size="sm" variant="outline">
-            <a href={item.lessonUrl}>
-              <PlayCircle data-icon="inline-start" />
-              Videoaula
-            </a>
+          <Button render={<a href={item.lessonUrl} />} nativeButton={false} size="sm" variant="outline">
+            <PlayCircle data-icon="inline-start" />
+            Videoaula
           </Button>
         ) : null}
         {item.materialUrl ? (
-          <Button asChild size="sm" variant="outline">
-            <a href={item.materialUrl}>
-              <FileText data-icon="inline-start" />
-              Material de apoio
-            </a>
+          <Button render={<a href={item.materialUrl} />} nativeButton={false} size="sm" variant="outline">
+            <FileText data-icon="inline-start" />
+            Material de apoio
           </Button>
         ) : null}
         <Button size="sm" variant="outline" disabled>

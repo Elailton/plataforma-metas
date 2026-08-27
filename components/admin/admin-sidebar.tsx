@@ -41,11 +41,9 @@ export function AdminSidebar() {
                 const Icon = item.icon
                 return (
                   <SidebarMenuItem key={item.href}>
-                    <SidebarMenuButton asChild isActive={isActive}>
-                      <Link href={item.href}>
-                        <Icon />
-                        <span>{item.label}</span>
-                      </Link>
+                    <SidebarMenuButton render={<Link href={item.href} />} isActive={isActive}>
+                      <Icon />
+                      <span>{item.label}</span>
                     </SidebarMenuButton>
                   </SidebarMenuItem>
                 )
@@ -57,11 +55,9 @@ export function AdminSidebar() {
       <SidebarFooter>
         <SidebarMenu>
           <SidebarMenuItem>
-            <SidebarMenuButton asChild>
-              <Link href="/">
-                <LogOut />
-                <span>Sair da plataforma</span>
-              </Link>
+            <SidebarMenuButton render={<Link href="/" />}>
+              <LogOut />
+              <span>Sair da plataforma</span>
             </SidebarMenuButton>
           </SidebarMenuItem>
         </SidebarMenu>
