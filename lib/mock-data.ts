@@ -56,6 +56,21 @@ export const currentStudent: Student = {
   joinedAt: "2025-02-10",
 }
 
+export const students: Student[] = [
+  currentStudent,
+  { id: "student-2", name: "Carlos Eduardo Lima", email: "carlos.lima@email.com", courseId: "prf", avatarInitials: "CL", joinedAt: "2025-02-12" },
+  { id: "student-3", name: "Fernanda Ramos", email: "fernanda.ramos@email.com", courseId: "prf", avatarInitials: "FR", joinedAt: "2025-02-15" },
+  { id: "student-4", name: "João Pedro Alves", email: "joao.alves@email.com", courseId: "prf", avatarInitials: "JA", joinedAt: "2025-03-01" },
+  { id: "student-5", name: "Larissa Martins", email: "larissa.martins@email.com", courseId: "prf", avatarInitials: "LM", joinedAt: "2025-03-04" },
+  { id: "student-6", name: "Rafael Nogueira", email: "rafael.nogueira@email.com", courseId: "gm-fortaleza", avatarInitials: "RN", joinedAt: "2025-04-02" },
+  { id: "student-7", name: "Beatriz Cavalcante", email: "beatriz.cavalcante@email.com", courseId: "gm-fortaleza", avatarInitials: "BC", joinedAt: "2025-04-06" },
+  { id: "student-8", name: "Diego Farias", email: "diego.farias@email.com", courseId: "pol-penal-ce", avatarInitials: "DF", joinedAt: "2025-05-10" },
+]
+
+export function getStudentsByCourse(courseId: string): Student[] {
+  return students.filter((s) => s.courseId === courseId)
+}
+
 // ---------------------------------------------------------------------------
 // Disciplinas e edital
 // ---------------------------------------------------------------------------
