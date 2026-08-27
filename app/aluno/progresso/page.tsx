@@ -39,11 +39,11 @@ export default function ProgressPage() {
         </Card>
       </div>
 
-      <Card>
+      <Card className="min-w-0 overflow-hidden">
         <CardHeader>
           <CardTitle className="text-sm font-semibold text-foreground">Progresso por disciplina</CardTitle>
         </CardHeader>
-        <CardContent>
+        <CardContent className="min-w-0 overflow-hidden">
           <DisciplineProgressChart courseId={courseId} />
         </CardContent>
       </Card>

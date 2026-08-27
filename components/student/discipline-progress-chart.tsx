@@ -18,14 +18,14 @@ export function DisciplineProgressChart({ courseId }: { courseId: string }) {
   }))
 
   return (
-    <ChartContainer config={chartConfig} className="h-[280px] w-full">
-      <BarChart data={data} layout="vertical" margin={{ left: 0, right: 16 }}>
+    <ChartContainer config={chartConfig} className="aspect-auto h-[280px] w-full min-w-0 overflow-hidden">
+      <BarChart data={data} layout="vertical" margin={{ left: 0, right: 8 }}>
         <CartesianGrid horizontal={false} stroke="var(--border)" />
         <XAxis type="number" domain={[0, 100]} hide />
         <YAxis
           type="category"
           dataKey="name"
-          width={140}
+          width={104}
           tickLine={false}
           axisLine={false}
           tick={{ fontSize: 11, fill: "var(--muted-foreground)" }}
