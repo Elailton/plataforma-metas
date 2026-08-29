@@ -1,21 +1,28 @@
 "use client"
 
 import Link from "next/link"
-import { Plus } from "lucide-react"
+import { ListChecks, Plus, BookOpen, FileText } from "lucide-react"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { Button } from "@/components/ui/button"
 import { AdminGoalRow } from "@/components/admin/admin-goal-row"
-import { CourseEditalSummary } from "@/components/admin/course-edital-summary"
+import { CourseEditalEditor } from "@/components/admin/course-edital-editor"
 import { CourseStudentsTable } from "@/components/admin/course-students-table"
+import { CourseMaterialsPanel } from "@/components/admin/course-materials-panel"
+import { CourseFormDialog } from "@/components/admin/course-form-dialog"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Empty, EmptyHeader, EmptyTitle, EmptyDescription, EmptyMedia } from "@/components/ui/empty"
-import { ListChecks } from "lucide-react"
-import type { Course, Goal } from "@/lib/types"
-import { getEditalProgressByCourse, getGoalsSummary } from "@/lib/mock-data"
+import type { AdminCourse, AdminGoal, AdminMaterial, AdminStudent, AdminSubject, AdminSyllabusTopic } from "@/lib/admin/types"
 
-export function CourseDetailTabs({ course, goals }: { course: Course; goals: Goal[] }) {
-  const edital = getEditalProgressByCourse(course.id)
-  const goalsSummary = getGoalsSummary(course.id)
+interface CourseDetailTabsProps {
+  course: AdminCourse
+  goals: AdminGoal[]
+  edital: { subject: AdminSubject; topics: AdminSyllabusTopic[] }[]
+  students: AdminStudent[]
+  materials: AdminMaterial[]
+}
+
+export function CourseDetailTabs({ course, goals, edital, students, materials }: CourseDetailTabsProps) {
+  const totalTopics = edital.reduce((acc, group) => acc + group.topics.length, 0)
 
   return (
     <Tabs defaultValue="overview">
@@ -23,7 +30,9 @@ export function CourseDetailTabs({ course, goals }: { course: Course; goals: Goa
         <TabsTrigger value="overview">Visão geral</TabsTrigger>
         <TabsTrigger value="goals">Metas</TabsTrigger>
         <TabsTrigger value="edital">Edital</TabsTrigger>
+        <TabsTrigger value="materials">Materiais</TabsTrigger>
         <TabsTrigger value="students">Alunos</TabsTrigger>
+        <TabsTrigger value="settings">Configurações</TabsTrigger>
       </TabsList>
 
       <TabsContent value="overview" className="flex flex-col gap-4">
@@ -33,25 +42,25 @@ export function CourseDetailTabs({ course, goals }: { course: Course; goals: Goa
               <CardTitle className="text-sm font-medium text-muted-foreground">Alunos</CardTitle>
             </CardHeader>
             <CardContent>
-              <span className="text-2xl font-semibold tabular-nums text-foreground">{course.studentsCount}</span>
+              <span className="text-2xl font-semibold tabular-nums text-foreground">{students.length}</span>
             </CardContent>
           </Card>
           <Card>
             <CardHeader className="pb-2">
-              <CardTitle className="text-sm font-medium text-muted-foreground">Metas concluídas</CardTitle>
+              <CardTitle className="text-sm font-medium text-muted-foreground">Metas</CardTitle>
             </CardHeader>
             <CardContent>
               <span className="text-2xl font-semibold tabular-nums text-foreground">
-                {goalsSummary.completed}/{goalsSummary.total}
+                {goals.filter((g) => g.status === "published").length}/{goals.length}
               </span>
             </CardContent>
           </Card>
           <Card>
             <CardHeader className="pb-2">
-              <CardTitle className="text-sm font-medium text-muted-foreground">Edital concluído</CardTitle>
+              <CardTitle className="text-sm font-medium text-muted-foreground">Tópicos no edital</CardTitle>
             </CardHeader>
             <CardContent>
-              <span className="text-2xl font-semibold tabular-nums text-foreground">{edital.percentage}%</span>
+              <span className="text-2xl font-semibold tabular-nums text-foreground">{totalTopics}</span>
             </CardContent>
           </Card>
         </div>
@@ -84,13 +93,66 @@ export function CourseDetailTabs({ course, goals }: { course: Course; goals: Goa
       </TabsContent>
 
       <TabsContent value="edital">
-        <CourseEditalSummary courseId={course.id} />
+        {edital.length === 0 ? (
+          <Empty>
+            <EmptyHeader>
+              <EmptyMedia variant="icon">
+                <BookOpen />
+              </EmptyMedia>
+              <EmptyTitle>Nenhuma disciplina cadastrada</EmptyTitle>
+              <EmptyDescription>Adicione disciplinas e tópicos para montar o edital deste curso.</EmptyDescription>
+            </EmptyHeader>
+          </Empty>
+        ) : null}
+        <CourseEditalEditor courseId={course.id} groups={edital} />
+      </TabsContent>
+
+      <TabsContent value="materials">
+        {materials.length === 0 ? (
+          <Empty>
+            <EmptyHeader>
+              <EmptyMedia variant="icon">
+                <FileText />
+              </EmptyMedia>
+              <EmptyTitle>Nenhum material vinculado</EmptyTitle>
+              <EmptyDescription>Adicione videoaulas, apostilas ou links para este curso.</EmptyDescription>
+            </EmptyHeader>
+          </Empty>
+        ) : null}
+        <CourseMaterialsPanel
+          courseId={course.id}
+          materials={materials}
+          subjects={edital.map((group) => group.subject)}
+        />
       </TabsContent>
 
       <TabsContent value="students">
         <Card>
           <CardContent className="p-0">
-            <CourseStudentsTable courseId={course.id} />
+            <CourseStudentsTable students={students} />
+          </CardContent>
+        </Card>
+      </TabsContent>
+
+      <TabsContent value="settings" className="flex flex-col gap-4">
+        <Card>
+          <CardHeader>
+            <CardTitle className="text-sm font-medium text-foreground">Informações do curso</CardTitle>
+          </CardHeader>
+          <CardContent className="flex flex-col gap-4">
+            <p className="text-sm text-muted-foreground">
+              Atualize o nome, a instituição, a descrição e o status de publicação deste curso.
+            </p>
+            <div>
+              <CourseFormDialog
+                course={course}
+                trigger={
+                  <Button variant="outline">
+                    Editar informações
+                  </Button>
+                }
+              />
+            </div>
           </CardContent>
         </Card>
       </TabsContent>

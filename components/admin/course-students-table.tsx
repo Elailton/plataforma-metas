@@ -1,18 +1,29 @@
 import { Avatar, AvatarFallback } from "@/components/ui/avatar"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
-import { getStudentsByCourse } from "@/lib/mock-data"
-import { formatDate } from "@/lib/format"
+import { Empty, EmptyHeader, EmptyMedia, EmptyTitle, EmptyDescription } from "@/components/ui/empty"
+import { Users } from "lucide-react"
+import type { AdminStudent } from "@/lib/admin/types"
 
-export function CourseStudentsTable({ courseId }: { courseId: string }) {
-  const students = getStudentsByCourse(courseId)
+export function CourseStudentsTable({ students }: { students: AdminStudent[] }) {
+  if (students.length === 0) {
+    return (
+      <Empty>
+        <EmptyHeader>
+          <EmptyMedia variant="icon">
+            <Users />
+          </EmptyMedia>
+          <EmptyTitle>Nenhum aluno matriculado</EmptyTitle>
+          <EmptyDescription>Os alunos aparecerão aqui após se matricularem neste curso.</EmptyDescription>
+        </EmptyHeader>
+      </Empty>
+    )
+  }
 
   return (
     <Table>
       <TableHeader>
         <TableRow>
           <TableHead>Aluno</TableHead>
-          <TableHead>E-mail</TableHead>
-          <TableHead className="text-right">Matriculado em</TableHead>
         </TableRow>
       </TableHeader>
       <TableBody>
@@ -25,11 +36,9 @@ export function CourseStudentsTable({ courseId }: { courseId: string }) {
                     {student.avatarInitials}
                   </AvatarFallback>
                 </Avatar>
-                <span className="font-medium text-foreground">{student.name}</span>
+                <span className="font-medium text-foreground">{student.fullName}</span>
               </div>
             </TableCell>
-            <TableCell className="text-muted-foreground">{student.email}</TableCell>
-            <TableCell className="text-right text-muted-foreground">{formatDate(student.joinedAt)}</TableCell>
           </TableRow>
         ))}
       </TableBody>

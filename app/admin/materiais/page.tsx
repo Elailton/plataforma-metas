@@ -1,7 +1,9 @@
 import { MaterialsBrowser } from "./materials-browser"
-import { courses, materials } from "@/lib/mock-data"
+import { listAdminCourses, listMaterials } from "@/lib/admin/queries"
 
-export default function AdminMaterialsPage() {
+export default async function AdminMaterialsPage() {
+  const [courses, materials] = await Promise.all([listAdminCourses(), listMaterials()])
+
   return (
     <div className="flex flex-col gap-6">
       <div>

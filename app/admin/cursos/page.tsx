@@ -1,11 +1,21 @@
 import Link from "next/link"
-import { Plus, Users, ListChecks } from "lucide-react"
+import { Users, ListChecks } from "lucide-react"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
-import { Button } from "@/components/ui/button"
-import { courses, getEditalProgressByCourse, getGoalsSummary } from "@/lib/mock-data"
+import { Empty, EmptyHeader, EmptyMedia, EmptyTitle, EmptyDescription } from "@/components/ui/empty"
+import { CourseFormDialog } from "@/components/admin/course-form-dialog"
+import { listAdminCourses } from "@/lib/admin/queries"
+import { GraduationCap } from "lucide-react"
 
-export default function AdminCoursesPage() {
+const STATUS_LABEL: Record<string, string> = {
+  draft: "Rascunho",
+  published: "Publicado",
+  archived: "Arquivado",
+}
+
+export default async function AdminCoursesPage() {
+  const courses = await listAdminCourses()
+
   return (
     <div className="flex flex-col gap-6">
       <div className="flex items-center justify-between gap-4">
@@ -13,26 +23,31 @@ export default function AdminCoursesPage() {
           <h1 className="text-2xl font-semibold tracking-tight text-foreground">Cursos</h1>
           <p className="text-sm text-muted-foreground">Gerencie os concursos disponíveis na plataforma.</p>
         </div>
-        <Button>
-          <Plus data-icon="inline-start" />
-          Novo curso
-        </Button>
+        <CourseFormDialog />
       </div>
 
-      <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
-        {courses.map((course) => {
-          const edital = getEditalProgressByCourse(course.id)
-          const goalsSummary = getGoalsSummary(course.id)
-          return (
+      {courses.length === 0 ? (
+        <Empty>
+          <EmptyHeader>
+            <EmptyMedia variant="icon">
+              <GraduationCap />
+            </EmptyMedia>
+            <EmptyTitle>Nenhum curso cadastrado</EmptyTitle>
+            <EmptyDescription>Crie o primeiro curso para começar a organizar disciplinas e metas.</EmptyDescription>
+          </EmptyHeader>
+        </Empty>
+      ) : (
+        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
+          {courses.map((course) => (
             <Link key={course.id} href={`/admin/cursos/${course.id}`}>
               <Card className="h-full transition-colors hover:border-primary/30">
                 <CardHeader className="flex-row items-start justify-between space-y-0">
                   <div className="flex flex-col gap-1">
-                    <CardTitle className="text-base font-semibold text-foreground">{course.shortName}</CardTitle>
-                    <span className="text-xs text-muted-foreground">{course.organization}</span>
+                    <CardTitle className="text-base font-semibold text-foreground">{course.name}</CardTitle>
+                    <span className="text-xs text-muted-foreground">{course.organization || "Sem instituição"}</span>
                   </div>
-                  <Badge variant={course.published ? "default" : "secondary"} className="shrink-0">
-                    {course.published ? "Publicado" : "Rascunho"}
+                  <Badge variant={course.status === "published" ? "default" : "secondary"} className="shrink-0">
+                    {STATUS_LABEL[course.status]}
                   </Badge>
                 </CardHeader>
                 <CardContent className="flex flex-col gap-3">
@@ -43,19 +58,15 @@ export default function AdminCoursesPage() {
                     </span>
                     <span className="flex items-center gap-1.5 text-muted-foreground">
                       <ListChecks className="size-3.5" />
-                      {goalsSummary.total} metas
+                      {course.goalsCount} metas
                     </span>
-                  </div>
-                  <div className="flex items-center justify-between text-xs text-muted-foreground">
-                    <span>Edital concluído</span>
-                    <span className="font-medium tabular-nums text-foreground">{edital.percentage}%</span>
                   </div>
                 </CardContent>
               </Card>
             </Link>
-          )
-        })}
-      </div>
+          ))}
+        </div>
+      )}
     </div>
   )
 }
