@@ -80,6 +80,12 @@ export function MaterialFormDialog({
       } else {
         await createMaterial(input)
         toast.success("Material adicionado com sucesso")
+        setTitle("")
+        setType("videoaula")
+        setUrl("")
+        setDescription("")
+        setCourseId(fixedCourseId ?? "none")
+        setSubjectId("none")
       }
       setOpen(false)
       router.refresh()

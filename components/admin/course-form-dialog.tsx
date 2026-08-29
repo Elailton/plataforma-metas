@@ -52,6 +52,10 @@ export function CourseFormDialog({ course, trigger }: CourseFormDialogProps) {
       } else {
         await createCourse({ name, organization, description, status })
         toast.success("Curso criado com sucesso", { description: `"${name}" já está disponível.` })
+        setName("")
+        setOrganization("")
+        setDescription("")
+        setStatus("draft")
       }
       setOpen(false)
       router.refresh()
