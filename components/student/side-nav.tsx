@@ -5,6 +5,7 @@ import { usePathname } from "next/navigation"
 import { GraduationCap, LogOut } from "lucide-react"
 import { cn } from "@/lib/utils"
 import { studentNavItems } from "./student-nav-items"
+import { signOut } from "@/lib/supabase/actions"
 
 export function SideNav() {
   const pathname = usePathname()
@@ -42,13 +43,15 @@ export function SideNav() {
         })}
       </ul>
 
-      <Link
-        href="/"
-        className="flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium text-sidebar-foreground/60 transition-colors hover:bg-sidebar-accent/60 hover:text-sidebar-accent-foreground"
-      >
-        <LogOut className="size-4.5" />
-        Sair da plataforma
-      </Link>
+      <form action={signOut}>
+        <button
+          type="submit"
+          className="flex w-full items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium text-sidebar-foreground/60 transition-colors hover:bg-sidebar-accent/60 hover:text-sidebar-accent-foreground"
+        >
+          <LogOut className="size-4.5" />
+          Sair da plataforma
+        </button>
+      </form>
     </aside>
   )
 }

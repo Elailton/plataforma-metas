@@ -1,9 +1,11 @@
 import Link from "next/link"
 import { GraduationCap } from "lucide-react"
 import { Avatar, AvatarFallback } from "@/components/ui/avatar"
-import { currentStudent } from "@/lib/mock-data"
+import { getCurrentProfile } from "@/lib/supabase/queries"
 
-export function MobileTopbar() {
+export async function MobileTopbar() {
+  const profile = await getCurrentProfile()
+
   return (
     <header className="flex items-center justify-between border-b border-border bg-card/95 px-4 py-3 backdrop-blur md:hidden">
       <div className="flex items-center gap-2">
@@ -15,7 +17,7 @@ export function MobileTopbar() {
       <Link href="/aluno/conta" aria-label="Minha conta">
         <Avatar className="size-8">
           <AvatarFallback className="bg-secondary text-secondary-foreground text-xs font-semibold">
-            {currentStudent.avatarInitials}
+            {profile?.avatarInitials ?? "US"}
           </AvatarFallback>
         </Avatar>
       </Link>

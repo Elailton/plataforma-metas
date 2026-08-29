@@ -15,6 +15,7 @@ import {
   SidebarMenuItem,
 } from "@/components/ui/sidebar"
 import { adminNavItems } from "./admin-nav-items"
+import { signOut } from "@/lib/supabase/actions"
 
 export function AdminSidebar() {
   const pathname = usePathname()
@@ -55,10 +56,12 @@ export function AdminSidebar() {
       <SidebarFooter>
         <SidebarMenu>
           <SidebarMenuItem>
-            <SidebarMenuButton render={<Link href="/" />}>
-              <LogOut />
-              <span>Sair da plataforma</span>
-            </SidebarMenuButton>
+            <form action={signOut}>
+              <SidebarMenuButton render={<button type="submit" />}>
+                <LogOut />
+                <span>Sair da plataforma</span>
+              </SidebarMenuButton>
+            </form>
           </SidebarMenuItem>
         </SidebarMenu>
       </SidebarFooter>
