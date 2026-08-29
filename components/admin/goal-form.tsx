@@ -121,7 +121,7 @@ export function GoalForm({ courseId, subjects, topicsBySubject, materials, goal 
         title,
         description,
         dueDate: dueDate || null,
-        status: submitStatus ?? status,
+        status: submitStatus ?? (isEditing && goal ? goal.status : status),
         items: goalItems,
       }
 
@@ -161,27 +161,29 @@ export function GoalForm({ courseId, subjects, topicsBySubject, materials, goal 
                 <FieldLabel htmlFor="goal-date">Data de liberação (opcional)</FieldLabel>
                 <Input id="goal-date" type="date" value={dueDate ?? ""} onChange={(e) => setDueDate(e.target.value)} />
               </Field>
-              <Field>
-                <FieldLabel>Status</FieldLabel>
-                <Select
-                  items={[
-                    { label: "Rascunho", value: "draft" },
-                    { label: "Publicada", value: "published" },
-                  ]}
-                  value={status}
-                  onValueChange={(value) => value && setStatus(value as GoalStatus)}
-                >
-                  <SelectTrigger className="w-full">
-                    <SelectValue placeholder="Selecione o status" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectGroup>
-                      <SelectItem value="draft">Rascunho</SelectItem>
-                      <SelectItem value="published">Publicada</SelectItem>
-                    </SelectGroup>
-                  </SelectContent>
-                </Select>
-              </Field>
+              {!isEditing ? (
+                <Field>
+                  <FieldLabel>Status</FieldLabel>
+                  <Select
+                    items={[
+                      { label: "Rascunho", value: "draft" },
+                      { label: "Publicada", value: "published" },
+                    ]}
+                    value={status}
+                    onValueChange={(value) => value && setStatus(value as GoalStatus)}
+                  >
+                    <SelectTrigger className="w-full">
+                      <SelectValue placeholder="Selecione o status" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectGroup>
+                        <SelectItem value="draft">Rascunho</SelectItem>
+                        <SelectItem value="published">Publicada</SelectItem>
+                      </SelectGroup>
+                    </SelectContent>
+                  </Select>
+                </Field>
+              ) : null}
             </div>
             <Field>
               <FieldLabel htmlFor="goal-description">Descrição</FieldLabel>
