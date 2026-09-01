@@ -148,7 +148,7 @@ export function CourseDetailTabs({
       <TabsContent value="students">
         <Card>
           <CardContent className="p-0">
-            <CourseStudentsTable students={students} />
+            <CourseStudentsTable courseId={course.id} students={students} />
           </CardContent>
         </Card>
       </TabsContent>

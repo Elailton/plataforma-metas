@@ -1,38 +1,38 @@
 "use client"
 
-import { useState } from "react"
-import { PlayCircle, FileText, HelpCircle, CheckCircle2 } from "lucide-react"
+import { useState, useTransition } from "react"
+import { ExternalLink, HelpCircle, CheckCircle2 } from "lucide-react"
 import { Checkbox } from "@/components/ui/checkbox"
 import { Button } from "@/components/ui/button"
-import { getDiscipline, getTopic } from "@/lib/mock-data"
-import type { ChecklistKey, GoalItem } from "@/lib/types"
+import { toast } from "sonner"
+import { setGoalItemCompleted } from "@/lib/student/actions"
+import type { StudentGoalItem } from "@/lib/student/types"
 
-const checklistLabels: Record<ChecklistKey, string> = {
-  studied: "Estudei o tópico",
-  watchedLesson: "Assisti à videoaula",
-  consultedMaterial: "Consultei o material de apoio",
-  solvedQuestions: "Resolvi as questões sugeridas",
-}
+export function GoalItemChecklist({ item }: { item: StudentGoalItem }) {
+  const [isComplete, setIsComplete] = useState(item.completed)
+  const [pending, startTransition] = useTransition()
 
-export function GoalItemChecklist({ item }: { item: GoalItem }) {
-  const [checklist, setChecklist] = useState(item.checklist)
-  const discipline = getDiscipline(item.disciplineId)
-  const topic = getTopic(item.topicId)
-
-  const checkedCount = Object.values(checklist).filter(Boolean).length
-  const total = Object.values(checklist).length
-  const isComplete = checkedCount === total
-
-  function toggle(key: ChecklistKey) {
-    setChecklist((prev) => ({ ...prev, [key]: !prev[key] }))
+  function toggle(completed: boolean) {
+    const previous = isComplete
+    setIsComplete(completed)
+    startTransition(async () => {
+      try {
+        await setGoalItemCompleted(item.id, completed)
+      } catch (error) {
+        setIsComplete(previous)
+        toast.error(error instanceof Error ? error.message : "Não foi possível salvar seu progresso.")
+      }
+    })
   }
 
   return (
     <div className="flex flex-col gap-4 rounded-xl border border-border bg-card p-4">
       <div className="flex items-start justify-between gap-3">
         <div className="flex flex-col gap-1">
-          <span className="text-xs font-medium text-primary">{discipline?.name}</span>
-          <h3 className="text-sm font-semibold leading-snug text-foreground">{topic?.name}</h3>
+          <span className="text-xs font-medium text-primary">{item.subjectName}</span>
+          <h3 className="text-sm font-semibold leading-snug text-foreground">
+            {item.topicName ?? "Item de estudo"}
+          </h3>
         </div>
         {isComplete ? (
           <span className="flex items-center gap-1 rounded-full bg-success/15 px-2 py-1 text-xs font-medium text-success">
@@ -40,42 +40,40 @@ export function GoalItemChecklist({ item }: { item: GoalItem }) {
             Concluído
           </span>
         ) : (
-          <span className="shrink-0 text-xs font-medium tabular-nums text-muted-foreground">
-            {checkedCount}/{total}
-          </span>
+          <span className="shrink-0 text-xs font-medium text-muted-foreground">Pendente</span>
         )}
       </div>
 
-      <p className="text-sm leading-relaxed text-muted-foreground">{item.orientation}</p>
+      {item.instructions ? <p className="text-sm leading-relaxed text-muted-foreground">{item.instructions}</p> : null}
 
       <div className="flex flex-wrap gap-2">
-        {item.lessonUrl ? (
-          <Button render={<a href={item.lessonUrl} />} nativeButton={false} size="sm" variant="outline">
-            <PlayCircle data-icon="inline-start" />
-            Videoaula
+        {item.materials.map((material) => (
+          <Button
+            key={material.id}
+            render={<a href={material.url} target="_blank" rel="noreferrer" />}
+            nativeButton={false}
+            size="sm"
+            variant="outline"
+          >
+            <ExternalLink data-icon="inline-start" />
+            {material.title}
           </Button>
-        ) : null}
-        {item.materialUrl ? (
-          <Button render={<a href={item.materialUrl} />} nativeButton={false} size="sm" variant="outline">
-            <FileText data-icon="inline-start" />
-            Material de apoio
-          </Button>
-        ) : null}
-        <Button size="sm" variant="outline" disabled>
+        ))}
+        {item.suggestedQuestions ? <Button size="sm" variant="outline" disabled>
           <HelpCircle data-icon="inline-start" />
           {item.suggestedQuestions} questões sugeridas
-        </Button>
+        </Button> : null}
       </div>
 
-      <div className="flex flex-col gap-2.5 border-t border-border pt-3">
-        {(Object.keys(checklistLabels) as ChecklistKey[]).map((key) => (
-          <label key={key} className="flex items-center gap-3 text-sm text-foreground">
-            <Checkbox checked={checklist[key]} onCheckedChange={() => toggle(key)} />
-            <span className={checklist[key] ? "text-muted-foreground line-through" : ""}>
-              {checklistLabels[key]}
-            </span>
-          </label>
-        ))}
+      <div className="border-t border-border pt-3">
+        <label className="flex items-center gap-3 text-sm font-medium text-foreground">
+          <Checkbox
+            checked={isComplete}
+            disabled={pending}
+            onCheckedChange={(checked) => toggle(checked === true)}
+          />
+          <span className={isComplete ? "text-muted-foreground line-through" : ""}>Item concluído</span>
+        </label>
       </div>
     </div>
   )

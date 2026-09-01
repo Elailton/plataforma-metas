@@ -5,17 +5,16 @@ import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group"
 import { GoalCard } from "@/components/student/goal-card"
 import { Empty, EmptyHeader, EmptyTitle, EmptyDescription, EmptyMedia } from "@/components/ui/empty"
 import { ListChecks } from "lucide-react"
-import { getGoalStatus } from "@/lib/mock-data"
-import type { Goal } from "@/lib/types"
+import type { StudentGoal } from "@/lib/student/types"
 
 type Filter = "all" | "in_progress" | "completed"
 
-export function GoalsFilter({ goals }: { goals: Goal[] }) {
+export function GoalsFilter({ goals }: { goals: StudentGoal[] }) {
   const [filter, setFilter] = useState<Filter>("all")
 
   const filtered = useMemo(() => {
     if (filter === "all") return goals
-    return goals.filter((goal) => getGoalStatus(goal) === filter)
+    return goals.filter((goal) => goal.progressStatus === filter)
   }, [goals, filter])
 
   return (

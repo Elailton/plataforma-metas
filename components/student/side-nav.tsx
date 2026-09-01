@@ -6,8 +6,10 @@ import { GraduationCap, LogOut } from "lucide-react"
 import { cn } from "@/lib/utils"
 import { studentNavItems } from "./student-nav-items"
 import { signOut } from "@/lib/supabase/actions"
+import { CourseSwitcher } from "@/components/student/course-switcher"
+import type { StudentCourse } from "@/lib/student/types"
 
-export function SideNav() {
+export function SideNav({ courses, currentCourse }: { courses: StudentCourse[]; currentCourse: StudentCourse }) {
   const pathname = usePathname()
 
   return (
@@ -17,6 +19,11 @@ export function SideNav() {
           <GraduationCap className="size-4.5" />
         </div>
         <span className="text-sm font-semibold tracking-tight">Plataforma Metas</span>
+      </div>
+
+      <div className="mb-5 px-2">
+        <p className="mb-1.5 text-[10px] font-semibold uppercase tracking-wide text-sidebar-foreground/50">Curso</p>
+        <CourseSwitcher courses={courses} currentCourseId={currentCourse.id} />
       </div>
 
       <ul className="flex flex-1 flex-col gap-1">
