@@ -1,33 +1,31 @@
 import Link from "next/link"
+import { redirect } from "next/navigation"
 import { CheckCircle2 } from "lucide-react"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { PageContainer } from "@/components/student/page-container"
 import { GoalCard } from "@/components/student/goal-card"
 import { NextGoalCard } from "@/components/student/next-goal-card"
 import { DisciplineProgressList } from "@/components/student/discipline-progress-list"
-import {
-  currentStudent,
-  getCourse,
-  getEditalProgressByCourse,
-  getGoalsByCourse,
-  getGoalsSummary,
-  getNextGoal,
-} from "@/lib/mock-data"
+import { getStudentContext, getStudentCourseSnapshot } from "@/lib/student/queries"
 
-export default function StudentHomePage() {
-  const course = getCourse(currentStudent.courseId)!
-  const edital = getEditalProgressByCourse(currentStudent.courseId)
-  const goalsSummary = getGoalsSummary(currentStudent.courseId)
-  const nextGoal = getNextGoal(currentStudent.courseId)
-  const recentGoals = getGoalsByCourse(currentStudent.courseId).slice(0, 3)
+export default async function StudentHomePage() {
+  const context = await getStudentContext()
+  if (!context) redirect("/auth/sem-acesso")
+  const snapshot = await getStudentCourseSnapshot(context.currentCourse.id)
+  if (!snapshot) redirect("/auth/sem-acesso")
 
-  const firstName = currentStudent.name.split(" ")[0]
+  const completedGoals = snapshot.goals.filter((goal) => goal.progressStatus === "completed").length
+  const nextGoal =
+    snapshot.goals.find((goal) => goal.progressStatus === "in_progress") ??
+    snapshot.goals.find((goal) => goal.progressStatus === "pending")
+  const recentGoals = snapshot.goals.slice(0, 3)
+  const firstName = context.profile.fullName.split(" ")[0]
 
   return (
     <PageContainer className="max-w-2xl">
       <div className="mb-6 flex flex-col gap-1">
         <p className="text-sm text-muted-foreground">Olá, {firstName}</p>
-        <h1 className="text-2xl font-semibold tracking-tight text-foreground">{course.shortName}</h1>
+        <h1 className="text-2xl font-semibold tracking-tight text-foreground">{snapshot.course.name}</h1>
       </div>
 
       <div className="mb-6 grid grid-cols-2 gap-3">
@@ -36,7 +34,7 @@ export default function StudentHomePage() {
             <CardTitle className="text-xs font-medium text-muted-foreground">Edital concluído</CardTitle>
           </CardHeader>
           <CardContent className="px-4">
-            <span className="text-2xl font-semibold tabular-nums text-foreground">{edital.percentage}%</span>
+            <span className="text-2xl font-semibold tabular-nums text-foreground">{snapshot.editalPercentage}%</span>
           </CardContent>
         </Card>
         <Card className="gap-2 py-4">
@@ -44,8 +42,8 @@ export default function StudentHomePage() {
             <CardTitle className="text-xs font-medium text-muted-foreground">Metas concluídas</CardTitle>
           </CardHeader>
           <CardContent className="px-4 flex items-center gap-2">
-            <span className="text-2xl font-semibold tabular-nums text-foreground">{goalsSummary.completed}</span>
-            <span className="text-sm text-muted-foreground">/ {goalsSummary.total}</span>
+            <span className="text-2xl font-semibold tabular-nums text-foreground">{completedGoals}</span>
+            <span className="text-sm text-muted-foreground">/ {snapshot.goals.length}</span>
           </CardContent>
         </Card>
       </div>
@@ -66,7 +64,7 @@ export default function StudentHomePage() {
 
       <div className="mb-8 flex flex-col gap-4">
         <h2 className="text-sm font-semibold text-foreground">Progresso por disciplina</h2>
-        <DisciplineProgressList courseId={currentStudent.courseId} />
+        <DisciplineProgressList subjects={snapshot.subjects} />
       </div>
 
       <div className="flex flex-col gap-4">
@@ -77,7 +75,11 @@ export default function StudentHomePage() {
           </Link>
         </div>
         <div className="flex flex-col gap-3">
-          {recentGoals.map((goal) => (
+          {recentGoals.length === 0 ? (
+            <p className="rounded-xl border border-dashed border-border p-5 text-sm text-muted-foreground">
+              Nenhuma meta publicada para este curso ainda.
+            </p>
+          ) : recentGoals.map((goal) => (
             <GoalCard key={goal.id} goal={goal} />
           ))}
         </div>

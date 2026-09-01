@@ -2,7 +2,7 @@
 
 import { Bar, BarChart, CartesianGrid, XAxis, YAxis } from "recharts"
 import { ChartContainer, ChartTooltip, ChartTooltipContent, type ChartConfig } from "@/components/ui/chart"
-import { getDisciplineProgressList } from "@/lib/mock-data"
+import type { StudentSubjectProgress } from "@/lib/student/types"
 
 const chartConfig: ChartConfig = {
   percentage: {
@@ -11,9 +11,9 @@ const chartConfig: ChartConfig = {
   },
 }
 
-export function DisciplineProgressChart({ courseId }: { courseId: string }) {
-  const data = getDisciplineProgressList(courseId).map((entry) => ({
-    name: entry.discipline.name,
+export function DisciplineProgressChart({ subjects }: { subjects: StudentSubjectProgress[] }) {
+  const data = subjects.map((entry) => ({
+    name: entry.name,
     percentage: entry.percentage,
   }))
 

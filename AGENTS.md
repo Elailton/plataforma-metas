@@ -64,9 +64,10 @@ Status permitidos:
 - `suspended`
 - `revoked`
 
-Fonte atualmente permitida:
+Fontes permitidas:
 
 - `hotmart`
+- `manual` somente para matrículas administrativas do beta enquanto a integração comercial não estiver ativa
 
 Deve existir uma única matrícula por par `(user_id, course_id)`.
 
@@ -188,7 +189,9 @@ O aluno marca apenas o item como concluído. O progresso da meta é:
 
 Um item concluído pode marcar seu `syllabus_topic` como estudado. O mesmo tópico deve contar apenas uma vez no percentual do edital, mesmo quando aparece em várias metas.
 
-Até que o usuário amplie explicitamente o escopo, não implemente o progresso das metas nesta fase.
+O usuário ampliou o escopo do beta em 1º de setembro de 2026. O progresso real e persistente dos itens e do edital faz parte da experiência do aluno.
+
+As contas existentes de um administrador e de um aluno de teste são dados protegidos. Nunca as exclua, recrie ou altere suas senhas. O aluno de teste deve receber acesso somente aos cursos atribuídos por matrícula ativa; inicialmente, apenas o curso GMF existente no banco.
 
 ## Escopo atual
 
@@ -202,6 +205,9 @@ O escopo atualmente autorizado inclui:
 - suspensão, revogação e reativação de matrícula;
 - RLS e autorização compatíveis;
 - testes para múltiplos cursos no mesmo e-mail.
+- progresso persistente por item de meta;
+- seleção independente entre vários cursos ativos;
+- matrícula manual administrativa de contas de aluno existentes durante o beta.
 
 Fora de escopo até solicitação explícita:
 
@@ -209,7 +215,6 @@ Fora de escopo até solicitação explícita:
 - ranking;
 - gamificação;
 - simulados;
-- progresso interativo das metas;
 - funcionalidades específicas de um concurso;
 - grandes reformulações visuais.
 
@@ -259,5 +264,3 @@ Confirme também que:
 - `service_role` e HOTTOK não aparecem em código de navegador;
 - a migração é aplicável antes do deploy;
 - nenhuma funcionalidade fora do escopo foi adicionada.
-
-

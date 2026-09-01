@@ -2,16 +2,11 @@ import Link from "next/link"
 import { ChevronRight } from "lucide-react"
 import { Progress } from "@/components/ui/progress"
 import { StatusBadge } from "@/components/status-badge"
-import { getDiscipline, getGoalProgress, getGoalStatus } from "@/lib/mock-data"
-import type { Goal } from "@/lib/types"
+import type { StudentGoal } from "@/lib/student/types"
 import { formatDate } from "@/lib/format"
 
-export function GoalCard({ goal }: { goal: Goal }) {
-  const progress = getGoalProgress(goal)
-  const status = getGoalStatus(goal)
-  const disciplineNames = Array.from(
-    new Set(goal.items.map((item) => getDiscipline(item.disciplineId)?.name).filter(Boolean)),
-  ) as string[]
+export function GoalCard({ goal }: { goal: StudentGoal }) {
+  const disciplineNames = Array.from(new Set(goal.items.map((item) => item.subjectName)))
 
   return (
     <Link
@@ -29,13 +24,13 @@ export function GoalCard({ goal }: { goal: Goal }) {
       <p className="text-xs text-muted-foreground">{disciplineNames.join(" • ")}</p>
 
       <div className="flex items-center gap-3">
-        <Progress value={progress} className="h-1.5 flex-1" />
-        <span className="text-xs font-medium text-muted-foreground tabular-nums">{progress}%</span>
+        <Progress value={goal.progress} className="h-1.5 flex-1" />
+        <span className="text-xs font-medium text-muted-foreground tabular-nums">{goal.progress}%</span>
       </div>
 
       <div className="flex items-center justify-between">
-        <span className="text-xs text-muted-foreground">{formatDate(goal.date)}</span>
-        <StatusBadge status={status} />
+        <span className="text-xs text-muted-foreground">{goal.dueDate ? formatDate(goal.dueDate) : "Sem prazo"}</span>
+        <StatusBadge status={goal.progressStatus} />
       </div>
     </Link>
   )

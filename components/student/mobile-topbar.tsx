@@ -1,23 +1,30 @@
 import Link from "next/link"
 import { GraduationCap } from "lucide-react"
 import { Avatar, AvatarFallback } from "@/components/ui/avatar"
-import { getCurrentProfile } from "@/lib/supabase/queries"
+import { CourseSwitcher } from "@/components/student/course-switcher"
+import type { StudentCourse } from "@/lib/student/types"
 
-export async function MobileTopbar() {
-  const profile = await getCurrentProfile()
-
+export function MobileTopbar({
+  courses,
+  currentCourse,
+  avatarInitials,
+}: {
+  courses: StudentCourse[]
+  currentCourse: StudentCourse
+  avatarInitials: string
+}) {
   return (
     <header className="flex items-center justify-between border-b border-border bg-card/95 px-4 py-3 backdrop-blur md:hidden">
       <div className="flex items-center gap-2">
         <div className="flex size-7 items-center justify-center rounded-md bg-primary text-primary-foreground">
           <GraduationCap className="size-4" />
         </div>
-        <span className="text-sm font-semibold tracking-tight">Plataforma Metas</span>
+        <CourseSwitcher courses={courses} currentCourseId={currentCourse.id} compact />
       </div>
       <Link href="/aluno/conta" aria-label="Minha conta">
         <Avatar className="size-8">
           <AvatarFallback className="bg-secondary text-secondary-foreground text-xs font-semibold">
-            {profile?.avatarInitials ?? "US"}
+            {avatarInitials}
           </AvatarFallback>
         </Avatar>
       </Link>

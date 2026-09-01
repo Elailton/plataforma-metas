@@ -28,6 +28,10 @@ Apply the migrations in `supabase/migrations` before deploying the application. 
 environment and configure the public Supabase URL/anon key plus the server-only values
 `SUPABASE_SERVICE_ROLE_KEY`, `HOTMART_HOTTOK`, and `SITE_URL`.
 
+For the beta, the Hotmart account is optional. Apply all migrations and use **Admin → Cursos → Alunos → Liberar
+acesso** to attach an existing student account to a course. This manual enrollment never creates users or changes
+passwords. The complete non-destructive activation checklist is in [`docs/BETA_ACTIVATION.md`](docs/BETA_ACTIVATION.md).
+
 Disable public sign-ups in Supabase Auth. Invitations created by the server-side Admin API continue to work, while
 the database trigger always creates new profiles as `student` and never trusts role metadata from the browser.
 
