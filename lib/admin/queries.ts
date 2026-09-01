@@ -7,6 +7,7 @@ import type {
   AdminStudent,
   AdminSubject,
   AdminSyllabusTopic,
+  HotmartProductMapping,
 } from "@/lib/admin/types"
 
 export async function listAdminCourses(): Promise<AdminCourse[]> {
@@ -16,7 +17,10 @@ export async function listAdminCourses(): Promise<AdminCourse[]> {
 
   if (!courses) return []
 
-  const { data: profileCounts } = await supabase.from("profiles").select("course_id").eq("role", "student")
+  const { data: enrollmentCounts } = await supabase
+    .from("enrollments")
+    .select("course_id")
+    .eq("status", "active")
 
   const { data: goalCounts } = await supabase.from("goals").select("course_id")
 
@@ -30,9 +34,19 @@ export async function listAdminCourses(): Promise<AdminCourse[]> {
     status: course.status,
     createdAt: course.created_at,
     updatedAt: course.updated_at,
-    studentsCount: profileCounts?.filter((p) => p.course_id === course.id).length ?? 0,
+    studentsCount: enrollmentCounts?.filter((enrollment) => enrollment.course_id === course.id).length ?? 0,
     goalsCount: goalCounts?.filter((g) => g.course_id === course.id).length ?? 0,
   }))
+}
+
+export async function countActiveStudents(): Promise<number> {
+  const supabase = await createClient()
+  const { data: enrollments } = await supabase
+    .from("enrollments")
+    .select("user_id")
+    .eq("status", "active")
+
+  return new Set((enrollments ?? []).map((enrollment) => enrollment.user_id)).size
 }
 
 export async function getAdminCourse(courseId: string): Promise<AdminCourse | null> {
@@ -42,10 +56,10 @@ export async function getAdminCourse(courseId: string): Promise<AdminCourse | nu
   if (!course) return null
 
   const { count: studentsCount } = await supabase
-    .from("profiles")
+    .from("enrollments")
     .select("id", { count: "exact", head: true })
-    .eq("role", "student")
     .eq("course_id", courseId)
+    .eq("status", "active")
 
   const { count: goalsCount } = await supabase
     .from("goals")
@@ -204,34 +218,66 @@ async function hydrateGoal(goal: any): Promise<AdminGoal> {
 export async function listCourseStudents(courseId: string): Promise<AdminStudent[]> {
   const supabase = await createClient()
 
-  const { data: profiles } = await supabase
-    .from("profiles")
-    .select("id, full_name, avatar_initials, course_id")
-    .eq("role", "student")
+  const { data: enrollments } = await supabase
+    .from("enrollments")
+    .select("id, user_id, course_id, status, enrolled_at, profiles!enrollments_user_id_fkey(full_name, avatar_initials)")
     .eq("course_id", courseId)
+    .order("enrolled_at", { ascending: false })
 
-  return (profiles ?? []).map((profile) => ({
-    id: profile.id,
-    fullName: profile.full_name || "Aluno",
+  return (enrollments ?? []).map((enrollment: any) => {
+    const profile = Array.isArray(enrollment.profiles) ? enrollment.profiles[0] : enrollment.profiles
+
+    return {
+    id: enrollment.id,
+    userId: enrollment.user_id,
+    fullName: profile?.full_name || "Aluno",
     email: "",
-    avatarInitials: profile.avatar_initials || "AL",
-    courseId: profile.course_id,
-  }))
+    avatarInitials: profile?.avatar_initials || "AL",
+    courseId: enrollment.course_id,
+    enrollmentStatus: enrollment.status,
+    enrolledAt: enrollment.enrolled_at,
+  }})
 }
 
 export async function listAllStudents(): Promise<AdminStudent[]> {
   const supabase = await createClient()
 
-  const { data: profiles } = await supabase
-    .from("profiles")
-    .select("id, full_name, avatar_initials, course_id")
-    .eq("role", "student")
+  const { data: enrollments } = await supabase
+    .from("enrollments")
+    .select("id, user_id, course_id, status, enrolled_at, profiles!enrollments_user_id_fkey(full_name, avatar_initials)")
+    .order("enrolled_at", { ascending: false })
 
-  return (profiles ?? []).map((profile) => ({
-    id: profile.id,
-    fullName: profile.full_name || "Aluno",
+  return (enrollments ?? []).map((enrollment: any) => {
+    const profile = Array.isArray(enrollment.profiles) ? enrollment.profiles[0] : enrollment.profiles
+
+    return {
+    id: enrollment.id,
+    userId: enrollment.user_id,
+    fullName: profile?.full_name || "Aluno",
     email: "",
-    avatarInitials: profile.avatar_initials || "AL",
-    courseId: profile.course_id,
+    avatarInitials: profile?.avatar_initials || "AL",
+    courseId: enrollment.course_id,
+    enrollmentStatus: enrollment.status,
+    enrolledAt: enrollment.enrolled_at,
+  }})
+}
+
+export async function listHotmartProductMappings(courseId: string): Promise<HotmartProductMapping[]> {
+  const supabase = await createClient()
+
+  const { data: mappings } = await supabase
+    .from("hotmart_product_mappings")
+    .select("*")
+    .eq("course_id", courseId)
+    .order("created_at", { ascending: false })
+
+  return (mappings ?? []).map((mapping) => ({
+    id: mapping.id,
+    courseId: mapping.course_id,
+    hotmartProductId: mapping.hotmart_product_id,
+    hotmartProductUcode: mapping.hotmart_product_ucode,
+    hotmartProductName: mapping.hotmart_product_name,
+    active: mapping.active,
+    createdAt: mapping.created_at,
   }))
 }

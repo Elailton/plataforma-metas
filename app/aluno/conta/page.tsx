@@ -4,7 +4,6 @@ import { Avatar, AvatarFallback } from "@/components/ui/avatar"
 import { Card, CardContent } from "@/components/ui/card"
 import { Separator } from "@/components/ui/separator"
 import { PageContainer, PageHeading } from "@/components/student/page-container"
-import { getCourse } from "@/lib/mock-data"
 import { getCurrentProfile } from "@/lib/supabase/queries"
 import { signOut } from "@/lib/supabase/actions"
 
@@ -12,7 +11,7 @@ export default async function AccountPage() {
   const profile = await getCurrentProfile()
   if (!profile) redirect("/auth/login")
 
-  const course = profile.courseId ? getCourse(profile.courseId) : undefined
+  const activeEnrollments = profile.enrollments.filter((enrollment) => enrollment.status === "active")
 
   return (
     <PageContainer>
@@ -35,18 +34,22 @@ export default async function AccountPage() {
         </CardContent>
       </Card>
 
-      {course && (
+      {activeEnrollments.length > 0 && (
         <Card className="mb-6">
-          <CardContent className="flex flex-col gap-3">
-            <div className="flex items-center gap-3">
-              <div className="flex size-9 items-center justify-center rounded-lg bg-primary/10 text-primary">
-                <GraduationCap className="size-4.5" />
+          <CardContent className="flex flex-col gap-4">
+            {activeEnrollments.map((enrollment) => (
+              <div key={enrollment.id} className="flex items-center gap-3">
+                <div className="flex size-9 items-center justify-center rounded-lg bg-primary/10 text-primary">
+                  <GraduationCap className="size-4.5" />
+                </div>
+                <div className="flex flex-1 flex-col">
+                  <span className="text-sm font-medium text-foreground">
+                    {enrollment.course?.name || "Curso matriculado"}
+                  </span>
+                  <span className="text-xs text-muted-foreground">Curso ativo</span>
+                </div>
               </div>
-              <div className="flex flex-1 flex-col">
-                <span className="text-sm font-medium text-foreground">{course.name}</span>
-                <span className="text-xs text-muted-foreground">Curso ativo</span>
-              </div>
-            </div>
+            ))}
           </CardContent>
         </Card>
       )}

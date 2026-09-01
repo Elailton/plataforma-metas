@@ -22,6 +22,29 @@ pnpm dev
 
 Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
 
+## Supabase and Hotmart
+
+Apply the migrations in `supabase/migrations` before deploying the application. Copy `.env.example` to your local
+environment and configure the public Supabase URL/anon key plus the server-only values
+`SUPABASE_SERVICE_ROLE_KEY`, `HOTMART_HOTTOK`, and `SITE_URL`.
+
+Disable public sign-ups in Supabase Auth. Invitations created by the server-side Admin API continue to work, while
+the database trigger always creates new profiles as `student` and never trusts role metadata from the browser.
+
+In Hotmart, configure Webhook 2.0.0 to send purchase events to:
+
+```text
+https://your-domain.example/api/webhooks/hotmart
+```
+
+Products are mapped to courses under **Admin → Cursos → Configurações → Integração Hotmart**. The webhook accepts
+approved, delayed, canceled, expired, refunded, and chargeback events. Run the idempotency and multi-course tests
+with:
+
+```bash
+pnpm test
+```
+
 You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
 
 ## Learn More
