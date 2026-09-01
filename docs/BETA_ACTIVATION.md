@@ -26,7 +26,7 @@ Este é o checklist operacional para ativar a Mentoria Imparáveis preservando o
 A migration `supabase/migrations/20260901000300_hotmart_entitlements.sql` é aditiva. Ela:
 
 - cria `hotmart_entitlements` com `transaction` única;
-- cria `manual_course_grants` e copia para ela as matrículas existentes com `source = 'manual'`;
+- cria `manual_course_grants` e copia as matrículas manuais existentes; se nunca houve uma compra aprovada processada, preserva todas as matrículas anteriores como concessões beta, inclusive o aluno de teste legado;
 - cria a reconciliação atômica do acesso efetivo;
 - substitui a função de matrícula manual para usar a concessão independente;
 - habilita RLS nas novas tabelas;

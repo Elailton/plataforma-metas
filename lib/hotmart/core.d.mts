@@ -20,7 +20,7 @@ export interface HotmartRepository {
   claimEvent(event: ParsedHotmartEvent): Promise<{ claimed: boolean; status: EventProcessingStatus }>
   finishEvent(eventId: string, status: "processed" | "ignored", message: string | null): Promise<void>
   failEvent(eventId: string, message: string): Promise<void>
-  findActiveMapping(productUcode: string | null): Promise<{ courseId: string } | null>
+  findProductMapping(productUcode: string | null): Promise<{ courseId: string; active: boolean } | null>
   findUserByEmail(email: string | null): Promise<string | null>
   inviteStudent(input: {
     email: string
@@ -67,7 +67,6 @@ export function processHotmartEvent(
   entitlementStatus?: EnrollmentStatus
   enrollmentStatus?: EnrollmentStatus
 }>
-
 
 
 

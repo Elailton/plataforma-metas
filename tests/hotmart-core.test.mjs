@@ -35,9 +35,9 @@ function inMemoryRepository({ adminEmails = [] } = {}) {
   const users = new Map()
   const profiles = new Map()
   const mappings = new Map([
-    ["product-one", { courseId: "course-one" }],
-    ["product-one-turbo", { courseId: "course-one" }],
-    ["product-two", { courseId: "course-two" }],
+    ["product-one", { courseId: "course-one", active: true }],
+    ["product-one-turbo", { courseId: "course-one", active: true }],
+    ["product-two", { courseId: "course-two", active: true }],
   ])
   const events = new Map()
   const entitlements = new Map()
@@ -106,7 +106,7 @@ function inMemoryRepository({ adminEmails = [] } = {}) {
     async failEvent(eventId, message) {
       events.set(eventId, { status: "failed", message })
     },
-    async findActiveMapping(productUcode) {
+    async findProductMapping(productUcode) {
       return mappings.get(productUcode) ?? null
     },
     async findUserByEmail(email) {
@@ -434,4 +434,25 @@ test("sem direitos ativos, um direito suspenso mantém a matrícula suspensa", a
   )
 
   assert.equal(repository.state.enrollments.get(`${first.userId}:course-one`), "suspended")
+})
+
+test("mapeamento inativo bloqueia aprovação nova, mas ainda processa reembolso existente", async () => {
+  const repository = inMemoryRepository()
+
+  const first = await approve(repository, { id: "mapped-approved", transaction: "HP-inactive" })
+  repository.state.mappings.set("product-one", { courseId: "course-one", active: false })
+  await refund(repository, {
+    id: "mapped-refund",
+    transaction: "HP-inactive",
+    creationDate: BASE_TIME + 1000,
+  })
+  const blocked = await approve(repository, {
+    id: "inactive-new-approved",
+    transaction: "HP-inactive-new",
+    creationDate: BASE_TIME + 2000,
+  })
+
+  assert.equal(repository.state.enrollments.get(`${first.userId}:course-one`), "revoked")
+  assert.equal(blocked.outcome, "ignored")
+  assert.equal(repository.state.entitlements.has("HP-inactive-new"), false)
 })

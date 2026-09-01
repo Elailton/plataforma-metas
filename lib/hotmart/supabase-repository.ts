@@ -86,18 +86,17 @@ export function createHotmartRepository(): HotmartRepository {
       throwDatabaseError(error)
     },
 
-    async findActiveMapping(productUcode) {
+    async findProductMapping(productUcode) {
       if (!productUcode) return null
 
       const { data, error } = await supabase
         .from("hotmart_product_mappings")
-        .select("course_id")
+        .select("course_id, active")
         .eq("hotmart_product_ucode", productUcode)
-        .eq("active", true)
         .maybeSingle()
 
       throwDatabaseError(error)
-      return data ? { courseId: data.course_id as string } : null
+      return data ? { courseId: data.course_id as string, active: Boolean(data.active) } : null
     },
 
     findUserByEmail,
@@ -214,4 +213,3 @@ export function createHotmartRepository(): HotmartRepository {
     },
   }
 }
-

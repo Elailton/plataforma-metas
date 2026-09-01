@@ -53,11 +53,20 @@ create trigger manual_course_grants_touch_updated_at
 before update on public.manual_course_grants
 for each row execute function public.touch_updated_at();
 
--- Preserve every manual beta access already represented by enrollments.
+-- Preserve explicit manual access. If this installation has never processed
+-- an approved Hotmart purchase, all existing rows predate the commercial
+-- integration and are preserved as beta/manual grants (including the test
+-- student even when a legacy migration labelled the row as "hotmart").
 insert into public.manual_course_grants (user_id, course_id, status)
 select user_id, course_id, status
 from public.enrollments
 where source = 'manual'
+  or not exists (
+    select 1
+    from public.hotmart_webhook_events
+    where event_type = 'PURCHASE_APPROVED'
+      and processing_status = 'processed'
+  )
 on conflict (user_id, course_id) do nothing;
 
 -- Serializes and recalculates the effective enrollment for one person/course.
