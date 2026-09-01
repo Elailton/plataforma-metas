@@ -109,16 +109,29 @@ export async function getStudentCourseSnapshot(courseId: string): Promise<Studen
         : Promise.resolve({ data: [], error: null }),
     ])
 
-  if (completionsError || itemMaterialsError) throw new Error("Não foi possível carregar o progresso do aluno.")
+  const isMissingProgressRelation = (error: { code?: string; message?: string } | null) =>
+    Boolean(error && (error.code === "PGRST205" || error.code === "42P01" || /does not exist|Could not find the table/i.test(error.message ?? "")))
 
-  const materialIds = [...new Set((itemMaterials ?? []).map((relation) => relation.material_id))]
+  if (completionsError && !isMissingProgressRelation(completionsError)) {
+    console.error("[v0] Falha ao carregar conclusões do aluno:", completionsError)
+    throw new Error("Não foi possível carregar o progresso do aluno.")
+  }
+
+  if (itemMaterialsError && !isMissingProgressRelation(itemMaterialsError)) {
+    console.error("[v0] Falha ao carregar materiais vinculados:", itemMaterialsError)
+    throw new Error("Não foi possível carregar os materiais das metas.")
+  }
+
+  const safeCompletionRows = completionsError ? [] : completionRows ?? []
+  const safeItemMaterials = itemMaterialsError ? [] : itemMaterials ?? []
+  const materialIds = [...new Set(safeItemMaterials.map((relation) => relation.material_id))]
   const { data: materials, error: materialsError } = materialIds.length
     ? await supabase.from("materials").select("id, title, type, url").in("id", materialIds)
     : { data: [], error: null }
 
   if (materialsError) throw new Error("Não foi possível carregar os materiais das metas.")
 
-  const completedItemIds = new Set((completionRows ?? []).map((completion) => completion.goal_item_id))
+  const completedItemIds = new Set(safeCompletionRows.map((completion) => completion.goal_item_id))
   const subjectById = new Map((subjects ?? []).map((subject) => [subject.id, subject]))
   const topicById = new Map((topics ?? []).map((topic) => [topic.id, topic]))
   const materialById = new Map(
@@ -139,7 +152,7 @@ export async function getStudentCourseSnapshot(courseId: string): Promise<Studen
       .map((item) => {
         const subject = subjectById.get(item.subject_id)
         const topic = item.topic_id ? topicById.get(item.topic_id) : null
-        const linkedMaterials = (itemMaterials ?? [])
+        const linkedMaterials = safeItemMaterials
           .filter((relation) => relation.goal_item_id === item.id)
           .map((relation) => materialById.get(relation.material_id))
           .filter((material): material is StudentMaterial => Boolean(material))
