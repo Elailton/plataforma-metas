@@ -8,16 +8,19 @@ export interface ParsedHotmartEvent {
   status: EnrollmentStatus | null
   transaction: string | null
   productUcode: string | null
+  productId: string | null
+  buyerUcode: string | null
   buyerEmail: string | null
   buyerName: string | null
   avatarInitials: string
+  eventCreationDate: string | null
 }
 
 export interface HotmartRepository {
   claimEvent(event: ParsedHotmartEvent): Promise<{ claimed: boolean; status: EventProcessingStatus }>
   finishEvent(eventId: string, status: "processed" | "ignored", message: string | null): Promise<void>
   failEvent(eventId: string, message: string): Promise<void>
-  findActiveMapping(productUcode: string | null): Promise<{ courseId: string } | null>
+  findProductMapping(productUcode: string | null): Promise<{ courseId: string; active: boolean } | null>
   findUserByEmail(email: string | null): Promise<string | null>
   inviteStudent(input: {
     email: string
@@ -29,16 +32,21 @@ export interface HotmartRepository {
     input: { fullName: string | null; avatarInitials: string },
   ): Promise<"student" | "admin">
   getProfileRole(userId: string): Promise<"student" | "admin" | null>
-  upsertEnrollment(input: {
+  applyEntitlementEvent(input: {
+    transaction: string
     userId: string
     courseId: string
-    status: "active"
-  }): Promise<void>
-  updateEnrollmentStatus(input: {
-    userId: string
-    courseId: string
+    productUcode: string
+    productId: string | null
+    buyerUcode: string | null
     status: EnrollmentStatus
-  }): Promise<void>
+    eventId: string
+    eventCreationDate: string
+  }): Promise<{
+    applied: boolean
+    entitlementStatus: EnrollmentStatus
+    enrollmentStatus: EnrollmentStatus
+  }>
 }
 
 export class HotmartPayloadError extends Error {}
@@ -56,10 +64,9 @@ export function processHotmartEvent(
   previousStatus?: EventProcessingStatus
   userId?: string | null
   courseId?: string
+  entitlementStatus?: EnrollmentStatus
   enrollmentStatus?: EnrollmentStatus
 }>
-
-
 
 
 

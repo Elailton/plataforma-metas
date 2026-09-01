@@ -72,7 +72,8 @@ export function HotmartIntegrationPanel({
       <CardHeader>
         <CardTitle className="text-sm font-medium text-foreground">Integração Hotmart</CardTitle>
         <CardDescription>
-          Cadastre os produtos que liberam este curso. O identificador principal é o product.ucode.
+          Cadastre os produtos que liberam este curso. Copie o campo data.product.ucode do Payload no Teste ou
+          Histórico do Webhook; o ID numérico é apenas auxiliar.
         </CardDescription>
       </CardHeader>
       <CardContent className="flex flex-col gap-6">
@@ -163,11 +164,10 @@ export function HotmartIntegrationPanel({
         )}
 
         <p className="text-xs text-muted-foreground">
-          Configure o endpoint /api/webhooks/hotmart como Webhook 2.0.0 e mantenha o HOTTOK apenas nas variáveis
-          server-side.
+          Em produção, configure https://mentoriaimparaveis.vercel.app/api/webhooks/hotmart como Webhook 2.0.0 e
+          mantenha o HOTTOK apenas nas variáveis server-side.
         </p>
       </CardContent>
     </Card>
   )
 }
-

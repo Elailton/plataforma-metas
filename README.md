@@ -42,8 +42,10 @@ https://your-domain.example/api/webhooks/hotmart
 ```
 
 Products are mapped to courses under **Admin → Cursos → Configurações → Integração Hotmart**. The webhook accepts
-approved, delayed, canceled, expired, refunded, and chargeback events. Run the idempotency and multi-course tests
-with:
+approved, delayed, canceled, expired, refunded, and chargeback events. Each `purchase.transaction` is stored as an
+independent entitlement, so refunding one product never revokes another valid product for the same course. Manual
+beta grants are reconciled independently and are not removed by Hotmart events. Run the idempotency, entitlement,
+manual-access, out-of-order and multi-course tests with:
 
 ```bash
 pnpm test
