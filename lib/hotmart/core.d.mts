@@ -8,9 +8,12 @@ export interface ParsedHotmartEvent {
   status: EnrollmentStatus | null
   transaction: string | null
   productUcode: string | null
+  productId: string | null
+  buyerUcode: string | null
   buyerEmail: string | null
   buyerName: string | null
   avatarInitials: string
+  eventCreationDate: string | null
 }
 
 export interface HotmartRepository {
@@ -29,16 +32,21 @@ export interface HotmartRepository {
     input: { fullName: string | null; avatarInitials: string },
   ): Promise<"student" | "admin">
   getProfileRole(userId: string): Promise<"student" | "admin" | null>
-  upsertEnrollment(input: {
+  applyEntitlementEvent(input: {
+    transaction: string
     userId: string
     courseId: string
-    status: "active"
-  }): Promise<void>
-  updateEnrollmentStatus(input: {
-    userId: string
-    courseId: string
+    productUcode: string
+    productId: string | null
+    buyerUcode: string | null
     status: EnrollmentStatus
-  }): Promise<void>
+    eventId: string
+    eventCreationDate: string
+  }): Promise<{
+    applied: boolean
+    entitlementStatus: EnrollmentStatus
+    enrollmentStatus: EnrollmentStatus
+  }>
 }
 
 export class HotmartPayloadError extends Error {}
@@ -56,9 +64,9 @@ export function processHotmartEvent(
   previousStatus?: EventProcessingStatus
   userId?: string | null
   courseId?: string
+  entitlementStatus?: EnrollmentStatus
   enrollmentStatus?: EnrollmentStatus
 }>
-
 
 
 

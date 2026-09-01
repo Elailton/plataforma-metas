@@ -39,13 +39,11 @@ export async function setEnrollmentStatus(
   const { supabase } = await requireAdmin()
   if (!ENROLLMENT_STATUSES.includes(status)) throw new Error("Status de matrícula inválido.")
 
-  const { data, error } = await supabase
-    .from("enrollments")
-    .update({ status })
-    .eq("id", enrollmentId)
-    .eq("course_id", courseId)
-    .select("id")
-    .maybeSingle()
+  const { data, error } = await supabase.rpc("admin_set_manual_course_grant", {
+    requested_enrollment_id: enrollmentId,
+    requested_course_id: courseId,
+    requested_status: status,
+  })
 
   if (error) throw new Error(error.message)
   if (!data) throw new Error("Matrícula não encontrada neste curso.")
@@ -54,4 +52,3 @@ export async function setEnrollmentStatus(
   revalidatePath("/admin/alunos")
   revalidatePath("/aluno", "layout")
 }
-

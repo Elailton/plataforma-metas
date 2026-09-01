@@ -169,30 +169,49 @@ export function createHotmartRepository(): HotmartRepository {
       return data.role === "admin" ? "admin" : "student"
     },
 
-    async upsertEnrollment({ userId, courseId, status }) {
-      const { error } = await supabase.from("enrollments").upsert(
-        {
-          user_id: userId,
-          course_id: courseId,
-          status,
-          source: "hotmart",
-        },
-        { onConflict: "user_id,course_id" },
-      )
+    async applyEntitlementEvent({
+      transaction,
+      userId,
+      courseId,
+      productUcode,
+      productId,
+      buyerUcode,
+      status,
+      eventId,
+      eventCreationDate,
+    }) {
+      const { data, error } = await supabase
+        .rpc("apply_hotmart_entitlement_event", {
+          requested_transaction: transaction,
+          requested_user_id: userId,
+          requested_course_id: courseId,
+          requested_product_ucode: productUcode,
+          requested_product_id: productId,
+          requested_buyer_ucode: buyerUcode,
+          requested_status: status,
+          requested_event_id: eventId,
+          requested_event_creation_date: eventCreationDate,
+        })
+        .single()
 
       throwDatabaseError(error)
-    },
 
-    async updateEnrollmentStatus({ userId, courseId, status }) {
-      const { error } = await supabase
-        .from("enrollments")
-        .update({ status })
-        .eq("user_id", userId)
-        .eq("course_id", courseId)
+      const result = data as {
+        event_applied?: boolean
+        entitlement_status?: "active" | "suspended" | "revoked"
+        enrollment_status?: "active" | "suspended" | "revoked"
+      } | null
 
-      throwDatabaseError(error)
+      if (!result?.entitlement_status || !result.enrollment_status) {
+        throw new Error("A reconciliação do acesso Hotmart não retornou um estado válido.")
+      }
+
+      return {
+        applied: Boolean(result.event_applied),
+        entitlementStatus: result.entitlement_status,
+        enrollmentStatus: result.enrollment_status,
+      }
     },
   }
 }
-
 

@@ -1,4 +1,3 @@
-import { createHash, timingSafeEqual } from "node:crypto"
 import { NextRequest, NextResponse } from "next/server"
 import {
   HotmartConflictError,
@@ -6,16 +5,9 @@ import {
   processHotmartEvent,
 } from "@/lib/hotmart/core.mjs"
 import { createHotmartRepository } from "@/lib/hotmart/supabase-repository"
+import { hottokMatches } from "@/lib/hotmart/security.mjs"
 
 export const runtime = "nodejs"
-
-function hottokMatches(received: string | null, expected: string) {
-  if (!received) return false
-
-  const receivedDigest = createHash("sha256").update(received, "utf8").digest()
-  const expectedDigest = createHash("sha256").update(expected, "utf8").digest()
-  return timingSafeEqual(receivedDigest, expectedDigest)
-}
 
 export async function POST(request: NextRequest) {
   const hottok = process.env.HOTMART_HOTTOK
@@ -53,6 +45,5 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ error: "Falha temporária no processamento." }, { status: 500 })
   }
 }
-
 
 
