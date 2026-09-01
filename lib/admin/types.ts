@@ -77,8 +77,21 @@ export interface AdminGoal {
 
 export interface AdminStudent {
   id: string
+  userId: string
   fullName: string
   email: string
   avatarInitials: string
-  courseId: string | null
+  courseId: string
+  enrollmentStatus: "active" | "suspended" | "revoked"
+  enrolledAt: string
+}
+
+export interface HotmartProductMapping {
+  id: string
+  courseId: string
+  hotmartProductId: string | null
+  hotmartProductUcode: string
+  hotmartProductName: string | null
+  active: boolean
+  createdAt: string
 }

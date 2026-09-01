@@ -48,7 +48,13 @@ export async function updateSession(request: NextRequest) {
 
   if ((isStudentArea || isAdminArea) && user) {
     const { data: profile } = await supabase.from("profiles").select("role").eq("id", user.id).single()
-    const role = profile?.role ?? "student"
+    const role = profile?.role
+
+    if (!role) {
+      const url = request.nextUrl.clone()
+      url.pathname = "/auth/sem-acesso"
+      return NextResponse.redirect(url)
+    }
 
     if (isAdminArea && role !== "admin") {
       const url = request.nextUrl.clone()
@@ -60,6 +66,22 @@ export async function updateSession(request: NextRequest) {
       const url = request.nextUrl.clone()
       url.pathname = "/admin"
       return NextResponse.redirect(url)
+    }
+
+    if (isStudentArea && role === "student") {
+      const { data: enrollment } = await supabase
+        .from("enrollments")
+        .select("id")
+        .eq("user_id", user.id)
+        .eq("status", "active")
+        .limit(1)
+        .maybeSingle()
+
+      if (!enrollment) {
+        const url = request.nextUrl.clone()
+        url.pathname = "/auth/sem-acesso"
+        return NextResponse.redirect(url)
+      }
     }
   }
 

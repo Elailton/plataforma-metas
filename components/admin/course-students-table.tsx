@@ -1,4 +1,5 @@
 import { Avatar, AvatarFallback } from "@/components/ui/avatar"
+import { Badge } from "@/components/ui/badge"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
 import { Empty, EmptyHeader, EmptyMedia, EmptyTitle, EmptyDescription } from "@/components/ui/empty"
 import { Users } from "lucide-react"
@@ -24,6 +25,7 @@ export function CourseStudentsTable({ students }: { students: AdminStudent[] }) 
       <TableHeader>
         <TableRow>
           <TableHead>Aluno</TableHead>
+          <TableHead>Status</TableHead>
         </TableRow>
       </TableHeader>
       <TableBody>
@@ -38,6 +40,15 @@ export function CourseStudentsTable({ students }: { students: AdminStudent[] }) 
                 </Avatar>
                 <span className="font-medium text-foreground">{student.fullName}</span>
               </div>
+            </TableCell>
+            <TableCell>
+              <Badge variant={student.enrollmentStatus === "active" ? "default" : "secondary"}>
+                {student.enrollmentStatus === "active"
+                  ? "Ativa"
+                  : student.enrollmentStatus === "suspended"
+                    ? "Suspensa"
+                    : "Revogada"}
+              </Badge>
             </TableCell>
           </TableRow>
         ))}

@@ -1,13 +1,14 @@
 import Link from "next/link"
 import { redirect } from "next/navigation"
-import { GraduationCap, LogIn, UserPlus, ArrowRight } from "lucide-react"
+import { GraduationCap, LogIn, ArrowRight } from "lucide-react"
 import { getCurrentProfile } from "@/lib/supabase/queries"
 
 export default async function Home() {
   const profile = await getCurrentProfile()
 
   if (profile) {
-    redirect(profile.role === "admin" ? "/admin" : "/aluno")
+    const hasActiveEnrollment = profile.enrollments.some((enrollment) => enrollment.status === "active")
+    redirect(profile.role === "admin" ? "/admin" : hasActiveEnrollment ? "/aluno" : "/auth/sem-acesso")
   }
 
   return (
@@ -40,19 +41,6 @@ export default async function Home() {
             <ArrowRight className="size-4 shrink-0 text-muted-foreground transition-transform group-hover:translate-x-0.5" />
           </Link>
 
-          <Link
-            href="/auth/cadastro"
-            className="group flex items-center gap-4 rounded-2xl border border-border bg-card p-5 text-left transition-colors hover:border-primary/40 hover:bg-secondary/40"
-          >
-            <div className="flex size-11 shrink-0 items-center justify-center rounded-xl bg-accent/20 text-accent-foreground">
-              <UserPlus className="size-5" />
-            </div>
-            <div className="flex flex-1 flex-col gap-0.5">
-              <span className="text-sm font-semibold text-foreground">Criar conta</span>
-              <span className="text-xs text-muted-foreground">Cadastre-se como aluno ou administrador</span>
-            </div>
-            <ArrowRight className="size-4 shrink-0 text-muted-foreground transition-transform group-hover:translate-x-0.5" />
-          </Link>
         </div>
       </main>
     </div>

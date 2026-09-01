@@ -9,9 +9,18 @@ import { CourseEditalEditor } from "@/components/admin/course-edital-editor"
 import { CourseStudentsTable } from "@/components/admin/course-students-table"
 import { CourseMaterialsPanel } from "@/components/admin/course-materials-panel"
 import { CourseFormDialog } from "@/components/admin/course-form-dialog"
+import { HotmartIntegrationPanel } from "@/components/admin/hotmart-integration-panel"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Empty, EmptyHeader, EmptyTitle, EmptyDescription, EmptyMedia } from "@/components/ui/empty"
-import type { AdminCourse, AdminGoal, AdminMaterial, AdminStudent, AdminSubject, AdminSyllabusTopic } from "@/lib/admin/types"
+import type {
+  AdminCourse,
+  AdminGoal,
+  AdminMaterial,
+  AdminStudent,
+  AdminSubject,
+  AdminSyllabusTopic,
+  HotmartProductMapping,
+} from "@/lib/admin/types"
 
 interface CourseDetailTabsProps {
   course: AdminCourse
@@ -19,9 +28,17 @@ interface CourseDetailTabsProps {
   edital: { subject: AdminSubject; topics: AdminSyllabusTopic[] }[]
   students: AdminStudent[]
   materials: AdminMaterial[]
+  hotmartMappings: HotmartProductMapping[]
 }
 
-export function CourseDetailTabs({ course, goals, edital, students, materials }: CourseDetailTabsProps) {
+export function CourseDetailTabs({
+  course,
+  goals,
+  edital,
+  students,
+  materials,
+  hotmartMappings,
+}: CourseDetailTabsProps) {
   const totalTopics = edital.reduce((acc, group) => acc + group.topics.length, 0)
 
   return (
@@ -42,7 +59,9 @@ export function CourseDetailTabs({ course, goals, edital, students, materials }:
               <CardTitle className="text-sm font-medium text-muted-foreground">Alunos</CardTitle>
             </CardHeader>
             <CardContent>
-              <span className="text-2xl font-semibold tabular-nums text-foreground">{students.length}</span>
+              <span className="text-2xl font-semibold tabular-nums text-foreground">
+                {students.filter((student) => student.enrollmentStatus === "active").length}
+              </span>
             </CardContent>
           </Card>
           <Card>
@@ -155,6 +174,7 @@ export function CourseDetailTabs({ course, goals, edital, students, materials }:
             </div>
           </CardContent>
         </Card>
+        <HotmartIntegrationPanel courseId={course.id} mappings={hotmartMappings} />
       </TabsContent>
     </Tabs>
   )

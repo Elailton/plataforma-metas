@@ -3,12 +3,11 @@ import { GraduationCap, Users, ListChecks, ArrowRight } from "lucide-react"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
-import { listAdminCourses } from "@/lib/admin/queries"
+import { countActiveStudents, listAdminCourses } from "@/lib/admin/queries"
 
 export default async function AdminDashboardPage() {
-  const courses = await listAdminCourses()
+  const [courses, totalStudents] = await Promise.all([listAdminCourses(), countActiveStudents()])
 
-  const totalStudents = courses.reduce((sum, c) => sum + c.studentsCount, 0)
   const totalGoals = courses.reduce((sum, c) => sum + c.goalsCount, 0)
   const publishedCourses = courses.filter((c) => c.status === "published").length
 

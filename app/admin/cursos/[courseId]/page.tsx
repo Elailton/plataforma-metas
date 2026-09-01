@@ -5,7 +5,14 @@ import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
 import { CourseDetailTabs } from "./course-detail-tabs"
 import { CourseStatusActions } from "@/components/admin/course-status-actions"
-import { getAdminCourse, listCourseEdital, listCourseGoals, listCourseStudents, listMaterials } from "@/lib/admin/queries"
+import {
+  getAdminCourse,
+  listCourseEdital,
+  listCourseGoals,
+  listCourseStudents,
+  listHotmartProductMappings,
+  listMaterials,
+} from "@/lib/admin/queries"
 
 const STATUS_LABEL: Record<string, string> = {
   draft: "Rascunho",
@@ -22,11 +29,12 @@ export default async function AdminCourseDetailPage({
   const course = await getAdminCourse(courseId)
   if (!course) notFound()
 
-  const [goals, edital, students, materials] = await Promise.all([
+  const [goals, edital, students, materials, hotmartMappings] = await Promise.all([
     listCourseGoals(course.id),
     listCourseEdital(course.id),
     listCourseStudents(course.id),
     listMaterials(course.id),
+    listHotmartProductMappings(course.id),
   ])
 
   return (
@@ -53,7 +61,14 @@ export default async function AdminCourseDetailPage({
         <CourseStatusActions course={course} />
       </div>
 
-      <CourseDetailTabs course={course} goals={goals} edital={edital} students={students} materials={materials} />
+      <CourseDetailTabs
+        course={course}
+        goals={goals}
+        edital={edital}
+        students={students}
+        materials={materials}
+        hotmartMappings={hotmartMappings}
+      />
     </div>
   )
 }

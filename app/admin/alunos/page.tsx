@@ -34,6 +34,7 @@ export default async function AdminStudentsPage() {
                 <TableRow>
                   <TableHead>Aluno</TableHead>
                   <TableHead>Curso</TableHead>
+                  <TableHead>Status</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
@@ -53,6 +54,15 @@ export default async function AdminStudentsPage() {
                       </TableCell>
                       <TableCell>
                         {course ? <Badge variant="secondary">{course.name}</Badge> : <span className="text-muted-foreground">—</span>}
+                      </TableCell>
+                      <TableCell>
+                        <Badge variant={student.enrollmentStatus === "active" ? "default" : "secondary"}>
+                          {student.enrollmentStatus === "active"
+                            ? "Ativa"
+                            : student.enrollmentStatus === "suspended"
+                              ? "Suspensa"
+                              : "Revogada"}
+                        </Badge>
                       </TableCell>
                     </TableRow>
                   )

@@ -54,8 +54,28 @@ function LoginForm() {
         .eq("id", data.user.id)
         .single()
 
+      const isAdmin = profile?.role === "admin"
+      let destination = isAdmin ? "/admin" : "/aluno"
+
+      if (!isAdmin) {
+        const { data: enrollment } = await supabase
+          .from("enrollments")
+          .select("id")
+          .eq("user_id", data.user.id)
+          .eq("status", "active")
+          .limit(1)
+          .maybeSingle()
+
+        if (!enrollment) destination = "/auth/sem-acesso"
+      }
+
       const next = searchParams.get("next")
-      const destination = next ?? (profile?.role === "admin" ? "/admin" : "/aluno")
+      const nextIsAllowed =
+        next?.startsWith("/") &&
+        !next.startsWith("//") &&
+        ((isAdmin && next.startsWith("/admin")) || (!isAdmin && next.startsWith("/aluno")))
+      if (nextIsAllowed && next && destination !== "/auth/sem-acesso") destination = next
+
       router.push(destination)
       router.refresh()
     } catch (error: unknown) {
@@ -82,7 +102,9 @@ function LoginForm() {
         <Card>
           <CardHeader>
             <CardTitle className="text-lg">Entrar</CardTitle>
-            <CardDescription>Informe seu e-mail e senha para acessar sua conta</CardDescription>
+            <CardDescription>
+              O acesso é liberado para alunos matriculados. Use o mesmo e-mail informado na compra.
+            </CardDescription>
           </CardHeader>
           <CardContent>
             <form onSubmit={handleLogin}>
@@ -116,12 +138,6 @@ function LoginForm() {
                 <Button type="submit" className="w-full" disabled={isLoading}>
                   {isLoading ? "Entrando..." : "Entrar"}
                 </Button>
-              </div>
-              <div className="mt-5 text-center text-sm text-muted-foreground">
-                Ainda não tem conta?{" "}
-                <Link href="/auth/cadastro" className="font-medium text-foreground underline underline-offset-4">
-                  Criar conta
-                </Link>
               </div>
             </form>
           </CardContent>
