@@ -95,3 +95,15 @@ export interface HotmartProductMapping {
   active: boolean
   createdAt: string
 }
+
+export interface AdminCourseStudent extends AdminStudent {
+  manualStatus: "active" | "suspended" | "revoked" | null
+  hotmartActiveCount: number
+  hotmartSuspendedCount: number
+  hotmartRevokedCount: number
+  accessBlock: {
+    reason: string
+    blockedAt: string
+    blockedByName: string
+  } | null
+}

@@ -16,7 +16,7 @@ import type {
   AdminCourse,
   AdminGoal,
   AdminMaterial,
-  AdminStudent,
+  AdminCourseStudent,
   AdminSubject,
   AdminSyllabusTopic,
   HotmartProductMapping,
@@ -26,7 +26,7 @@ interface CourseDetailTabsProps {
   course: AdminCourse
   goals: AdminGoal[]
   edital: { subject: AdminSubject; topics: AdminSyllabusTopic[] }[]
-  students: AdminStudent[]
+  students: AdminCourseStudent[]
   materials: AdminMaterial[]
   hotmartMappings: HotmartProductMapping[]
 }
