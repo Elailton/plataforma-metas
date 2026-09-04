@@ -68,10 +68,19 @@ Enquanto a Hotmart não estiver pronta, `HOTMART_HOTTOK` pode permanecer ausente
 ## Configuração no Supabase
 
 1. Em **Authentication → URL Configuration**, defina **Site URL** como `https://mentoriaimparaveis.vercel.app`.
-2. Em **Redirect URLs**, permita `https://mentoriaimparaveis.vercel.app/auth/callback` e, se a tela exigir o caminho completo usado pelo convite, `https://mentoriaimparaveis.vercel.app/**`.
+2. Em **Redirect URLs**, permita `https://mentoriaimparaveis.vercel.app/auth/confirm` e, se a tela exigir o caminho completo usado pelo convite, `https://mentoriaimparaveis.vercel.app/**`.
 3. Em **Authentication → Providers → Email**, mantenha login por e-mail/senha e desative **Allow new users to sign up**. Os convites administrativos continuam sendo feitos pelo servidor.
 4. Em **Authentication → Emails → SMTP Settings**, configure SMTP próprio antes do beta com compradores reais. O SMTP padrão do Supabase é apenas para testes limitados e não entrega convites para qualquer endereço.
-5. Confirme que o template **Invite user** usa o redirecionamento fornecido pelo convite. O fluxo esperado termina em `/auth/callback?next=/auth/primeiro-acesso`.
+5. Em **Authentication → Email Templates → Invite user**, substitua o link padrão pelo fluxo SSR baseado em `token_hash` (o fragmento `#access_token=...` do fluxo implícito nunca chega a um Route Handler). Use exatamente:
+
+   ```html
+   <h2>Você foi convidado</h2>
+
+   <p>Siga o link abaixo para definir sua senha e acessar a plataforma:</p>
+   <p><a href="{{ .SiteURL }}/auth/confirm?token_hash={{ .TokenHash }}&type=invite&next=/auth/primeiro-acesso">Aceitar convite</a></p>
+   ```
+
+   O endpoint `/auth/confirm` só aceita `type=invite` e só redireciona para `/auth/primeiro-acesso` (lista fechada, sem open redirect). Não é necessário alterar mais nada no restante do template.
 6. Não altere a função/trigger que cria novos perfis como `student` e não promova papel por metadata.
 
 Referências: [URLs de redirecionamento](https://supabase.com/docs/guides/auth/redirect-urls), [convites](https://supabase.com/docs/guides/auth/users#inviting-users) e [SMTP próprio](https://supabase.com/docs/guides/auth/auth-smtp).
