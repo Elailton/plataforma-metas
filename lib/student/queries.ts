@@ -84,6 +84,7 @@ export async function getStudentCourseSnapshot(courseId: string): Promise<Studen
           .from("goal_items")
           .select("id, goal_id, subject_id, topic_id, instructions, suggested_questions, position")
           .in("goal_id", goalIds)
+          .is("archived_at", null)
           .order("position")
       : Promise.resolve({ data: [], error: null }),
   ])

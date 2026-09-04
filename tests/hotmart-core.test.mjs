@@ -125,23 +125,28 @@ function inMemoryRepository({ adminEmails = [] } = {}) {
     async getProfileRole(userId) {
       return profiles.get(userId) ?? null
     },
+    async findEntitlement(transaction) {
+      return entitlements.get(transaction) ?? null
+    },
     async applyEntitlementEvent(input) {
       const current = entitlements.get(input.transaction)
       if (current) {
-        if (current.userId !== input.userId || current.courseId !== input.courseId) {
+        if ((current.userId && input.userId && current.userId !== input.userId) ||
+          current.courseId !== input.courseId || current.productUcode !== input.productUcode) {
           throw new Error("Hotmart transaction identity conflict")
         }
         if (Date.parse(input.eventCreationDate) <= Date.parse(current.eventCreationDate)) {
           return {
             applied: false,
             entitlementStatus: current.status,
-            enrollmentStatus: enrollments.get(`${input.userId}:${input.courseId}`),
+            enrollmentStatus: enrollments.get(`${current.userId ?? input.userId}:${input.courseId}`) ?? null,
           }
         }
       }
 
       const entitlement = {
         ...input,
+        userId: current?.userId ?? input.userId,
         id: current?.id ?? `entitlement-${entitlements.size + 1}`,
       }
       entitlements.set(input.transaction, entitlement)
@@ -149,7 +154,7 @@ function inMemoryRepository({ adminEmails = [] } = {}) {
       return {
         applied: true,
         entitlementStatus: input.status,
-        enrollmentStatus: reconcile(input.userId, input.courseId),
+        enrollmentStatus: entitlement.userId ? reconcile(entitlement.userId, input.courseId) : null,
       }
     },
   }
@@ -176,6 +181,60 @@ async function refund(repository, options = {}) {
     repository,
   )
 }
+
+test("reembolso antes da conta impede aprovação antiga sem enviar convite", async () => {
+  const repository = inMemoryRepository()
+  await refund(repository, { id: "early-refund", transaction: "HP-early", creationDate: BASE_TIME + 2000 })
+  assert.equal(repository.state.entitlements.get("HP-early").userId, null)
+  assert.equal(repository.state.entitlements.get("HP-early").status, "revoked")
+  assert.equal(repository.state.users.size, 0)
+  const stale = await approve(repository, { id: "late-approved", transaction: "HP-early", creationDate: BASE_TIME })
+  assert.equal(stale.outcome, "ignored")
+  assert.equal(repository.state.invitations, 0)
+  assert.equal(repository.state.enrollments.size, 0)
+  assert.equal((await approve(repository, { id: "late-approved", transaction: "HP-early" })).outcome, "duplicate")
+})
+
+test("todos os eventos negativos preservam watermark sem conta; uma aprovação nova pode reativar", async () => {
+  for (const event of ["PURCHASE_DELAYED", "PURCHASE_REFUNDED", "PURCHASE_CHARGEBACK", "PURCHASE_CANCELED", "PURCHASE_EXPIRED"]) {
+    const repository = inMemoryRepository()
+    await processHotmartEvent(payload({ id: "negative", event, transaction: "HP-new", creationDate: BASE_TIME + 1000 }), repository)
+    const stale = await approve(repository, { id: "old", transaction: "HP-new" })
+    assert.equal(stale.outcome, "ignored")
+    assert.equal(repository.state.invitations, 0)
+    const result = await approve(repository, { id: "new", transaction: "HP-new", creationDate: BASE_TIME + 2000 })
+    assert.equal(result.enrollmentStatus, "active")
+    assert.equal(repository.state.entitlements.size, 1)
+    assert.equal(repository.state.users.size, 1)
+    assert.equal(repository.state.invitations, 1)
+  }
+})
+
+test("refund entre preflight e convite não permite matrícula ativa", async () => {
+  const repository = inMemoryRepository()
+  const invite = repository.inviteStudent
+  repository.inviteStudent = async (input) => {
+    await refund(repository, { id: "racing-refund", transaction: "HP-race", creationDate: BASE_TIME + 2000 })
+    return invite(input)
+  }
+  const result = await approve(repository, { id: "racing-approval", transaction: "HP-race" })
+  assert.equal(result.outcome, "ignored")
+  assert.equal(repository.state.entitlements.get("HP-race").status, "revoked")
+  assert.equal(repository.state.enrollments.size, 0)
+})
+
+test("retry de evento que falhou preserva o watermark e não duplica convite", async () => {
+  const repository = inMemoryRepository()
+  const finish = repository.finishEvent
+  repository.finishEvent = async () => { throw new Error("Falha transitória de confirmação") }
+  await assert.rejects(refund(repository, { id: "retry", transaction: "HP-retry", creationDate: BASE_TIME + 1000 }), /Falha transitória/)
+  assert.equal(repository.state.events.get("retry").status, "failed")
+  repository.finishEvent = finish
+  assert.equal((await refund(repository, { id: "retry", transaction: "HP-retry", creationDate: BASE_TIME + 1000 })).outcome, "ignored")
+  assert.equal(repository.state.entitlements.size, 1)
+  assert.equal((await approve(repository, { id: "old", transaction: "HP-retry" })).outcome, "ignored")
+  assert.equal(repository.state.invitations, 0)
+})
 
 test("1. primeira compra cria uma conta, perfil, entitlement, matrícula e convite", async () => {
   const repository = inMemoryRepository()
