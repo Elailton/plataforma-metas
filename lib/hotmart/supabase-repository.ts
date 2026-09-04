@@ -17,9 +17,13 @@ function inviteRedirectUrl() {
     throw new Error("SITE_URL não está configurada para o convite de primeiro acesso.")
   }
 
-  const callback = new URL("/auth/callback", siteUrl)
-  callback.searchParams.set("next", "/auth/primeiro-acesso")
-  return callback.toString()
+  // O link real enviado ao aluno vem do template "Invite user" do Supabase
+  // (que usa {{ .TokenHash }} e type=invite diretamente). Este redirectTo
+  // só precisa apontar para uma URL da allow-list de Redirect URLs do
+  // Supabase Auth; usamos o próprio endpoint de confirmação SSR.
+  const confirm = new URL("/auth/confirm", siteUrl)
+  confirm.searchParams.set("next", "/auth/primeiro-acesso")
+  return confirm.toString()
 }
 
 export function createHotmartRepository(): HotmartRepository {
