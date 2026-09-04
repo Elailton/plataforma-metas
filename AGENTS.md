@@ -86,7 +86,9 @@ O painel deve separar acesso efetivo, concessão manual, compras e bloqueio. Men
 de sucesso devem usar o estado efetivo retornado pelo banco, não só a ação solicitada.
 Motivos são privados do administrador. Escritas ocorrem somente pela RPC protegida.
 Operações concorrentes devem obter o advisory lock aluno/curso antes de escrever
-matrícula, concessão, bloqueio ou entitlement. Testar RLS e SQL real em banco descartável.
+matrícula, concessão, bloqueio ou entitlement associado a uma conta. No webhook,
+obter primeiro o lock da transação e depois o do par aluno/curso; um entitlement
+pendente sem conta usa somente o lock da transação. Testar RLS e SQL real em banco descartável.
 
 Deve existir uma única matrícula por par `(user_id, course_id)`.
 
@@ -141,6 +143,12 @@ Eventos e efeitos sobre o direito comercial (a matrícula é reconciliada separa
 
 Uma nova aprovação reativa o direito comercial, mas nunca remove um bloqueio administrativo. Reembolso, cancelamento ou chargeback nunca apagam usuário, perfil, matrícula ou histórico de progresso.
 
+Eventos negativos anteriores à conta também devem persistir em `hotmart_entitlements`,
+com `user_id = null`, sem e-mail ou payload. Nunca permitir `active` sem aluno.
+Uma aprovação antiga/igual ao último `creation_date` é ignorada antes de convidar,
+e a RPC verifica novamente atomicamente após eventual convite. Não reatribuir
+transações de uma conta a outra. O e-mail normalizado continua identificando a conta.
+
 ## Idempotência do webhook
 
 Cada evento Hotmart possui um `id` único e deve ser registrado em `hotmart_webhook_events`.
@@ -174,8 +182,8 @@ Um aluno pode:
 
 - ler o próprio perfil;
 - ler as próprias matrículas;
-- acessar somente cursos com matrícula `active`;
-- acessar disciplinas, tópicos, materiais, metas e itens pertencentes a cursos com matrícula `active`.
+- acessar somente cursos `published`, com matrícula `active` e sem bloqueio administrativo;
+- acessar disciplinas, tópicos e materiais desses cursos; metas somente `published`, itens somente não arquivados.
 
 Um administrador pode gerenciar os dados administrativos mediante papel validado no banco.
 
@@ -201,6 +209,13 @@ Cada item pode possuir:
 - materiais vinculados.
 
 Materiais são recursos e não representam progresso.
+
+Salvar metas usa `admin_save_goal`, em uma transação, com versão `updated_at` e
+IDs estáveis dos itens. Editar texto, questões, links e ordem preserva conclusões.
+Remover itens ou trocar disciplina/tópico arquiva a identidade antiga; não apagar
+conclusões nem transferi-las ao tópico novo. Itens arquivados ficam no histórico
+do banco, fora do formulário/checklist e dos totais atuais. Não voltar ao padrão
+delete/reinsert. Metas com histórico devem ser arquivadas, não excluídas.
 
 O aluno marca apenas o item como concluído. O progresso da meta é:
 

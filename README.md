@@ -37,6 +37,10 @@ See [`docs/ADMIN_COURSE_BLOCKS.md`](docs/ADMIN_COURSE_BLOCKS.md) for the additiv
 deployment order, audit trail, acceptance tests and safe rollback. The student table now labels
 the grant action **Conceder acesso manual** and provides a separate **Bloquear neste curso** action.
 
+For stable goal item identities, published-content RLS and Hotmart events received
+before account creation, follow [`docs/BETA_REGRESSION_FIXES.md`](docs/BETA_REGRESSION_FIXES.md).
+Apply both new additive migrations before deploying those fixes.
+
 Disable public sign-ups in Supabase Auth. Invitations created by the server-side Admin API continue to work, while
 the database trigger always creates new profiles as `student` and never trusts role metadata from the browser.
 

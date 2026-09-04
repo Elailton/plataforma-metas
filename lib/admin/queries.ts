@@ -189,6 +189,7 @@ async function hydrateGoal(goal: any): Promise<AdminGoal> {
     .from("goal_items")
     .select("*, goal_item_materials(material_id, position)")
     .eq("goal_id", goal.id)
+    .is("archived_at", null)
     .order("position", { ascending: true })
 
   const goalItems: AdminGoalItem[] = (items ?? []).map((item: any) => ({

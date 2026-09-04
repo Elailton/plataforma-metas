@@ -172,6 +172,17 @@ export function createHotmartRepository(): HotmartRepository {
       return data.role === "admin" ? "admin" : "student"
     },
 
+    async findEntitlement(transaction) {
+      const { data, error } = await supabase.from("hotmart_entitlements")
+        .select("user_id, course_id, product_ucode, status, last_event_creation_date")
+        .eq("transaction", transaction).maybeSingle()
+      throwDatabaseError(error)
+      return data ? {
+        userId: data.user_id, courseId: data.course_id, productUcode: data.product_ucode,
+        status: data.status, eventCreationDate: data.last_event_creation_date,
+      } : null
+    },
+
     async applyEntitlementEvent({
       transaction,
       userId,
@@ -202,10 +213,10 @@ export function createHotmartRepository(): HotmartRepository {
       const result = data as {
         event_applied?: boolean
         entitlement_status?: "active" | "suspended" | "revoked"
-        enrollment_status?: "active" | "suspended" | "revoked"
+        enrollment_status?: "active" | "suspended" | "revoked" | null
       } | null
 
-      if (!result?.entitlement_status || !result.enrollment_status) {
+      if (!result?.entitlement_status || result.enrollment_status === undefined) {
         throw new Error("A reconciliação do acesso Hotmart não retornou um estado válido.")
       }
 

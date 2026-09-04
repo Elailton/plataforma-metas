@@ -1,6 +1,6 @@
 import assert from "node:assert/strict"
 import { afterEach, beforeEach, test } from "node:test"
-import { readFile } from "node:fs/promises"
+import { fixture, applyMigration } from "./helpers/database.mjs"
 import { PGlite } from "@electric-sql/pglite"
 
 // Real PostgreSQL functions/RLS in a disposable in-memory database.
@@ -13,27 +13,6 @@ const COURSE2 = "00000000-0000-4000-8000-000000000011"
 const ITEM = "00000000-0000-4000-8000-000000000020"
 let db
 
-const fixture = `
-  create role anon nologin;
-  create role authenticated nologin;
-  create role service_role nologin bypassrls;
-  create schema auth;
-  create table auth.users (id uuid primary key, email text, raw_user_meta_data jsonb default '{}', created_at timestamptz default now());
-  create function auth.uid() returns uuid language sql stable as $$
-    select nullif(current_setting('request.jwt.claim.sub', true), '')::uuid;
-  $$;
-  grant usage on schema auth, public to anon, authenticated, service_role;
-  grant execute on function auth.uid() to anon, authenticated, service_role;
-  create table public.profiles (id uuid primary key references auth.users(id), full_name text, avatar_initials text, role text, course_id uuid);
-  create table public.courses (id uuid primary key, name text, status text);
-  create table public.subjects (id uuid primary key, course_id uuid references courses(id));
-  create table public.syllabus_topics (id uuid primary key, subject_id uuid references subjects(id));
-  create table public.materials (id uuid primary key, course_id uuid references courses(id));
-  create table public.goals (id uuid primary key, course_id uuid references courses(id), status text);
-  create table public.goal_items (id uuid primary key, goal_id uuid references goals(id));
-  create table public.goal_item_materials (goal_item_id uuid references goal_items(id), material_id uuid references materials(id));
-`
-
 async function asRole(user, role, operation) {
   await db.exec(`set role ${role}`)
   await db.query("select set_config('request.jwt.claim.sub', $1, false)", [user ?? ""])
@@ -45,13 +24,7 @@ async function asRole(user, role, operation) {
 const asAdmin = (operation) => asRole(ADMIN, "authenticated", operation)
 const asStudent = (operation, user = STUDENT) => asRole(user, "authenticated", operation)
 
-async function migration(name) {
-  let sql = await readFile(new URL("../supabase/migrations/" + name, import.meta.url), "utf8")
-  // PGlite has core gen_random_uuid, but doesn't ship pgcrypto. Nothing else
-  // in these migrations uses that extension; all other SQL runs unchanged.
-  sql = sql.replace("create extension if not exists pgcrypto;", "")
-  await db.exec(sql)
-}
+async function migration(name) { await applyMigration(db, name) }
 
 async function setup(applyBlocks = true) {
   db = new PGlite()
@@ -66,11 +39,15 @@ async function setup(applyBlocks = true) {
       ('${ADMIN}','admin@test.invalid'), ('${STUDENT}','student@test.invalid'), ('${OTHER}','other@test.invalid');
     update profiles set role = 'admin' where id = '${ADMIN}';
     insert into courses values ('${COURSE}','Course A','published'), ('${COURSE2}','Course B','published');
-    insert into goals values ('${COURSE}','${COURSE}','published'), ('${COURSE2}','${COURSE2}','published');
-    insert into goal_items values ('${ITEM}','${COURSE}');
+    insert into goals (id,course_id,status) values ('${COURSE}','${COURSE}','published'), ('${COURSE2}','${COURSE2}','published');
+    insert into goal_items (id,goal_id) values ('${ITEM}','${COURSE}');
     insert into student_goal_item_completions (user_id,goal_item_id) values ('${STUDENT}','${ITEM}');
   `)
-  if (applyBlocks) await migration("20260904000100_admin_course_access_blocks.sql")
+  if (applyBlocks) {
+    await migration("20260904000100_admin_course_access_blocks.sql")
+    await migration("20260904000200_goal_progress_and_published_rls.sql")
+    await migration("20260904000300_hotmart_events_before_account.sql")
+  }
 }
 beforeEach(async () => { await setup() })
 afterEach(async () => { await db?.close() })

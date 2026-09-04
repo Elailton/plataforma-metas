@@ -32,9 +32,16 @@ export interface HotmartRepository {
     input: { fullName: string | null; avatarInitials: string },
   ): Promise<"student" | "admin">
   getProfileRole(userId: string): Promise<"student" | "admin" | null>
+  findEntitlement(transaction: string): Promise<{
+    userId: string | null
+    courseId: string
+    productUcode: string
+    status: EnrollmentStatus
+    eventCreationDate: string
+  } | null>
   applyEntitlementEvent(input: {
     transaction: string
-    userId: string
+    userId: string | null
     courseId: string
     productUcode: string
     productId: string | null
@@ -45,7 +52,7 @@ export interface HotmartRepository {
   }): Promise<{
     applied: boolean
     entitlementStatus: EnrollmentStatus
-    enrollmentStatus: EnrollmentStatus
+    enrollmentStatus: EnrollmentStatus | null
   }>
 }
 
@@ -65,8 +72,5 @@ export function processHotmartEvent(
   userId?: string | null
   courseId?: string
   entitlementStatus?: EnrollmentStatus
-  enrollmentStatus?: EnrollmentStatus
+  enrollmentStatus?: EnrollmentStatus | null
 }>
-
-
-

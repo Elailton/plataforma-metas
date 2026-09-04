@@ -24,6 +24,7 @@ import { createGoal, updateGoal, type GoalFormInput, type GoalItemInput } from "
 import type { AdminGoal, AdminMaterial, AdminSubject, AdminSyllabusTopic, GoalStatus } from "@/lib/admin/types"
 
 interface DraftItem {
+  id?: string
   key: string
   subjectId: string
   topicId: string
@@ -46,6 +47,7 @@ function emptyItem(key: string, subjects: AdminSubject[]): DraftItem {
 function goalToDrafts(goal: AdminGoal): DraftItem[] {
   return goal.items.map((item, index) => ({
     key: `existing-${item.id}-${index}`,
+    id: item.id,
     subjectId: item.subjectId,
     topicId: item.topicId ?? "",
     instructions: item.instructions ?? "",
@@ -109,6 +111,7 @@ export function GoalForm({ courseId, subjects, topicsBySubject, materials, goal 
     setPending(true)
     try {
       const goalItems: GoalItemInput[] = items.map((item) => ({
+        id: item.id,
         subjectId: item.subjectId,
         topicId: item.topicId || null,
         instructions: item.instructions,
@@ -122,6 +125,7 @@ export function GoalForm({ courseId, subjects, topicsBySubject, materials, goal 
         description,
         dueDate: dueDate || null,
         status: submitStatus ?? (isEditing && goal ? goal.status : status),
+        updatedAt: goal?.updatedAt,
         items: goalItems,
       }
 
@@ -143,6 +147,12 @@ export function GoalForm({ courseId, subjects, topicsBySubject, materials, goal 
 
   return (
     <form onSubmit={handleSubmit} className="flex flex-col gap-6">
+      {isEditing && (
+        <p className="text-sm text-muted-foreground">
+          Editar textos, materiais ou a ordem mantém as conclusões. Remover um item ou trocar
+          sua disciplina/tópico arquiva o item anterior; o histórico é preservado e um novo tópico começa sem conclusão.
+        </p>
+      )}
       <Card>
         <CardContent>
           <FieldGroup>
