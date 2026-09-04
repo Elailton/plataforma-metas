@@ -5,6 +5,7 @@ import type {
   AdminGoalItem,
   AdminMaterial,
   AdminStudent,
+  AdminCourseStudent,
   AdminSubject,
   AdminSyllabusTopic,
   HotmartProductMapping,
@@ -215,17 +216,31 @@ async function hydrateGoal(goal: any): Promise<AdminGoal> {
   }
 }
 
-export async function listCourseStudents(courseId: string): Promise<AdminStudent[]> {
+export async function listCourseStudents(courseId: string): Promise<AdminCourseStudent[]> {
   const supabase = await createClient()
 
-  const { data: enrollments } = await supabase
+  const { data: enrollments, error: enrollmentError } = await supabase
     .from("enrollments")
     .select("id, user_id, course_id, status, enrolled_at, profiles!enrollments_user_id_fkey(full_name, avatar_initials)")
     .eq("course_id", courseId)
     .order("enrolled_at", { ascending: false })
 
+  const [manual, rights, blocks] = await Promise.all([
+    supabase.from("manual_course_grants").select("user_id, status").eq("course_id", courseId),
+    supabase.from("hotmart_entitlements").select("user_id, status").eq("course_id", courseId),
+    supabase.from("course_access_blocks")
+      .select("user_id, reason, blocked_at, profiles!course_access_blocks_blocked_by_fkey(full_name)")
+      .eq("course_id", courseId).is("released_at", null),
+  ])
+  if (enrollmentError || manual.error || rights.error || blocks.error) {
+    throw new Error("Não foi possível consultar os acessos. Confira a migration de bloqueios administrativos.")
+  }
+
   return (enrollments ?? []).map((enrollment: any) => {
     const profile = Array.isArray(enrollment.profiles) ? enrollment.profiles[0] : enrollment.profiles
+    const block = blocks.data?.find((row) => row.user_id === enrollment.user_id)
+    const actor = Array.isArray(block?.profiles) ? block.profiles[0] : block?.profiles
+    const purchases = rights.data?.filter((row) => row.user_id === enrollment.user_id) ?? []
 
     return {
     id: enrollment.id,
@@ -236,6 +251,15 @@ export async function listCourseStudents(courseId: string): Promise<AdminStudent
     courseId: enrollment.course_id,
     enrollmentStatus: enrollment.status,
     enrolledAt: enrollment.enrolled_at,
+    manualStatus: manual.data?.find((row) => row.user_id === enrollment.user_id)?.status ?? null,
+    hotmartActiveCount: purchases.filter((row) => row.status === "active").length,
+    hotmartSuspendedCount: purchases.filter((row) => row.status === "suspended").length,
+    hotmartRevokedCount: purchases.filter((row) => row.status === "revoked").length,
+    accessBlock: block ? {
+      reason: block.reason,
+      blockedAt: block.blocked_at,
+      blockedByName: actor?.full_name || "Administrador",
+    } : null,
   }})
 }
 

@@ -32,6 +32,11 @@ For the beta, the Hotmart account is optional. Apply all migrations and use **Ad
 acesso** to attach an existing student account to a course. This manual enrollment never creates users or changes
 passwords. The complete non-destructive activation checklist is in [`docs/BETA_ACTIVATION.md`](docs/BETA_ACTIVATION.md).
 
+Administrative course blocks are independent of purchases/manual grants and take priority over both.
+See [`docs/ADMIN_COURSE_BLOCKS.md`](docs/ADMIN_COURSE_BLOCKS.md) for the additive migration,
+deployment order, audit trail, acceptance tests and safe rollback. The student table now labels
+the grant action **Conceder acesso manual** and provides a separate **Bloquear neste curso** action.
+
 Disable public sign-ups in Supabase Auth. Invitations created by the server-side Admin API continue to work, while
 the database trigger always creates new profiles as `student` and never trusts role metadata from the browser.
 

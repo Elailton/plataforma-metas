@@ -67,7 +67,26 @@ Status permitidos:
 Fontes permitidas:
 
 - `hotmart`
-- `manual` somente para matrículas administrativas do beta enquanto a integração comercial não estiver ativa
+- `manual` para concessões administrativas independentes, preservadas mesmo com a integração comercial ativa
+
+### Direitos independentes e bloqueio administrativo por curso
+
+A matrícula é o acesso efetivo, não a origem única desse acesso. Preserve os direitos
+por transação em `hotmart_entitlements` e as concessões em `manual_course_grants`.
+Revogar uma concessão manual não revoga uma compra válida, nem o contrário.
+
+`course_access_blocks` registra cada bloqueio administrativo por aluno/curso, com
+motivo, administrador e data; o desbloqueio fecha o registro sem apagar o histórico.
+Um bloqueio aberto tem prioridade sobre todos os direitos: a matrícula fica
+`suspended`, inclusive após novos eventos Hotmart ou concessões manuais.
+Desbloquear não cria direito: reconciliar novamente as compras/concessões existentes.
+Outros cursos, conta e progresso nunca são afetados pelo bloqueio de um curso.
+
+O painel deve separar acesso efetivo, concessão manual, compras e bloqueio. Mensagens
+de sucesso devem usar o estado efetivo retornado pelo banco, não só a ação solicitada.
+Motivos são privados do administrador. Escritas ocorrem somente pela RPC protegida.
+Operações concorrentes devem obter o advisory lock aluno/curso antes de escrever
+matrícula, concessão, bloqueio ou entitlement. Testar RLS e SQL real em banco descartável.
 
 Deve existir uma única matrícula por par `(user_id, course_id)`.
 
@@ -104,23 +123,23 @@ Fluxo principal:
 5. localizar o curso por `data.product.ucode`;
 6. localizar ou convidar o usuário pelo e-mail;
 7. garantir um perfil `student`;
-8. criar ou reativar a matrícula com upsert;
+8. atualizar o direito por transação e reconciliar a matrícula, respeitando o bloqueio administrativo;
 9. registrar o processamento idempotente do evento.
 
 Use `product.ucode` como identificador principal. Não hardcode produtos Hotmart. Vários produtos podem liberar o mesmo curso.
 
 O mapeamento é armazenado em `hotmart_product_mappings` e administrado dentro das configurações de cada curso.
 
-Eventos e efeitos:
+Eventos e efeitos sobre o direito comercial (a matrícula é reconciliada separadamente):
 
-- `PURCHASE_APPROVED` -> matrícula `active`;
-- `PURCHASE_DELAYED` -> matrícula `suspended`;
-- `PURCHASE_REFUNDED` -> matrícula `revoked`;
-- `PURCHASE_CHARGEBACK` -> matrícula `revoked`;
-- `PURCHASE_CANCELED` -> matrícula `revoked`;
-- `PURCHASE_EXPIRED` -> matrícula `revoked`.
+- `PURCHASE_APPROVED` -> entitlement `active`;
+- `PURCHASE_DELAYED` -> entitlement `suspended`;
+- `PURCHASE_REFUNDED` -> entitlement `revoked`;
+- `PURCHASE_CHARGEBACK` -> entitlement `revoked`;
+- `PURCHASE_CANCELED` -> entitlement `revoked`;
+- `PURCHASE_EXPIRED` -> entitlement `revoked`.
 
-Uma nova aprovação deve reativar a matrícula. Reembolso, cancelamento ou chargeback nunca apagam usuário, perfil, matrícula ou histórico de progresso.
+Uma nova aprovação reativa o direito comercial, mas nunca remove um bloqueio administrativo. Reembolso, cancelamento ou chargeback nunca apagam usuário, perfil, matrícula ou histórico de progresso.
 
 ## Idempotência do webhook
 
