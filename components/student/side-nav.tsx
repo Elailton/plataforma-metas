@@ -1,8 +1,10 @@
 "use client"
 
+import { BrandSkull } from "@/components/brand-skull"
+
 import Link from "next/link"
 import { usePathname } from "next/navigation"
-import { GraduationCap, LogOut } from "lucide-react"
+import { LogOut } from "lucide-react"
 import { cn } from "@/lib/utils"
 import { studentNavItems } from "./student-nav-items"
 import { signOut } from "@/lib/supabase/actions"
@@ -15,10 +17,10 @@ export function SideNav({ courses, currentCourse }: { courses: StudentCourse[]; 
   return (
     <aside className="hidden w-64 shrink-0 flex-col border-r border-sidebar-border bg-sidebar px-4 py-6 text-sidebar-foreground md:flex">
       <div className="flex items-center gap-2 px-2 pb-8">
-        <div className="flex size-8 items-center justify-center rounded-lg bg-sidebar-primary text-sidebar-primary-foreground">
-          <GraduationCap className="size-4.5" />
+        <div className="flex size-8 items-center justify-center rounded-sm border border-sidebar-primary/80 bg-sidebar-primary/10 text-sidebar-primary">
+          <BrandSkull className="size-5" />
         </div>
-        <span className="text-sm font-semibold tracking-tight">Plataforma Metas</span>
+        <span className="text-sm font-semibold tracking-tight">Mentoria Imparáveis</span>
       </div>
 
       <div className="mb-5 px-2">
@@ -62,3 +64,4 @@ export function SideNav({ courses, currentCourse }: { courses: StudentCourse[]; 
     </aside>
   )
 }
+
