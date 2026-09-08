@@ -1,11 +1,12 @@
 "use client"
 
+import { BrandSkull } from "@/components/brand-skull"
+
 import type React from "react"
 
 import Link from "next/link"
 import { useRouter, useSearchParams } from "next/navigation"
 import { Suspense, useState } from "react"
-import { GraduationCap } from "lucide-react"
 import { createClient } from "@/lib/supabase/client"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
@@ -90,11 +91,11 @@ function LoginForm() {
     <div className="flex min-h-screen w-full items-center justify-center bg-background px-6 py-16 font-sans">
       <div className="w-full max-w-sm">
         <div className="mb-8 flex flex-col items-center gap-4 text-center">
-          <div className="flex size-12 items-center justify-center rounded-xl bg-primary text-primary-foreground">
-            <GraduationCap className="size-6" />
+          <div className="flex size-12 items-center justify-center rounded-sm border border-primary/80 bg-primary/10 text-primary shadow-[0_0_24px_rgba(255,226,2,0.12)]">
+            <BrandSkull className="size-7" />
           </div>
           <div className="flex flex-col gap-1.5">
-            <h1 className="text-balance text-2xl font-semibold tracking-tight text-foreground">Plataforma Metas</h1>
+            <h1 className="text-balance text-2xl font-semibold tracking-tight text-foreground">Mentoria Imparáveis</h1>
             <p className="text-sm text-muted-foreground">Entre para acompanhar suas metas de estudo</p>
           </div>
         </div>
@@ -161,3 +162,4 @@ export default function LoginPage() {
     </Suspense>
   )
 }
+

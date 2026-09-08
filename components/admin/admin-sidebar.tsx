@@ -1,8 +1,10 @@
 "use client"
 
+import { BrandSkull } from "@/components/brand-skull"
+
 import Link from "next/link"
 import { usePathname } from "next/navigation"
-import { LogOut, ShieldCheck } from "lucide-react"
+import { LogOut } from "lucide-react"
 import {
   Sidebar,
   SidebarContent,
@@ -24,11 +26,11 @@ export function AdminSidebar() {
     <Sidebar>
       <SidebarHeader className="px-3 py-3.5">
         <div className="flex items-center gap-2 px-1">
-          <div className="flex size-8 items-center justify-center rounded-lg bg-sidebar-primary text-sidebar-primary-foreground">
-            <ShieldCheck className="size-4.5" />
+          <div className="flex size-8 items-center justify-center rounded-sm border border-sidebar-primary/80 bg-sidebar-primary/10 text-sidebar-primary">
+            <BrandSkull className="size-5" />
           </div>
           <div className="flex flex-col">
-            <span className="text-sm font-semibold tracking-tight text-sidebar-foreground">Plataforma Metas</span>
+            <span className="text-sm font-semibold tracking-tight text-sidebar-foreground">Mentoria Imparáveis</span>
             <span className="text-[11px] text-sidebar-foreground/60">Painel do administrador</span>
           </div>
         </div>
@@ -68,3 +70,4 @@ export function AdminSidebar() {
     </Sidebar>
   )
 }
+

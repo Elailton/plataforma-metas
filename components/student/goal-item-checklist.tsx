@@ -1,7 +1,7 @@
 "use client"
 
 import { useState, useTransition } from "react"
-import { ExternalLink, HelpCircle, CheckCircle2 } from "lucide-react"
+import { ExternalLink, FileText, PlayCircle, HelpCircle, CheckCircle2 } from "lucide-react"
 import { Checkbox } from "@/components/ui/checkbox"
 import { Button } from "@/components/ui/button"
 import { toast } from "sonner"
@@ -50,12 +50,13 @@ export function GoalItemChecklist({ item }: { item: StudentGoalItem }) {
         {item.materials.map((material) => (
           <Button
             key={material.id}
+            className={material.type === "apostila" ? "material-apostila" : material.type === "videoaula" ? "material-videoaula" : undefined}
             render={<a href={material.url} target="_blank" rel="noreferrer" />}
             nativeButton={false}
             size="sm"
             variant="outline"
           >
-            <ExternalLink data-icon="inline-start" />
+            {material.type === "apostila" ? <FileText data-icon="inline-start" /> : material.type === "videoaula" ? <PlayCircle data-icon="inline-start" /> : <ExternalLink data-icon="inline-start" />}
             {material.title}
           </Button>
         ))}
@@ -78,3 +79,4 @@ export function GoalItemChecklist({ item }: { item: StudentGoalItem }) {
     </div>
   )
 }
+
