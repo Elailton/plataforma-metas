@@ -51,40 +51,43 @@
 
 :root, .dark {
   color-scheme: dark;
-  --background: #181718;
-  --foreground: #f7f6f7;
-  --card: #2c2a2c;
-  --card-foreground: #f7f6f7;
-  --popover: #2c2a2c;
-  --popover-foreground: #f7f6f7;
+  /* Camadas de profundidade: background < sidebar < card < secondary < accent (hover/selecionado). */
+  --background: #131417;
+  --foreground: #f1f1f1;
+  --card: #1c1e22;
+  --card-foreground: #f1f1f1;
+  --popover: #1c1e22;
+  --popover-foreground: #f1f1f1;
   --primary: #ffe202;
-  --primary-foreground: #2c2a2c;
-  --secondary: #393639;
-  --secondary-foreground: #f7f6f7;
-  --muted: #393639;
-  --muted-foreground: #d1ced1;
-  --accent: #ffe202;
-  --accent-foreground: #2c2a2c;
+  --primary-foreground: #1c1e22;
+  --secondary: #212327;
+  --secondary-foreground: #f1f1f1;
+  --muted: #1a1c1f;
+  --muted-foreground: #a7a9ad;
+  /* accent é a superfície neutra de hover/seleção usada pelos componentes shadcn
+     (dropdown, select, combobox, aria-expanded de botões) — nunca amarela. */
+  --accent: #262930;
+  --accent-foreground: #f1f1f1;
   --success: #83e6ac;
-  --success-foreground: #182b20;
+  --success-foreground: #16241c;
   --destructive: #ff8585;
-  --border: #e2e1e2;
-  --input: #e2e1e2;
-  --ring: #ffe202;
-  --chart-1: #ffe202;
+  --border: #2b2e33;
+  --input: #34373d;
+  --ring: #4b4f57;
+  --chart-1: #8a8d93;
   --chart-2: #83e6ac;
   --chart-3: #ffab66;
   --chart-4: #ff8585;
-  --chart-5: #e2e1e2;
+  --chart-5: #5b6470;
   --radius: 0.75rem;
-  --sidebar: #2c2a2c;
-  --sidebar-foreground: #e2e1e2;
+  --sidebar: #17181b;
+  --sidebar-foreground: #e7e8ea;
   --sidebar-primary: #ffe202;
-  --sidebar-primary-foreground: #2c2a2c;
-  --sidebar-accent: #ffe202;
-  --sidebar-accent-foreground: #2c2a2c;
-  --sidebar-border: #e2e1e2;
-  --sidebar-ring: #ffe202;
+  --sidebar-primary-foreground: #1c1e22;
+  --sidebar-accent: #2a2d33;
+  --sidebar-accent-foreground: #f1f1f1;
+  --sidebar-border: #24262b;
+  --sidebar-ring: #4b4f57;
 }
 
 @layer base {
@@ -97,14 +100,16 @@
 }
 
 
-/* Shared surfaces retain the same dark identity on every device. */
+/* Shared surfaces retain the same dark identity on every device.
+   Campos de formulário ficam mais escuros que os cards para reforçar a
+   hierarquia de profundidade (fundo < sidebar < card < campo). */
 [data-slot="input"], [data-slot="textarea"], [data-slot="select-trigger"],
-[data-slot="table-container"] { background-color: var(--card); }
-[data-slot="table-row"]:hover { background-color: #ffe20212; }
-::selection { background: #ffe202; color: #2c2a2c; }
+[data-slot="table-container"] { background-color: #181a1d; }
+[data-slot="table-row"]:hover { background-color: #ffffff0a; }
+::selection { background: #3a3d44; color: #f1f1f1; }
 .material-apostila { color: #ff8585; border-color: #ff8585; background-color: #ff858512; }
 .material-videoaula { color: #ffab66; border-color: #ffab66; background-color: #ffab6612; }
-.material-apostila:hover, .material-videoaula:hover {
-  color: #2c2a2c; background-color: #ffe202; border-color: #ffe202;
-}
+/* Hover intensifica a própria cor do tipo de material — nunca amarelo. */
+.material-apostila:hover { background-color: #ff858524; border-color: #ff8585; }
+.material-videoaula:hover { background-color: #ffab6624; border-color: #ffab66; }
 

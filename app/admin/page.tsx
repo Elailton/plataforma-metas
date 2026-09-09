@@ -61,7 +61,7 @@ export default async function AdminDashboardPage() {
         <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
           {courses.map((course) => (
             <Link key={course.id} href={`/admin/cursos/${course.id}`}>
-              <Card className="h-full transition-colors hover:border-primary/30">
+              <Card className="h-full transition-colors hover:bg-secondary/30">
                 <CardHeader className="flex-row items-start justify-between space-y-0">
                   <div className="flex flex-col gap-1">
                     <CardTitle className="text-base font-semibold text-foreground">{course.name}</CardTitle>

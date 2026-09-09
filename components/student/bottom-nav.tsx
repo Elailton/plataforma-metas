@@ -24,7 +24,7 @@ export function BottomNav() {
                 aria-current={isActive ? "page" : undefined}
                 className={cn(
                   "flex flex-col items-center gap-1 py-2.5 text-[11px] font-medium transition-colors",
-                  isActive ? "text-primary" : "text-muted-foreground hover:text-foreground",
+                  isActive ? "text-foreground" : "text-muted-foreground hover:text-foreground",
                 )}
               >
                 <Icon className="size-5" strokeWidth={isActive ? 2.4 : 2} />

@@ -13,7 +13,7 @@ const statusConfig: Record<Status, { label: string; icon: typeof CheckCircle2; c
   in_progress: {
     label: "Em andamento",
     icon: PlayCircle,
-    className: "bg-primary/10 text-primary border-primary/20",
+    className: "bg-secondary text-foreground border-border",
   },
   pending: {
     label: "Pendente",

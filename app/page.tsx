@@ -31,7 +31,7 @@ export default async function Home() {
         <div className="flex w-full flex-col gap-3">
           <Link
             href="/auth/login"
-            className="group flex items-center gap-4 rounded-2xl border border-border bg-card p-5 text-left transition-colors hover:border-primary/40 hover:bg-secondary/40"
+            className="group flex items-center gap-4 rounded-2xl border border-border bg-card p-5 text-left transition-colors hover:border-foreground/15 hover:bg-secondary/40"
           >
             <div className="flex size-11 shrink-0 items-center justify-center rounded-xl bg-primary/10 text-primary">
               <LogIn className="size-5" />
