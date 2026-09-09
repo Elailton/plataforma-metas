@@ -2,6 +2,7 @@
 
 import { revalidatePath } from "next/cache"
 import { requireAdmin } from "@/lib/admin/auth"
+import { throwSafeDatabaseError } from "@/lib/security/safe-error"
 
 export interface HotmartProductMappingInput {
   hotmartProductId: string
@@ -16,7 +17,9 @@ async function assertCourseExists(supabase: any, courseId: string) {
     .eq("id", courseId)
     .maybeSingle()
 
-  if (error) throw new Error(error.message)
+  if (error) {
+    throwSafeDatabaseError("admin.hotmart.course_lookup_failed", error, "Não foi possível verificar o curso.")
+  }
   if (!course) throw new Error("Curso inválido.")
 }
 
@@ -41,7 +44,9 @@ export async function createHotmartProductMapping(
   if (error?.code === "23505") {
     throw new Error("Este product.ucode já está vinculado a um curso.")
   }
-  if (error) throw new Error(error.message)
+  if (error) {
+    throwSafeDatabaseError("admin.hotmart.mapping_create_failed", error, "Não foi possível vincular o produto.")
+  }
 
   revalidatePath(`/admin/cursos/${courseId}`)
 }
@@ -62,9 +67,10 @@ export async function setHotmartProductMappingActive(
     .select("id")
     .maybeSingle()
 
-  if (error) throw new Error(error.message)
+  if (error) {
+    throwSafeDatabaseError("admin.hotmart.mapping_status_failed", error, "Não foi possível alterar o mapeamento.")
+  }
   if (!data) throw new Error("Mapeamento Hotmart inválido para este curso.")
 
   revalidatePath(`/admin/cursos/${courseId}`)
 }
-

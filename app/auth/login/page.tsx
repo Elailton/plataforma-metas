@@ -80,7 +80,6 @@ function LoginForm() {
       router.push(destination)
       router.refresh()
     } catch (error: unknown) {
-      console.error("[v0] Erro no login:", error)
       setError(loginErrorMessage(error))
     } finally {
       setIsLoading(false)

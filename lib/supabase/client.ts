@@ -6,7 +6,11 @@ export function createClient() {
     process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
     {
       // Cookies seguros em produção; em dev, não, para que o localhost continue funcionando.
-      cookieOptions: { secure: process.env.NODE_ENV === "production" },
+      cookieOptions: {
+        secure: process.env.NODE_ENV === "production",
+        sameSite: "lax",
+        path: "/",
+      },
     },
   )
 }

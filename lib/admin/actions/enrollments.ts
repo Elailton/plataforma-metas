@@ -3,6 +3,7 @@
 import { revalidatePath } from "next/cache"
 import { requireAdmin } from "@/lib/admin/auth"
 import { effectiveAccessStatus, normalizeBlockReason, manualAccessMessage, blockAccessMessage } from "@/lib/admin/access-feedback.mjs"
+import { throwSafeDatabaseError } from "@/lib/security/safe-error"
 
 const ENROLLMENT_STATUSES = ["active", "suspended", "revoked"] as const
 type EnrollmentStatus = (typeof ENROLLMENT_STATUSES)[number]
@@ -26,7 +27,9 @@ export async function enrollExistingStudent(courseId: string, email: string) {
   if (error?.message.includes("Only student accounts")) {
     throw new Error("Contas administrativas não podem ser matriculadas.")
   }
-  if (error) throw new Error(error.message)
+  if (error) {
+    throwSafeDatabaseError("admin.enrollment.create_failed", error, "Não foi possível matricular o aluno.")
+  }
 
   const { data: enrollment, error: readError } = await supabase.from("enrollments")
     .select("status").eq("id", enrollmentId).eq("course_id", courseId).single()
@@ -50,7 +53,9 @@ export async function setEnrollmentStatus(
     requested_status: status,
   })
 
-  if (error) throw new Error(error.message)
+  if (error) {
+    throwSafeDatabaseError("admin.enrollment.status_failed", error, "Não foi possível alterar a matrícula.")
+  }
   const effectiveStatus = effectiveAccessStatus(data)
   refreshAccessPages(courseId)
   return { effectiveStatus, message: manualAccessMessage(status, effectiveStatus) }

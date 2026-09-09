@@ -3,6 +3,7 @@
 import { revalidatePath } from "next/cache"
 import { requireAdmin } from "@/lib/admin/auth"
 import type { GoalStatus } from "@/lib/admin/types"
+import { throwSafeDatabaseError } from "@/lib/security/safe-error"
 
 export interface GoalItemInput {
   id?: string
@@ -52,7 +53,7 @@ async function saveGoal(goalId: string | null, input: GoalFormInput) {
       material_ids: [...new Set(item.materialIds)],
     })),
   })
-  if (error) throw new Error(error.message)
+  if (error) throwSafeDatabaseError("admin.goal.save_failed", error, "Não foi possível salvar a meta.")
   if (typeof data !== "string") throw new Error("Não foi possível salvar a meta.")
   refreshGoal(input.courseId, data)
   return data
@@ -71,7 +72,7 @@ export async function setGoalStatus(goalId: string, courseId: string, status: Go
   const { error } = await supabase.from("goals")
     .update({ status, updated_at: new Date().toISOString() })
     .eq("id", goalId).eq("course_id", courseId).select("id").single()
-  if (error) throw new Error(error.message)
+  if (error) throwSafeDatabaseError("admin.goal.status_failed", error, "Não foi possível alterar o status da meta.")
   refreshGoal(courseId, goalId)
 }
 
@@ -82,7 +83,7 @@ export async function deleteGoal(goalId: string, courseId: string) {
   if (error?.code === "23503") {
     throw new Error("Esta meta possui histórico de alunos. Arquive a meta para preservar o progresso.")
   }
-  if (error) throw new Error(error.message)
+  if (error) throwSafeDatabaseError("admin.goal.delete_failed", error, "Não foi possível excluir a meta.")
   refreshGoal(courseId, goalId)
 }
 
@@ -94,7 +95,9 @@ export async function duplicateGoal(goalId: string, courseId: string) {
   const { data: items, error: itemsError } = await supabase.from("goal_items")
     .select("*, goal_item_materials(material_id, position)")
     .eq("goal_id", goalId).is("archived_at", null).order("position", { ascending: true })
-  if (itemsError) throw new Error(itemsError.message)
+  if (itemsError) {
+    throwSafeDatabaseError("admin.goal.duplicate_read_failed", itemsError, "Não foi possível duplicar a meta.")
+  }
 
   return saveGoal(null, {
     courseId, title: `${goal.title} (cópia)`, description: goal.description ?? "",

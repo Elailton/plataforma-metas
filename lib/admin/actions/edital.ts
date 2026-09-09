@@ -2,6 +2,7 @@
 
 import { revalidatePath } from "next/cache"
 import { requireAdmin } from "@/lib/admin/auth"
+import { throwSafeDatabaseError } from "@/lib/security/safe-error"
 
 export async function createSubject(courseId: string, name: string) {
   const { supabase } = await requireAdmin()
@@ -20,7 +21,7 @@ export async function createSubject(courseId: string, name: string) {
     position: count ?? 0,
   })
 
-  if (error) throw new Error(error.message)
+  if (error) throwSafeDatabaseError("admin.subject.create_failed", error, "Não foi possível criar a disciplina.")
   revalidatePath(`/admin/cursos/${courseId}`)
 }
 
@@ -31,7 +32,7 @@ export async function renameSubject(subjectId: string, courseId: string, name: s
   if (!trimmed) throw new Error("Informe o nome da disciplina.")
 
   const { error } = await supabase.from("subjects").update({ name: trimmed }).eq("id", subjectId)
-  if (error) throw new Error(error.message)
+  if (error) throwSafeDatabaseError("admin.subject.rename_failed", error, "Não foi possível renomear a disciplina.")
   revalidatePath(`/admin/cursos/${courseId}`)
 }
 
@@ -39,7 +40,7 @@ export async function deleteSubject(subjectId: string, courseId: string) {
   const { supabase } = await requireAdmin()
 
   const { error } = await supabase.from("subjects").delete().eq("id", subjectId)
-  if (error) throw new Error(error.message)
+  if (error) throwSafeDatabaseError("admin.subject.delete_failed", error, "Não foi possível excluir a disciplina.")
   revalidatePath(`/admin/cursos/${courseId}`)
 }
 
@@ -65,7 +66,7 @@ export async function addSyllabusTopicsBulk(subjectId: string, courseId: string,
   const rows = titles.map((title) => ({ subject_id: subjectId, title, position: position++ }))
 
   const { error } = await supabase.from("syllabus_topics").insert(rows)
-  if (error) throw new Error(error.message)
+  if (error) throwSafeDatabaseError("admin.topic.bulk_create_failed", error, "Não foi possível adicionar os tópicos.")
   revalidatePath(`/admin/cursos/${courseId}`)
 }
 
@@ -76,7 +77,7 @@ export async function renameSyllabusTopic(topicId: string, courseId: string, tit
   if (!trimmed) throw new Error("Informe o título do tópico.")
 
   const { error } = await supabase.from("syllabus_topics").update({ title: trimmed }).eq("id", topicId)
-  if (error) throw new Error(error.message)
+  if (error) throwSafeDatabaseError("admin.topic.rename_failed", error, "Não foi possível renomear o tópico.")
   revalidatePath(`/admin/cursos/${courseId}`)
 }
 
@@ -84,6 +85,6 @@ export async function deleteSyllabusTopic(topicId: string, courseId: string) {
   const { supabase } = await requireAdmin()
 
   const { error } = await supabase.from("syllabus_topics").delete().eq("id", topicId)
-  if (error) throw new Error(error.message)
+  if (error) throwSafeDatabaseError("admin.topic.delete_failed", error, "Não foi possível excluir o tópico.")
   revalidatePath(`/admin/cursos/${courseId}`)
 }

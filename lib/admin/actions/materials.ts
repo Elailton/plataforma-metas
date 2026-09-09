@@ -3,6 +3,7 @@
 import { revalidatePath } from "next/cache"
 import { requireAdmin } from "@/lib/admin/auth"
 import type { AdminMaterialType } from "@/lib/admin/types"
+import { throwSafeDatabaseError } from "@/lib/security/safe-error"
 
 export interface MaterialFormInput {
   title: string
@@ -16,8 +17,15 @@ export interface MaterialFormInput {
 function normalizeUrl(url: string) {
   const trimmed = url.trim()
   if (!trimmed) return trimmed
-  if (/^https?:\/\//i.test(trimmed)) return trimmed
-  return `https://${trimmed}`
+  const candidate = /^https?:\/\//i.test(trimmed) ? trimmed : `https://${trimmed}`
+
+  try {
+    const parsed = new URL(candidate)
+    if (!(["http:", "https:"].includes(parsed.protocol)) || !parsed.hostname) return ""
+    return parsed.toString()
+  } catch {
+    return ""
+  }
 }
 
 async function assertSubjectBelongsToCourse(
@@ -53,7 +61,7 @@ export async function createMaterial(input: MaterialFormInput) {
     subject_id: input.subjectId,
   })
 
-  if (error) throw new Error(error.message)
+  if (error) throwSafeDatabaseError("admin.material.create_failed", error, "Não foi possível criar o material.")
 
   revalidatePath("/admin/materiais")
   if (input.courseId) revalidatePath(`/admin/cursos/${input.courseId}`)
@@ -81,7 +89,7 @@ export async function updateMaterial(materialId: string, input: MaterialFormInpu
     })
     .eq("id", materialId)
 
-  if (error) throw new Error(error.message)
+  if (error) throwSafeDatabaseError("admin.material.update_failed", error, "Não foi possível atualizar o material.")
 
   revalidatePath("/admin/materiais")
   if (input.courseId) revalidatePath(`/admin/cursos/${input.courseId}`)
@@ -91,7 +99,7 @@ export async function deleteMaterial(materialId: string, courseId: string | null
   const { supabase } = await requireAdmin()
 
   const { error } = await supabase.from("materials").delete().eq("id", materialId)
-  if (error) throw new Error(error.message)
+  if (error) throwSafeDatabaseError("admin.material.delete_failed", error, "Não foi possível excluir o material.")
 
   revalidatePath("/admin/materiais")
   if (courseId) revalidatePath(`/admin/cursos/${courseId}`)
