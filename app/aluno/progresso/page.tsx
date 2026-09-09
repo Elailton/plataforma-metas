@@ -38,7 +38,7 @@ export default async function ProgressPage() {
             <CardTitle className="text-[11px] font-medium text-muted-foreground">Em curso</CardTitle>
           </CardHeader>
           <CardContent className="px-3.5">
-            <span className="text-xl font-semibold tabular-nums text-primary">{inProgressGoals}</span>
+            <span className="text-xl font-semibold tabular-nums text-foreground">{inProgressGoals}</span>
           </CardContent>
         </Card>
       </div>

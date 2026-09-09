@@ -39,7 +39,7 @@ export default async function AccountPage() {
           <CardContent className="flex flex-col gap-4">
             {activeEnrollments.map((enrollment) => (
               <div key={enrollment.id} className="flex items-center gap-3">
-                <div className="flex size-9 items-center justify-center rounded-lg bg-primary/10 text-primary">
+                <div className="flex size-9 items-center justify-center rounded-lg bg-secondary text-foreground">
                   <GraduationCap className="size-4.5" />
                 </div>
                 <div className="flex flex-1 flex-col">

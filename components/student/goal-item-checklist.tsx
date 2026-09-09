@@ -29,7 +29,7 @@ export function GoalItemChecklist({ item }: { item: StudentGoalItem }) {
     <div className="flex flex-col gap-4 rounded-xl border border-border bg-card p-4">
       <div className="flex items-start justify-between gap-3">
         <div className="flex flex-col gap-1">
-          <span className="text-xs font-medium text-primary">{item.subjectName}</span>
+          <span className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">{item.subjectName}</span>
           <h3 className="text-sm font-semibold leading-snug text-foreground">
             {item.topicName ?? "Item de estudo"}
           </h3>

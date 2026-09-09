@@ -11,7 +11,7 @@ export function GoalCard({ goal }: { goal: StudentGoal }) {
   return (
     <Link
       href={`/aluno/metas/${goal.id}`}
-      className="group flex flex-col gap-3 rounded-xl border border-border bg-card p-4 transition-colors hover:border-primary/30 hover:bg-secondary/40"
+      className="group flex flex-col gap-3 rounded-xl border border-border bg-card p-4 transition-colors hover:border-foreground/15 hover:bg-secondary/40"
     >
       <div className="flex items-start justify-between gap-3">
         <div className="flex flex-col gap-1">
