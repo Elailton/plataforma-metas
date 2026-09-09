@@ -1,23 +1,17 @@
 import type { SVGProps } from "react"
 
-/**
- * Marca da plataforma: caveira sólida de dentes serrilhados, no espírito do
- * símbolo do Justiceiro. Um único path preenchido (fill-rule evenodd) — sem
- * stroke — para permanecer nítido em qualquer tamanho e cor (currentColor).
- */
 export function BrandSkull(props: SVGProps<SVGSVGElement>) {
   return (
-    <svg viewBox="0 0 32 32" fill="none" aria-hidden="true" {...props}>
+    <svg viewBox="0 0 32 36" fill="none" aria-hidden="true" {...props}>
       <path
-        fillRule="evenodd"
-        clipRule="evenodd"
-        fill="currentColor"
-        d="M6 15C6 7 10.5 2 16 2C21.5 2 26 7 26 15L6 15Z
-           M6 15L7.7 21L9.3 15L11 21L12.7 15L14.3 21L16 15L17.7 21L19.3 15L21 21L22.7 15L24.3 21L26 15Z
-           M12 7.3L14.7 10L12 12.7L9.3 10Z
-           M20 7.3L22.7 10L20 12.7L17.3 10Z
-           M14.5 13L17.5 13L16 17.5Z"
+        d="M16 2.5C8.6 2.5 4 7 4 13.5v7.2l4.5 3.2v6.6h4.2v-5.8h2.1v8.8h2.4v-8.8h2.1v5.8h4.2v-6.6l4.5-3.2v-7.2C28 7 23.4 2.5 16 2.5Z"
+        stroke="currentColor"
+        strokeWidth="2.4"
+        strokeLinejoin="round"
       />
+      <path d="m7.2 13.2 7 2.2-2.6 4.2-4.4-1.8v-4.6Zm17.6 0-7 2.2 2.6 4.2 4.4-1.8v-4.6ZM16 17.8l-2 4h4l-2-4Z" fill="currentColor" />
+      <path d="M9 24.5h14M12.7 28.5h6.6" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" />
     </svg>
   )
 }
+
