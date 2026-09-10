@@ -74,6 +74,22 @@ export async function addSyllabusTopicsBulk(
 
   if (titles.length === 0) throw new Error("Informe ao menos um tópico.")
 
+  if (!parentTopicId) {
+    const { count, error: countError } = await supabase
+      .from("syllabus_topics")
+      .select("id", { count: "exact", head: true })
+      .eq("subject_id", subjectId)
+
+    if (countError) throwSafeDatabaseError("admin.topic.count_failed", countError, "Não foi possível preparar os tópicos.")
+
+    let position = count ?? 0
+    const rows = titles.map((title) => ({ subject_id: subjectId, title, position: position++ }))
+    const { error } = await supabase.from("syllabus_topics").insert(rows)
+    if (error) throwSafeDatabaseError("admin.topic.bulk_create_failed", error, "Não foi possível adicionar os tópicos.")
+    revalidatePath(`/admin/cursos/${courseId}`)
+    return
+  }
+
   if (parentTopicId) {
     const { data: parent, error: parentError } = await supabase
       .from("syllabus_topics")
@@ -90,36 +106,14 @@ export async function addSyllabusTopicsBulk(
     }
   }
 
-  const countQuery = supabase
+  const { count, error: countError } = await supabase
     .from("syllabus_topics")
     .select("id", { count: "exact", head: true })
     .eq("subject_id", subjectId)
-  const { count, error: countError } = parentTopicId
-    ? await countQuery.eq("parent_topic_id", parentTopicId)
-    : await countQuery.is("parent_topic_id", null)
+    .eq("parent_topic_id", parentTopicId)
 
   if (isMissingSubtopicColumn(countError)) {
-    if (parentTopicId) {
-      throw new Error("A estrutura de subtópicos ainda não foi aplicada no banco. Aplique a migration antes de criar subtópicos.")
-    }
-
-    const { count: legacyCount, error: legacyCountError } = await supabase
-      .from("syllabus_topics")
-      .select("id", { count: "exact", head: true })
-      .eq("subject_id", subjectId)
-
-    if (legacyCountError) {
-      throwSafeDatabaseError("admin.topic.count_failed", legacyCountError, "Não foi possível preparar os tópicos.")
-    }
-
-    let legacyPosition = legacyCount ?? 0
-    const legacyRows = titles.map((title) => ({ subject_id: subjectId, title, position: legacyPosition++ }))
-    const { error: legacyInsertError } = await supabase.from("syllabus_topics").insert(legacyRows)
-    if (legacyInsertError) {
-      throwSafeDatabaseError("admin.topic.bulk_create_failed", legacyInsertError, "Não foi possível adicionar os tópicos.")
-    }
-    revalidatePath(`/admin/cursos/${courseId}`)
-    return
+    throw new Error("A estrutura de subtópicos ainda não foi aplicada no banco. Aplique a migration antes de criar subtópicos.")
   }
   if (countError) throwSafeDatabaseError("admin.topic.count_failed", countError, "Não foi possível preparar os tópicos.")
 

@@ -76,14 +76,14 @@ export async function getStudentCourseSnapshot(courseId: string): Promise<Studen
     subjectIds.length
       ? supabase
           .from("syllabus_topics")
-          .select("id, subject_id, parent_topic_id, title, position")
+          .select("*")
           .in("subject_id", subjectIds)
           .order("position")
       : Promise.resolve({ data: [], error: null }),
     goalIds.length
       ? supabase
           .from("goal_items")
-          .select("id, goal_id, subject_id, topic_id, subtopic_id, instructions, suggested_questions, position")
+          .select("*")
           .in("goal_id", goalIds)
           .is("archived_at", null)
           .order("position")
