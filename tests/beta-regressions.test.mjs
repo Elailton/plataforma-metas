@@ -6,7 +6,7 @@ import { processHotmartEvent } from "../lib/hotmart/core.mjs"
 
 const id = (number) => `00000000-0000-4000-8000-${String(number).padStart(12, "0")}`
 const ADMIN = id(1), STUDENT = id(2), OTHER = id(3), COURSE = id(10), COURSE2 = id(11)
-const SUBJECT = id(20), SUBJECT2 = id(21), TOPIC = id(30), TOPIC2 = id(31), MATERIAL = id(40), MATERIAL2 = id(41)
+const SUBJECT = id(20), SUBJECT2 = id(21), TOPIC = id(30), TOPIC2 = id(31), SUBTOPIC = id(32), MATERIAL = id(40), MATERIAL2 = id(41)
 let db
 const admin = (operation) => asRole(db, ADMIN, "authenticated", operation)
 const student = (operation) => asRole(db, STUDENT, "authenticated", operation)
@@ -21,7 +21,7 @@ beforeEach(async () => {
     update profiles set role='admin' where id='${ADMIN}';
     insert into courses values ('${COURSE}','Course A','published'), ('${COURSE2}','Course B','published');
     insert into subjects values ('${SUBJECT}','${COURSE}'), ('${SUBJECT2}','${COURSE2}');
-    insert into syllabus_topics values ('${TOPIC}','${SUBJECT}'), ('${TOPIC2}','${SUBJECT2}');
+    insert into syllabus_topics(id, subject_id) values ('${TOPIC}','${SUBJECT}'), ('${TOPIC2}','${SUBJECT2}');
     insert into materials values ('${MATERIAL}','${COURSE}'), ('${MATERIAL2}','${COURSE2}');
     insert into enrollments(user_id,course_id,status,source) values ('${STUDENT}','${COURSE}','active','manual');
   `)
@@ -69,11 +69,28 @@ test("remover item arquiva histórico; incluir item não herda conclusões", asy
 
 test("trocar tópico cria nova identidade e não atribui progresso ao novo tópico", async () => {
   const { goalId, items } = await completedGoal()
-  await db.query("insert into syllabus_topics values($1,$2)", [id(32), SUBJECT])
-  await save(goalId, [item({ id: items[0].id, topic_id: id(32) }), item({ id: items[1].id })])
+  await db.query("insert into syllabus_topics(id, subject_id) values($1,$2)", [id(33), SUBJECT])
+  await save(goalId, [item({ id: items[0].id, topic_id: id(33) }), item({ id: items[1].id })])
   const next = (await currentItems(goalId))[0]
   assert.notEqual(next.id, items[0].id)
-  assert.equal(next.topic_id, id(32))
+  assert.equal(next.topic_id, id(33))
+  assert.equal((await db.query("select goal_item_id from student_goal_item_completions")).rows[0].goal_item_id, items[0].id)
+})
+
+test("subtópico é opcional, pertence ao tópico e trocar subtópico cria nova identidade", async () => {
+  await db.query("insert into syllabus_topics(id, subject_id, parent_topic_id) values($1,$2,$3)", [SUBTOPIC, SUBJECT, TOPIC])
+  const goalId = await save(null, [item({ subtopic_id: SUBTOPIC })])
+  const items = await currentItems(goalId)
+  assert.equal(items[0].topic_id, TOPIC)
+  assert.equal(items[0].subtopic_id, SUBTOPIC)
+  await student(() => db.query("insert into student_goal_item_completions(user_id,goal_item_id) values($1,$2)", [STUDENT, items[0].id]))
+
+  await assert.rejects(save(goalId, [item({ id: items[0].id, subtopic_id: TOPIC2 })]), /subtópico/)
+  await db.query("insert into syllabus_topics(id, subject_id, parent_topic_id) values($1,$2,$3)", [id(34), SUBJECT, TOPIC])
+  await save(goalId, [item({ id: items[0].id, subtopic_id: id(34) })])
+  const next = (await currentItems(goalId))[0]
+  assert.notEqual(next.id, items[0].id)
+  assert.equal(next.subtopic_id, id(34))
   assert.equal((await db.query("select goal_item_id from student_goal_item_completions")).rows[0].goal_item_id, items[0].id)
 })
 
@@ -203,7 +220,12 @@ test("as duas migrations preservam contas, conteúdo, matrículas, direitos, blo
   for (const name of migrations.slice(4)) await applyMigration(db, name)
   for (const table of tables) {
     const after = (await db.query(`select * from ${table}`)).rows
-    if (table === "goal_items") for (const row of after) { assert.equal(row.archived_at, null); delete row.archived_at }
+    if (table === "goal_items") for (const row of after) {
+      assert.equal(row.archived_at, null)
+      assert.equal(row.subtopic_id, null)
+      delete row.archived_at
+      delete row.subtopic_id
+    }
     assert.deepEqual(after, before[table], table)
   }
 })

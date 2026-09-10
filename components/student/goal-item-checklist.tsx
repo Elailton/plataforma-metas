@@ -31,8 +31,11 @@ export function GoalItemChecklist({ item }: { item: StudentGoalItem }) {
         <div className="flex flex-col gap-1">
           <span className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">{item.subjectName}</span>
           <h3 className="text-sm font-semibold leading-snug text-foreground">
-            {item.topicName ?? "Item de estudo"}
+            {item.subtopicName ?? item.topicName ?? "Item de estudo"}
           </h3>
+          {item.subtopicName && item.topicName ? (
+            <span className="text-xs text-muted-foreground">{item.topicName}</span>
+          ) : null}
         </div>
         {isComplete ? (
           <span className="flex items-center gap-1 rounded-full bg-success/15 px-2 py-1 text-xs font-medium text-success">

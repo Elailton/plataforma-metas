@@ -29,6 +29,7 @@ export interface AdminSubject {
 export interface AdminSyllabusTopic {
   id: string
   subjectId: string
+  parentTopicId: string | null
   title: string
   position: number
 }
@@ -57,6 +58,7 @@ export interface AdminGoalItem {
   id: string
   subjectId: string
   topicId: string | null
+  subtopicId: string | null
   instructions: string | null
   suggestedQuestions: number | null
   position: number

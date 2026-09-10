@@ -76,14 +76,14 @@ export async function getStudentCourseSnapshot(courseId: string): Promise<Studen
     subjectIds.length
       ? supabase
           .from("syllabus_topics")
-          .select("id, subject_id, title, position")
+          .select("id, subject_id, parent_topic_id, title, position")
           .in("subject_id", subjectIds)
           .order("position")
       : Promise.resolve({ data: [], error: null }),
     goalIds.length
       ? supabase
           .from("goal_items")
-          .select("id, goal_id, subject_id, topic_id, instructions, suggested_questions, position")
+          .select("id, goal_id, subject_id, topic_id, subtopic_id, instructions, suggested_questions, position")
           .in("goal_id", goalIds)
           .is("archived_at", null)
           .order("position")
@@ -154,6 +154,7 @@ export async function getStudentCourseSnapshot(courseId: string): Promise<Studen
       .map((item) => {
         const subject = subjectById.get(item.subject_id)
         const topic = item.topic_id ? topicById.get(item.topic_id) : null
+        const subtopic = item.subtopic_id ? topicById.get(item.subtopic_id) : null
         const linkedMaterials = safeItemMaterials
           .filter((relation) => relation.goal_item_id === item.id)
           .map((relation) => materialById.get(relation.material_id))
@@ -165,6 +166,8 @@ export async function getStudentCourseSnapshot(courseId: string): Promise<Studen
           subjectName: subject?.name ?? "Disciplina",
           topicId: item.topic_id,
           topicName: topic?.title ?? null,
+          subtopicId: item.subtopic_id ?? null,
+          subtopicName: subtopic?.title ?? null,
           instructions: item.instructions,
           suggestedQuestions: item.suggested_questions,
           materials: linkedMaterials,
@@ -194,15 +197,28 @@ export async function getStudentCourseSnapshot(courseId: string): Promise<Studen
   const studiedTopicIds = collectStudiedTopicIds(mappedGoals.flatMap((goal) => goal.items))
 
   const mappedSubjects: StudentSubjectProgress[] = (subjects ?? []).map((subject) => {
-    const mappedTopics = (topics ?? [])
-      .filter((topic) => topic.subject_id === subject.id)
+    const subjectTopics = (topics ?? []).filter((topic) => topic.subject_id === subject.id)
+    const rootTopics = subjectTopics.filter((topic) => !topic.parent_topic_id)
+    const mappedTopics = rootTopics
       .map((topic) => ({
         id: topic.id,
+        parentTopicId: topic.parent_topic_id ?? null,
         title: topic.title,
         position: topic.position,
         studied: studiedTopicIds.has(topic.id),
+        subtopics: subjectTopics
+          .filter((subtopic) => subtopic.parent_topic_id === topic.id)
+          .map((subtopic) => ({
+            id: subtopic.id,
+            parentTopicId: subtopic.parent_topic_id ?? null,
+            title: subtopic.title,
+            position: subtopic.position,
+            studied: studiedTopicIds.has(subtopic.id),
+            subtopics: [],
+          })),
       }))
-    const studied = mappedTopics.filter((topic) => topic.studied).length
+    const flatTopics = mappedTopics.flatMap((topic) => [topic, ...topic.subtopics])
+    const studied = flatTopics.filter((topic) => topic.studied).length
 
     return {
       id: subject.id,
@@ -210,8 +226,8 @@ export async function getStudentCourseSnapshot(courseId: string): Promise<Studen
       position: subject.position,
       topics: mappedTopics,
       studied,
-      total: mappedTopics.length,
-      percentage: calculatePercentage(studied, mappedTopics.length),
+      total: flatTopics.length,
+      percentage: calculatePercentage(studied, flatTopics.length),
     }
   })
 

@@ -47,7 +47,12 @@ export async function deleteSubject(subjectId: string, courseId: string) {
 /**
  * Adiciona vários tópicos de uma vez, um por linha, a uma disciplina.
  */
-export async function addSyllabusTopicsBulk(subjectId: string, courseId: string, rawTopics: string) {
+export async function addSyllabusTopicsBulk(
+  subjectId: string,
+  courseId: string,
+  rawTopics: string,
+  parentTopicId: string | null = null,
+) {
   const { supabase } = await requireAdmin()
 
   const titles = rawTopics
@@ -57,13 +62,28 @@ export async function addSyllabusTopicsBulk(subjectId: string, courseId: string,
 
   if (titles.length === 0) throw new Error("Informe ao menos um tópico.")
 
-  const { count } = await supabase
+  if (parentTopicId) {
+    const { data: parent } = await supabase
+      .from("syllabus_topics")
+      .select("id, subject_id, parent_topic_id")
+      .eq("id", parentTopicId)
+      .single()
+
+    if (!parent || parent.subject_id !== subjectId || parent.parent_topic_id) {
+      throw new Error("O tópico principal selecionado não pertence à disciplina.")
+    }
+  }
+
+  const countQuery = supabase
     .from("syllabus_topics")
     .select("id", { count: "exact", head: true })
     .eq("subject_id", subjectId)
+  const { count } = parentTopicId
+    ? await countQuery.eq("parent_topic_id", parentTopicId)
+    : await countQuery.is("parent_topic_id", null)
 
   let position = count ?? 0
-  const rows = titles.map((title) => ({ subject_id: subjectId, title, position: position++ }))
+  const rows = titles.map((title) => ({ subject_id: subjectId, parent_topic_id: parentTopicId, title, position: position++ }))
 
   const { error } = await supabase.from("syllabus_topics").insert(rows)
   if (error) throwSafeDatabaseError("admin.topic.bulk_create_failed", error, "Não foi possível adicionar os tópicos.")

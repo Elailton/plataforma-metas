@@ -55,26 +55,38 @@ export function CourseEditalEditor({ courseId, groups }: CourseEditalEditorProps
 
       {groups.length > 0 ? (
         <Accordion className="rounded-xl border border-border bg-card">
-          {groups.map(({ subject, topics }) => (
-            <AccordionItem key={subject.id} value={subject.id} className="px-4">
-              <div className="flex items-center gap-2">
-                <AccordionTrigger className="flex-1">{subject.name}</AccordionTrigger>
-                <span className="text-xs text-muted-foreground">
-                  {topics.length} {topics.length === 1 ? "tópico" : "tópicos"}
-                </span>
-                <EditSubjectDialog courseId={courseId} subject={subject} onDone={() => router.refresh()} />
-                <DeleteSubjectAlert courseId={courseId} subject={subject} onDone={() => router.refresh()} />
-              </div>
-              <AccordionContent>
-                <div className="flex flex-col gap-2 pb-4">
-                  {topics.map((topic) => (
-                    <TopicRow key={topic.id} courseId={courseId} topic={topic} onDone={() => router.refresh()} />
-                  ))}
-                  <AddTopicsDialog subjectId={subject.id} courseId={courseId} onDone={() => router.refresh()} />
+          {groups.map(({ subject, topics }) => {
+            const rootTopics = topics.filter((topic) => !topic.parentTopicId)
+
+            return (
+              <AccordionItem key={subject.id} value={subject.id} className="px-4">
+                <div className="flex items-center gap-2">
+                  <AccordionTrigger className="flex-1">{subject.name}</AccordionTrigger>
+                  <span className="text-xs text-muted-foreground">
+                    {topics.length} {topics.length === 1 ? "tópico" : "tópicos"}
+                  </span>
+                  <EditSubjectDialog courseId={courseId} subject={subject} onDone={() => router.refresh()} />
+                  <DeleteSubjectAlert courseId={courseId} subject={subject} onDone={() => router.refresh()} />
                 </div>
-              </AccordionContent>
-            </AccordionItem>
-          ))}
+                <AccordionContent>
+                  <div className="flex flex-col gap-2 pb-4">
+                    {rootTopics.map((topic, index) => (
+                      <TopicRow
+                        key={topic.id}
+                        courseId={courseId}
+                        subjectId={subject.id}
+                        topic={topic}
+                        number={`${index + 1}`}
+                        subtopics={topics.filter((subtopic) => subtopic.parentTopicId === topic.id)}
+                        onDone={() => router.refresh()}
+                      />
+                    ))}
+                    <AddTopicsDialog subjectId={subject.id} courseId={courseId} onDone={() => router.refresh()} />
+                  </div>
+                </AccordionContent>
+              </AccordionItem>
+            )
+          })}
         </Accordion>
       ) : null}
     </div>
@@ -259,12 +271,20 @@ function DeleteSubjectAlert({
 
 function TopicRow({
   courseId,
+  subjectId,
   topic,
+  number,
+  subtopics = [],
   onDone,
+  isSubtopic = false,
 }: {
   courseId: string
+  subjectId: string
   topic: AdminSyllabusTopic
+  number: string
+  subtopics?: AdminSyllabusTopic[]
   onDone: () => void
+  isSubtopic?: boolean
 }) {
   const [editing, setEditing] = useState(false)
   const [title, setTitle] = useState(topic.title)
@@ -298,7 +318,7 @@ function TopicRow({
 
   if (editing) {
     return (
-      <div className="flex items-center gap-2 rounded-lg border border-border px-3 py-2">
+      <div className={`flex items-center gap-2 rounded-lg border border-border px-3 py-2 ${isSubtopic ? "ml-6" : ""}`}>
         <Input value={title} onChange={(e) => setTitle(e.target.value)} className="h-8" autoFocus />
         <Button variant="ghost" size="icon" className="size-7" onClick={handleSave} disabled={pending} aria-label="Salvar">
           <Check className="size-3.5" />
@@ -321,29 +341,61 @@ function TopicRow({
   }
 
   return (
-    <div className="group flex items-center justify-between gap-2 rounded-lg px-3 py-2 hover:bg-secondary/50">
-      <span className="text-sm text-foreground">{topic.title}</span>
-      <div className="flex items-center gap-1 opacity-0 group-hover:opacity-100">
-        <Button
-          variant="ghost"
-          size="icon"
-          className="size-7"
-          onClick={() => setEditing(true)}
-          aria-label="Editar tópico"
-        >
-          <Pencil className="size-3.5" />
-        </Button>
-        <Button
-          variant="ghost"
-          size="icon"
-          className="size-7"
-          onClick={handleDelete}
-          disabled={pending}
-          aria-label="Remover tópico"
-        >
-          <Trash2 className="size-3.5 text-destructive" />
-        </Button>
+    <div className="flex flex-col gap-1">
+      <div className={`group flex items-center justify-between gap-2 rounded-lg px-3 py-2 hover:bg-secondary/50 ${isSubtopic ? "ml-6 border-l border-border/70" : ""}`}>
+        <span className={`text-sm ${isSubtopic ? "text-muted-foreground" : "text-foreground"}`}>
+          <span className="mr-2 font-mono text-xs text-muted-foreground">{number}</span>
+          {topic.title}
+        </span>
+        <div className="flex items-center gap-1 opacity-0 group-hover:opacity-100">
+          {!isSubtopic ? (
+            <AddTopicsDialog
+              subjectId={subjectId}
+              courseId={courseId}
+              parentTopicId={topic.id}
+              triggerLabel="Subtópicos"
+              onDone={onDone}
+            />
+          ) : null}
+          <Button
+            variant="ghost"
+            size="icon"
+            className="size-7"
+            onClick={() => setEditing(true)}
+            aria-label={isSubtopic ? "Editar subtópico" : "Editar tópico"}
+          >
+            <Pencil className="size-3.5" />
+          </Button>
+          <Button
+            variant="ghost"
+            size="icon"
+            className="size-7"
+            onClick={handleDelete}
+            disabled={pending}
+            aria-label={isSubtopic ? "Remover subtópico" : "Remover tópico"}
+          >
+            <Trash2 className="size-3.5 text-destructive" />
+          </Button>
+        </div>
       </div>
+      {subtopics.length > 0 ? (
+        <div className="flex flex-col gap-1">
+          {subtopics.map((subtopic, index) => (
+            <TopicRow
+              key={subtopic.id}
+              courseId={courseId}
+              subjectId={subjectId}
+              topic={subtopic}
+              number={`${number}.${index + 1}`}
+              onDone={onDone}
+              isSubtopic
+            />
+          ))}
+        </div>
+      ) : null}
+      {!isSubtopic && subtopics.length === 0 ? (
+        <div className="ml-9 text-xs text-muted-foreground/70">Sem subtópicos</div>
+      ) : null}
     </div>
   )
 }
@@ -351,22 +403,28 @@ function TopicRow({
 function AddTopicsDialog({
   subjectId,
   courseId,
+  parentTopicId = null,
+  triggerLabel = "Adicionar tópicos",
   onDone,
 }: {
   subjectId: string
   courseId: string
+  parentTopicId?: string | null
+  triggerLabel?: string
   onDone: () => void
 }) {
   const [open, setOpen] = useState(false)
   const [rawTopics, setRawTopics] = useState("")
   const [pending, setPending] = useState(false)
 
+  const isSubtopic = Boolean(parentTopicId)
+
   async function handleSubmit(event: React.FormEvent) {
     event.preventDefault()
     setPending(true)
     try {
-      await addSyllabusTopicsBulk(subjectId, courseId, rawTopics)
-      toast.success("Tópicos adicionados")
+      await addSyllabusTopicsBulk(subjectId, courseId, rawTopics, parentTopicId)
+      toast.success(isSubtopic ? "Subtópicos adicionados" : "Tópicos adicionados")
       setRawTopics("")
       setOpen(false)
       onDone()
@@ -381,30 +439,42 @@ function AddTopicsDialog({
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger
         render={
-          <Button variant="outline" size="sm" className="self-start">
+          <Button variant="outline" size="sm" className={isSubtopic ? "h-7 px-2 text-xs" : "self-start"}>
             <Plus data-icon="inline-start" />
-            Adicionar tópicos
+            {triggerLabel}
           </Button>
         }
       />
       <DialogContent>
         <DialogHeader>
-          <DialogTitle>Adicionar tópicos</DialogTitle>
-          <DialogDescription>Cole um tópico por linha para adicionar vários de uma vez.</DialogDescription>
+          <DialogTitle>{isSubtopic ? "Adicionar subtópicos" : "Adicionar tópicos"}</DialogTitle>
+          <DialogDescription>
+            {isSubtopic
+              ? "Cole um subtópico por linha para criar a hierarquia abaixo deste tópico."
+              : "Cole um tópico por linha para adicionar vários de uma vez."}
+          </DialogDescription>
         </DialogHeader>
         <form onSubmit={handleSubmit} className="flex flex-col gap-6">
           <FieldGroup>
             <Field>
-              <FieldLabel htmlFor="bulk-topics">Tópicos</FieldLabel>
+              <FieldLabel htmlFor={isSubtopic ? "bulk-subtopics" : "bulk-topics"}>
+                {isSubtopic ? "Subtópicos" : "Tópicos"}
+              </FieldLabel>
               <Textarea
-                id="bulk-topics"
-                placeholder={"Direitos e garantias fundamentais\nOrganização do Estado\nPoder Legislativo"}
+                id={isSubtopic ? "bulk-subtopics" : "bulk-topics"}
+                placeholder={
+                  isSubtopic
+                    ? "Interpretação de textos\nTipologia textual\nGêneros textuais"
+                    : "Direitos e garantias fundamentais\nOrganização do Estado\nPoder Legislativo"
+                }
                 value={rawTopics}
                 onChange={(e) => setRawTopics(e.target.value)}
                 rows={8}
                 required
               />
-              <FieldDescription>Cada linha se torna um tópico independente.</FieldDescription>
+              <FieldDescription>
+                Cada linha se torna {isSubtopic ? "um subtópico vinculado ao tópico principal." : "um tópico independente."}
+              </FieldDescription>
             </Field>
           </FieldGroup>
           <DialogFooter>

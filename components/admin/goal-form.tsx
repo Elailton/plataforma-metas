@@ -29,6 +29,7 @@ interface DraftItem {
   key: string
   subjectId: string
   topicId: string
+  subtopicId: string
   instructions: string
   suggestedQuestions: string
   materialIds: string[]
@@ -39,6 +40,7 @@ function emptyItem(key: string, subjects: AdminSubject[]): DraftItem {
     key,
     subjectId: subjects[0]?.id ?? "",
     topicId: "",
+    subtopicId: "",
     instructions: "",
     suggestedQuestions: "10",
     materialIds: [],
@@ -51,6 +53,7 @@ function goalToDrafts(goal: AdminGoal): DraftItem[] {
     id: item.id,
     subjectId: item.subjectId,
     topicId: item.topicId ?? "",
+    subtopicId: item.subtopicId ?? "",
     instructions: item.instructions ?? "",
     suggestedQuestions: item.suggestedQuestions != null ? String(item.suggestedQuestions) : "",
     materialIds: item.materialIds,
@@ -138,6 +141,7 @@ export function GoalForm({ courseId, subjects, topicsBySubject, materials, goal 
         id: item.id,
         subjectId: item.subjectId,
         topicId: item.topicId || null,
+        subtopicId: item.subtopicId || null,
         instructions: item.instructions,
         suggestedQuestions: item.suggestedQuestions.trim() ? Number(item.suggestedQuestions) : null,
         materialIds: item.materialIds,
@@ -246,6 +250,10 @@ export function GoalForm({ courseId, subjects, topicsBySubject, materials, goal 
         <div className="flex flex-col gap-4">
           {items.map((item, index) => {
             const topics = topicsBySubject[item.subjectId] ?? []
+            const rootTopics = topics.filter((topic) => !topic.parentTopicId)
+            const subtopics = item.topicId
+              ? topics.filter((topic) => topic.parentTopicId === item.topicId)
+              : []
             const materialSearch = materialSearchByItem[item.key]?.trim().toLowerCase() ?? ""
             const scopedMaterials = goalMaterials.filter((m) => !m.subjectId || m.subjectId === item.subjectId)
             const availableMaterials = materialSearch
@@ -286,7 +294,9 @@ export function GoalForm({ courseId, subjects, topicsBySubject, materials, goal 
                         <Select
                           items={subjectSelectItems}
                           value={item.subjectId}
-                          onValueChange={(value) => value && updateItem(item.key, { subjectId: value, topicId: "" })}
+                          onValueChange={(value) =>
+                            value && updateItem(item.key, { subjectId: value, topicId: "", subtopicId: "" })
+                          }
                         >
                           <SelectTrigger className="w-full">
                             <SelectValue placeholder="Selecione a disciplina" />
@@ -305,26 +315,57 @@ export function GoalForm({ courseId, subjects, topicsBySubject, materials, goal 
                       <Field>
                         <FieldLabel>Tópico do edital</FieldLabel>
                         <Select
-                          items={topics.map((t) => ({ label: t.title, value: t.id }))}
+                          items={rootTopics.map((t, topicIndex) => ({ label: `${topicIndex + 1}. ${t.title}`, value: t.id }))}
                           value={item.topicId}
-                          onValueChange={(value) => updateItem(item.key, { topicId: value ?? "" })}
-                          disabled={topics.length === 0}
+                          onValueChange={(value) => updateItem(item.key, { topicId: value ?? "", subtopicId: "" })}
+                          disabled={rootTopics.length === 0}
                         >
                           <SelectTrigger className="w-full">
                             <SelectValue
-                              placeholder={topics.length === 0 ? "Sem tópicos cadastrados" : "Selecione o tópico"}
+                              placeholder={rootTopics.length === 0 ? "Sem tópicos cadastrados" : "Selecione o tópico"}
                             />
                           </SelectTrigger>
                           <SelectContent>
                             <SelectGroup>
-                              {topics.map((topic) => (
+                              {rootTopics.map((topic, topicIndex) => (
                                 <SelectItem key={topic.id} value={topic.id}>
-                                  {topic.title}
+                                  {topicIndex + 1}. {topic.title}
                                 </SelectItem>
                               ))}
                             </SelectGroup>
                           </SelectContent>
                         </Select>
+                      </Field>
+                      <Field>
+                        <FieldLabel>Subtópico do edital (opcional)</FieldLabel>
+                        <Select
+                          items={subtopics.map((t, subtopicIndex) => ({
+                            label: `${rootTopics.findIndex((topic) => topic.id === item.topicId) + 1}.${subtopicIndex + 1} ${t.title}`,
+                            value: t.id,
+                          }))}
+                          value={item.subtopicId || "none"}
+                          onValueChange={(value) => updateItem(item.key, { subtopicId: value === "none" ? "" : value ?? "" })}
+                          disabled={subtopics.length === 0}
+                        >
+                          <SelectTrigger className="w-full">
+                            <SelectValue
+                              placeholder={subtopics.length === 0 ? "Sem subtópicos para este tópico" : "Selecione o subtópico"}
+                            />
+                          </SelectTrigger>
+                          <SelectContent>
+                            <SelectGroup>
+                              <SelectItem value="none">Sem subtópico</SelectItem>
+                              {subtopics.map((topic, subtopicIndex) => (
+                                <SelectItem key={topic.id} value={topic.id}>
+                                  {rootTopics.findIndex((rootTopic) => rootTopic.id === item.topicId) + 1}.{subtopicIndex + 1} {topic.title}
+                                </SelectItem>
+                              ))}
+                            </SelectGroup>
+                          </SelectContent>
+                        </Select>
+                        <FieldDescription>
+                          Você pode vincular a meta somente ao tópico principal, se preferir.
+                        </FieldDescription>
                       </Field>
                     </div>
 
