@@ -19,6 +19,7 @@ import {
 } from "@/components/ui/field"
 import { Select, SelectContent, SelectGroup, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Card, CardContent } from "@/components/ui/card"
+import { MaterialFormDialog } from "@/components/admin/material-form-dialog"
 import { MaterialTypeIcon, materialTypeLabel } from "@/components/admin/material-type-icon"
 import { createGoal, updateGoal, type GoalFormInput, type GoalItemInput } from "@/lib/admin/actions/goals"
 import type { AdminGoal, AdminMaterial, AdminSubject, AdminSyllabusTopic, GoalStatus } from "@/lib/admin/types"
@@ -76,6 +77,8 @@ export function GoalForm({ courseId, subjects, topicsBySubject, materials, goal 
   const [items, setItems] = useState<DraftItem[]>(
     goal ? goalToDrafts(goal) : [emptyItem("item-0", subjects)],
   )
+  const [goalMaterials, setGoalMaterials] = useState<AdminMaterial[]>(materials)
+  const [materialSearchByItem, setMaterialSearchByItem] = useState<Record<string, string>>({})
   const [pending, setPending] = useState(false)
 
   const subjectSelectItems = subjects.map((s) => ({ label: s.name, value: s.id }))
@@ -104,6 +107,27 @@ export function GoalForm({ courseId, subjects, topicsBySubject, materials, goal 
         }
       }),
     )
+  }
+
+  function updateMaterialSearch(key: string, value: string) {
+    setMaterialSearchByItem((prev) => ({ ...prev, [key]: value }))
+  }
+
+  function handleMaterialCreated(key: string, material: AdminMaterial) {
+    setGoalMaterials((prev) => (prev.some((item) => item.id === material.id) ? prev : [material, ...prev]))
+    setItems((prev) =>
+      prev.map((item) =>
+        item.key === key
+          ? {
+              ...item,
+              materialIds: item.materialIds.includes(material.id)
+                ? item.materialIds
+                : [...item.materialIds, material.id],
+            }
+          : item,
+      ),
+    )
+    updateMaterialSearch(key, "")
   }
 
   async function handleSubmit(event: React.FormEvent, submitStatus?: GoalStatus) {
@@ -222,7 +246,20 @@ export function GoalForm({ courseId, subjects, topicsBySubject, materials, goal 
         <div className="flex flex-col gap-4">
           {items.map((item, index) => {
             const topics = topicsBySubject[item.subjectId] ?? []
-            const availableMaterials = materials.filter((m) => !m.subjectId || m.subjectId === item.subjectId)
+            const materialSearch = materialSearchByItem[item.key]?.trim().toLowerCase() ?? ""
+            const scopedMaterials = goalMaterials.filter((m) => !m.subjectId || m.subjectId === item.subjectId)
+            const availableMaterials = materialSearch
+              ? scopedMaterials.filter((material) =>
+                  [
+                    material.title,
+                    materialTypeLabel(material.type),
+                    material.description ?? "",
+                  ]
+                    .join(" ")
+                    .toLowerCase()
+                    .includes(materialSearch),
+                )
+              : scopedMaterials
 
             return (
               <Card key={item.key}>
@@ -316,33 +353,62 @@ export function GoalForm({ courseId, subjects, topicsBySubject, materials, goal 
 
                     <Field>
                       <FieldLabel>Materiais vinculados</FieldLabel>
-                      {availableMaterials.length === 0 ? (
-                        <FieldDescription>
-                          Nenhum material disponível para esta disciplina. Adicione materiais na aba Materiais do curso.
-                        </FieldDescription>
-                      ) : (
-                        <div className="flex flex-col gap-1.5 rounded-lg border border-border p-2">
-                          {availableMaterials.map((material) => {
-                            const checked = item.materialIds.includes(material.id)
-                            return (
-                              <label
-                                key={material.id}
-                                className="flex items-center gap-2.5 rounded-md px-2 py-1.5 hover:bg-secondary/50"
-                              >
-                                <Checkbox
-                                  checked={checked}
-                                  onCheckedChange={() => toggleMaterial(item.key, material.id)}
-                                />
-                                <MaterialTypeIcon type={material.type} />
-                                <span className="min-w-0 flex-1 truncate text-sm text-foreground">{material.title}</span>
-                                <span className="shrink-0 text-xs text-muted-foreground">
-                                  {materialTypeLabel(material.type)}
-                                </span>
-                              </label>
-                            )
-                          })}
+                      <div className="flex flex-col gap-2">
+                        <div className="flex flex-col gap-2 sm:flex-row">
+                          <Input
+                            aria-label="Pesquisar materiais"
+                            placeholder="Pesquisar materiais"
+                            value={materialSearchByItem[item.key] ?? ""}
+                            onChange={(event) => updateMaterialSearch(item.key, event.target.value)}
+                            onKeyDown={(event) => {
+                              if (event.key === "Enter") event.preventDefault()
+                            }}
+                          />
+                          <MaterialFormDialog
+                            fixedCourseId={courseId}
+                            initialSubjectId={item.subjectId || null}
+                            subjects={subjects}
+                            onCreated={(material) => handleMaterialCreated(item.key, material)}
+                            trigger={
+                              <Button type="button" variant="outline" className="shrink-0">
+                                <Plus data-icon="inline-start" />
+                                Criar novo material
+                              </Button>
+                            }
+                          />
                         </div>
-                      )}
+                        {availableMaterials.length === 0 ? (
+                          <FieldDescription>
+                            {scopedMaterials.length === 0
+                              ? "Nenhum material disponível para esta disciplina. Crie um novo material sem sair da meta."
+                              : "Nenhum material encontrado com essa busca."}
+                          </FieldDescription>
+                        ) : (
+                          <div className="flex flex-col gap-1.5 rounded-lg border border-border p-2">
+                            {availableMaterials.map((material) => {
+                              const checked = item.materialIds.includes(material.id)
+                              return (
+                                <label
+                                  key={material.id}
+                                  className="flex items-center gap-2.5 rounded-md px-2 py-1.5 hover:bg-secondary/50"
+                                >
+                                  <Checkbox
+                                    checked={checked}
+                                    onCheckedChange={() => toggleMaterial(item.key, material.id)}
+                                  />
+                                  <MaterialTypeIcon type={material.type} />
+                                  <span className="min-w-0 flex-1 truncate text-sm text-foreground">
+                                    {material.title}
+                                  </span>
+                                  <span className="shrink-0 text-xs text-muted-foreground">
+                                    {materialTypeLabel(material.type)}
+                                  </span>
+                                </label>
+                              )
+                            })}
+                          </div>
+                        )}
+                      </div>
                     </Field>
                   </FieldGroup>
                 </CardContent>

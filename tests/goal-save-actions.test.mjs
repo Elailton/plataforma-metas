@@ -73,6 +73,7 @@ test("formulário real conserva o ID carregado e envia a versão ao salvar", asy
     "lucide-react": new Proxy({}, { get: (_, name) => name }),
     "sonner": { toast: { success() {}, error(message) { throw new Error(message) } } },
     "@/lib/admin/actions/goals": { updateGoal: async (...args) => submitted.push(args) },
+    "@/components/admin/material-form-dialog": { MaterialFormDialog: ({ trigger }) => trigger ?? null },
     "@/components/admin/material-type-icon": { MaterialTypeIcon: "span", materialTypeLabel: {} },
   }
   for (const name of ["button", "input", "textarea", "checkbox", "field", "select", "card"]) {

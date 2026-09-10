@@ -2,7 +2,7 @@
 
 import { revalidatePath } from "next/cache"
 import { requireAdmin } from "@/lib/admin/auth"
-import type { AdminMaterialType } from "@/lib/admin/types"
+import type { AdminMaterial, AdminMaterialType } from "@/lib/admin/types"
 import { throwSafeDatabaseError } from "@/lib/security/safe-error"
 
 export interface MaterialFormInput {
@@ -42,7 +42,7 @@ async function assertSubjectBelongsToCourse(
   }
 }
 
-export async function createMaterial(input: MaterialFormInput) {
+export async function createMaterial(input: MaterialFormInput): Promise<AdminMaterial> {
   const { supabase } = await requireAdmin()
 
   const title = input.title.trim()
@@ -52,19 +52,35 @@ export async function createMaterial(input: MaterialFormInput) {
 
   await assertSubjectBelongsToCourse(supabase, input.courseId, input.subjectId)
 
-  const { error } = await supabase.from("materials").insert({
-    title,
-    type: input.type,
-    url,
-    description: input.description.trim() || null,
-    course_id: input.courseId,
-    subject_id: input.subjectId,
-  })
+  const { data, error } = await supabase
+    .from("materials")
+    .insert({
+      title,
+      type: input.type,
+      url,
+      description: input.description.trim() || null,
+      course_id: input.courseId,
+      subject_id: input.subjectId,
+    })
+    .select("id, course_id, subject_id, title, type, url, description, created_at")
+    .single()
 
   if (error) throwSafeDatabaseError("admin.material.create_failed", error, "Não foi possível criar o material.")
+  if (!data) throw new Error("Não foi possível carregar o material criado.")
 
   revalidatePath("/admin/materiais")
   if (input.courseId) revalidatePath(`/admin/cursos/${input.courseId}`)
+
+  return {
+    id: data.id,
+    courseId: data.course_id,
+    subjectId: data.subject_id,
+    title: data.title,
+    type: data.type,
+    url: data.url,
+    description: data.description,
+    createdAt: data.created_at,
+  }
 }
 
 export async function updateMaterial(materialId: string, input: MaterialFormInput) {
