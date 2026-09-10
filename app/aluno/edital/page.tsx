@@ -47,16 +47,38 @@ export default async function EditalPage() {
               </AccordionTrigger>
               <AccordionContent>
                 <ul className="flex flex-col gap-2.5 pb-2 pt-1">
-                  {discipline.topics.map((topic) => (
-                    <li key={topic.id} className="flex items-start gap-2.5 text-sm">
-                      {topic.studied ? (
-                        <CheckCircle2 className="mt-0.5 size-4 shrink-0 text-success" />
-                      ) : (
-                        <Circle className="mt-0.5 size-4 shrink-0 text-muted-foreground/50" />
-                      )}
-                      <span className={topic.studied ? "text-foreground" : "text-muted-foreground"}>
-                        {topic.title}
-                      </span>
+                  {discipline.topics.map((topic, topicIndex) => (
+                    <li key={topic.id} className="flex flex-col gap-2">
+                      <div className="flex items-start gap-2.5 text-sm">
+                        {topic.studied ? (
+                          <CheckCircle2 className="mt-0.5 size-4 shrink-0 text-success" />
+                        ) : (
+                          <Circle className="mt-0.5 size-4 shrink-0 text-muted-foreground/50" />
+                        )}
+                        <span className={topic.studied ? "text-foreground" : "text-muted-foreground"}>
+                          <span className="mr-2 font-mono text-xs text-muted-foreground">{topicIndex + 1}</span>
+                          {topic.title}
+                        </span>
+                      </div>
+                      {topic.subtopics.length > 0 ? (
+                        <ul className="ml-6 flex flex-col gap-2">
+                          {topic.subtopics.map((subtopic, subtopicIndex) => (
+                            <li key={subtopic.id} className="flex items-start gap-2.5 text-sm">
+                              {subtopic.studied ? (
+                                <CheckCircle2 className="mt-0.5 size-4 shrink-0 text-success" />
+                              ) : (
+                                <Circle className="mt-0.5 size-4 shrink-0 text-muted-foreground/50" />
+                              )}
+                              <span className={subtopic.studied ? "text-foreground" : "text-muted-foreground"}>
+                                <span className="mr-2 font-mono text-xs text-muted-foreground">
+                                  {topicIndex + 1}.{subtopicIndex + 1}
+                                </span>
+                                {subtopic.title}
+                              </span>
+                            </li>
+                          ))}
+                        </ul>
+                      ) : null}
                     </li>
                   ))}
                 </ul>

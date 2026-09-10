@@ -22,6 +22,8 @@ export interface StudentGoalItem {
   subjectName: string
   topicId: string | null
   topicName: string | null
+  subtopicId: string | null
+  subtopicName: string | null
   instructions: string | null
   suggestedQuestions: number | null
   materials: StudentMaterial[]
@@ -44,9 +46,11 @@ export interface StudentGoal {
 
 export interface StudentTopic {
   id: string
+  parentTopicId: string | null
   title: string
   position: number
   studied: boolean
+  subtopics: StudentTopic[]
 }
 
 export interface StudentSubjectProgress {
@@ -67,4 +71,3 @@ export interface StudentCourseSnapshot {
   totalTopics: number
   editalPercentage: number
 }
-

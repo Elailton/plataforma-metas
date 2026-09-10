@@ -19,6 +19,7 @@ import {
 } from "@/components/ui/field"
 import { Select, SelectContent, SelectGroup, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Card, CardContent } from "@/components/ui/card"
+import { MaterialFormDialog } from "@/components/admin/material-form-dialog"
 import { MaterialTypeIcon, materialTypeLabel } from "@/components/admin/material-type-icon"
 import { createGoal, updateGoal, type GoalFormInput, type GoalItemInput } from "@/lib/admin/actions/goals"
 import type { AdminGoal, AdminMaterial, AdminSubject, AdminSyllabusTopic, GoalStatus } from "@/lib/admin/types"
@@ -28,6 +29,7 @@ interface DraftItem {
   key: string
   subjectId: string
   topicId: string
+  subtopicId: string
   instructions: string
   suggestedQuestions: string
   materialIds: string[]
@@ -38,6 +40,7 @@ function emptyItem(key: string, subjects: AdminSubject[]): DraftItem {
     key,
     subjectId: subjects[0]?.id ?? "",
     topicId: "",
+    subtopicId: "",
     instructions: "",
     suggestedQuestions: "10",
     materialIds: [],
@@ -50,6 +53,7 @@ function goalToDrafts(goal: AdminGoal): DraftItem[] {
     id: item.id,
     subjectId: item.subjectId,
     topicId: item.topicId ?? "",
+    subtopicId: item.subtopicId ?? "",
     instructions: item.instructions ?? "",
     suggestedQuestions: item.suggestedQuestions != null ? String(item.suggestedQuestions) : "",
     materialIds: item.materialIds,
@@ -76,6 +80,8 @@ export function GoalForm({ courseId, subjects, topicsBySubject, materials, goal 
   const [items, setItems] = useState<DraftItem[]>(
     goal ? goalToDrafts(goal) : [emptyItem("item-0", subjects)],
   )
+  const [goalMaterials, setGoalMaterials] = useState<AdminMaterial[]>(materials)
+  const [materialSearchByItem, setMaterialSearchByItem] = useState<Record<string, string>>({})
   const [pending, setPending] = useState(false)
 
   const subjectSelectItems = subjects.map((s) => ({ label: s.name, value: s.id }))
@@ -106,6 +112,27 @@ export function GoalForm({ courseId, subjects, topicsBySubject, materials, goal 
     )
   }
 
+  function updateMaterialSearch(key: string, value: string) {
+    setMaterialSearchByItem((prev) => ({ ...prev, [key]: value }))
+  }
+
+  function handleMaterialCreated(key: string, material: AdminMaterial) {
+    setGoalMaterials((prev) => (prev.some((item) => item.id === material.id) ? prev : [material, ...prev]))
+    setItems((prev) =>
+      prev.map((item) =>
+        item.key === key
+          ? {
+              ...item,
+              materialIds: item.materialIds.includes(material.id)
+                ? item.materialIds
+                : [...item.materialIds, material.id],
+            }
+          : item,
+      ),
+    )
+    updateMaterialSearch(key, "")
+  }
+
   async function handleSubmit(event: React.FormEvent, submitStatus?: GoalStatus) {
     event.preventDefault()
     setPending(true)
@@ -114,6 +141,7 @@ export function GoalForm({ courseId, subjects, topicsBySubject, materials, goal 
         id: item.id,
         subjectId: item.subjectId,
         topicId: item.topicId || null,
+        subtopicId: item.subtopicId || null,
         instructions: item.instructions,
         suggestedQuestions: item.suggestedQuestions.trim() ? Number(item.suggestedQuestions) : null,
         materialIds: item.materialIds,
@@ -222,7 +250,24 @@ export function GoalForm({ courseId, subjects, topicsBySubject, materials, goal 
         <div className="flex flex-col gap-4">
           {items.map((item, index) => {
             const topics = topicsBySubject[item.subjectId] ?? []
-            const availableMaterials = materials.filter((m) => !m.subjectId || m.subjectId === item.subjectId)
+            const rootTopics = topics.filter((topic) => !topic.parentTopicId)
+            const subtopics = item.topicId
+              ? topics.filter((topic) => topic.parentTopicId === item.topicId)
+              : []
+            const materialSearch = materialSearchByItem[item.key]?.trim().toLowerCase() ?? ""
+            const scopedMaterials = goalMaterials.filter((m) => !m.subjectId || m.subjectId === item.subjectId)
+            const availableMaterials = materialSearch
+              ? scopedMaterials.filter((material) =>
+                  [
+                    material.title,
+                    materialTypeLabel(material.type),
+                    material.description ?? "",
+                  ]
+                    .join(" ")
+                    .toLowerCase()
+                    .includes(materialSearch),
+                )
+              : scopedMaterials
 
             return (
               <Card key={item.key}>
@@ -249,7 +294,9 @@ export function GoalForm({ courseId, subjects, topicsBySubject, materials, goal 
                         <Select
                           items={subjectSelectItems}
                           value={item.subjectId}
-                          onValueChange={(value) => value && updateItem(item.key, { subjectId: value, topicId: "" })}
+                          onValueChange={(value) =>
+                            value && updateItem(item.key, { subjectId: value, topicId: "", subtopicId: "" })
+                          }
                         >
                           <SelectTrigger className="w-full">
                             <SelectValue placeholder="Selecione a disciplina" />
@@ -268,26 +315,57 @@ export function GoalForm({ courseId, subjects, topicsBySubject, materials, goal 
                       <Field>
                         <FieldLabel>Tópico do edital</FieldLabel>
                         <Select
-                          items={topics.map((t) => ({ label: t.title, value: t.id }))}
+                          items={rootTopics.map((t, topicIndex) => ({ label: `${topicIndex + 1}. ${t.title}`, value: t.id }))}
                           value={item.topicId}
-                          onValueChange={(value) => updateItem(item.key, { topicId: value ?? "" })}
-                          disabled={topics.length === 0}
+                          onValueChange={(value) => updateItem(item.key, { topicId: value ?? "", subtopicId: "" })}
+                          disabled={rootTopics.length === 0}
                         >
                           <SelectTrigger className="w-full">
                             <SelectValue
-                              placeholder={topics.length === 0 ? "Sem tópicos cadastrados" : "Selecione o tópico"}
+                              placeholder={rootTopics.length === 0 ? "Sem tópicos cadastrados" : "Selecione o tópico"}
                             />
                           </SelectTrigger>
                           <SelectContent>
                             <SelectGroup>
-                              {topics.map((topic) => (
+                              {rootTopics.map((topic, topicIndex) => (
                                 <SelectItem key={topic.id} value={topic.id}>
-                                  {topic.title}
+                                  {topicIndex + 1}. {topic.title}
                                 </SelectItem>
                               ))}
                             </SelectGroup>
                           </SelectContent>
                         </Select>
+                      </Field>
+                      <Field>
+                        <FieldLabel>Subtópico do edital (opcional)</FieldLabel>
+                        <Select
+                          items={subtopics.map((t, subtopicIndex) => ({
+                            label: `${rootTopics.findIndex((topic) => topic.id === item.topicId) + 1}.${subtopicIndex + 1} ${t.title}`,
+                            value: t.id,
+                          }))}
+                          value={item.subtopicId || "none"}
+                          onValueChange={(value) => updateItem(item.key, { subtopicId: value === "none" ? "" : value ?? "" })}
+                          disabled={subtopics.length === 0}
+                        >
+                          <SelectTrigger className="w-full">
+                            <SelectValue
+                              placeholder={subtopics.length === 0 ? "Sem subtópicos para este tópico" : "Selecione o subtópico"}
+                            />
+                          </SelectTrigger>
+                          <SelectContent>
+                            <SelectGroup>
+                              <SelectItem value="none">Sem subtópico</SelectItem>
+                              {subtopics.map((topic, subtopicIndex) => (
+                                <SelectItem key={topic.id} value={topic.id}>
+                                  {rootTopics.findIndex((rootTopic) => rootTopic.id === item.topicId) + 1}.{subtopicIndex + 1} {topic.title}
+                                </SelectItem>
+                              ))}
+                            </SelectGroup>
+                          </SelectContent>
+                        </Select>
+                        <FieldDescription>
+                          Você pode vincular a meta somente ao tópico principal, se preferir.
+                        </FieldDescription>
                       </Field>
                     </div>
 
@@ -316,33 +394,62 @@ export function GoalForm({ courseId, subjects, topicsBySubject, materials, goal 
 
                     <Field>
                       <FieldLabel>Materiais vinculados</FieldLabel>
-                      {availableMaterials.length === 0 ? (
-                        <FieldDescription>
-                          Nenhum material disponível para esta disciplina. Adicione materiais na aba Materiais do curso.
-                        </FieldDescription>
-                      ) : (
-                        <div className="flex flex-col gap-1.5 rounded-lg border border-border p-2">
-                          {availableMaterials.map((material) => {
-                            const checked = item.materialIds.includes(material.id)
-                            return (
-                              <label
-                                key={material.id}
-                                className="flex items-center gap-2.5 rounded-md px-2 py-1.5 hover:bg-secondary/50"
-                              >
-                                <Checkbox
-                                  checked={checked}
-                                  onCheckedChange={() => toggleMaterial(item.key, material.id)}
-                                />
-                                <MaterialTypeIcon type={material.type} />
-                                <span className="min-w-0 flex-1 truncate text-sm text-foreground">{material.title}</span>
-                                <span className="shrink-0 text-xs text-muted-foreground">
-                                  {materialTypeLabel(material.type)}
-                                </span>
-                              </label>
-                            )
-                          })}
+                      <div className="flex flex-col gap-2">
+                        <div className="flex flex-col gap-2 sm:flex-row">
+                          <Input
+                            aria-label="Pesquisar materiais"
+                            placeholder="Pesquisar materiais"
+                            value={materialSearchByItem[item.key] ?? ""}
+                            onChange={(event) => updateMaterialSearch(item.key, event.target.value)}
+                            onKeyDown={(event) => {
+                              if (event.key === "Enter") event.preventDefault()
+                            }}
+                          />
+                          <MaterialFormDialog
+                            fixedCourseId={courseId}
+                            initialSubjectId={item.subjectId || null}
+                            subjects={subjects}
+                            onCreated={(material) => handleMaterialCreated(item.key, material)}
+                            trigger={
+                              <Button type="button" variant="outline" className="shrink-0">
+                                <Plus data-icon="inline-start" />
+                                Criar novo material
+                              </Button>
+                            }
+                          />
                         </div>
-                      )}
+                        {availableMaterials.length === 0 ? (
+                          <FieldDescription>
+                            {scopedMaterials.length === 0
+                              ? "Nenhum material disponível para esta disciplina. Crie um novo material sem sair da meta."
+                              : "Nenhum material encontrado com essa busca."}
+                          </FieldDescription>
+                        ) : (
+                          <div className="flex flex-col gap-1.5 rounded-lg border border-border p-2">
+                            {availableMaterials.map((material) => {
+                              const checked = item.materialIds.includes(material.id)
+                              return (
+                                <label
+                                  key={material.id}
+                                  className="flex items-center gap-2.5 rounded-md px-2 py-1.5 hover:bg-secondary/50"
+                                >
+                                  <Checkbox
+                                    checked={checked}
+                                    onCheckedChange={() => toggleMaterial(item.key, material.id)}
+                                  />
+                                  <MaterialTypeIcon type={material.type} />
+                                  <span className="min-w-0 flex-1 truncate text-sm text-foreground">
+                                    {material.title}
+                                  </span>
+                                  <span className="shrink-0 text-xs text-muted-foreground">
+                                    {materialTypeLabel(material.type)}
+                                  </span>
+                                </label>
+                              )
+                            })}
+                          </div>
+                        )}
+                      </div>
                     </Field>
                   </FieldGroup>
                 </CardContent>

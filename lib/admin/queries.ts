@@ -114,6 +114,7 @@ export async function listSubjectTopics(subjectId: string): Promise<AdminSyllabu
   return (topics ?? []).map((topic) => ({
     id: topic.id,
     subjectId: topic.subject_id,
+    parentTopicId: topic.parent_topic_id ?? null,
     title: topic.title,
     position: topic.position,
   }))
@@ -135,7 +136,13 @@ export async function listCourseEdital(
     subject,
     topics: (topics ?? [])
       .filter((t) => t.subject_id === subject.id)
-      .map((t) => ({ id: t.id, subjectId: t.subject_id, title: t.title, position: t.position })),
+      .map((t) => ({
+        id: t.id,
+        subjectId: t.subject_id,
+        parentTopicId: t.parent_topic_id ?? null,
+        title: t.title,
+        position: t.position,
+      })),
   }))
 }
 
@@ -196,6 +203,7 @@ async function hydrateGoal(goal: any): Promise<AdminGoal> {
     id: item.id,
     subjectId: item.subject_id,
     topicId: item.topic_id,
+    subtopicId: item.subtopic_id ?? null,
     instructions: item.instructions,
     suggestedQuestions: item.suggested_questions,
     position: item.position,

@@ -37,6 +37,10 @@ interface MaterialFormDialogProps {
   trigger?: React.ReactElement
   /** Curso fixo — quando usado dentro da página do curso, não permite trocar. */
   fixedCourseId?: string
+  /** Disciplina sugerida ao abrir o formulário para criar um novo material. */
+  initialSubjectId?: string | null
+  /** Atalho usado por fluxos que precisam usar o material logo após criá-lo. */
+  onCreated?: (material: AdminMaterial) => void
   courses?: CourseOption[]
   subjects?: AdminSubject[]
 }
@@ -45,6 +49,8 @@ export function MaterialFormDialog({
   material,
   trigger,
   fixedCourseId,
+  initialSubjectId,
+  onCreated,
   courses = [],
   subjects = [],
 }: MaterialFormDialogProps) {
@@ -57,10 +63,18 @@ export function MaterialFormDialog({
   const [url, setUrl] = useState(material?.url ?? "")
   const [description, setDescription] = useState(material?.description ?? "")
   const [courseId, setCourseId] = useState<string>(material?.courseId ?? fixedCourseId ?? "none")
-  const [subjectId, setSubjectId] = useState<string>(material?.subjectId ?? "none")
+  const [subjectId, setSubjectId] = useState<string>(material?.subjectId ?? initialSubjectId ?? "none")
 
   const courseSelectItems = [{ label: "Nenhum (biblioteca geral)", value: "none" }, ...courses.map((c) => ({ label: c.name, value: c.id }))]
   const subjectSelectItems = [{ label: "Nenhuma", value: "none" }, ...subjects.map((s) => ({ label: s.name, value: s.id }))]
+
+  function handleOpenChange(nextOpen: boolean) {
+    if (nextOpen && !isEditing) {
+      setCourseId(fixedCourseId ?? "none")
+      setSubjectId(initialSubjectId ?? "none")
+    }
+    setOpen(nextOpen)
+  }
 
   async function handleSubmit(event: React.FormEvent) {
     event.preventDefault()
@@ -78,17 +92,18 @@ export function MaterialFormDialog({
         await updateMaterial(material.id, input)
         toast.success("Material atualizado com sucesso")
       } else {
-        await createMaterial(input)
+        const createdMaterial = await createMaterial(input)
+        onCreated?.(createdMaterial)
         toast.success("Material adicionado com sucesso")
         setTitle("")
         setType("videoaula")
         setUrl("")
         setDescription("")
         setCourseId(fixedCourseId ?? "none")
-        setSubjectId("none")
+        setSubjectId(initialSubjectId ?? "none")
       }
       setOpen(false)
-      router.refresh()
+      if (!onCreated) router.refresh()
     } catch (error) {
       toast.error(error instanceof Error ? error.message : "Não foi possível salvar o material.")
     } finally {
@@ -97,7 +112,7 @@ export function MaterialFormDialog({
   }
 
   return (
-    <Dialog open={open} onOpenChange={setOpen}>
+    <Dialog open={open} onOpenChange={handleOpenChange}>
       <DialogTrigger
         render={
           trigger ?? (

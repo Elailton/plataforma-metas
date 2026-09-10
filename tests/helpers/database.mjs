@@ -32,6 +32,7 @@ export const migrations = [
   "20260904000100_admin_course_access_blocks.sql",
   "20260904000200_goal_progress_and_published_rls.sql",
   "20260904000300_hotmart_events_before_account.sql",
+  "20260910000100_syllabus_subtopics.sql",
 ]
 
 export async function applyMigration(db, name) {

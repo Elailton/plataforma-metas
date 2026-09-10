@@ -9,6 +9,7 @@ export interface GoalItemInput {
   id?: string
   subjectId: string
   topicId: string | null
+  subtopicId: string | null
   instructions: string
   suggestedQuestions: number | null
   materialIds: string[]
@@ -47,7 +48,7 @@ async function saveGoal(goalId: string | null, input: GoalFormInput) {
     },
     requested_items: input.items.map((item) => ({
       id: goalId ? item.id ?? null : null,
-      subject_id: item.subjectId, topic_id: item.topicId,
+      subject_id: item.subjectId, topic_id: item.topicId, subtopic_id: item.subtopicId,
       instructions: item.instructions.trim() || null,
       suggested_questions: item.suggestedQuestions,
       material_ids: [...new Set(item.materialIds)],
@@ -103,7 +104,7 @@ export async function duplicateGoal(goalId: string, courseId: string) {
     courseId, title: `${goal.title} (cópia)`, description: goal.description ?? "",
     dueDate: goal.due_date, status: "draft",
     items: (items ?? []).map((item: any) => ({
-      subjectId: item.subject_id, topicId: item.topic_id,
+      subjectId: item.subject_id, topicId: item.topic_id, subtopicId: item.subtopic_id,
       instructions: item.instructions ?? "", suggestedQuestions: item.suggested_questions,
       materialIds: (item.goal_item_materials ?? [])
         .sort((a: any, b: any) => a.position - b.position).map((m: any) => m.material_id),
