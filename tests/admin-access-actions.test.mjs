@@ -29,6 +29,9 @@ function actions({ status = "active", denied = false } = {}) {
       return { supabase, userId: "admin-id" }
     } },
     "@/lib/admin/access-feedback.mjs": feedback,
+    "@/lib/security/safe-error": {
+      throwSafeDatabaseError: (_context, _error, publicMessage) => { throw new Error(publicMessage) },
+    },
   }
   runInNewContext(js, { exports: module.exports, require: (name) => {
     if (!(name in dependencies)) throw new Error("Unexpected import: " + name)

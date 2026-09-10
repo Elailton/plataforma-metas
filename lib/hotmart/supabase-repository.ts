@@ -1,6 +1,7 @@
 import "server-only"
 
 import { createAdminClient } from "@/lib/supabase/admin"
+import { throwSafeDatabaseError } from "@/lib/security/safe-error"
 import type {
   EventProcessingStatus,
   HotmartRepository,
@@ -8,7 +9,13 @@ import type {
 } from "@/lib/hotmart/core.mjs"
 
 function throwDatabaseError(error: { message: string } | null) {
-  if (error) throw new Error(error.message)
+  if (error) {
+    throwSafeDatabaseError(
+      "hotmart.repository.database_failed",
+      error,
+      "Falha interna ao persistir o evento Hotmart.",
+    )
+  }
 }
 
 function inviteRedirectUrl() {
@@ -120,7 +127,11 @@ export function createHotmartRepository(): HotmartRepository {
         // e-mail. Reuse the account if it appeared between lookup and invite.
         const existingUserId = await findUserByEmail(email)
         if (existingUserId) return existingUserId
-        throw new Error(error.message)
+        throwSafeDatabaseError(
+          "hotmart.repository.invite_failed",
+          error,
+          "Não foi possível provisionar a conta do aluno.",
+        )
       }
 
       if (!data.user) throw new Error("A Hotmart não conseguiu provisionar o aluno.")
@@ -146,7 +157,11 @@ export function createHotmartRepository(): HotmartRepository {
       })
 
       if (insertError && insertError.code !== "23505") {
-        throw new Error(insertError.message)
+        throwSafeDatabaseError(
+          "hotmart.repository.profile_create_failed",
+          insertError,
+          "Não foi possível criar o perfil do aluno.",
+        )
       }
 
       const { data: profile, error: profileError } = await supabase

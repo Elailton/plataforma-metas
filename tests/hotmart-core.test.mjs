@@ -2,6 +2,9 @@ import assert from "node:assert/strict"
 import test from "node:test"
 import {
   HotmartConflictError,
+  HotmartPayloadError,
+  normalizeEmail,
+  parseHotmartEvent,
   processHotmartEvent,
 } from "../lib/hotmart/core.mjs"
 import { hottokMatches } from "../lib/hotmart/security.mjs"
@@ -160,6 +163,26 @@ function inMemoryRepository({ adminEmails = [] } = {}) {
   }
 }
 
+test("validação de e-mail rejeita endereços malformados antes do convite", () => {
+  for (const invalid of ["@example.com", "user@", "user@@example.com", "user@example", ".user@example.com", "user..name@example.com"]) {
+    assert.throws(() => normalizeEmail(invalid), HotmartPayloadError)
+  }
+
+  assert.equal(normalizeEmail(" Aluno+Curso@Example.COM "), "aluno+curso@example.com")
+})
+
+test("creation_date aceita apenas epoch Hotmart em milissegundos e com faixa plausível", () => {
+  assert.equal(parseHotmartEvent(payload({ id: "milliseconds" })).eventCreationDate, new Date(BASE_TIME).toISOString())
+  assert.equal(parseHotmartEvent(payload({ id: "milliseconds-string", creationDate: String(BASE_TIME) })).eventCreationDate, new Date(BASE_TIME).toISOString())
+
+  for (const invalidDate of ["2026-09-01T12:00:00Z", 1_700_000_000, "1700000000", Date.now() + 2 * 24 * 60 * 60 * 1000]) {
+    assert.throws(
+      () => parseHotmartEvent(payload({ id: `invalid-${invalidDate}`, creationDate: invalidDate })),
+      HotmartPayloadError,
+    )
+  }
+})
+
 async function approve(repository, options = {}) {
   return processHotmartEvent(
     payload({
@@ -229,6 +252,7 @@ test("retry de evento que falhou preserva o watermark e não duplica convite", a
   repository.finishEvent = async () => { throw new Error("Falha transitória de confirmação") }
   await assert.rejects(refund(repository, { id: "retry", transaction: "HP-retry", creationDate: BASE_TIME + 1000 }), /Falha transitória/)
   assert.equal(repository.state.events.get("retry").status, "failed")
+  assert.equal(repository.state.events.get("retry").message, "Falha interna ao processar o evento.")
   repository.finishEvent = finish
   assert.equal((await refund(repository, { id: "retry", transaction: "HP-retry", creationDate: BASE_TIME + 1000 })).outcome, "ignored")
   assert.equal(repository.state.entitlements.size, 1)

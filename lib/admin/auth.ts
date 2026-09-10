@@ -1,6 +1,7 @@
 import "server-only"
 
 import { createClient } from "@/lib/supabase/server"
+import { throwSafeDatabaseError } from "@/lib/security/safe-error"
 
 /**
  * Garante que o usuário autenticado é um administrador antes de qualquer
@@ -19,7 +20,19 @@ export async function requireAdmin() {
     throw new Error("Você precisa estar autenticado.")
   }
 
-  const { data: profile } = await supabase.from("profiles").select("role").eq("id", user.id).single()
+  const { data: profile, error } = await supabase
+    .from("profiles")
+    .select("role")
+    .eq("id", user.id)
+    .maybeSingle()
+
+  if (error) {
+    throwSafeDatabaseError(
+      "admin.authorization.profile_lookup_failed",
+      error,
+      "Não foi possível verificar suas permissões.",
+    )
+  }
 
   if (!profile || profile.role !== "admin") {
     throw new Error("Apenas administradores podem realizar esta ação.")

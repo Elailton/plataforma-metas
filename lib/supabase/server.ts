@@ -10,7 +10,14 @@ export async function createClient() {
 
   return createServerClient(process.env.NEXT_PUBLIC_SUPABASE_URL!, process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!, {
     // Cookies seguros em produção; em dev, não, para que o localhost continue funcionando.
-    cookieOptions: { secure: process.env.NODE_ENV === "production" },
+    // O browser Supabase precisa ler/atualizar o token para renovar a sessão;
+    // portanto httpOnly não deve ser forçado. SameSite=Lax é a proteção CSRF
+    // compatível com callbacks de autenticação vindos de outro site.
+    cookieOptions: {
+      secure: process.env.NODE_ENV === "production",
+      sameSite: "lax",
+      path: "/",
+    },
     cookies: {
       getAll() {
         return cookieStore.getAll()

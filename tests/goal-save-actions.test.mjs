@@ -30,6 +30,9 @@ function actions({ denied = false, error = null } = {}) {
         from: () => { throw new Error("Save must use a single atomic RPC, not table writes") },
       } }
     } },
+    "@/lib/security/safe-error": {
+      throwSafeDatabaseError: (_context, _error, publicMessage) => { throw new Error(publicMessage) },
+    },
   })
   return { ...exports, calls, refreshed }
 }
@@ -54,7 +57,7 @@ test("criar não reutiliza IDs/conclusões; falha não anuncia sucesso nem reval
   assert.equal(action.calls[0].args.requested_goal_id, null)
   assert.equal(action.calls[0].args.requested_items[0].id, null)
   const failed = actions({ error: { message: "Recarregue a meta" } })
-  await assert.rejects(failed.updateGoal("goal", input), /Recarregue/)
+  await assert.rejects(failed.updateGoal("goal", input), /Não foi possível salvar a meta/)
   assert.equal(failed.refreshed.length, 0)
   const denied = actions({ denied: true })
   await assert.rejects(denied.updateGoal("goal", input), /administradores/)

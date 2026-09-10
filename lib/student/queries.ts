@@ -12,6 +12,7 @@ import type {
   StudentSubjectProgress,
 } from "@/lib/student/types"
 import { calculatePercentage, collectStudiedTopicIds, getGoalProgressStatus } from "@/lib/student/core.mjs"
+import { logSafeServerError } from "@/lib/security/safe-error"
 
 export const STUDENT_COURSE_COOKIE = "student_course_id"
 
@@ -114,12 +115,12 @@ export async function getStudentCourseSnapshot(courseId: string): Promise<Studen
     Boolean(error && (error.code === "PGRST205" || error.code === "42P01" || /does not exist|Could not find the table/i.test(error.message ?? "")))
 
   if (completionsError && !isMissingProgressRelation(completionsError)) {
-    console.error("[v0] Falha ao carregar conclusões do aluno:", completionsError)
+    logSafeServerError("student.completions.read_failed", completionsError)
     throw new Error("Não foi possível carregar o progresso do aluno.")
   }
 
   if (itemMaterialsError && !isMissingProgressRelation(itemMaterialsError)) {
-    console.error("[v0] Falha ao carregar materiais vinculados:", itemMaterialsError)
+    logSafeServerError("student.goal_materials.read_failed", itemMaterialsError)
     throw new Error("Não foi possível carregar os materiais das metas.")
   }
 

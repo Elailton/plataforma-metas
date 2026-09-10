@@ -1,3 +1,6 @@
 minimumReleaseAgeExclude:
   - '@next/*'
   - next
+overrides:
+  baseline-browser-mapping: 2.11.0
+  browserslist: 4.28.7

@@ -3,6 +3,7 @@
 import { revalidatePath } from "next/cache"
 import { requireAdmin } from "@/lib/admin/auth"
 import type { CourseStatus } from "@/lib/admin/types"
+import { throwSafeDatabaseError } from "@/lib/security/safe-error"
 
 function slugify(value: string) {
   return value
@@ -58,7 +59,7 @@ export async function createCourse(input: CourseFormInput) {
     .select("id")
     .single()
 
-  if (error) throw new Error(error.message)
+  if (error) throwSafeDatabaseError("admin.course.create_failed", error, "Não foi possível criar o curso.")
 
   revalidatePath("/admin/cursos")
   return data.id as string
@@ -81,7 +82,7 @@ export async function updateCourse(courseId: string, input: CourseFormInput) {
     })
     .eq("id", courseId)
 
-  if (error) throw new Error(error.message)
+  if (error) throwSafeDatabaseError("admin.course.update_failed", error, "Não foi possível atualizar o curso.")
 
   revalidatePath("/admin/cursos")
   revalidatePath(`/admin/cursos/${courseId}`)
@@ -95,7 +96,7 @@ export async function setCourseStatus(courseId: string, status: CourseStatus) {
     .update({ status, updated_at: new Date().toISOString() })
     .eq("id", courseId)
 
-  if (error) throw new Error(error.message)
+  if (error) throwSafeDatabaseError("admin.course.status_failed", error, "Não foi possível alterar o status do curso.")
 
   revalidatePath("/admin/cursos")
   revalidatePath(`/admin/cursos/${courseId}`)
