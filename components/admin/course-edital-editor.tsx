@@ -44,6 +44,10 @@ interface CourseEditalEditorProps {
   groups: { subject: AdminSubject; topics: AdminSyllabusTopic[] }[]
 }
 
+function topicDisplayTitle(title: string) {
+  return title.replace(/^\d+(?:\.\d+)*[\s.)-]+/, "").trim() || title
+}
+
 export function CourseEditalEditor({ courseId, groups }: CourseEditalEditorProps) {
   const router = useRouter()
 
@@ -345,7 +349,7 @@ function TopicRow({
       <div className={`group flex items-center justify-between gap-2 rounded-lg px-3 py-2 hover:bg-secondary/50 ${isSubtopic ? "ml-6 border-l border-border/70" : ""}`}>
         <span className={`text-sm ${isSubtopic ? "text-muted-foreground" : "text-foreground"}`}>
           <span className="mr-2 font-mono text-xs text-muted-foreground">{number}</span>
-          {topic.title}
+          {topicDisplayTitle(topic.title)}
         </span>
         <div className="flex items-center gap-1 opacity-0 group-hover:opacity-100">
           {!isSubtopic ? (

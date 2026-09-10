@@ -4,6 +4,18 @@ import { revalidatePath } from "next/cache"
 import { requireAdmin } from "@/lib/admin/auth"
 import { throwSafeDatabaseError } from "@/lib/security/safe-error"
 
+function normalizeTopicTitle(line: string) {
+  return line.trim().replace(/^\d+(?:\.\d+)*[\s.)-]+/, "").trim()
+}
+
+function isMissingSubtopicColumn(error: { code?: string; message?: string } | null) {
+  return Boolean(
+    error
+      && ["42703", "PGRST204", "PGRST200"].includes(error.code ?? "")
+      && /parent_topic_id|subtopic_id|column|schema cache/i.test(error.message ?? ""),
+  )
+}
+
 export async function createSubject(courseId: string, name: string) {
   const { supabase } = await requireAdmin()
 
@@ -57,18 +69,22 @@ export async function addSyllabusTopicsBulk(
 
   const titles = rawTopics
     .split("\n")
-    .map((line) => line.trim())
+    .map(normalizeTopicTitle)
     .filter(Boolean)
 
   if (titles.length === 0) throw new Error("Informe ao menos um tópico.")
 
   if (parentTopicId) {
-    const { data: parent } = await supabase
+    const { data: parent, error: parentError } = await supabase
       .from("syllabus_topics")
       .select("id, subject_id, parent_topic_id")
       .eq("id", parentTopicId)
       .single()
 
+    if (isMissingSubtopicColumn(parentError)) {
+      throw new Error("A estrutura de subtópicos ainda não foi aplicada no banco. Aplique a migration antes de criar subtópicos.")
+    }
+    if (parentError) throwSafeDatabaseError("admin.topic.parent_read_failed", parentError, "Não foi possível validar o tópico principal.")
     if (!parent || parent.subject_id !== subjectId || parent.parent_topic_id) {
       throw new Error("O tópico principal selecionado não pertence à disciplina.")
     }
@@ -78,9 +94,34 @@ export async function addSyllabusTopicsBulk(
     .from("syllabus_topics")
     .select("id", { count: "exact", head: true })
     .eq("subject_id", subjectId)
-  const { count } = parentTopicId
+  const { count, error: countError } = parentTopicId
     ? await countQuery.eq("parent_topic_id", parentTopicId)
     : await countQuery.is("parent_topic_id", null)
+
+  if (isMissingSubtopicColumn(countError)) {
+    if (parentTopicId) {
+      throw new Error("A estrutura de subtópicos ainda não foi aplicada no banco. Aplique a migration antes de criar subtópicos.")
+    }
+
+    const { count: legacyCount, error: legacyCountError } = await supabase
+      .from("syllabus_topics")
+      .select("id", { count: "exact", head: true })
+      .eq("subject_id", subjectId)
+
+    if (legacyCountError) {
+      throwSafeDatabaseError("admin.topic.count_failed", legacyCountError, "Não foi possível preparar os tópicos.")
+    }
+
+    let legacyPosition = legacyCount ?? 0
+    const legacyRows = titles.map((title) => ({ subject_id: subjectId, title, position: legacyPosition++ }))
+    const { error: legacyInsertError } = await supabase.from("syllabus_topics").insert(legacyRows)
+    if (legacyInsertError) {
+      throwSafeDatabaseError("admin.topic.bulk_create_failed", legacyInsertError, "Não foi possível adicionar os tópicos.")
+    }
+    revalidatePath(`/admin/cursos/${courseId}`)
+    return
+  }
+  if (countError) throwSafeDatabaseError("admin.topic.count_failed", countError, "Não foi possível preparar os tópicos.")
 
   let position = count ?? 0
   const rows = titles.map((title) => ({ subject_id: subjectId, parent_topic_id: parentTopicId, title, position: position++ }))
