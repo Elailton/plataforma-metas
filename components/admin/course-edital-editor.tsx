@@ -427,7 +427,11 @@ function AddTopicsDialog({
     event.preventDefault()
     setPending(true)
     try {
-      await addSyllabusTopicsBulk(subjectId, courseId, rawTopics, parentTopicId)
+      const result = await addSyllabusTopicsBulk(subjectId, courseId, rawTopics, parentTopicId)
+      if (!result.ok) {
+        toast.error(result.message)
+        return
+      }
       toast.success(isSubtopic ? "Subtópicos adicionados" : "Tópicos adicionados")
       setRawTopics("")
       setOpen(false)

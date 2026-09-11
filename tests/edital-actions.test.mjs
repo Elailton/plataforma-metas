@@ -66,28 +66,89 @@ function createSupabaseWithoutSubtopics() {
   }
 }
 
-test("adicionar tópicos principais aceita lista numerada mesmo antes da migration de subtópicos", async () => {
-  const refreshed = []
-  const supabase = createSupabaseWithoutSubtopics()
-  const { addSyllabusTopicsBulk } = load("lib/admin/actions/edital.ts", {
+function createSupabaseWithMissingSubtopicColumn() {
+  const inserted = []
+
+  return {
+    inserted,
+    from(table) {
+      assert.equal(table, "syllabus_topics")
+      return {
+        select(_columns) {
+          return {
+            eq(column, _value) {
+              assert.equal(column, "id")
+              return {
+                single() {
+                  return Promise.resolve({
+                    data: null,
+                    error: {
+                      code: "PGRST204",
+                      message: "Could not find the 'parent_topic_id' column of 'syllabus_topics' in the schema cache",
+                    },
+                  })
+                },
+              }
+            },
+          }
+        },
+        insert(rows) {
+          inserted.push(...rows)
+          return Promise.resolve({ error: null })
+        },
+      }
+    },
+  }
+}
+
+function loadEditalAction(supabase, refreshed = []) {
+  return load("lib/admin/actions/edital.ts", {
     "next/cache": { revalidatePath: (...args) => refreshed.push(args) },
     "@/lib/admin/auth": { requireAdmin: async () => ({ supabase }) },
     "@/lib/security/safe-error": {
+      logSafeServerError: () => {},
       throwSafeDatabaseError: (_context, _error, publicMessage) => {
         throw new Error(publicMessage)
       },
     },
   })
+}
 
-  await addSyllabusTopicsBulk(
+test("adicionar tópicos principais aceita lista numerada mesmo antes da migration de subtópicos", async () => {
+  const refreshed = []
+  const supabase = createSupabaseWithoutSubtopics()
+  const { addSyllabusTopicsBulk } = loadEditalAction(supabase, refreshed)
+
+  const result = await addSyllabusTopicsBulk(
     "subject-id",
     "course-id",
     "1 Compreensão e interpretação de textos\n2 Reconhecimento de tipos e gêneros textuais",
   )
 
+  assert.deepEqual(JSON.parse(JSON.stringify(result)), { ok: true })
   assert.deepEqual(JSON.parse(JSON.stringify(supabase.inserted)), [
     { subject_id: "subject-id", title: "Compreensão e interpretação de textos", position: 2 },
     { subject_id: "subject-id", title: "Reconhecimento de tipos e gêneros textuais", position: 3 },
   ])
   assert.deepEqual(refreshed, [["/admin/cursos/course-id"]])
+})
+
+test("adicionar subtópicos retorna erro controlado quando migration ainda não existe", async () => {
+  const refreshed = []
+  const supabase = createSupabaseWithMissingSubtopicColumn()
+  const { addSyllabusTopicsBulk } = loadEditalAction(supabase, refreshed)
+
+  const result = await addSyllabusTopicsBulk(
+    "subject-id",
+    "course-id",
+    "1.1 Interpretação textual",
+    "topic-id",
+  )
+
+  assert.deepEqual(JSON.parse(JSON.stringify(result)), {
+    ok: false,
+    message: "A estrutura de subtópicos ainda não foi aplicada no banco. Aplique a migration antes de criar subtópicos.",
+  })
+  assert.deepEqual(supabase.inserted, [])
+  assert.deepEqual(refreshed, [])
 })

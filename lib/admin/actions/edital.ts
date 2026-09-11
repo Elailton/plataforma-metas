@@ -2,7 +2,9 @@
 
 import { revalidatePath } from "next/cache"
 import { requireAdmin } from "@/lib/admin/auth"
-import { throwSafeDatabaseError } from "@/lib/security/safe-error"
+import { logSafeServerError, throwSafeDatabaseError } from "@/lib/security/safe-error"
+
+export type EditalActionResult = { ok: true } | { ok: false; message: string }
 
 function normalizeTopicTitle(line: string) {
   return line.trim().replace(/^\d+(?:\.\d+)*[\s.)-]+/, "").trim()
@@ -14,6 +16,10 @@ function isMissingSubtopicColumn(error: { code?: string; message?: string } | nu
       && ["42703", "PGRST204", "PGRST200"].includes(error.code ?? "")
       && /parent_topic_id|subtopic_id|column|schema cache/i.test(error.message ?? ""),
   )
+}
+
+function actionError(message: string): EditalActionResult {
+  return { ok: false, message }
 }
 
 export async function createSubject(courseId: string, name: string) {
@@ -64,7 +70,7 @@ export async function addSyllabusTopicsBulk(
   courseId: string,
   rawTopics: string,
   parentTopicId: string | null = null,
-) {
+): Promise<EditalActionResult> {
   const { supabase } = await requireAdmin()
 
   const titles = rawTopics
@@ -72,7 +78,7 @@ export async function addSyllabusTopicsBulk(
     .map(normalizeTopicTitle)
     .filter(Boolean)
 
-  if (titles.length === 0) throw new Error("Informe ao menos um tópico.")
+  if (titles.length === 0) return actionError("Informe ao menos um tópico.")
 
   if (!parentTopicId) {
     const { count, error: countError } = await supabase
@@ -80,14 +86,20 @@ export async function addSyllabusTopicsBulk(
       .select("id", { count: "exact", head: true })
       .eq("subject_id", subjectId)
 
-    if (countError) throwSafeDatabaseError("admin.topic.count_failed", countError, "Não foi possível preparar os tópicos.")
+    if (countError) {
+      logSafeServerError("admin.topic.count_failed", countError)
+      return actionError("Não foi possível preparar os tópicos.")
+    }
 
     let position = count ?? 0
     const rows = titles.map((title) => ({ subject_id: subjectId, title, position: position++ }))
     const { error } = await supabase.from("syllabus_topics").insert(rows)
-    if (error) throwSafeDatabaseError("admin.topic.bulk_create_failed", error, "Não foi possível adicionar os tópicos.")
+    if (error) {
+      logSafeServerError("admin.topic.bulk_create_failed", error)
+      return actionError("Não foi possível adicionar os tópicos.")
+    }
     revalidatePath(`/admin/cursos/${courseId}`)
-    return
+    return { ok: true }
   }
 
   if (parentTopicId) {
@@ -98,11 +110,14 @@ export async function addSyllabusTopicsBulk(
       .single()
 
     if (isMissingSubtopicColumn(parentError)) {
-      throw new Error("A estrutura de subtópicos ainda não foi aplicada no banco. Aplique a migration antes de criar subtópicos.")
+      return actionError("A estrutura de subtópicos ainda não foi aplicada no banco. Aplique a migration antes de criar subtópicos.")
     }
-    if (parentError) throwSafeDatabaseError("admin.topic.parent_read_failed", parentError, "Não foi possível validar o tópico principal.")
+    if (parentError) {
+      logSafeServerError("admin.topic.parent_read_failed", parentError)
+      return actionError("Não foi possível validar o tópico principal.")
+    }
     if (!parent || parent.subject_id !== subjectId || parent.parent_topic_id) {
-      throw new Error("O tópico principal selecionado não pertence à disciplina.")
+      return actionError("O tópico principal selecionado não pertence à disciplina.")
     }
   }
 
@@ -113,16 +128,23 @@ export async function addSyllabusTopicsBulk(
     .eq("parent_topic_id", parentTopicId)
 
   if (isMissingSubtopicColumn(countError)) {
-    throw new Error("A estrutura de subtópicos ainda não foi aplicada no banco. Aplique a migration antes de criar subtópicos.")
+    return actionError("A estrutura de subtópicos ainda não foi aplicada no banco. Aplique a migration antes de criar subtópicos.")
   }
-  if (countError) throwSafeDatabaseError("admin.topic.count_failed", countError, "Não foi possível preparar os tópicos.")
+  if (countError) {
+    logSafeServerError("admin.topic.count_failed", countError)
+    return actionError("Não foi possível preparar os tópicos.")
+  }
 
   let position = count ?? 0
   const rows = titles.map((title) => ({ subject_id: subjectId, parent_topic_id: parentTopicId, title, position: position++ }))
 
   const { error } = await supabase.from("syllabus_topics").insert(rows)
-  if (error) throwSafeDatabaseError("admin.topic.bulk_create_failed", error, "Não foi possível adicionar os tópicos.")
+  if (error) {
+    logSafeServerError("admin.topic.bulk_create_failed", error)
+    return actionError("Não foi possível adicionar os tópicos.")
+  }
   revalidatePath(`/admin/cursos/${courseId}`)
+  return { ok: true }
 }
 
 export async function renameSyllabusTopic(topicId: string, courseId: string, title: string) {
