@@ -1,5 +1,5 @@
 
-import { BrandSkull } from "@/components/brand-skull"
+import { BrandLogo } from "@/components/brand-logo"
 import Link from "next/link"
 import { Avatar, AvatarFallback } from "@/components/ui/avatar"
 import { CourseSwitcher } from "@/components/student/course-switcher"
@@ -17,9 +17,7 @@ export function MobileTopbar({
   return (
     <header className="flex items-center justify-between border-b border-border bg-card/95 px-4 py-3 backdrop-blur md:hidden">
       <div className="flex items-center gap-2">
-        <div className="flex size-7 items-center justify-center rounded-sm border border-primary/80 bg-primary/10 text-primary">
-          <BrandSkull className="size-4.5" />
-        </div>
+        <BrandLogo size={28} className="size-7" />
         <CourseSwitcher courses={courses} currentCourseId={currentCourse.id} compact />
       </div>
       <Link href="/aluno/conta" aria-label="Minha conta">
