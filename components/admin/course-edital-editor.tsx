@@ -83,6 +83,7 @@ export function CourseEditalEditor({ courseId, groups }: CourseEditalEditorProps
                         number={`${index + 1}`}
                         subtopics={topics.filter((subtopic) => subtopic.parentTopicId === topic.id)}
                         onDone={() => router.refresh()}
+                        allTopics={topics}
                       />
                     ))}
                     <AddTopicsDialog subjectId={subject.id} courseId={courseId} onDone={() => router.refresh()} />
@@ -281,6 +282,7 @@ function TopicRow({
   subtopics = [],
   onDone,
   isSubtopic = false,
+  allTopics = [],
 }: {
   courseId: string
   subjectId: string
@@ -289,6 +291,7 @@ function TopicRow({
   subtopics?: AdminSyllabusTopic[]
   onDone: () => void
   isSubtopic?: boolean
+  allTopics?: AdminSyllabusTopic[]
 }) {
   const [editing, setEditing] = useState(false)
   const [title, setTitle] = useState(topic.title)
@@ -384,17 +387,22 @@ function TopicRow({
       </div>
       {subtopics.length > 0 ? (
         <div className="flex flex-col gap-1">
-          {subtopics.map((subtopic, index) => (
-            <TopicRow
-              key={subtopic.id}
-              courseId={courseId}
-              subjectId={subjectId}
-              topic={subtopic}
-              number={`${number}.${index + 1}`}
-              onDone={onDone}
-              isSubtopic
-            />
-          ))}
+          {subtopics.map((subtopic, index) => {
+            const subtopicSubtopics = allTopics.filter((t) => t.parentTopicId === subtopic.id)
+            return (
+              <TopicRow
+                key={subtopic.id}
+                courseId={courseId}
+                subjectId={subjectId}
+                topic={subtopic}
+                number={`${number}.${index + 1}`}
+                subtopics={subtopicSubtopics}
+                onDone={onDone}
+                isSubtopic
+                allTopics={allTopics}
+              />
+            )
+          })}
         </div>
       ) : null}
       {!isSubtopic && subtopics.length === 0 ? (
