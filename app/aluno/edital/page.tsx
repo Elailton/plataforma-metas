@@ -5,6 +5,10 @@ import { Progress } from "@/components/ui/progress"
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion"
 import { getStudentContext, getStudentCourseSnapshot } from "@/lib/student/queries"
 
+function topicDisplayTitle(title: string) {
+  return title.replace(/^\d+(?:\.\d+)*[\s.)-]+/, "").trim() || title
+}
+
 export default async function EditalPage() {
   const context = await getStudentContext()
   if (!context) redirect("/auth/sem-acesso")
@@ -57,7 +61,7 @@ export default async function EditalPage() {
                         )}
                         <span className={topic.studied ? "text-foreground" : "text-muted-foreground"}>
                           <span className="mr-2 font-mono text-xs text-muted-foreground">{topicIndex + 1}</span>
-                          {topic.title}
+                          {topicDisplayTitle(topic.title)}
                         </span>
                       </div>
                       {topic.subtopics.length > 0 ? (
@@ -73,7 +77,7 @@ export default async function EditalPage() {
                                 <span className="mr-2 font-mono text-xs text-muted-foreground">
                                   {topicIndex + 1}.{subtopicIndex + 1}
                                 </span>
-                                {subtopic.title}
+                                {topicDisplayTitle(subtopic.title)}
                               </span>
                             </li>
                           ))}
