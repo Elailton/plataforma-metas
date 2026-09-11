@@ -1,8 +1,8 @@
 import Image from "next/image"
-import type { ImgHTMLAttributes } from "react"
 
-interface BrandSkullProps extends ImgHTMLAttributes<HTMLImageElement> {
+interface BrandSkullProps {
   className?: string
+  [key: string]: any
 }
 
 export function BrandSkull({ className = "", ...props }: BrandSkullProps) {
@@ -14,7 +14,7 @@ export function BrandSkull({ className = "", ...props }: BrandSkullProps) {
       height={32}
       className={className}
       priority
-      {...props}
+      unoptimized
     />
   )
 }
