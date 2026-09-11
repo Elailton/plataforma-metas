@@ -60,6 +60,10 @@ function goalToDrafts(goal: AdminGoal): DraftItem[] {
   }))
 }
 
+function topicDisplayTitle(title: string) {
+  return title.replace(/^\d+(?:\.\d+)*[\s.)-]+/, "").trim() || title
+}
+
 interface GoalFormProps {
   courseId: string
   subjects: AdminSubject[]
@@ -315,7 +319,7 @@ export function GoalForm({ courseId, subjects, topicsBySubject, materials, goal 
                       <Field>
                         <FieldLabel>Tópico do edital</FieldLabel>
                         <Select
-                          items={rootTopics.map((t, topicIndex) => ({ label: `${topicIndex + 1}. ${t.title}`, value: t.id }))}
+                          items={rootTopics.map((t, topicIndex) => ({ label: `${topicIndex + 1}. ${topicDisplayTitle(t.title)}`, value: t.id }))}
                           value={item.topicId}
                           onValueChange={(value) => updateItem(item.key, { topicId: value ?? "", subtopicId: "" })}
                           disabled={rootTopics.length === 0}
@@ -329,7 +333,7 @@ export function GoalForm({ courseId, subjects, topicsBySubject, materials, goal 
                             <SelectGroup>
                               {rootTopics.map((topic, topicIndex) => (
                                 <SelectItem key={topic.id} value={topic.id}>
-                                  {topicIndex + 1}. {topic.title}
+                                  {topicIndex + 1}. {topicDisplayTitle(topic.title)}
                                 </SelectItem>
                               ))}
                             </SelectGroup>
@@ -340,7 +344,7 @@ export function GoalForm({ courseId, subjects, topicsBySubject, materials, goal 
                         <FieldLabel>Subtópico do edital (opcional)</FieldLabel>
                         <Select
                           items={subtopics.map((t, subtopicIndex) => ({
-                            label: `${rootTopics.findIndex((topic) => topic.id === item.topicId) + 1}.${subtopicIndex + 1} ${t.title}`,
+                            label: `${rootTopics.findIndex((topic) => topic.id === item.topicId) + 1}.${subtopicIndex + 1} ${topicDisplayTitle(t.title)}`,
                             value: t.id,
                           }))}
                           value={item.subtopicId || "none"}
@@ -357,7 +361,7 @@ export function GoalForm({ courseId, subjects, topicsBySubject, materials, goal 
                               <SelectItem value="none">Sem subtópico</SelectItem>
                               {subtopics.map((topic, subtopicIndex) => (
                                 <SelectItem key={topic.id} value={topic.id}>
-                                  {rootTopics.findIndex((rootTopic) => rootTopic.id === item.topicId) + 1}.{subtopicIndex + 1} {topic.title}
+                                  {rootTopics.findIndex((rootTopic) => rootTopic.id === item.topicId) + 1}.{subtopicIndex + 1} {topicDisplayTitle(topic.title)}
                                 </SelectItem>
                               ))}
                             </SelectGroup>
