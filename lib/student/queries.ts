@@ -61,7 +61,6 @@ export async function getStudentCourseSnapshot(courseId: string): Promise<Studen
         .select("id, course_id, title, description, due_date, created_at")
         .eq("course_id", courseId)
         .eq("status", "published")
-        .order("due_date", { ascending: true, nullsFirst: false })
         .order("created_at", { ascending: true }),
     ])
 
