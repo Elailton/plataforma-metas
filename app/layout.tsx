@@ -14,7 +14,7 @@ export const metadata: Metadata = {
     'Acompanhe suas metas de estudo, o progresso no edital e a evolução por disciplina em um só lugar.',
   generator: 'v0.app',
   icons: {
-    icon: [{ url: '/icon.svg', type: 'image/svg+xml' }],
+    icon: [{ url: '/logo-el-branca-transparente.png', type: 'image/png' }],
   },
 }
 
