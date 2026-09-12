@@ -15,7 +15,6 @@ export function GoalCard({ goal }: { goal: StudentGoal }) {
     >
       <div className="flex items-start justify-between gap-3">
         <div className="flex flex-col gap-1">
-          <span className="text-xs font-medium text-muted-foreground">Meta {goal.number}</span>
           <h3 className="text-sm font-semibold leading-snug text-foreground">{goal.title}</h3>
         </div>
         <ChevronRight className="mt-0.5 size-4 shrink-0 text-muted-foreground transition-transform group-hover:translate-x-0.5" />
