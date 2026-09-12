@@ -1,13 +1,9 @@
 import { redirect } from "next/navigation"
-import { CheckCircle2, Circle } from "lucide-react"
 import { PageContainer, PageHeading } from "@/components/student/page-container"
 import { Progress } from "@/components/ui/progress"
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion"
+import { EditalTopic } from "@/components/student/edital-topic"
 import { getStudentContext, getStudentCourseSnapshot } from "@/lib/student/queries"
-
-function topicDisplayTitle(title: string) {
-  return title.replace(/^\d+(?:\.\d+)*[\s.)-]+/, "").trim() || title
-}
 
 export default async function EditalPage() {
   const context = await getStudentContext()
@@ -16,7 +12,7 @@ export default async function EditalPage() {
   if (!snapshot) redirect("/auth/sem-acesso")
 
   return (
-    <PageContainer>
+    <PageContainer className="md:max-w-[1000px]">
       <PageHeading title="Edital" description="Acompanhe o que você já estudou em cada disciplina." />
 
       <div className="mb-6 flex flex-col gap-2 rounded-xl border border-border bg-card p-4">
@@ -50,42 +46,11 @@ export default async function EditalPage() {
                 </div>
               </AccordionTrigger>
               <AccordionContent>
-                <ul className="flex flex-col gap-2.5 pb-2 pt-1">
+                <div className="flex flex-col divide-y divide-border/50 pb-1">
                   {discipline.topics.map((topic, topicIndex) => (
-                    <li key={topic.id} className="flex flex-col gap-2">
-                      <div className="flex items-start gap-2.5 text-sm">
-                        {topic.studied ? (
-                          <CheckCircle2 className="mt-0.5 size-4 shrink-0 text-success" />
-                        ) : (
-                          <Circle className="mt-0.5 size-4 shrink-0 text-muted-foreground/50" />
-                        )}
-                        <span className={topic.studied ? "text-foreground" : "text-muted-foreground"}>
-                          <span className="mr-2 font-mono text-xs text-muted-foreground">{topicIndex + 1}</span>
-                          {topicDisplayTitle(topic.title)}
-                        </span>
-                      </div>
-                      {topic.subtopics.length > 0 ? (
-                        <ul className="ml-6 flex flex-col gap-2">
-                          {topic.subtopics.map((subtopic, subtopicIndex) => (
-                            <li key={subtopic.id} className="flex items-start gap-2.5 text-sm">
-                              {subtopic.studied ? (
-                                <CheckCircle2 className="mt-0.5 size-4 shrink-0 text-success" />
-                              ) : (
-                                <Circle className="mt-0.5 size-4 shrink-0 text-muted-foreground/50" />
-                              )}
-                              <span className={subtopic.studied ? "text-foreground" : "text-muted-foreground"}>
-                                <span className="mr-2 font-mono text-xs text-muted-foreground">
-                                  {topicIndex + 1}.{subtopicIndex + 1}
-                                </span>
-                                {topicDisplayTitle(subtopic.title)}
-                              </span>
-                            </li>
-                          ))}
-                        </ul>
-                      ) : null}
-                    </li>
+                    <EditalTopic key={topic.id} topic={topic} index={topicIndex} />
                   ))}
-                </ul>
+                </div>
               </AccordionContent>
             </AccordionItem>
           )

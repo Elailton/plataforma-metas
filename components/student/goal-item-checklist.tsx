@@ -1,16 +1,40 @@
 "use client"
 
 import { useState, useTransition } from "react"
-import { ExternalLink, FileText, PlayCircle, HelpCircle, CheckCircle2 } from "lucide-react"
+import {
+  CheckCircle2,
+  ChevronDown,
+  Circle,
+  ExternalLink,
+  FileText,
+  HelpCircle,
+  PlayCircle,
+} from "lucide-react"
 import { Checkbox } from "@/components/ui/checkbox"
-import { Button } from "@/components/ui/button"
 import { toast } from "sonner"
 import { setGoalItemCompleted } from "@/lib/student/actions"
-import type { StudentGoalItem } from "@/lib/student/types"
+import { cn } from "@/lib/utils"
+import type { StudentGoalItem, StudentMaterial } from "@/lib/student/types"
+
+const DESCRIPTION_TRUNCATE_THRESHOLD = 160
+const MATERIALS_PREVIEW_COUNT = 3
+
+const materialIcon: Record<StudentMaterial["type"], typeof FileText> = {
+  apostila: FileText,
+  videoaula: PlayCircle,
+  link: ExternalLink,
+}
+
+const materialGroupLabel: Record<"apostila" | "videoaula", string> = {
+  apostila: "Apostilas",
+  videoaula: "Videoaulas",
+}
 
 export function GoalItemChecklist({ item }: { item: StudentGoalItem }) {
   const [isComplete, setIsComplete] = useState(item.completed)
   const [pending, startTransition] = useTransition()
+  const [descExpanded, setDescExpanded] = useState(false)
+  const [materialsExpanded, setMaterialsExpanded] = useState(false)
 
   function toggle(completed: boolean) {
     const previous = isComplete
@@ -25,61 +49,153 @@ export function GoalItemChecklist({ item }: { item: StudentGoalItem }) {
     })
   }
 
+  const studyMaterials = item.materials.filter(
+    (material): material is StudentMaterial & { type: "apostila" | "videoaula" } =>
+      material.type === "apostila" || material.type === "videoaula",
+  )
+  const questionLinks = item.materials.filter((material) => material.type === "link")
+  const hasLongDescription = (item.instructions?.length ?? 0) > DESCRIPTION_TRUNCATE_THRESHOLD
+  const visibleMaterials = materialsExpanded ? studyMaterials : studyMaterials.slice(0, MATERIALS_PREVIEW_COUNT)
+  const groupedMaterials = groupMaterialsByType(visibleMaterials)
+  const hasQuestions = questionLinks.length > 0 || Boolean(item.suggestedQuestions)
+
   return (
-    <div className="flex flex-col gap-4 rounded-xl border border-border bg-card p-4">
+    <div className="flex flex-col gap-3 rounded-xl border border-border bg-card p-4">
       <div className="flex items-start justify-between gap-3">
-        <div className="flex flex-col gap-1">
-          <span className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">{item.subjectName}</span>
-          <h3 className="text-sm font-semibold leading-snug text-foreground">
-            {item.subtopicName ?? item.topicName ?? "Item de estudo"}
-          </h3>
-          {item.subtopicName && item.topicName ? (
-            <span className="text-xs text-muted-foreground">{item.topicName}</span>
-          ) : null}
-        </div>
+        <span className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">
+          {item.subjectName}
+        </span>
         {isComplete ? (
-          <span className="flex items-center gap-1 rounded-full bg-success/15 px-2 py-1 text-xs font-medium text-success">
+          <span className="flex shrink-0 items-center gap-1 text-xs font-medium text-success">
             <CheckCircle2 className="size-3.5" />
             Concluído
           </span>
         ) : (
-          <span className="shrink-0 text-xs font-medium text-muted-foreground">Pendente</span>
+          <span className="flex shrink-0 items-center gap-1 text-xs font-medium text-muted-foreground">
+            <Circle className="size-3.5" />
+            Pendente
+          </span>
         )}
       </div>
 
-      {item.instructions ? <p className="text-sm leading-relaxed text-muted-foreground">{item.instructions}</p> : null}
-
-      <div className="flex flex-wrap gap-2">
-        {item.materials.map((material) => (
-          <Button
-            key={material.id}
-            className={material.type === "apostila" ? "material-apostila" : material.type === "videoaula" ? "material-videoaula" : undefined}
-            render={<a href={material.url} target="_blank" rel="noreferrer" />}
-            nativeButton={false}
-            size="sm"
-            variant="outline"
-          >
-            {material.type === "apostila" ? <FileText data-icon="inline-start" /> : material.type === "videoaula" ? <PlayCircle data-icon="inline-start" /> : <ExternalLink data-icon="inline-start" />}
-            {material.title}
-          </Button>
-        ))}
-        {item.suggestedQuestions ? <Button size="sm" variant="outline" disabled>
-          <HelpCircle data-icon="inline-start" />
-          {item.suggestedQuestions} questões sugeridas
-        </Button> : null}
+      <div className="flex flex-col gap-1">
+        <h3 className="text-sm font-semibold leading-snug text-foreground">
+          {item.subtopicName ?? item.topicName ?? "Item de estudo"}
+        </h3>
+        {item.subtopicName && item.topicName ? (
+          <span className="text-xs text-muted-foreground">{item.topicName}</span>
+        ) : null}
       </div>
 
-      <div className="border-t border-border pt-3">
-        <label className="flex items-center gap-3 text-sm font-medium text-foreground">
-          <Checkbox
-            checked={isComplete}
-            disabled={pending}
-            onCheckedChange={(checked) => toggle(checked === true)}
-          />
-          <span className={isComplete ? "text-muted-foreground line-through" : ""}>Item concluído</span>
-        </label>
-      </div>
+      {item.instructions ? (
+        <div className="flex flex-col gap-1.5">
+          <p className={cn("text-sm leading-relaxed text-muted-foreground", !descExpanded && "line-clamp-3")}>
+            {item.instructions}
+          </p>
+          {hasLongDescription ? (
+            <button
+              type="button"
+              onClick={() => setDescExpanded((value) => !value)}
+              className="self-start text-xs font-medium text-foreground underline-offset-2 transition-colors hover:underline"
+            >
+              {descExpanded ? "Recolher" : "Ver orientação completa"}
+            </button>
+          ) : null}
+        </div>
+      ) : null}
+
+      {studyMaterials.length > 0 ? (
+        <div className="flex flex-col gap-1.5">
+          <span className="text-xs font-medium text-muted-foreground">Materiais</span>
+          <div className="flex flex-col overflow-hidden rounded-lg bg-muted/40">
+            {groupedMaterials.map((group) => (
+              <div key={group.type} className="flex flex-col">
+                {group.showLabel ? (
+                  <span className="px-3 pt-2 text-xs font-medium text-muted-foreground">
+                    {materialGroupLabel[group.type]}
+                  </span>
+                ) : null}
+                <div className="flex flex-col divide-y divide-border/50">
+                  {group.materials.map((material) => (
+                    <MaterialRow key={material.id} material={material} />
+                  ))}
+                </div>
+              </div>
+            ))}
+          </div>
+          {studyMaterials.length > MATERIALS_PREVIEW_COUNT ? (
+            <button
+              type="button"
+              onClick={() => setMaterialsExpanded((value) => !value)}
+              className="self-start text-xs font-medium text-foreground underline-offset-2 transition-colors hover:underline"
+            >
+              {materialsExpanded ? "Mostrar menos" : `Ver todos os ${studyMaterials.length} materiais`}
+            </button>
+          ) : null}
+        </div>
+      ) : null}
+
+      {hasQuestions ? (
+        <div className="flex flex-col gap-1.5">
+          <span className="text-xs font-medium text-muted-foreground">Questões</span>
+          <div className="flex flex-col divide-y divide-border/50 overflow-hidden rounded-lg bg-secondary/40">
+            {questionLinks.map((material) => (
+              <a
+                key={material.id}
+                href={material.url}
+                target="_blank"
+                rel="noreferrer"
+                className="group flex items-center gap-2.5 px-3 py-2.5 text-sm text-foreground transition-colors hover:bg-secondary/60"
+              >
+                <ExternalLink className="size-4 shrink-0 text-muted-foreground" />
+                <span className="flex-1 truncate">{material.title}</span>
+                <span className="shrink-0 text-xs font-medium text-muted-foreground transition-colors group-hover:text-foreground">
+                  Resolver questões
+                </span>
+              </a>
+            ))}
+            {item.suggestedQuestions ? (
+              <div className="flex items-center gap-2.5 px-3 py-2.5 text-sm text-muted-foreground">
+                <HelpCircle className="size-4 shrink-0" />
+                <span>{item.suggestedQuestions} questões sugeridas</span>
+              </div>
+            ) : null}
+          </div>
+        </div>
+      ) : null}
+
+      <label className="flex items-center gap-3 border-t border-border pt-3 text-sm font-medium text-foreground">
+        <Checkbox checked={isComplete} disabled={pending} onCheckedChange={(checked) => toggle(checked === true)} />
+        <span className={isComplete ? "text-muted-foreground line-through" : ""}>Item concluído</span>
+      </label>
     </div>
   )
 }
 
+function MaterialRow({ material }: { material: StudentMaterial }) {
+  const Icon = materialIcon[material.type]
+  return (
+    <a
+      href={material.url}
+      target="_blank"
+      rel="noreferrer"
+      className="group flex items-center gap-2.5 px-3 py-2.5 text-sm text-foreground transition-colors hover:bg-muted/60"
+    >
+      <Icon className="size-4 shrink-0 text-muted-foreground" />
+      <span className="flex-1 truncate">{material.title}</span>
+      <ChevronDown className="size-3.5 shrink-0 -rotate-90 text-muted-foreground opacity-0 transition-opacity group-hover:opacity-100" />
+    </a>
+  )
+}
+
+function groupMaterialsByType(materials: (StudentMaterial & { type: "apostila" | "videoaula" })[]) {
+  const hasBoth = materials.some((m) => m.type === "apostila") && materials.some((m) => m.type === "videoaula")
+  const order: ("apostila" | "videoaula")[] = ["apostila", "videoaula"]
+  return order
+    .map((type) => ({
+      type,
+      showLabel: hasBoth,
+      materials: materials.filter((material) => material.type === type),
+    }))
+    .filter((group) => group.materials.length > 0)
+}
