@@ -92,7 +92,7 @@ export function MaterialFormDialog({
         await updateMaterial(material.id, input)
         toast.success("Material atualizado com sucesso")
       } else {
-        const createdMaterial = await createMaterial(input)
+        const createdMaterial = await createMaterial(input, { revalidate: !onCreated })
         onCreated?.(createdMaterial)
         toast.success("Material adicionado com sucesso")
         setTitle("")

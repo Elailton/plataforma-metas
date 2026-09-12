@@ -13,6 +13,7 @@ import type {
 } from "@/lib/student/types"
 import { calculatePercentage, collectStudiedTopicIds, getGoalProgressStatus } from "@/lib/student/core.mjs"
 import { logSafeServerError } from "@/lib/security/safe-error"
+import { isGoalReleased } from "@/lib/goals/release.mjs"
 
 export const STUDENT_COURSE_COOKIE = "student_course_id"
 
@@ -185,6 +186,7 @@ export async function getStudentCourseSnapshot(courseId: string): Promise<Studen
       title: goal.title,
       description: goal.description,
       dueDate: goal.due_date,
+      isReleased: isGoalReleased(goal.due_date),
       items: mappedItems,
       completedItems,
       totalItems,

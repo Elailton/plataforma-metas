@@ -7,6 +7,7 @@ import type {
   HotmartRepository,
   ParsedHotmartEvent,
 } from "@/lib/hotmart/core.mjs"
+import { inviteRedirectUrl } from "@/lib/auth/invite-url"
 
 function throwDatabaseError(error: { message: string } | null) {
   if (error) {
@@ -16,21 +17,6 @@ function throwDatabaseError(error: { message: string } | null) {
       "Falha interna ao persistir o evento Hotmart.",
     )
   }
-}
-
-function inviteRedirectUrl() {
-  const siteUrl = process.env.SITE_URL
-  if (!siteUrl) {
-    throw new Error("SITE_URL não está configurada para o convite de primeiro acesso.")
-  }
-
-  // O link real enviado ao aluno vem do template "Invite user" do Supabase
-  // (que usa {{ .TokenHash }} e type=invite diretamente). Este redirectTo
-  // só precisa apontar para uma URL da allow-list de Redirect URLs do
-  // Supabase Auth; usamos o próprio endpoint de confirmação SSR.
-  const confirm = new URL("/auth/confirm", siteUrl)
-  confirm.searchParams.set("next", "/auth/primeiro-acesso")
-  return confirm.toString()
 }
 
 export function createHotmartRepository(): HotmartRepository {

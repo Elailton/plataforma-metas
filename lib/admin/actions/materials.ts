@@ -67,7 +67,7 @@ async function assertSubjectBelongsToCourse(
   }
 }
 
-export async function createMaterial(input: MaterialFormInput): Promise<AdminMaterial> {
+export async function createMaterial(input: MaterialFormInput, options: { revalidate?: boolean } = {}): Promise<AdminMaterial> {
   const { supabase } = await requireAdmin()
 
   const title = input.title.trim()
@@ -93,8 +93,10 @@ export async function createMaterial(input: MaterialFormInput): Promise<AdminMat
   if (error) throwSafeDatabaseError("admin.material.create_failed", error, "Não foi possível criar o material.")
   if (!data) throw new Error("Não foi possível carregar o material criado.")
 
-  revalidatePath("/admin/materiais")
-  if (input.courseId) revalidatePath(`/admin/cursos/${input.courseId}`)
+  if (options.revalidate !== false) {
+    revalidatePath("/admin/materiais")
+    if (input.courseId) revalidatePath(`/admin/cursos/${input.courseId}`)
+  }
 
   return {
     id: data.id,

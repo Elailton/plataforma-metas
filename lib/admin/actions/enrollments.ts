@@ -4,11 +4,13 @@ import { revalidatePath } from "next/cache"
 import { requireAdmin } from "@/lib/admin/auth"
 import { effectiveAccessStatus, normalizeBlockReason, manualAccessMessage, blockAccessMessage } from "@/lib/admin/access-feedback.mjs"
 import { throwSafeDatabaseError } from "@/lib/security/safe-error"
+import { createAdminClient } from "@/lib/supabase/admin"
+import { inviteRedirectUrl } from "@/lib/auth/invite-url"
 
 const ENROLLMENT_STATUSES = ["active", "suspended", "revoked"] as const
 type EnrollmentStatus = (typeof ENROLLMENT_STATUSES)[number]
 
-export async function enrollExistingStudent(courseId: string, email: string) {
+export async function enrollExistingStudent(courseId: string, email: string, requestedName = "") {
   const { supabase } = await requireAdmin()
   const normalizedEmail = email.trim().toLowerCase()
 
@@ -16,18 +18,37 @@ export async function enrollExistingStudent(courseId: string, email: string) {
     throw new Error("Informe o e-mail válido de uma conta de aluno existente.")
   }
 
-  const { data: enrollmentId, error } = await supabase.rpc("admin_enroll_existing_student", {
+  let { data: enrollmentId, error } = await supabase.rpc("admin_enroll_existing_student", {
     requested_email: normalizedEmail,
     requested_course_id: courseId,
   })
 
+  let invited = false
   if (error?.message.includes("Student account not found")) {
-    throw new Error("Não encontramos uma conta de aluno com este e-mail.")
+    const fullName = requestedName.trim()
+    if (!fullName) throw new Error("Informe o nome para criar a nova conta do aluno.")
+    const admin = createAdminClient()
+    const avatarInitials = fullName.split(/\s+/).slice(0, 2).map((part) => part[0]?.toUpperCase()).join("")
+    const { error: inviteError } = await admin.auth.admin.inviteUserByEmail(normalizedEmail, {
+      redirectTo: inviteRedirectUrl(),
+      data: { full_name: fullName, avatar_initials: avatarInitials, role: "student" },
+    })
+    if (inviteError) {
+      throwSafeDatabaseError("admin.enrollment.invite_failed", inviteError, "Não foi possível criar a conta ou enviar o email de definição de senha.")
+    }
+    invited = true
+    ;({ data: enrollmentId, error } = await supabase.rpc("admin_enroll_existing_student", {
+      requested_email: normalizedEmail,
+      requested_course_id: courseId,
+    }))
   }
   if (error?.message.includes("Only student accounts")) {
     throw new Error("Contas administrativas não podem ser matriculadas.")
   }
   if (error) {
+    if (invited) {
+      throw new Error("Conta criada e email de definição de senha enviado, mas não foi possível concluir a matrícula. Tente novamente; a conta não será duplicada.")
+    }
     throwSafeDatabaseError("admin.enrollment.create_failed", error, "Não foi possível matricular o aluno.")
   }
 
@@ -36,7 +57,12 @@ export async function enrollExistingStudent(courseId: string, email: string) {
   if (readError) throw new Error("Concessão salva, mas não foi possível conferir o acesso. Recarregue a página.")
   const effectiveStatus = effectiveAccessStatus(enrollment?.status)
   refreshAccessPages(courseId)
-  return { effectiveStatus, message: manualAccessMessage("active", effectiveStatus) }
+  return {
+    effectiveStatus,
+    message: invited
+      ? "Conta criada, matrícula liberada e email de definição de senha enviado."
+      : manualAccessMessage("active", effectiveStatus),
+  }
 }
 
 export async function setEnrollmentStatus(

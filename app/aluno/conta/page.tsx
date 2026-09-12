@@ -6,12 +6,14 @@ import { Separator } from "@/components/ui/separator"
 import { PageContainer, PageHeading } from "@/components/student/page-container"
 import { getCurrentProfile } from "@/lib/supabase/queries"
 import { signOut } from "@/lib/supabase/actions"
+import { ProfileNameDialog } from "@/components/student/profile-name-dialog"
 
 export default async function AccountPage() {
   const profile = await getCurrentProfile()
   if (!profile) redirect("/auth/login")
 
   const activeEnrollments = profile.enrollments.filter((enrollment) => enrollment.status === "active")
+  const supportUrl = process.env.SUPPORT_WHATSAPP_URL
 
   return (
     <PageContainer>
@@ -55,20 +57,26 @@ export default async function AccountPage() {
       )}
 
       <nav className="flex flex-col overflow-hidden rounded-xl border border-border bg-card">
-        <button className="flex items-center justify-between px-4 py-3.5 text-left text-sm font-medium text-foreground transition-colors hover:bg-secondary/50">
-          Editar perfil
-          <ChevronRight className="size-4 text-muted-foreground" />
-        </button>
+        <ProfileNameDialog
+          currentName={profile.fullName}
+          trigger={
+            <button type="button" className="flex w-full items-center justify-between px-4 py-3.5 text-left text-sm font-medium text-foreground transition-colors hover:bg-secondary/50">
+              Editar perfil
+              <ChevronRight className="size-4 text-muted-foreground" />
+            </button>
+          }
+        />
         <Separator />
-        <button className="flex items-center justify-between px-4 py-3.5 text-left text-sm font-medium text-foreground transition-colors hover:bg-secondary/50">
-          Notificações
-          <ChevronRight className="size-4 text-muted-foreground" />
-        </button>
-        <Separator />
-        <button className="flex items-center justify-between px-4 py-3.5 text-left text-sm font-medium text-foreground transition-colors hover:bg-secondary/50">
+        <a
+          href={supportUrl || undefined}
+          target="_blank"
+          rel="noreferrer"
+          aria-disabled={!supportUrl}
+          className="flex items-center justify-between px-4 py-3.5 text-left text-sm font-medium text-foreground transition-colors hover:bg-secondary/50 aria-disabled:pointer-events-none aria-disabled:opacity-50"
+        >
           Ajuda e suporte
           <ChevronRight className="size-4 text-muted-foreground" />
-        </button>
+        </a>
       </nav>
 
       <form action={signOut}>

@@ -32,6 +32,8 @@ function actions({ status = "active", denied = false } = {}) {
     "@/lib/security/safe-error": {
       throwSafeDatabaseError: (_context, _error, publicMessage) => { throw new Error(publicMessage) },
     },
+    "@/lib/supabase/admin": { createAdminClient: () => ({ auth: { admin: {} } }) },
+    "@/lib/auth/invite-url": { inviteRedirectUrl: () => "https://example.test/auth/confirm" },
   }
   runInNewContext(js, { exports: module.exports, require: (name) => {
     if (!(name in dependencies)) throw new Error("Unexpected import: " + name)

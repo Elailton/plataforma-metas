@@ -5,6 +5,8 @@ import { redirect } from "next/navigation"
 import { revalidatePath } from "next/cache"
 import { createClient } from "@/lib/supabase/server"
 import { STUDENT_COURSE_COOKIE } from "@/lib/student/queries"
+import { isGoalReleased } from "@/lib/goals/release.mjs"
+import { formatDateLong } from "@/lib/format"
 
 export async function selectStudentCourse(formData: FormData) {
   const courseId = String(formData.get("courseId") ?? "")
@@ -55,10 +57,13 @@ export async function setGoalItemCompleted(goalItemId: string, completed: boolea
 
   const { data: goal } = await supabase
     .from("goals")
-    .select("course_id, status")
+    .select("course_id, status, due_date")
     .eq("id", item.goal_id)
     .maybeSingle()
   if (!goal || goal.status !== "published") throw new Error("Esta meta não está disponível.")
+  if (!isGoalReleased(goal.due_date)) {
+    throw new Error(`Esta meta estará disponível a partir de ${formatDateLong(goal.due_date)}.`)
+  }
 
   const { data: enrollment } = await supabase
     .from("enrollments")

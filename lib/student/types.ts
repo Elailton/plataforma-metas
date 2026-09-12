@@ -37,6 +37,7 @@ export interface StudentGoal {
   title: string
   description: string | null
   dueDate: string | null
+  isReleased: boolean
   items: StudentGoalItem[]
   completedItems: number
   totalItems: number

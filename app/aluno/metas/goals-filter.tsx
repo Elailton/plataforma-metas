@@ -6,6 +6,7 @@ import { GoalCard } from "@/components/student/goal-card"
 import { Empty, EmptyHeader, EmptyTitle, EmptyDescription, EmptyMedia } from "@/components/ui/empty"
 import { ListChecks } from "lucide-react"
 import type { StudentGoal } from "@/lib/student/types"
+import { GoalReleaseRefresh } from "@/components/student/goal-release-refresh"
 
 type Filter = "all" | "in_progress" | "completed"
 
@@ -19,6 +20,9 @@ export function GoalsFilter({ goals }: { goals: StudentGoal[] }) {
 
   return (
     <div className="flex flex-col gap-4">
+      {goals.filter((goal) => !goal.isReleased).map((goal) => (
+        <GoalReleaseRefresh key={goal.id} releaseDate={goal.dueDate} released={goal.isReleased} />
+      ))}
       <ToggleGroup
         value={[filter]}
         onValueChange={(value) => value[0] && setFilter(value[0] as Filter)}
