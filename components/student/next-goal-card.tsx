@@ -21,7 +21,7 @@ export function NextGoalCard({ goal }: { goal: StudentGoal }) {
 
       <div className="flex flex-col gap-1.5">
         <span className="text-xs font-medium text-muted-foreground">
-          Meta {goal.number} · {goal.dueDate ? formatDate(goal.dueDate) : "Sem prazo"}
+          {goal.dueDate ? formatDate(goal.dueDate) : "Sem prazo"}
         </span>
         <h3 className="text-lg font-semibold leading-snug text-balance text-foreground">{goal.title}</h3>
         <p className="text-sm text-muted-foreground">{disciplineNames.join(" • ")}</p>

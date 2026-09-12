@@ -23,17 +23,14 @@ export default async function GoalDetailPage({
     <PageContainer className="md:max-w-[1000px]">
       <PageHeader
         backHref="/aluno/metas"
-        title={`Meta ${goal.number}`}
+        title={goal.title}
         description={goal.dueDate ? formatDateLong(goal.dueDate) : "Sem prazo definido"}
+        action={<StatusBadge status={goal.progressStatus} />}
       />
 
-      <div className="mt-4 flex flex-col gap-2">
-        <div className="flex items-start justify-between gap-3">
-          <h2 className="text-lg font-semibold leading-snug text-balance text-foreground">{goal.title}</h2>
-          <StatusBadge status={goal.progressStatus} className="mt-0.5 shrink-0" />
-        </div>
-        {goal.description ? <p className="text-sm leading-relaxed text-muted-foreground">{goal.description}</p> : null}
-      </div>
+      {goal.description ? (
+        <p className="mt-3 text-sm leading-relaxed text-muted-foreground">{goal.description}</p>
+      ) : null}
 
       <div className="mt-3 flex items-center gap-3">
         <Progress value={goal.progress} className="h-1.5 flex-1" />
