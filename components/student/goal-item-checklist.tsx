@@ -30,13 +30,14 @@ const materialGroupLabel: Record<"apostila" | "videoaula", string> = {
   videoaula: "Videoaulas",
 }
 
-export function GoalItemChecklist({ item }: { item: StudentGoalItem }) {
+export function GoalItemChecklist({ item, locked = false }: { item: StudentGoalItem; locked?: boolean }) {
   const [isComplete, setIsComplete] = useState(item.completed)
   const [pending, startTransition] = useTransition()
   const [descExpanded, setDescExpanded] = useState(false)
   const [materialsExpanded, setMaterialsExpanded] = useState(false)
 
   function toggle(completed: boolean) {
+    if (locked) return
     const previous = isComplete
     setIsComplete(completed)
     startTransition(async () => {
@@ -65,7 +66,9 @@ export function GoalItemChecklist({ item }: { item: StudentGoalItem }) {
         <span className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">
           {item.subjectName}
         </span>
-        {isComplete ? (
+        {locked ? (
+          <span className="flex shrink-0 items-center gap-1 text-xs font-medium text-muted-foreground">Bloqueada</span>
+        ) : isComplete ? (
           <span className="flex shrink-0 items-center gap-1 text-xs font-medium text-success">
             <CheckCircle2 className="size-3.5" />
             Concluído
@@ -165,8 +168,10 @@ export function GoalItemChecklist({ item }: { item: StudentGoalItem }) {
       ) : null}
 
       <label className="flex items-center gap-3 border-t border-border pt-3 text-sm font-medium text-foreground">
-        <Checkbox checked={isComplete} disabled={pending} onCheckedChange={(checked) => toggle(checked === true)} />
-        <span className={isComplete ? "text-muted-foreground line-through" : ""}>Item concluído</span>
+        <Checkbox checked={isComplete} disabled={pending || locked} onCheckedChange={(checked) => toggle(checked === true)} />
+        <span className={isComplete ? "text-muted-foreground line-through" : ""}>
+          {locked ? "Disponível na data de liberação" : "Item concluído"}
+        </span>
       </label>
     </div>
   )

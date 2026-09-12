@@ -28,8 +28,10 @@ export function GoalCard({ goal }: { goal: StudentGoal }) {
       </div>
 
       <div className="flex items-center justify-between">
-        <span className="text-xs text-muted-foreground">{goal.dueDate ? formatDate(goal.dueDate) : "Sem prazo"}</span>
-        <StatusBadge status={goal.progressStatus} />
+        <span className="text-xs text-muted-foreground">
+          {goal.dueDate ? `${goal.isReleased ? "Liberada em" : "Libera em"} ${formatDate(goal.dueDate)}` : "Disponível imediatamente"}
+        </span>
+        <StatusBadge status={goal.isReleased ? goal.progressStatus : "locked"} />
       </div>
     </Link>
   )

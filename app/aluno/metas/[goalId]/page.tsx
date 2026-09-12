@@ -6,6 +6,7 @@ import { StatusBadge } from "@/components/status-badge"
 import { Progress } from "@/components/ui/progress"
 import { getStudentContext, getStudentCourseSnapshot } from "@/lib/student/queries"
 import { formatDateLong } from "@/lib/format"
+import { GoalReleaseRefresh } from "@/components/student/goal-release-refresh"
 
 export default async function GoalDetailPage({
   params,
@@ -24,9 +25,12 @@ export default async function GoalDetailPage({
       <PageHeader
         backHref="/aluno/metas"
         title={goal.title}
-        description={goal.dueDate ? formatDateLong(goal.dueDate) : "Sem prazo definido"}
-        action={<StatusBadge status={goal.progressStatus} />}
+        description={goal.dueDate
+          ? `${goal.isReleased ? "Liberada em" : "Libera em"} ${formatDateLong(goal.dueDate)}`
+          : "Disponível imediatamente"}
+        action={<StatusBadge status={goal.isReleased ? goal.progressStatus : "locked"} />}
       />
+      <GoalReleaseRefresh releaseDate={goal.dueDate} released={goal.isReleased} />
 
       {goal.description ? (
         <p className="mt-3 text-sm leading-relaxed text-muted-foreground">{goal.description}</p>
@@ -40,7 +44,7 @@ export default async function GoalDetailPage({
       <div className="mt-5 flex flex-col gap-3">
         <h3 className="text-sm font-semibold text-foreground">Itens da meta</h3>
         {goal.items.map((item) => (
-          <GoalItemChecklist key={item.id} item={item} />
+          <GoalItemChecklist key={item.id} item={item} locked={!goal.isReleased} />
         ))}
       </div>
     </PageContainer>

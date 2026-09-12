@@ -16,8 +16,9 @@ export default async function StudentHomePage() {
 
   const completedGoals = snapshot.goals.filter((goal) => goal.progressStatus === "completed").length
   const nextGoal =
-    snapshot.goals.find((goal) => goal.progressStatus === "in_progress") ??
-    snapshot.goals.find((goal) => goal.progressStatus === "pending")
+    snapshot.goals.find((goal) => goal.isReleased && goal.progressStatus === "in_progress") ??
+    snapshot.goals.find((goal) => goal.isReleased && goal.progressStatus === "pending") ??
+    snapshot.goals.find((goal) => !goal.isReleased)
   const recentGoals = snapshot.goals.slice(0, 3)
   const firstName = context.profile.fullName.split(" ")[0]
 

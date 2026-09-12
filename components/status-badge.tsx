@@ -1,10 +1,15 @@
-import { CheckCircle2, CircleDashed, PlayCircle } from "lucide-react"
+import { CheckCircle2, CircleDashed, Lock, PlayCircle } from "lucide-react"
 import { Badge } from "@/components/ui/badge"
 import { cn } from "@/lib/utils"
 
-type Status = "pending" | "in_progress" | "completed"
+type Status = "pending" | "in_progress" | "completed" | "locked"
 
 const statusConfig: Record<Status, { label: string; icon: typeof CheckCircle2; className: string }> = {
+  locked: {
+    label: "Bloqueada",
+    icon: Lock,
+    className: "bg-secondary text-muted-foreground border-border",
+  },
   completed: {
     label: "Concluída",
     icon: CheckCircle2,

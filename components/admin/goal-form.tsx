@@ -202,6 +202,11 @@ export function GoalForm({ courseId, subjects, topicsBySubject, materials, goal 
               <Field>
                 <FieldLabel htmlFor="goal-date">Data de liberação (opcional)</FieldLabel>
                 <Input id="goal-date" type="date" value={dueDate ?? ""} onChange={(e) => setDueDate(e.target.value)} />
+                <FieldDescription>
+                  {dueDate
+                    ? "Até esta data, a meta ficará visível ao aluno, mas bloqueada para alterações."
+                    : "Disponível imediatamente."}
+                </FieldDescription>
               </Field>
               {!isEditing ? (
                 <Field>

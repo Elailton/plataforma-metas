@@ -4,12 +4,14 @@ import { Button } from "@/components/ui/button"
 import { Progress } from "@/components/ui/progress"
 import type { StudentGoal } from "@/lib/student/types"
 import { formatDate } from "@/lib/format"
+import { GoalReleaseRefresh } from "@/components/student/goal-release-refresh"
 
 export function NextGoalCard({ goal }: { goal: StudentGoal }) {
   const disciplineNames = Array.from(new Set(goal.items.map((item) => item.subjectName)))
 
   return (
     <div className="flex flex-col gap-4 rounded-2xl border border-border bg-card p-5">
+      <GoalReleaseRefresh releaseDate={goal.dueDate} released={goal.isReleased} />
       <div className="flex items-center gap-2">
         <div className="flex size-8 items-center justify-center rounded-full bg-secondary text-foreground">
           <Target className="size-4" />
@@ -21,7 +23,7 @@ export function NextGoalCard({ goal }: { goal: StudentGoal }) {
 
       <div className="flex flex-col gap-1.5">
         <span className="text-xs font-medium text-muted-foreground">
-          {goal.dueDate ? formatDate(goal.dueDate) : "Sem prazo"}
+          {goal.dueDate ? `${goal.isReleased ? "Liberada em" : "Libera em"} ${formatDate(goal.dueDate)}` : "Disponível imediatamente"}
         </span>
         <h3 className="text-lg font-semibold leading-snug text-balance text-foreground">{goal.title}</h3>
         <p className="text-sm text-muted-foreground">{disciplineNames.join(" • ")}</p>
@@ -33,7 +35,7 @@ export function NextGoalCard({ goal }: { goal: StudentGoal }) {
       </div>
 
       <Button render={<Link href={`/aluno/metas/${goal.id}`} />} nativeButton={false} className="w-full">
-        Continuar meta
+        {goal.isReleased ? "Continuar meta" : "Ver meta bloqueada"}
         <ArrowRight data-icon="inline-end" />
       </Button>
     </div>

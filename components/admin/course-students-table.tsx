@@ -19,6 +19,7 @@ import { enrollExistingStudent, setEnrollmentStatus, setCourseAccessBlock } from
 export function CourseStudentsTable({ courseId, students }: { courseId: string; students: AdminCourseStudent[] }) {
   const router = useRouter()
   const [email, setEmail] = useState("")
+  const [fullName, setFullName] = useState("")
   const [pending, startTransition] = useTransition()
   const [blockTarget, setBlockTarget] = useState<AdminCourseStudent | null>(null)
   const [reason, setReason] = useState("")
@@ -27,8 +28,9 @@ export function CourseStudentsTable({ courseId, students }: { courseId: string; 
     event.preventDefault()
     startTransition(async () => {
       try {
-        const result = await enrollExistingStudent(courseId, email)
+        const result = await enrollExistingStudent(courseId, email, fullName)
         setEmail("")
+        setFullName("")
         toast.success(result.message)
         router.refresh()
       } catch (error) {
@@ -72,7 +74,16 @@ export function CourseStudentsTable({ courseId, students }: { courseId: string; 
         a concessão manual não cancela compras. Para impedir todas as formas de acesso a este curso,
         use o bloqueio administrativo. Suspenso é uma pausa; revogado encerra a concessão.
       </p>
-      <form onSubmit={handleEnrollment} className="flex flex-col gap-3 border-b border-border p-4 sm:flex-row">
+      <form onSubmit={handleEnrollment} className="grid gap-3 border-b border-border p-4 sm:grid-cols-[1fr_1fr_auto]">
+        <div>
+          <Input
+            type="text"
+            placeholder="Nome (necessário para uma conta nova)"
+            aria-label="Nome do aluno"
+            value={fullName}
+            onChange={(event) => setFullName(event.target.value)}
+          />
+        </div>
         <div className="flex-1">
           <Input
             type="email"
