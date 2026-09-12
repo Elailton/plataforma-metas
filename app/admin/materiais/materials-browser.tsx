@@ -5,14 +5,7 @@ import { useRouter } from "next/navigation"
 import { toast } from "sonner"
 import { FolderKanban, Trash2 } from "lucide-react"
 import { Button } from "@/components/ui/button"
-import {
-  Select,
-  SelectContent,
-  SelectGroup,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select"
+import { Select, SelectContent, SelectGroup, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Card, CardContent } from "@/components/ui/card"
 import { Empty, EmptyHeader, EmptyTitle, EmptyDescription, EmptyMedia } from "@/components/ui/empty"
 import {
@@ -28,10 +21,19 @@ import {
 } from "@/components/ui/alert-dialog"
 import { MaterialTypeIcon, materialTypeLabel } from "@/components/admin/material-type-icon"
 import { MaterialFormDialog } from "@/components/admin/material-form-dialog"
+import { MaterialImportDialog } from "@/components/admin/material-import-dialog"
 import { deleteMaterial } from "@/lib/admin/actions/materials"
-import type { AdminCourse, AdminMaterial } from "@/lib/admin/types"
+import type { AdminCourse, AdminMaterial, AdminSubject } from "@/lib/admin/types"
 
-export function MaterialsBrowser({ courses, materials }: { courses: AdminCourse[]; materials: AdminMaterial[] }) {
+export function MaterialsBrowser({
+  courses,
+  materials,
+  subjects,
+}: {
+  courses: AdminCourse[]
+  materials: AdminMaterial[]
+  subjects: AdminSubject[]
+}) {
   const router = useRouter()
   const [courseId, setCourseId] = useState<string>("all")
   const courseSelectItems = [
@@ -41,7 +43,7 @@ export function MaterialsBrowser({ courses, materials }: { courses: AdminCourse[
 
   const filtered = useMemo(() => {
     if (courseId === "all") return materials
-    return materials.filter((m) => m.courseId === courseId)
+    return materials.filter((material) => material.courseId === courseId)
   }, [materials, courseId])
 
   async function handleDelete(materialId: string, materialCourseId: string | null) {
@@ -56,30 +58,23 @@ export function MaterialsBrowser({ courses, materials }: { courses: AdminCourse[
 
   return (
     <div className="flex flex-col gap-4">
-      <div className="flex items-center justify-between gap-3">
+      <div className="flex flex-wrap items-center justify-between gap-3">
         <Select items={courseSelectItems} value={courseId} onValueChange={(value) => setCourseId(value ?? "all")}>
-          <SelectTrigger className="w-56">
-            <SelectValue placeholder="Filtrar por curso" />
-          </SelectTrigger>
-          <SelectContent>
-            <SelectGroup>
-              {courseSelectItems.map((item) => (
-                <SelectItem key={item.value} value={item.value}>
-                  {item.label}
-                </SelectItem>
-              ))}
-            </SelectGroup>
-          </SelectContent>
+          <SelectTrigger className="w-56"><SelectValue placeholder="Filtrar por curso" /></SelectTrigger>
+          <SelectContent><SelectGroup>
+            {courseSelectItems.map((item) => <SelectItem key={item.value} value={item.value}>{item.label}</SelectItem>)}
+          </SelectGroup></SelectContent>
         </Select>
-        <MaterialFormDialog courses={courses.map((c) => ({ id: c.id, name: c.name }))} />
+        <div className="flex items-center gap-2">
+          <MaterialImportDialog courses={courses} subjects={subjects} />
+          <MaterialFormDialog courses={courses.map((course) => ({ id: course.id, name: course.name }))} />
+        </div>
       </div>
 
       {filtered.length === 0 ? (
         <Empty>
           <EmptyHeader>
-            <EmptyMedia variant="icon">
-              <FolderKanban />
-            </EmptyMedia>
+            <EmptyMedia variant="icon"><FolderKanban /></EmptyMedia>
             <EmptyTitle>Nenhum material encontrado</EmptyTitle>
             <EmptyDescription>Ajuste o filtro ou adicione um novo material.</EmptyDescription>
           </EmptyHeader>
@@ -88,7 +83,7 @@ export function MaterialsBrowser({ courses, materials }: { courses: AdminCourse[
         <Card>
           <CardContent className="flex flex-col divide-y divide-border p-0">
             {filtered.map((material) => {
-              const course = courses.find((c) => c.id === material.courseId)
+              const course = courses.find((candidate) => candidate.id === material.courseId)
               return (
                 <div key={material.id} className="flex items-center gap-3.5 px-4 py-3.5">
                   <MaterialTypeIcon type={material.type} />
@@ -101,12 +96,8 @@ export function MaterialsBrowser({ courses, materials }: { courses: AdminCourse[
                   </div>
                   <MaterialFormDialog
                     material={material}
-                    courses={courses.map((c) => ({ id: c.id, name: c.name }))}
-                    trigger={
-                      <Button variant="ghost" size="sm">
-                        Editar
-                      </Button>
-                    }
+                    courses={courses.map((candidate) => ({ id: candidate.id, name: candidate.name }))}
+                    trigger={<Button variant="ghost" size="sm">Editar</Button>}
                   />
                   <AlertDialog>
                     <AlertDialogTrigger render={<Button variant="ghost" size="icon" aria-label="Remover material" />}>
@@ -121,9 +112,7 @@ export function MaterialsBrowser({ courses, materials }: { courses: AdminCourse[
                       </AlertDialogHeader>
                       <AlertDialogFooter>
                         <AlertDialogCancel>Cancelar</AlertDialogCancel>
-                        <AlertDialogAction onClick={() => handleDelete(material.id, material.courseId)}>
-                          Remover
-                        </AlertDialogAction>
+                        <AlertDialogAction onClick={() => handleDelete(material.id, material.courseId)}>Remover</AlertDialogAction>
                       </AlertDialogFooter>
                     </AlertDialogContent>
                   </AlertDialog>
