@@ -8,7 +8,7 @@ const statusConfig: Record<Status, { label: string; icon: typeof CheckCircle2; c
   locked: {
     label: "Bloqueada",
     icon: Lock,
-    className: "bg-secondary text-muted-foreground border-border",
+    className: "border-border/50 bg-black/40 text-muted-foreground",
   },
   completed: {
     label: "Concluída",

@@ -1,16 +1,23 @@
 import Link from "next/link"
-import { ArrowRight, Target } from "lucide-react"
+import { ArrowRight, Lock, Target } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Progress } from "@/components/ui/progress"
 import type { StudentGoal } from "@/lib/student/types"
 import { formatDate } from "@/lib/format"
 import { GoalReleaseRefresh } from "@/components/student/goal-release-refresh"
+import { cn } from "@/lib/utils"
 
 export function NextGoalCard({ goal }: { goal: StudentGoal }) {
   const disciplineNames = Array.from(new Set(goal.items.map((item) => item.subjectName)))
 
   return (
-    <div className="flex flex-col gap-4 rounded-2xl border border-border bg-card p-5">
+    <div
+      aria-disabled={!goal.isReleased}
+      className={cn(
+        "flex flex-col gap-4 rounded-2xl border border-border bg-card p-5",
+        !goal.isReleased && "select-none border-border/40 bg-black/35 opacity-70 grayscale-[0.25]",
+      )}
+    >
       <GoalReleaseRefresh releaseDate={goal.dueDate} released={goal.isReleased} />
       <div className="flex items-center gap-2">
         <div className="flex size-8 items-center justify-center rounded-full bg-secondary text-foreground">
@@ -34,10 +41,17 @@ export function NextGoalCard({ goal }: { goal: StudentGoal }) {
         <span className="text-xs font-medium tabular-nums text-muted-foreground">{goal.progress}%</span>
       </div>
 
-      <Button render={<Link href={`/aluno/metas/${goal.id}`} />} nativeButton={false} className="w-full">
-        {goal.isReleased ? "Continuar meta" : "Ver meta bloqueada"}
-        <ArrowRight data-icon="inline-end" />
-      </Button>
+      {goal.isReleased ? (
+        <Button render={<Link href={`/aluno/metas/${goal.id}`} />} nativeButton={false} className="w-full">
+          Continuar meta
+          <ArrowRight data-icon="inline-end" />
+        </Button>
+      ) : (
+        <Button type="button" className="w-full cursor-not-allowed" disabled>
+          Meta bloqueada
+          <Lock data-icon="inline-end" />
+        </Button>
+      )}
     </div>
   )
 }

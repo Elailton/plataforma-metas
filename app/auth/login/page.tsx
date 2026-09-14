@@ -101,7 +101,7 @@ function LoginForm() {
           <CardHeader>
             <CardTitle className="text-lg">Entrar</CardTitle>
             <CardDescription>
-              O acesso é liberado para alunos matriculados. Use o mesmo e-mail informado na compra.
+              Acesse com o e-mail e a senha vinculados à sua matrícula.
             </CardDescription>
           </CardHeader>
           <CardContent>
