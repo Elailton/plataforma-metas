@@ -31,7 +31,8 @@ export function CourseStudentsTable({ courseId, students }: { courseId: string; 
         const result = await enrollExistingStudent(courseId, email, fullName)
         setEmail("")
         setFullName("")
-        toast.success(result.message)
+        if (result.emailWarning) toast.warning(result.message)
+        else toast.success(result.message)
         router.refresh()
       } catch (error) {
         toast.error(error instanceof Error ? error.message : "Não foi possível matricular o aluno.")

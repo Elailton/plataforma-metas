@@ -2,7 +2,7 @@ import { createClient } from "@/lib/supabase/server"
 import { resolveConfirmRequest } from "@/lib/auth/confirm.mjs"
 import { NextRequest, NextResponse } from "next/server"
 
-// Endpoint SSR de confirmação de e-mail (convite de primeiro acesso).
+// Endpoint SSR de confirmação de e-mail (convite ou recuperação de acesso).
 // Segue o fluxo recomendado pelo Supabase para SSR: token_hash + verifyOtp,
 // em vez de depender do fragmento (#access_token=...) da confirmação padrão,
 // que nunca chega a um Route Handler.

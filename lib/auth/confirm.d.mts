@@ -1,4 +1,4 @@
-export type AllowedOtpType = "invite"
+export type AllowedOtpType = "invite" | "recovery"
 
 export const ALLOWED_OTP_TYPES: readonly AllowedOtpType[]
 export const ALLOWED_NEXT_PATHS: readonly string[]

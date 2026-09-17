@@ -20,6 +20,18 @@ test("1. token_hash e type=invite válidos liberam o fluxo com destino padrão",
   assert.equal(result.next, "/auth/primeiro-acesso")
 })
 
+test("1b. token de recovery válido permite redefinir a senha de conta recuperada", () => {
+  const result = resolveConfirmRequest({
+    tokenHash: "recovery-token",
+    type: "recovery",
+    next: "/auth/primeiro-acesso",
+  })
+
+  assert.equal(result.valid, true)
+  assert.equal(result.type, "recovery")
+  assert.equal(result.next, "/auth/primeiro-acesso")
+})
+
 test("2. token_hash ausente é rejeitado", () => {
   const result = resolveConfirmRequest({ tokenHash: null, type: "invite" })
 
@@ -41,8 +53,8 @@ test("4. type ausente é rejeitado", () => {
   assert.equal(result.errorCode, "invalid_type")
 })
 
-test("5. type fora da lista permitida (ex.: recovery) é rejeitado", () => {
-  const result = resolveConfirmRequest({ tokenHash: "abc123", type: "recovery" })
+test("5. type fora da lista permitida (ex.: magiclink) é rejeitado", () => {
+  const result = resolveConfirmRequest({ tokenHash: "abc123", type: "magiclink" })
 
   assert.equal(result.valid, false)
   assert.equal(result.errorCode, "invalid_type")
