@@ -7,17 +7,40 @@ import * as feedback from "../lib/admin/access-feedback.mjs"
 
 // Run the actual server-action implementation with mocked network/auth/cache
 // boundaries. SQL authorization is exercised separately against PostgreSQL.
-function actions({ status = "active", denied = false } = {}) {
+function actions({ status = "active", denied = false, orphaned = false } = {}) {
   const calls = []
   const refreshed = []
+  let rpcCount = 0
   const selection = {
     select() { return this },
     eq() { return this },
     async single() { return { data: { status }, error: null } },
   }
   const supabase = {
-    async rpc(name, args) { calls.push({ name, args }); return { data: status, error: null } },
+    async rpc(name, args) {
+      calls.push({ name, args })
+      rpcCount += 1
+      if (orphaned && name === "admin_enroll_existing_student" && rpcCount === 1) {
+        return { data: null, error: { message: "Only student accounts can be enrolled" } }
+      }
+      return { data: status, error: null }
+    },
     from() { return selection },
+  }
+  const adminSelection = {
+    select() { return this },
+    eq() { return this },
+    async maybeSingle() { return { data: null, error: null } },
+    async insert() { return { error: null } },
+  }
+  const admin = {
+    auth: {
+      admin: {
+        async listUsers() { return { data: { users: [{ id: "auth-user", email: "orphan@test.invalid" }] }, error: null } },
+      },
+      async resetPasswordForEmail() { return { data: {}, error: null } },
+    },
+    from() { return adminSelection },
   }
   const source = readFileSync(new URL("../lib/admin/actions/enrollments.ts", import.meta.url), "utf8")
   const js = ts.transpileModule(source, { compilerOptions: { module: ts.ModuleKind.CommonJS } }).outputText
@@ -32,7 +55,7 @@ function actions({ status = "active", denied = false } = {}) {
     "@/lib/security/safe-error": {
       throwSafeDatabaseError: (_context, _error, publicMessage) => { throw new Error(publicMessage) },
     },
-    "@/lib/supabase/admin": { createAdminClient: () => ({ auth: { admin: {} } }) },
+    "@/lib/supabase/admin": { createAdminClient: () => admin },
     "@/lib/auth/invite-url": { inviteRedirectUrl: () => "https://example.test/auth/confirm" },
   }
   runInNewContext(js, { exports: module.exports, require: (name) => {
@@ -82,4 +105,12 @@ test("concessão manual a bloqueado e desbloqueio sem direito não anunciam aces
   const revoked = actions({ status: "revoked" })
   const released = await revoked.setCourseAccessBlock("e", "c", false, "Análise concluída")
   assert.match(released.message, /não há direito ativo/)
+})
+
+test("acesso manual repara perfil apagado sem duplicar a conta de autenticação", async () => {
+  const action = actions({ orphaned: true })
+  const result = await action.enrollExistingStudent("course", "orphan@test.invalid", "Ellen Carneiro")
+  assert.match(result.message, /cadastro reparado.*email.*reenviado/i)
+  assert.equal(result.emailWarning, false)
+  assert.equal(action.calls.filter(({ name }) => name === "admin_enroll_existing_student").length, 2)
 })

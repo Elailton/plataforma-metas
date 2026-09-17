@@ -24,6 +24,8 @@ export async function enrollExistingStudent(courseId: string, email: string, req
   })
 
   let invited = false
+  let repairedAccount = false
+  let recoveryEmailFailed = false
   if (error?.message.includes("Student account not found")) {
     const fullName = requestedName.trim()
     if (!fullName) throw new Error("Informe o nome para criar a nova conta do aluno.")
@@ -43,7 +45,46 @@ export async function enrollExistingStudent(courseId: string, email: string, req
     }))
   }
   if (error?.message.includes("Only student accounts")) {
-    throw new Error("Contas administrativas não podem ser matriculadas.")
+    const fullName = requestedName.trim()
+    const admin = createAdminClient()
+    const authUser = await findAuthUserByEmail(admin, normalizedEmail)
+
+    if (!authUser) {
+      throw new Error("A conta de autenticação foi encontrada, mas não pôde ser recuperada. Tente novamente.")
+    }
+
+    const { data: existingProfile, error: profileReadError } = await admin
+      .from("profiles")
+      .select("id, role")
+      .eq("id", authUser.id)
+      .maybeSingle()
+
+    if (profileReadError) {
+      throwSafeDatabaseError("admin.enrollment.profile_read_failed", profileReadError, "Não foi possível conferir o cadastro do aluno.")
+    }
+    if (existingProfile?.role && existingProfile.role !== "student") {
+      throw new Error("Contas administrativas não podem ser matriculadas.")
+    }
+    if (!existingProfile) {
+      if (!fullName) {
+        throw new Error("O cadastro deste e-mail está incompleto. Informe o nome para reparar a conta e liberar o acesso.")
+      }
+      const avatarInitials = fullName.split(/\s+/).slice(0, 2).map((part) => part[0]?.toUpperCase()).join("")
+      const { error: profileInsertError } = await admin.from("profiles").insert({
+        id: authUser.id,
+        full_name: fullName,
+        avatar_initials: avatarInitials,
+        role: "student",
+      })
+      if (profileInsertError) {
+        throwSafeDatabaseError("admin.enrollment.profile_repair_failed", profileInsertError, "Não foi possível reparar o cadastro do aluno.")
+      }
+      repairedAccount = true
+      ;({ data: enrollmentId, error } = await supabase.rpc("admin_enroll_existing_student", {
+        requested_email: normalizedEmail,
+        requested_course_id: courseId,
+      }))
+    }
   }
   if (error) {
     if (invited) {
@@ -56,13 +97,43 @@ export async function enrollExistingStudent(courseId: string, email: string, req
     .select("status").eq("id", enrollmentId).eq("course_id", courseId).single()
   if (readError) throw new Error("Concessão salva, mas não foi possível conferir o acesso. Recarregue a página.")
   const effectiveStatus = effectiveAccessStatus(enrollment?.status)
+
+  if (repairedAccount) {
+    const admin = createAdminClient()
+    const { error: recoveryError } = await admin.auth.resetPasswordForEmail(normalizedEmail, {
+      redirectTo: inviteRedirectUrl(),
+    })
+    recoveryEmailFailed = Boolean(recoveryError)
+  }
+
   refreshAccessPages(courseId)
   return {
     effectiveStatus,
-    message: invited
+    emailWarning: recoveryEmailFailed,
+    message: recoveryEmailFailed
+      ? "Matrícula liberada e cadastro reparado, mas não foi possível enviar o email de definição de senha. Tente novamente mais tarde."
+      : repairedAccount
+        ? "Cadastro reparado, matrícula liberada e email de definição de senha reenviado."
+        : invited
       ? "Conta criada, matrícula liberada e email de definição de senha enviado."
       : manualAccessMessage("active", effectiveStatus),
   }
+}
+
+type AdminAuthClient = ReturnType<typeof createAdminClient>
+
+async function findAuthUserByEmail(admin: AdminAuthClient, email: string) {
+  const perPage = 1000
+  for (let page = 1; page <= 10; page += 1) {
+    const { data, error } = await admin.auth.admin.listUsers({ page, perPage })
+    if (error) {
+      throwSafeDatabaseError("admin.enrollment.auth_lookup_failed", error, "Não foi possível localizar a conta de autenticação.")
+    }
+    const user = data.users.find((candidate) => candidate.email?.trim().toLowerCase() === email)
+    if (user) return user
+    if (data.users.length < perPage) return null
+  }
+  return null
 }
 
 export async function setEnrollmentStatus(
