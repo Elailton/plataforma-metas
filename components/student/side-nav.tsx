@@ -1,6 +1,6 @@
 "use client"
 
-import { BrandSkull } from "@/components/brand-skull"
+import { BrandLockup } from "@/components/brand-skull"
 
 import Link from "next/link"
 import { usePathname } from "next/navigation"
@@ -15,42 +15,43 @@ export function SideNav({ courses, currentCourse }: { courses: StudentCourse[]; 
   const pathname = usePathname()
 
   return (
-    <aside className="hidden w-64 shrink-0 flex-col border-r border-sidebar-border bg-sidebar px-4 py-6 text-sidebar-foreground md:flex">
-      <div className="flex items-center gap-2 px-2 pb-8">
-        <BrandSkull className="size-8" />
-        <span className="text-sm font-semibold tracking-tight">Mentoria Imparáveis</span>
+    <aside className="sticky top-0 hidden h-screen w-64 shrink-0 flex-col border-r border-sidebar-border bg-sidebar text-sidebar-foreground md:flex">
+      <div className="px-5 pb-6 pt-6">
+        <BrandLockup subtitle="Área do aluno" />
       </div>
 
-      <div className="mb-5 px-2">
-        <p className="mb-1.5 text-[10px] font-semibold uppercase tracking-wide text-sidebar-foreground/50">Curso</p>
+      <div className="mx-4 mb-6 rounded-xl border border-sidebar-border bg-background/40 p-3">
+        <p className="mb-1.5 text-[11px] font-medium uppercase tracking-wider text-sidebar-foreground/50">Curso atual</p>
         <CourseSwitcher courses={courses} currentCourseId={currentCourse.id} />
       </div>
 
-      <ul className="flex flex-1 flex-col gap-1">
-        {studentNavItems.map((item) => {
-          const isActive = item.href === "/aluno" ? pathname === "/aluno" : pathname.startsWith(item.href)
-          const Icon = item.icon
-          return (
-            <li key={item.href}>
-              <Link
-                href={item.href}
-                aria-current={isActive ? "page" : undefined}
-                className={cn(
-                  "flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium transition-colors",
-                  isActive
-                    ? "bg-sidebar-accent text-sidebar-accent-foreground"
-                    : "text-sidebar-foreground/70 hover:bg-sidebar-accent/60 hover:text-sidebar-accent-foreground",
-                )}
-              >
-                <Icon className="size-4.5" strokeWidth={isActive ? 2.4 : 2} />
-                {item.label}
-              </Link>
-            </li>
-          )
-        })}
-      </ul>
+      <nav aria-label="Navegação principal" className="flex-1 px-3">
+        <ul className="flex flex-col gap-0.5">
+          {studentNavItems.map((item) => {
+            const isActive = item.href === "/aluno" ? pathname === "/aluno" : pathname.startsWith(item.href)
+            const Icon = item.icon
+            return (
+              <li key={item.href}>
+                <Link
+                  href={item.href}
+                  aria-current={isActive ? "page" : undefined}
+                  className={cn(
+                    "relative flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium transition-colors",
+                    isActive
+                      ? "bg-sidebar-accent text-sidebar-accent-foreground before:absolute before:inset-y-2 before:left-0 before:w-0.5 before:rounded-full before:bg-primary"
+                      : "text-sidebar-foreground/70 hover:bg-sidebar-accent/60 hover:text-sidebar-accent-foreground",
+                  )}
+                >
+                  <Icon className={cn("size-4.5", isActive && "text-primary")} strokeWidth={isActive ? 2.4 : 2} />
+                  {item.label}
+                </Link>
+              </li>
+            )
+          })}
+        </ul>
+      </nav>
 
-      <form action={signOut}>
+      <form action={signOut} className="border-t border-sidebar-border p-3">
         <button
           type="submit"
           className="flex w-full items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium text-sidebar-foreground/60 transition-colors hover:bg-sidebar-accent/60 hover:text-sidebar-accent-foreground"
@@ -62,4 +63,3 @@ export function SideNav({ courses, currentCourse }: { courses: StudentCourse[]; 
     </aside>
   )
 }
-

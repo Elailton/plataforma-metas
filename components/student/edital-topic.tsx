@@ -21,10 +21,10 @@ export function EditalTopic({ topic, index }: { topic: StudentTopic; index: numb
       ) : (
         <Circle className="size-4 shrink-0 text-muted-foreground/50" />
       )}
-      <span className="flex size-6 shrink-0 items-center justify-center rounded-md bg-secondary text-xs font-semibold text-foreground">
+      <span className="flex size-6 shrink-0 items-center justify-center rounded-md bg-secondary text-xs font-semibold tabular-nums text-foreground">
         {index + 1}
       </span>
-      <span className={cn("flex-1 text-sm font-medium", topic.studied ? "text-foreground" : "text-muted-foreground")}>
+      <span className={cn("min-w-0 flex-1 text-sm font-medium leading-snug", topic.studied ? "text-foreground" : "text-muted-foreground")}>
         {topicDisplayTitle(topic.title)}
       </span>
       {hasSubtopics ? (
@@ -48,12 +48,12 @@ export function EditalTopic({ topic, index }: { topic: StudentTopic; index: numb
           aria-expanded={open}
           aria-controls={panelId}
           onClick={() => setOpen((value) => !value)}
-          className="flex items-center gap-2.5 rounded-lg py-2.5 text-left transition-colors hover:bg-muted/40"
+          className="-mx-2 flex min-h-11 items-center gap-2.5 rounded-lg px-2 py-2.5 text-left transition-colors hover:bg-muted/40 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
         >
           {header}
         </button>
       ) : (
-        <div className="flex items-center gap-2.5 py-2.5">{header}</div>
+        <div className="flex min-h-11 items-center gap-2.5 py-2.5">{header}</div>
       )}
 
       {hasSubtopics ? (
@@ -62,7 +62,7 @@ export function EditalTopic({ topic, index }: { topic: StudentTopic; index: numb
           className={cn("grid transition-all duration-200 ease-out", open ? "grid-rows-[1fr] opacity-100" : "grid-rows-[0fr] opacity-0")}
         >
           <div className="overflow-hidden">
-            <ul className="ml-3 flex flex-col gap-3 border-l border-border py-1 pl-4">
+            <ul className="mb-2 ml-3 flex flex-col gap-2.5 border-l border-border py-1 pl-4">
               {topic.subtopics.map((subtopic, subtopicIndex) => (
                 <li key={subtopic.id} className="flex items-start gap-2.5">
                   {subtopic.studied ? (

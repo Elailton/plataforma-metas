@@ -61,20 +61,25 @@ export function GoalItemChecklist({ item, locked = false }: { item: StudentGoalI
   const hasQuestions = questionLinks.length > 0 || Boolean(item.suggestedQuestions)
 
   return (
-    <div className="flex flex-col gap-3 rounded-xl border border-border bg-card p-4">
+    <div
+      className={cn(
+        "flex flex-col gap-4 overflow-hidden rounded-xl border bg-card p-4 transition-colors md:p-5",
+        isComplete && !locked ? "border-success/25" : "border-border",
+      )}
+    >
       <div className="flex items-start justify-between gap-3">
-        <span className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">
+        <span className="min-w-0 text-xs font-semibold uppercase tracking-wider text-muted-foreground">
           {item.subjectName}
         </span>
         {locked ? (
-          <span className="flex shrink-0 items-center gap-1 text-xs font-medium text-muted-foreground">Bloqueada</span>
+          <span className="flex shrink-0 items-center gap-1 rounded-full bg-muted px-2 py-0.5 text-xs font-medium text-muted-foreground">Bloqueada</span>
         ) : isComplete ? (
-          <span className="flex shrink-0 items-center gap-1 text-xs font-medium text-success">
+          <span className="flex shrink-0 items-center gap-1 rounded-full bg-success/15 px-2 py-0.5 text-xs font-medium text-success">
             <CheckCircle2 className="size-3.5" />
             Concluído
           </span>
         ) : (
-          <span className="flex shrink-0 items-center gap-1 text-xs font-medium text-muted-foreground">
+          <span className="flex shrink-0 items-center gap-1 rounded-full bg-secondary px-2 py-0.5 text-xs font-medium text-muted-foreground">
             <Circle className="size-3.5" />
             Pendente
           </span>
@@ -82,7 +87,7 @@ export function GoalItemChecklist({ item, locked = false }: { item: StudentGoalI
       </div>
 
       <div className="flex flex-col gap-1">
-        <h3 className="text-sm font-semibold leading-snug text-foreground">
+        <h3 className="text-base font-semibold leading-snug text-foreground">
           {item.subtopicName ?? item.topicName ?? "Item de estudo"}
         </h3>
         {item.subtopicName && item.topicName ? (
@@ -91,8 +96,9 @@ export function GoalItemChecklist({ item, locked = false }: { item: StudentGoalI
       </div>
 
       {item.instructions ? (
-        <div className="flex flex-col gap-1.5">
-          <p className={cn("text-sm leading-relaxed text-muted-foreground", !descExpanded && "line-clamp-3")}>
+        <div className="flex flex-col gap-1.5 rounded-lg border-l-2 border-primary/60 bg-muted/30 py-2 pl-3 pr-3">
+          <span className="text-[11px] font-medium uppercase tracking-wider text-muted-foreground">Orientação</span>
+          <p className={cn("whitespace-pre-line text-sm leading-relaxed text-foreground/85", !descExpanded && "line-clamp-3")}>
             {item.instructions}
           </p>
           {hasLongDescription ? (
@@ -109,8 +115,8 @@ export function GoalItemChecklist({ item, locked = false }: { item: StudentGoalI
 
       {studyMaterials.length > 0 ? (
         <div className="flex flex-col gap-1.5">
-          <span className="text-xs font-medium text-muted-foreground">Materiais</span>
-          <div className="flex flex-col overflow-hidden rounded-lg bg-muted/40">
+          <span className="text-[11px] font-medium uppercase tracking-wider text-muted-foreground">Materiais</span>
+          <div className="flex flex-col overflow-hidden rounded-lg border border-border/70 bg-muted/30">
             {groupedMaterials.map((group) => (
               <div key={group.type} className="flex flex-col">
                 {group.showLabel ? (
@@ -140,15 +146,15 @@ export function GoalItemChecklist({ item, locked = false }: { item: StudentGoalI
 
       {hasQuestions ? (
         <div className="flex flex-col gap-1.5">
-          <span className="text-xs font-medium text-muted-foreground">Questões</span>
-          <div className="flex flex-col divide-y divide-border/50 overflow-hidden rounded-lg bg-secondary/40">
+          <span className="text-[11px] font-medium uppercase tracking-wider text-muted-foreground">Questões</span>
+          <div className="flex flex-col divide-y divide-border/50 overflow-hidden rounded-lg border border-border/70 bg-muted/30">
             {questionLinks.map((material) => (
               <a
                 key={material.id}
                 href={material.url}
                 target="_blank"
                 rel="noreferrer"
-                className="group flex items-center gap-2.5 px-3 py-2.5 text-sm text-foreground transition-colors hover:bg-secondary/60"
+                className="group flex min-h-11 items-center gap-2.5 px-3 py-2.5 text-sm text-foreground transition-colors hover:bg-secondary/60"
               >
                 <ExternalLink className="size-4 shrink-0 text-muted-foreground" />
                 <span className="flex-1 truncate">{material.title}</span>
@@ -167,10 +173,21 @@ export function GoalItemChecklist({ item, locked = false }: { item: StudentGoalI
         </div>
       ) : null}
 
-      <label className="flex items-center gap-3 border-t border-border pt-3 text-sm font-medium text-foreground">
-        <Checkbox checked={isComplete} disabled={pending || locked} onCheckedChange={(checked) => toggle(checked === true)} />
+      <label
+        className={cn(
+          "-mx-4 -mb-4 flex min-h-12 items-center gap-3 border-t border-border px-4 py-3 text-sm font-medium text-foreground transition-colors md:-mx-5 md:-mb-5 md:px-5",
+          locked ? "cursor-not-allowed text-muted-foreground" : "cursor-pointer hover:bg-secondary/40",
+          isComplete && !locked && "bg-success/5",
+        )}
+      >
+        <Checkbox
+          checked={isComplete}
+          disabled={pending || locked}
+          onCheckedChange={(checked) => toggle(checked === true)}
+          className="size-5"
+        />
         <span className={isComplete ? "text-muted-foreground line-through" : ""}>
-          {locked ? "Disponível na data de liberação" : "Item concluído"}
+          {locked ? "Disponível na data de liberação" : isComplete ? "Item concluído" : "Marcar item como concluído"}
         </span>
       </label>
     </div>
@@ -184,7 +201,7 @@ function MaterialRow({ material }: { material: StudentMaterial }) {
       href={material.url}
       target="_blank"
       rel="noreferrer"
-      className="group flex items-center gap-2.5 px-3 py-2.5 text-sm text-foreground transition-colors hover:bg-muted/60"
+      className="group flex min-h-11 items-center gap-2.5 px-3 py-2.5 text-sm text-foreground transition-colors hover:bg-muted/60"
     >
       <Icon className="size-4 shrink-0 text-muted-foreground" />
       <span className="flex-1 truncate">{material.title}</span>

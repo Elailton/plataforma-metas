@@ -1,7 +1,5 @@
 import { notFound } from "next/navigation"
-import Link from "next/link"
-import { ArrowLeft } from "lucide-react"
-import { Button } from "@/components/ui/button"
+import { PageHeader } from "@/components/page-header"
 import { GoalForm } from "@/components/admin/goal-form"
 import { GoalActions } from "@/components/admin/goal-actions"
 import { getAdminCourse, getAdminGoal, listCourseEdital, listMaterials } from "@/lib/admin/queries"
@@ -22,21 +20,7 @@ export default async function AdminGoalDetailPage({
 
   return (
     <div className="flex flex-col gap-6">
-      <div className="flex items-center gap-3">
-        <Button
-          render={<Link href={`/admin/cursos/${course.id}`} aria-label="Voltar" />}
-          nativeButton={false}
-          variant="ghost"
-          size="icon"
-          className="-ml-2 shrink-0"
-        >
-          <ArrowLeft />
-        </Button>
-        <div className="flex min-w-0 flex-1 flex-col">
-          <h1 className="truncate text-2xl font-semibold tracking-tight text-foreground">{goal.title}</h1>
-          <p className="text-sm text-muted-foreground">{course.name}</p>
-        </div>
-      </div>
+      <PageHeader className="mb-0 md:mb-0" backHref={`/admin/cursos/${course.id}`} backLabel={course.name} title={goal.title} />
 
       <GoalActions goal={goal} />
 

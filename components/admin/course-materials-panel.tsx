@@ -44,17 +44,20 @@ export function CourseMaterialsPanel({
 
   return (
     <div className="flex flex-col gap-4">
-      <div className="flex items-center justify-end">
+      <div className="flex items-center justify-between gap-3">
+        <span className="text-sm text-muted-foreground tabular-nums">
+          {materials.length} {materials.length === 1 ? "material" : "materiais"}
+        </span>
         <MaterialFormDialog fixedCourseId={courseId} subjects={subjects} />
       </div>
 
       {materials.length > 0 ? (
-        <Card>
+        <Card className="py-0">
           <CardContent className="flex flex-col divide-y divide-border p-0">
             {materials.map((material) => {
               const subject = subjects.find((s) => s.id === material.subjectId)
               return (
-                <div key={material.id} className="flex items-center gap-3.5 px-4 py-3.5">
+                <div key={material.id} className="flex items-center gap-3 px-4 py-3 transition-colors hover:bg-secondary/30 md:gap-3.5">
                   <MaterialTypeIcon type={material.type} />
                   <div className="flex min-w-0 flex-1 flex-col gap-0.5">
                     <span className="truncate text-sm font-medium text-foreground">{material.title}</span>

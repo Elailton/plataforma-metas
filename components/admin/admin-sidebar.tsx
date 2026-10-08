@@ -1,6 +1,6 @@
 "use client"
 
-import { BrandSkull } from "@/components/brand-skull"
+import { BrandLockup } from "@/components/brand-skull"
 
 import Link from "next/link"
 import { usePathname } from "next/navigation"
@@ -24,17 +24,11 @@ export function AdminSidebar() {
 
   return (
     <Sidebar>
-      <SidebarHeader className="px-3 py-3.5">
-        <div className="flex items-center gap-2 px-1">
-          <BrandSkull className="size-8" />
-          <div className="flex flex-col">
-            <span className="text-sm font-semibold tracking-tight text-sidebar-foreground">Mentoria Imparáveis</span>
-            <span className="text-[11px] text-sidebar-foreground/60">Painel do administrador</span>
-          </div>
-        </div>
+      <SidebarHeader className="border-b border-sidebar-border px-4 py-4">
+        <BrandLockup subtitle="Painel do administrador" />
       </SidebarHeader>
       <SidebarContent>
-        <SidebarGroup>
+        <SidebarGroup className="px-3 py-4">
           <SidebarGroupContent>
             <SidebarMenu>
               {adminNavItems.map((item) => {
@@ -42,8 +36,12 @@ export function AdminSidebar() {
                 const Icon = item.icon
                 return (
                   <SidebarMenuItem key={item.href}>
-                    <SidebarMenuButton render={<Link href={item.href} />} isActive={isActive}>
-                      <Icon />
+                    <SidebarMenuButton
+                      render={<Link href={item.href} />}
+                      isActive={isActive}
+                      className="h-9 data-active:font-semibold"
+                    >
+                      <Icon className={isActive ? "text-primary" : undefined} />
                       <span>{item.label}</span>
                     </SidebarMenuButton>
                   </SidebarMenuItem>
@@ -53,7 +51,7 @@ export function AdminSidebar() {
           </SidebarGroupContent>
         </SidebarGroup>
       </SidebarContent>
-      <SidebarFooter>
+      <SidebarFooter className="border-t border-sidebar-border p-3">
         <SidebarMenu>
           <SidebarMenuItem>
             <form action={signOut}>

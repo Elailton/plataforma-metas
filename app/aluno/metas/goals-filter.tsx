@@ -19,7 +19,7 @@ export function GoalsFilter({ goals }: { goals: StudentGoal[] }) {
   }, [goals, filter])
 
   return (
-    <div className="flex flex-col gap-4">
+    <div className="flex flex-col gap-5">
       {goals.filter((goal) => !goal.isReleased).map((goal) => (
         <GoalReleaseRefresh key={goal.id} releaseDate={goal.dueDate} released={goal.isReleased} />
       ))}
@@ -27,21 +27,22 @@ export function GoalsFilter({ goals }: { goals: StudentGoal[] }) {
         value={[filter]}
         onValueChange={(value) => value[0] && setFilter(value[0] as Filter)}
         variant="outline"
-        className="w-full"
+        className="w-full sm:w-fit"
+        aria-label="Filtrar metas"
       >
-        <ToggleGroupItem value="all" className="flex-1 text-xs">
-          Todas
+        <ToggleGroupItem value="all" className="h-9 flex-1 px-4 text-xs sm:flex-none">
+          Todas <span className="ml-1 tabular-nums text-muted-foreground">{goals.length}</span>
         </ToggleGroupItem>
-        <ToggleGroupItem value="in_progress" className="flex-1 text-xs">
+        <ToggleGroupItem value="in_progress" className="h-9 flex-1 px-4 text-xs sm:flex-none">
           Em andamento
         </ToggleGroupItem>
-        <ToggleGroupItem value="completed" className="flex-1 text-xs">
+        <ToggleGroupItem value="completed" className="h-9 flex-1 px-4 text-xs sm:flex-none">
           Concluídas
         </ToggleGroupItem>
       </ToggleGroup>
 
       {filtered.length === 0 ? (
-        <Empty>
+        <Empty className="border border-dashed border-border">
           <EmptyHeader>
             <EmptyMedia variant="icon">
               <ListChecks />

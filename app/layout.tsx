@@ -3,13 +3,15 @@ import type { Metadata, Viewport } from 'next'
 import { Geist, Geist_Mono } from 'next/font/google'
 import { TooltipProvider } from '@/components/ui/tooltip'
 import { Toaster } from '@/components/ui/sonner'
+import { BRAND_NAME, BRAND_TAGLINE } from '@/lib/brand'
 import './globals.css'
 
 const _geistSans = Geist({ subsets: ['latin'], variable: '--font-geist-sans' })
 const _geistMono = Geist_Mono({ subsets: ['latin'], variable: '--font-geist-mono' })
 
 export const metadata: Metadata = {
-  title: 'Mentoria Imparáveis | Acompanhamento de estudos para concursos',
+  title: { default: `${BRAND_NAME} | ${BRAND_TAGLINE}`, template: `%s | ${BRAND_NAME}` },
+  applicationName: BRAND_NAME,
   description:
     'Acompanhe suas metas de estudo, o progresso no edital e a evolução por disciplina em um só lugar.',
   generator: 'v0.app',

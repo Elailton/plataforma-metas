@@ -1,6 +1,6 @@
 # Ativação do beta
 
-Este é o checklist operacional para ativar a Mentoria Imparáveis preservando o administrador, o aluno de teste e todo o progresso existente.
+Este é o checklist operacional para ativar a Sistema Guiado de Aprovação preservando o administrador, o aluno de teste e todo o progresso existente.
 
 ## Regra de acesso
 
@@ -117,7 +117,7 @@ Na Hotmart:
 
 1. Acesse **Ferramentas → Ver todas → Webhook (API e notificações)**.
 2. Selecione **Cadastrar Webhook**.
-3. Dê um nome, como `Mentoria Imparáveis - Produção`.
+3. Dê um nome, como `Sistema Guiado de Aprovação - Produção`.
 4. Associe os produtos desejados, ou todos os produtos se os mapeamentos no Admin já estiverem completos.
 5. Selecione a versão **2.0.0**.
 6. Informe a URL `https://mentoriaimparaveis.vercel.app/api/webhooks/hotmart`.

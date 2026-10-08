@@ -11,7 +11,7 @@ export default async function StudentGoalsPage() {
 
   return (
     <PageContainer>
-      <PageHeading title="Minhas Metas" description="Suas metas em ordem cronológica." />
+      <PageHeading title="Minhas Metas" description="Suas metas em ordem cronológica, com o progresso de cada uma." />
       <GoalsFilter goals={snapshot.goals} />
     </PageContainer>
   )

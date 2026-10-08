@@ -1,27 +1,39 @@
 import type React from "react"
 import { cn } from "@/lib/utils"
+import { PageHeader } from "@/components/page-header"
 
+const WIDTHS = {
+  default: "max-w-3xl",
+  wide: "max-w-5xl",
+} as const
+
+/** Área de conteúdo das páginas do aluno, com larguras e respiros padronizados. */
 export function PageContainer({
   children,
   className,
+  size = "default",
 }: {
   children: React.ReactNode
   className?: string
+  size?: keyof typeof WIDTHS
 }) {
-  return <div className={cn("mx-auto w-full max-w-2xl px-4 py-6 md:px-8 md:py-8", className)}>{children}</div>
+  return (
+    <div className={cn("mx-auto w-full px-4 pb-8 pt-5 sm:px-6 md:px-10 md:pb-12 md:pt-10", WIDTHS[size], className)}>
+      {children}
+    </div>
+  )
 }
 
 export function PageHeading({
   title,
   description,
+  eyebrow,
+  actions,
 }: {
   title: string
   description?: string
+  eyebrow?: string
+  actions?: React.ReactNode
 }) {
-  return (
-    <div className="mb-6 flex flex-col gap-1">
-      <h1 className="text-balance text-2xl font-semibold tracking-tight text-foreground">{title}</h1>
-      {description ? <p className="text-pretty text-sm text-muted-foreground">{description}</p> : null}
-    </div>
-  )
+  return <PageHeader title={title} description={description} eyebrow={eyebrow} actions={actions} />
 }
