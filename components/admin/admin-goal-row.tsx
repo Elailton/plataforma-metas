@@ -28,7 +28,7 @@ export function AdminGoalRow({ goal }: { goal: AdminGoal }) {
         variant={goal.status === "published" ? "default" : "secondary"}
         className="shrink-0"
       >
-        {goal.status === "published" ? "Publicada" : "Rascunho"}
+        {goal.status === "published" ? "Publicada" : goal.status === "archived" ? "Arquivada" : "Rascunho"}
       </Badge>
       <ChevronRight className="size-4 shrink-0 text-muted-foreground" />
     </Link>
