@@ -50,7 +50,7 @@ export default async function GoalDetailPage({
           <span className="w-10 text-right text-sm font-semibold tabular-nums text-foreground">{goal.progress}%</span>
         </div>
         {goal.description ? (
-          <p className="border-t border-border pt-4 text-sm leading-relaxed text-muted-foreground">{goal.description}</p>
+          <p className="border-t border-border pt-4 whitespace-pre-line text-sm leading-relaxed text-muted-foreground">{goal.description}</p>
         ) : null}
       </div>
 

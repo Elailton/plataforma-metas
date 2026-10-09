@@ -69,7 +69,7 @@ export function GoalActions({ goal }: { goal: AdminGoal }) {
     <div className="flex flex-wrap items-center gap-2">
       <div className="flex items-center gap-2.5 rounded-lg border border-border px-3 py-2">
         <Badge variant={goal.status === "published" ? "default" : "secondary"}>
-          {goal.status === "published" ? "Publicada" : "Rascunho"}
+          {goal.status === "published" ? "Publicada" : goal.status === "archived" ? "Arquivada" : "Rascunho"}
         </Badge>
         <Switch
           checked={goal.status === "published"}

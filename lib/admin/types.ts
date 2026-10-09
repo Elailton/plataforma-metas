@@ -49,7 +49,7 @@ export interface AdminMaterial {
   createdAt: string
 }
 
-export type GoalStatus = "draft" | "published"
+export type GoalStatus = "draft" | "published" | "archived"
 
 export interface AdminGoalItemMaterial {
   materialId: string
