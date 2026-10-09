@@ -35,7 +35,8 @@ function refreshGoal(courseId: string, goalId: string) {
 async function saveGoal(goalId: string | null, input: GoalFormInput) {
   const { supabase } = await requireAdmin()
   if (!input.title.trim()) throw new Error("Informe o título da meta.")
-  if (!input.items.length) throw new Error("Adicione ao menos um item à meta.")
+  if (!input.items.length && !input.description.trim())
+    throw new Error("Adicione ao menos um item ou uma descrição de orientação à meta.")
 
   const targetGroups = input.targetGroups ?? [1, 2]
   if (!targetGroups.length || targetGroups.some((g) => g !== 1 && g !== 2))

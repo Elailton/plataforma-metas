@@ -314,3 +314,14 @@ test("email lookup refuses administrator accounts and non-admin callers", async 
  await assert.rejects(student(()=>db.query("select admin_find_student_by_email('other@test.invalid')")))
  assert.equal((await admin(()=>db.query("select admin_find_student_by_email(' STUDENT@Test.Invalid ') as id"))).rows[0].id,S)
 })
+
+test("orientação sem itens salva e edita com controle de versão e permissão", async () => {
+ await applyMigration(db,"20261009000400_orientation_goal_save.sql")
+ const goal={title:"Comece por aqui",description:"Orientações iniciais",status:"published",target_groups:[1,2]}
+ const id=(await admin(()=>db.query("select admin_save_goal(null,$1,$2,'[]',null) as id",[C,goal]))).rows[0].id
+ const version=(await db.query("select updated_at from goals where id=$1",[id])).rows[0].updated_at
+ await admin(()=>db.query("select admin_save_goal($1,$2,$3,'[]',$4)",[id,C,{...goal,description:"Orientações revisadas"},version]))
+ assert.equal((await db.query("select description from goals where id=$1",[id])).rows[0].description,"Orientações revisadas")
+ await assert.rejects(admin(()=>db.query("select admin_save_goal(null,$1,$2,'[]',null)",[C,{...goal,description:" "}])),/descrição de orientação/)
+ await assert.rejects(student(()=>db.query("select admin_save_goal(null,$1,$2,'[]',null)",[C,goal])),/administradores/)
+})
