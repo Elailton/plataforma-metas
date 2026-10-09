@@ -1,13 +1,16 @@
 import assert from "node:assert/strict"
 import test from "node:test"
 import {
+  evaluateOffer,
   HotmartConflictError,
   HotmartPayloadError,
   normalizeEmail,
+  normalizeOfferCode,
   parseHotmartEvent,
   processHotmartEvent,
 } from "../lib/hotmart/core.mjs"
 import { hottokMatches } from "../lib/hotmart/security.mjs"
+import { offerConfigurationWarning, parseOfferInput } from "../lib/hotmart/offers.mjs"
 
 const BASE_TIME = Date.parse("2026-09-01T12:00:00.000Z")
 
@@ -20,6 +23,7 @@ function payload({
   creationDate = BASE_TIME,
   productId = 101,
   buyerUcode = "buyer-ucode",
+  offerCode,
 } = {}) {
   return {
     id,
@@ -29,7 +33,7 @@ function payload({
     data: {
       product: { id: productId, ucode: productUcode, name: "Produto" },
       buyer: { ucode: buyerUcode, email, name: "João da Silva" },
-      purchase: { transaction },
+      purchase: offerCode === undefined ? { transaction } : { transaction, offer: { code: offerCode } },
     },
   }
 }
@@ -41,6 +45,10 @@ function inMemoryRepository({ adminEmails = [] } = {}) {
     ["product-one", { courseId: "course-one", active: true }],
     ["product-one-turbo", { courseId: "course-one", active: true }],
     ["product-two", { courseId: "course-two", active: true }],
+    ["product-sga", {
+      courseId: "course-sga", active: true, offerPolicy: "authorized_offers",
+      offers: [{ code: "4e4p713s", grantsAccess: true }, { code: "qkpqg5ea", grantsAccess: false }],
+    }],
   ])
   const events = new Map()
   const entitlements = new Map()
@@ -103,11 +111,11 @@ function inMemoryRepository({ adminEmails = [] } = {}) {
       events.set(event.eventId, { status: "processing", message: null })
       return { claimed: true, status: "processing" }
     },
-    async finishEvent(eventId, status, message) {
-      events.set(eventId, { status, message })
+    async finishEvent(eventId, status, message, details) {
+      events.set(eventId, { status, message, offerCode: details?.offerCode ?? null })
     },
-    async failEvent(eventId, message) {
-      events.set(eventId, { status: "failed", message })
+    async failEvent(eventId, message, details) {
+      events.set(eventId, { status: "failed", message, offerCode: details?.offerCode ?? null })
     },
     async findProductMapping(productUcode) {
       return mappings.get(productUcode) ?? null
@@ -150,6 +158,7 @@ function inMemoryRepository({ adminEmails = [] } = {}) {
       const entitlement = {
         ...input,
         userId: current?.userId ?? input.userId,
+        offerCode: current?.offerCode ?? input.offerCode ?? null,
         id: current?.id ?? `entitlement-${entitlements.size + 1}`,
       }
       entitlements.set(input.transaction, entitlement)
@@ -538,4 +547,179 @@ test("mapeamento inativo bloqueia aprovação nova, mas ainda processa reembolso
   assert.equal(repository.state.enrollments.get(`${first.userId}:course-one`), "revoked")
   assert.equal(blocked.outcome, "ignored")
   assert.equal(repository.state.entitlements.has("HP-inactive-new"), false)
+})
+
+// ---------------------------------------------------------------------------
+// Ofertas: "curso + SGA" (4e4p713s) libera; "curso apenas" (qkpqg5ea) não libera.
+// Os códigos aparecem só nos testes; a regra real é cadastrada pelo administrador.
+// ---------------------------------------------------------------------------
+
+const SGA = { productUcode: "product-sga", offerCode: "4e4p713s" }
+const COURSE_ONLY = { productUcode: "product-sga", offerCode: "qkpqg5ea" }
+
+test("oferta: código normalizado e configuração da regra", () => {
+  assert.equal(normalizeOfferCode(" 4E4P713S "), "4e4p713s")
+  assert.equal(normalizeOfferCode("x y"), null)
+  assert.equal(normalizeOfferCode(""), null)
+  assert.equal(parseOfferInput("https://pay.hotmart.com/T70472489M?off=4e4p713s"), "4e4p713s")
+  assert.equal(parseOfferInput("https://pay.hotmart.com/T70472489M?off=4e4p713s&src=anuncio&sck=x"), "4e4p713s")
+  assert.equal(parseOfferInput("https://pay.hotmart.com/T70472489M"), null)
+  assert.equal(parseOfferInput("QKPQG5EA"), "qkpqg5ea")
+  assert.equal(parseOfferInput("<script>"), null)
+  assert.equal(offerConfigurationWarning("any", []), null)
+  assert.match(offerConfigurationWarning("authorized_offers", []), /Nenhuma oferta libera/)
+  assert.match(offerConfigurationWarning("authorized_offers", [{ grantsAccess: false }]), /Nenhuma oferta libera/)
+  assert.equal(offerConfigurationWarning("authorized_offers", [{ grantsAccess: true }]), null)
+  // Lista vazia com política restrita nunca significa "qualquer oferta".
+  assert.equal(evaluateOffer({ offerPolicy: "authorized_offers", offers: [] }, "4e4p713s").verdict, "unknown")
+  assert.equal(evaluateOffer({ offerPolicy: "any" }, null).verdict, "granting")
+})
+
+test("oferta 1. curso + SGA concede o direito correto e registra a oferta", async () => {
+  const repository = inMemoryRepository()
+  const result = await approve(repository, { id: "sga-1", transaction: "HP-sga", ...SGA })
+  assert.equal(result.outcome, "processed")
+  assert.equal(result.offerCode, "4e4p713s")
+  assert.equal(repository.state.enrollments.get(`${result.userId}:course-sga`), "active")
+  assert.equal(repository.state.entitlements.get("HP-sga").offerCode, "4e4p713s")
+  assert.equal(repository.state.events.get("sga-1").offerCode, "4e4p713s")
+  assert.equal(repository.state.invitations, 1)
+})
+
+test("oferta 2. curso apenas não concede acesso nem envia convite", async () => {
+  const repository = inMemoryRepository()
+  const result = await approve(repository, { id: "only-1", transaction: "HP-only", ...COURSE_ONLY })
+  assert.equal(result.outcome, "ignored")
+  assert.equal(result.offerVerdict, "non_granting")
+  assert.equal(repository.state.invitations, 0)
+  assert.equal(repository.state.users.size, 0)
+  assert.equal(repository.state.entitlements.size, 0)
+  assert.equal(repository.state.enrollments.size, 0)
+  assert.equal(repository.state.events.get("only-1").status, "ignored")
+  assert.equal(repository.state.events.get("only-1").offerCode, "qkpqg5ea")
+  // O reembolso da compra "curso apenas" também não tem o que revogar.
+  const refunded = await refund(repository, { id: "only-refund", transaction: "HP-only", creationDate: BASE_TIME + 1000, ...COURSE_ONLY })
+  assert.equal(refunded.outcome, "ignored")
+  assert.equal(repository.state.entitlements.size, 0)
+})
+
+test("oferta 3. oferta desconhecida ou ausente não concede acesso e fica registrada para conferência", async () => {
+  const repository = inMemoryRepository()
+  const unknown = await approve(repository, { id: "unknown", transaction: "HP-unknown", productUcode: "product-sga", offerCode: "zzzz9999" })
+  const missing = await approve(repository, { id: "missing", transaction: "HP-missing", productUcode: "product-sga" })
+  assert.equal(unknown.offerVerdict, "unknown")
+  assert.equal(missing.offerVerdict, "missing")
+  assert.match(repository.state.events.get("unknown").message, /não cadastrada/)
+  assert.match(repository.state.events.get("missing").message, /sem código de oferta/)
+  assert.equal(repository.state.invitations, 0)
+  assert.equal(repository.state.enrollments.size, 0)
+})
+
+test("oferta 4. aprovação sem oferta não herda acesso de um watermark negativo", async () => {
+  const repository = inMemoryRepository()
+  await refund(repository, { id: "neg", transaction: "HP-neg", productUcode: "product-sga", creationDate: BASE_TIME })
+  assert.equal(repository.state.entitlements.get("HP-neg").status, "revoked")
+  const result = await approve(repository, { id: "later", transaction: "HP-neg", productUcode: "product-sga", creationDate: BASE_TIME + 1000 })
+  assert.equal(result.outcome, "ignored")
+  assert.equal(repository.state.invitations, 0)
+  assert.equal(repository.state.enrollments.size, 0)
+})
+
+test("oferta 5. a oferta do SGA não depende de src, sck ou outros parâmetros", async () => {
+  const repository = inMemoryRepository()
+  const body = payload({ id: "src", transaction: "HP-src", productUcode: "product-sga" })
+  body.data.purchase.sck = "4e4p713s"
+  body.data.purchase.src = "4e4p713s"
+  body.data.purchase.offer = { code: "qkpqg5ea" }
+  const result = await processHotmartEvent(body, repository)
+  assert.equal(result.outcome, "ignored")
+  assert.equal(repository.state.enrollments.size, 0)
+})
+
+test("oferta 6. produto errado com o código da oferta SGA não libera acesso", async () => {
+  const repository = inMemoryRepository()
+  const result = await approve(repository, { id: "wrong", transaction: "HP-wrong", productUcode: "product-unknown", offerCode: "4e4p713s" })
+  assert.equal(result.outcome, "ignored")
+  assert.equal(repository.state.enrollments.size, 0)
+  assert.equal(repository.state.invitations, 0)
+})
+
+test("oferta 7. evento SGA repetido não duplica conta, convite, direito ou matrícula", async () => {
+  const repository = inMemoryRepository()
+  await approve(repository, { id: "dup", transaction: "HP-dup", ...SGA })
+  const again = await approve(repository, { id: "dup", transaction: "HP-dup", ...SGA })
+  const resent = await approve(repository, { id: "dup-2", transaction: "HP-dup", ...SGA })
+  assert.equal(again.outcome, "duplicate")
+  assert.equal(resent.outcome, "ignored")
+  assert.equal(repository.state.users.size, 1)
+  assert.equal(repository.state.invitations, 1)
+  assert.equal(repository.state.entitlements.size, 1)
+  assert.equal(repository.state.enrollments.size, 1)
+})
+
+test("oferta 8. compra curso apenas não remove o acesso SGA de outra transação", async () => {
+  const repository = inMemoryRepository()
+  const sga = await approve(repository, { id: "a", transaction: "HP-a", ...SGA })
+  await approve(repository, { id: "b", transaction: "HP-b", ...COURSE_ONLY })
+  await refund(repository, { id: "b-refund", transaction: "HP-b", creationDate: BASE_TIME + 1000, ...COURSE_ONLY })
+  assert.equal(repository.state.enrollments.get(`${sga.userId}:course-sga`), "active")
+  assert.equal(repository.state.entitlements.size, 1)
+})
+
+test("oferta 9. reembolso revoga somente o direito da própria transação", async () => {
+  const repository = inMemoryRepository()
+  const first = await approve(repository, { id: "one", transaction: "HP-one", ...SGA })
+  await approve(repository, { id: "two", transaction: "HP-two", ...SGA })
+  await refund(repository, { id: "one-refund", transaction: "HP-one", creationDate: BASE_TIME + 1000, ...SGA })
+  assert.equal(repository.state.entitlements.get("HP-one").status, "revoked")
+  assert.equal(repository.state.entitlements.get("HP-two").status, "active")
+  assert.equal(repository.state.enrollments.get(`${first.userId}:course-sga`), "active")
+  await refund(repository, { id: "two-refund", transaction: "HP-two", creationDate: BASE_TIME + 1000, ...SGA })
+  assert.equal(repository.state.enrollments.get(`${first.userId}:course-sga`), "revoked")
+})
+
+test("oferta 10. reembolso sem oferta ainda atinge a transação SGA conhecida", async () => {
+  const repository = inMemoryRepository()
+  const result = await approve(repository, { id: "sga", transaction: "HP-sga", ...SGA })
+  const refunded = await refund(repository, { id: "sga-refund", transaction: "HP-sga", productUcode: "product-sga", creationDate: BASE_TIME + 1000 })
+  assert.equal(refunded.outcome, "processed")
+  assert.equal(repository.state.enrollments.get(`${result.userId}:course-sga`), "revoked")
+})
+
+test("oferta 11. evento posterior sem oferta reutiliza o vínculo da transação SGA", async () => {
+  const repository = inMemoryRepository()
+  const first = await approve(repository, { id: "sga", transaction: "HP-sga", ...SGA })
+  await processHotmartEvent(payload({ id: "delay", event: "PURCHASE_DELAYED", transaction: "HP-sga", creationDate: BASE_TIME + 1000, ...SGA }), repository)
+  assert.equal(repository.state.enrollments.get(`${first.userId}:course-sga`), "suspended")
+  const reapproved = await approve(repository, { id: "reapproved", transaction: "HP-sga", productUcode: "product-sga", creationDate: BASE_TIME + 2000 })
+  assert.equal(reapproved.outcome, "processed")
+  assert.equal(repository.state.enrollments.get(`${first.userId}:course-sga`), "active")
+  assert.equal(repository.state.invitations, 1)
+})
+
+test("oferta 12. concessão manual sobrevive ao reembolso SGA e à compra curso apenas", async () => {
+  const repository = inMemoryRepository()
+  const first = await approve(repository, { id: "sga", transaction: "HP-sga", ...SGA })
+  repository.grantManual("student@email.com", "course-sga")
+  await refund(repository, { id: "sga-refund", transaction: "HP-sga", creationDate: BASE_TIME + 1000, ...SGA })
+  await approve(repository, { id: "only", transaction: "HP-only", ...COURSE_ONLY })
+  assert.equal(repository.state.enrollments.get(`${first.userId}:course-sga`), "active")
+})
+
+test("oferta 13. conta existente comprando curso apenas mantém progresso e não recebe convite", async () => {
+  const repository = inMemoryRepository()
+  const first = await approve(repository, { id: "other", transaction: "HP-other" })
+  repository.state.progress.set(`${first.userId}:item-1`, true)
+  await approve(repository, { id: "only", transaction: "HP-only", ...COURSE_ONLY })
+  assert.equal(repository.state.invitations, 1)
+  assert.equal(repository.state.progress.get(`${first.userId}:item-1`), true)
+  assert.equal(repository.state.enrollments.get(`${first.userId}:course-one`), "active")
+  assert.equal(repository.state.enrollments.has(`${first.userId}:course-sga`), false)
+})
+
+test("oferta: mapeamento sem política restrita mantém o comportamento anterior", async () => {
+  const repository = inMemoryRepository()
+  const result = await approve(repository, { id: "legacy", transaction: "HP-legacy", offerCode: "qualquer" })
+  assert.equal(result.outcome, "processed")
+  assert.equal(repository.state.enrollments.get(`${result.userId}:course-one`), "active")
 })

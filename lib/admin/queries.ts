@@ -9,6 +9,7 @@ import type {
   AdminSubject,
   AdminSyllabusTopic,
   HotmartProductMapping,
+  HotmartEventSummary,
 } from "@/lib/admin/types"
 
 export async function listAdminCourses(): Promise<AdminCourse[]> {
@@ -377,7 +378,7 @@ export async function listHotmartProductMappings(
 
   const { data: mappings } = await supabase
     .from("hotmart_product_mappings")
-    .select("*")
+    .select("*, hotmart_offer_rules(id, offer_code, grants_access, label, created_at)")
     .eq("course_id", courseId)
     .order("created_at", { ascending: false })
 
@@ -388,6 +389,39 @@ export async function listHotmartProductMappings(
     hotmartProductUcode: mapping.hotmart_product_ucode,
     hotmartProductName: mapping.hotmart_product_name,
     active: mapping.active,
+    offerPolicy: mapping.offer_policy === "authorized_offers" ? "authorized_offers" : "any",
+    offerRules: ((mapping.hotmart_offer_rules ?? []) as any[])
+      .map((rule) => ({
+        id: rule.id,
+        offerCode: rule.offer_code,
+        grantsAccess: Boolean(rule.grants_access),
+        label: rule.label,
+        createdAt: rule.created_at,
+      }))
+      .sort((a, b) => Number(b.grantsAccess) - Number(a.grantsAccess) || a.offerCode.localeCompare(b.offerCode)),
     createdAt: mapping.created_at,
+  }))
+}
+
+/**
+ * Últimos eventos Hotmart recebidos (sem e-mail, nome ou payload): tipo, produto,
+ * oferta e resultado. Inclui produtos ainda não vinculados, para conferência do ucode.
+ */
+export async function listRecentHotmartEvents(limit = 25): Promise<HotmartEventSummary[]> {
+  const supabase = await createClient()
+  const { data } = await supabase
+    .from("hotmart_webhook_events")
+    .select("id, event_type, product_ucode, offer_code, processing_status, error_message, created_at")
+    .order("created_at", { ascending: false })
+    .limit(limit)
+
+  return (data ?? []).map((event) => ({
+    id: event.id,
+    eventType: event.event_type,
+    productUcode: event.product_ucode,
+    offerCode: event.offer_code ?? null,
+    status: event.processing_status,
+    message: event.error_message,
+    createdAt: event.created_at,
   }))
 }

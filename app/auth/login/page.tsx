@@ -138,6 +138,12 @@ function LoginForm() {
                 </Button>
               </div>
             </form>
+            <p className="mt-5 text-center text-sm text-muted-foreground">
+              Primeiro acesso ou não recebeu o e-mail?{" "}
+              <Link href="/auth/reenviar-acesso" className="font-medium text-foreground underline-offset-4 hover:underline">
+                Reenviar acesso
+              </Link>
+            </p>
           </CardContent>
         </Card>
 

@@ -14,13 +14,35 @@ export interface ParsedHotmartEvent {
   buyerName: string | null
   avatarInitials: string
   eventCreationDate: string | null
+  /** data.purchase.offer.code normalizado (minúsculas) ou null quando ausente. */
+  offerCode: string | null
+}
+
+export type OfferPolicy = "any" | "authorized_offers"
+export type OfferVerdict = "granting" | "non_granting" | "unknown" | "missing"
+
+export interface HotmartProductMapping {
+  courseId: string
+  active: boolean
+  /** Ausente equivale a "any" (comportamento anterior). */
+  offerPolicy?: OfferPolicy
+  offers?: { code: string; grantsAccess: boolean }[]
+}
+
+export interface HotmartEventDetails {
+  offerCode: string | null
 }
 
 export interface HotmartRepository {
   claimEvent(event: ParsedHotmartEvent): Promise<{ claimed: boolean; status: EventProcessingStatus }>
-  finishEvent(eventId: string, status: "processed" | "ignored", message: string | null): Promise<void>
-  failEvent(eventId: string, message: string): Promise<void>
-  findProductMapping(productUcode: string | null): Promise<{ courseId: string; active: boolean } | null>
+  finishEvent(
+    eventId: string,
+    status: "processed" | "ignored",
+    message: string | null,
+    details?: HotmartEventDetails,
+  ): Promise<void>
+  failEvent(eventId: string, message: string, details?: HotmartEventDetails): Promise<void>
+  findProductMapping(productUcode: string | null): Promise<HotmartProductMapping | null>
   findUserByEmail(email: string | null): Promise<string | null>
   inviteStudent(input: {
     email: string
@@ -38,6 +60,7 @@ export interface HotmartRepository {
     productUcode: string
     status: EnrollmentStatus
     eventCreationDate: string
+    offerCode?: string | null
   } | null>
   applyEntitlementEvent(input: {
     transaction: string
@@ -49,6 +72,7 @@ export interface HotmartRepository {
     status: EnrollmentStatus
     eventId: string
     eventCreationDate: string
+    offerCode?: string | null
   }): Promise<{
     applied: boolean
     entitlementStatus: EnrollmentStatus
@@ -59,6 +83,12 @@ export interface HotmartRepository {
 export class HotmartPayloadError extends Error {}
 export class HotmartConflictError extends Error {}
 
+export const OFFER_IGNORED_MESSAGES: Readonly<Record<Exclude<OfferVerdict, "granting">, string>>
+export function normalizeOfferCode(value: unknown): string | null
+export function evaluateOffer(
+  mapping: HotmartProductMapping | null,
+  offerCode: string | null,
+): { restricted: boolean; verdict: OfferVerdict }
 export function normalizeEmail(value: unknown): string
 export function initialsFromName(value: unknown): string
 export function parseHotmartEvent(payload: unknown): ParsedHotmartEvent
@@ -73,4 +103,6 @@ export function processHotmartEvent(
   courseId?: string
   entitlementStatus?: EnrollmentStatus
   enrollmentStatus?: EnrollmentStatus | null
+  offerCode?: string | null
+  offerVerdict?: OfferVerdict
 }>

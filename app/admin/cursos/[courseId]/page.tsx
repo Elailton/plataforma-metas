@@ -11,6 +11,7 @@ import {
   listCourseGoals,
   listCourseStudents,
   listHotmartProductMappings,
+  listRecentHotmartEvents,
   listMaterials,
 } from "@/lib/admin/queries"
 
@@ -29,13 +30,17 @@ export default async function AdminCourseDetailPage({
   const course = await getAdminCourse(courseId)
   if (!course) notFound()
 
-  const [goals, edital, students, materials, hotmartMappings] = await Promise.all([
+  const [goals, edital, students, materials, hotmartMappings, hotmartEvents] = await Promise.all([
     listCourseGoals(course.id),
     listCourseEdital(course.id),
     listCourseStudents(course.id),
     listMaterials(course.id),
     listHotmartProductMappings(course.id),
+    listRecentHotmartEvents(),
   ])
+  const hotmartWebhookUrl = process.env.SITE_URL
+    ? new URL("/api/webhooks/hotmart", process.env.SITE_URL).toString()
+    : null
 
   return (
     <div className="flex flex-col gap-6">
@@ -68,6 +73,8 @@ export default async function AdminCourseDetailPage({
         students={students}
         materials={materials}
         hotmartMappings={hotmartMappings}
+        hotmartEvents={hotmartEvents}
+        hotmartWebhookUrl={hotmartWebhookUrl}
       />
     </div>
   )
