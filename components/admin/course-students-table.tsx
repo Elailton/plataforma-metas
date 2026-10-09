@@ -8,20 +8,54 @@ import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Textarea } from "@/components/ui/textarea"
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter } from "@/components/ui/dialog"
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
-import { Empty, EmptyHeader, EmptyMedia, EmptyTitle, EmptyDescription } from "@/components/ui/empty"
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogDescription,
+  DialogFooter,
+} from "@/components/ui/dialog"
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table"
+import {
+  Empty,
+  EmptyHeader,
+  EmptyMedia,
+  EmptyTitle,
+  EmptyDescription,
+} from "@/components/ui/empty"
 import { UserPlus, Users } from "lucide-react"
 import { toast } from "sonner"
+import { setStudentGroup } from "@/lib/admin/actions/groups"
 import type { AdminCourseStudent } from "@/lib/admin/types"
-import { enrollExistingStudent, setEnrollmentStatus, setCourseAccessBlock } from "@/lib/admin/actions/enrollments"
+import {
+  enrollExistingStudent,
+  setEnrollmentStatus,
+  setCourseAccessBlock,
+} from "@/lib/admin/actions/enrollments"
 
-export function CourseStudentsTable({ courseId, students }: { courseId: string; students: AdminCourseStudent[] }) {
+export function CourseStudentsTable({
+  courseId,
+  students,
+}: {
+  courseId: string
+  students: AdminCourseStudent[]
+}) {
   const router = useRouter()
+  const [groupFilter, setGroupFilter] = useState("all")
   const [email, setEmail] = useState("")
   const [fullName, setFullName] = useState("")
   const [pending, startTransition] = useTransition()
-  const [blockTarget, setBlockTarget] = useState<AdminCourseStudent | null>(null)
+  const [blockTarget, setBlockTarget] = useState<AdminCourseStudent | null>(
+    null,
+  )
   const [reason, setReason] = useState("")
 
   function handleEnrollment(event: FormEvent<HTMLFormElement>) {
@@ -35,19 +69,30 @@ export function CourseStudentsTable({ courseId, students }: { courseId: string; 
         else toast.success(result.message)
         router.refresh()
       } catch (error) {
-        toast.error(error instanceof Error ? error.message : "Não foi possível matricular o aluno.")
+        toast.error(
+          error instanceof Error
+            ? error.message
+            : "Não foi possível matricular o aluno.",
+        )
       }
     })
   }
 
-  function handleStatus(enrollmentId: string, status: "active" | "suspended" | "revoked") {
+  function handleStatus(
+    enrollmentId: string,
+    status: "active" | "suspended" | "revoked",
+  ) {
     startTransition(async () => {
       try {
         const result = await setEnrollmentStatus(enrollmentId, courseId, status)
         toast.success(result.message)
         router.refresh()
       } catch (error) {
-        toast.error(error instanceof Error ? error.message : "Não foi possível alterar a matrícula.")
+        toast.error(
+          error instanceof Error
+            ? error.message
+            : "Não foi possível alterar a matrícula.",
+        )
       }
     })
   }
@@ -57,13 +102,22 @@ export function CourseStudentsTable({ courseId, students }: { courseId: string; 
     if (!blockTarget) return
     startTransition(async () => {
       try {
-        const result = await setCourseAccessBlock(blockTarget.id, courseId, !blockTarget.accessBlock, reason)
+        const result = await setCourseAccessBlock(
+          blockTarget.id,
+          courseId,
+          !blockTarget.accessBlock,
+          reason,
+        )
         toast.success(result.message)
         setBlockTarget(null)
         setReason("")
         router.refresh()
       } catch (error) {
-        toast.error(error instanceof Error ? error.message : "Não foi possível alterar o bloqueio.")
+        toast.error(
+          error instanceof Error
+            ? error.message
+            : "Não foi possível alterar o bloqueio.",
+        )
       }
     })
   }
@@ -71,11 +125,15 @@ export function CourseStudentsTable({ courseId, students }: { courseId: string; 
   return (
     <div className="flex flex-col">
       <p className="border-b border-border p-4 text-sm text-muted-foreground">
-        O acesso pode vir de uma compra Hotmart ou de uma concessão manual. Suspender ou revogar
-        a concessão manual não cancela compras. Para impedir todas as formas de acesso a este curso,
-        use o bloqueio administrativo. Suspenso é uma pausa; revogado encerra a concessão.
+        O acesso pode vir de uma compra Hotmart ou de uma concessão manual.
+        Suspender ou revogar a concessão manual não cancela compras. Para
+        impedir todas as formas de acesso a este curso, use o bloqueio
+        administrativo. Suspenso é uma pausa; revogado encerra a concessão.
       </p>
-      <form onSubmit={handleEnrollment} className="grid gap-3 border-b border-border p-4 sm:grid-cols-[1fr_1fr_auto]">
+      <form
+        onSubmit={handleEnrollment}
+        className="grid gap-3 border-b border-border p-4 sm:grid-cols-[1fr_1fr_auto]"
+      >
         <div>
           <Input
             type="text"
@@ -101,115 +159,266 @@ export function CourseStudentsTable({ courseId, students }: { courseId: string; 
         </Button>
       </form>
 
+      <div className="flex flex-wrap items-center gap-3 border-b p-4">
+        <label htmlFor="group-filter">Filtrar grupo</label>
+        <select
+          id="group-filter"
+          value={groupFilter}
+          onChange={(e) => setGroupFilter(e.target.value)}
+          className="rounded border p-2"
+        >
+          <option value="all">Todos ({students.length})</option>
+          <option value="1">
+            Grupo 1 ({students.filter((s) => s.studyGroup === 1).length})
+          </option>
+          <option value="2">
+            Grupo 2 ({students.filter((s) => s.studyGroup === 2).length})
+          </option>
+          <option value="none">
+            Sem grupo ({students.filter((s) => s.studyGroup == null).length})
+          </option>
+        </select>
+      </div>
       {students.length === 0 ? (
-      <Empty>
-        <EmptyHeader>
-          <EmptyMedia variant="icon">
-            <Users />
-          </EmptyMedia>
-          <EmptyTitle>Nenhum aluno matriculado</EmptyTitle>
-          <EmptyDescription>Os alunos aparecerão aqui após se matricularem neste curso.</EmptyDescription>
-        </EmptyHeader>
-      </Empty>
+        <Empty>
+          <EmptyHeader>
+            <EmptyMedia variant="icon">
+              <Users />
+            </EmptyMedia>
+            <EmptyTitle>Nenhum aluno matriculado</EmptyTitle>
+            <EmptyDescription>
+              Os alunos aparecerão aqui após se matricularem neste curso.
+            </EmptyDescription>
+          </EmptyHeader>
+        </Empty>
       ) : (
-      <Table>
-      <TableHeader>
-        <TableRow>
-          <TableHead>Aluno</TableHead>
-          <TableHead>Acesso efetivo</TableHead>
-          <TableHead>Compras Hotmart</TableHead>
-          <TableHead>Concessão manual</TableHead>
-          <TableHead className="text-right">Bloqueio administrativo</TableHead>
-        </TableRow>
-      </TableHeader>
-      <TableBody>
-        {students.map((student) => (
-          <TableRow key={student.id}>
-            <TableCell>
-              <div className="flex items-center gap-2.5">
-                <Avatar className="size-8">
-                  <AvatarFallback className="bg-secondary text-xs font-semibold text-secondary-foreground">
-                    {student.avatarInitials}
-                  </AvatarFallback>
-                </Avatar>
-                <span className="font-medium text-foreground">{student.fullName}</span>
-              </div>
-            </TableCell>
-            <TableCell>
-              <Badge variant={student.enrollmentStatus === "active" ? "default" : "secondary"}>
-                {student.accessBlock ? "Bloqueado pelo admin" : student.enrollmentStatus === "active"
-                  ? "Ativa"
-                  : student.enrollmentStatus === "suspended"
-                    ? "Suspensa"
-                    : "Revogada"}
-              </Badge>
-            </TableCell>
-            <TableCell className="text-xs text-muted-foreground">
-              <div>{student.hotmartActiveCount} ativa(s)</div>
-              <div>{student.hotmartSuspendedCount} suspensa(s) · {student.hotmartRevokedCount} revogada(s)</div>
-            </TableCell>
-            <TableCell>
-              <select
-                className="h-8 rounded-md border border-input bg-background px-2 text-xs"
-                value={student.manualStatus ?? "none"}
-                disabled={pending}
-                onChange={(event) =>
-                  handleStatus(
-                    student.id,
-                    event.target.value as "active" | "suspended" | "revoked",
-                  )
-                }
-                aria-label={`Concessão manual de ${student.fullName}`}
-              >
-                <option value="none" disabled>Sem concessão manual</option>
-                <option value="active">Ativo</option>
-                <option value="suspended">Suspenso</option>
-                <option value="revoked">Revogado</option>
-              </select>
-            </TableCell>
-            <TableCell className="max-w-64 whitespace-normal text-right">
-              <Button
-                size="sm"
-                variant={student.accessBlock ? "outline" : "destructive"}
-                disabled={pending}
-                aria-label={`${student.accessBlock ? "Desbloquear" : "Bloquear"} ${student.fullName} neste curso`}
-                onClick={() => { setReason(""); setBlockTarget(student) }}
-              >
-                {student.accessBlock ? "Desbloquear" : "Bloquear neste curso"}
-              </Button>
-              {student.accessBlock && (
-                <div className="mt-2 break-words text-xs text-muted-foreground">
-                  <p>{student.accessBlock.reason}</p>
-                  <p>{student.accessBlock.blockedByName} · {new Date(student.accessBlock.blockedAt).toLocaleString("pt-BR", { timeZone: "America/Sao_Paulo" })} (Brasília)</p>
-                </div>
-              )}
-            </TableCell>
-          </TableRow>
-        ))}
-      </TableBody>
-    </Table>
+        <Table>
+          <TableHeader>
+            <TableRow>
+              <TableHead>Aluno</TableHead>
+              <TableHead>Grupo e respostas</TableHead>
+              <TableHead>Acesso efetivo</TableHead>
+              <TableHead>Compras Hotmart</TableHead>
+              <TableHead>Concessão manual</TableHead>
+              <TableHead className="text-right">
+                Bloqueio administrativo
+              </TableHead>
+            </TableRow>
+          </TableHeader>
+          <TableBody>
+            {students
+              .filter(
+                (s) =>
+                  groupFilter === "all" ||
+                  (groupFilter === "none"
+                    ? s.studyGroup == null
+                    : s.studyGroup === Number(groupFilter)),
+              )
+              .map((student) => (
+                <TableRow key={student.id}>
+                  <TableCell>
+                    <div className="flex items-center gap-2.5">
+                      <Avatar className="size-8">
+                        <AvatarFallback className="bg-secondary text-xs font-semibold text-secondary-foreground">
+                          {student.avatarInitials}
+                        </AvatarFallback>
+                      </Avatar>
+                      <span className="font-medium text-foreground">
+                        {student.fullName}
+                      </span>
+                    </div>
+                  </TableCell>
+                  <TableCell className="max-w-80 whitespace-normal">
+                    <select
+                      aria-label={`Grupo de ${student.fullName}`}
+                      value={student.studyGroup ?? "none"}
+                      disabled={pending}
+                      className="rounded border p-2"
+                      onChange={(event) => {
+                        const value = event.target.value
+                        startTransition(async () => {
+                          try {
+                            await setStudentGroup(
+                              student.id,
+                              courseId,
+                              value === "none" ? null : Number(value),
+                            )
+                            toast.success(
+                              "Grupo atualizado; histórico preservado.",
+                            )
+                            router.refresh()
+                          } catch (error) {
+                            toast.error(
+                              error instanceof Error
+                                ? error.message
+                                : "Não foi possível alterar o grupo",
+                            )
+                          }
+                        })
+                      }}
+                    >
+                      <option value="none">Sem grupo</option>
+                      <option value="1">Grupo 1 — até 4h</option>
+                      <option value="2">Grupo 2 — mais de 4h</option>
+                    </select>
+                    {student.groupManualOverride && (
+                      <p className="mt-1 text-xs text-muted-foreground">
+                        Definido pelo administrador
+                      </p>
+                    )}
+                    {student.questionnaire && (
+                      <details className="mt-2 text-xs">
+                        <summary>Respostas do formulário</summary>
+                        <p>{student.questionnaire.whatsapp}</p>
+                        {Object.entries(student.questionnaire.labels).map(
+                          ([key, value]) => (
+                            <p key={key} className="mt-2">
+                              <strong>{key.toUpperCase()}:</strong> {value}
+                            </p>
+                          ),
+                        )}
+                      </details>
+                    )}
+                  </TableCell>
+                  <TableCell>
+                    <Badge
+                      variant={
+                        student.enrollmentStatus === "active"
+                          ? "default"
+                          : "secondary"
+                      }
+                    >
+                      {student.accessBlock
+                        ? "Bloqueado pelo admin"
+                        : student.enrollmentStatus === "active"
+                          ? "Ativa"
+                          : student.enrollmentStatus === "suspended"
+                            ? "Suspensa"
+                            : "Revogada"}
+                    </Badge>
+                  </TableCell>
+                  <TableCell className="text-xs text-muted-foreground">
+                    <div>{student.hotmartActiveCount} ativa(s)</div>
+                    <div>
+                      {student.hotmartSuspendedCount} suspensa(s) ·{" "}
+                      {student.hotmartRevokedCount} revogada(s)
+                    </div>
+                  </TableCell>
+                  <TableCell>
+                    <select
+                      className="h-8 rounded-md border border-input bg-background px-2 text-xs"
+                      value={student.manualStatus ?? "none"}
+                      disabled={pending}
+                      onChange={(event) =>
+                        handleStatus(
+                          student.id,
+                          event.target.value as
+                            | "active"
+                            | "suspended"
+                            | "revoked",
+                        )
+                      }
+                      aria-label={`Concessão manual de ${student.fullName}`}
+                    >
+                      <option value="none" disabled>
+                        Sem concessão manual
+                      </option>
+                      <option value="active">Ativo</option>
+                      <option value="suspended">Suspenso</option>
+                      <option value="revoked">Revogado</option>
+                    </select>
+                  </TableCell>
+                  <TableCell className="max-w-64 whitespace-normal text-right">
+                    <Button
+                      size="sm"
+                      variant={student.accessBlock ? "outline" : "destructive"}
+                      disabled={pending}
+                      aria-label={`${student.accessBlock ? "Desbloquear" : "Bloquear"} ${student.fullName} neste curso`}
+                      onClick={() => {
+                        setReason("")
+                        setBlockTarget(student)
+                      }}
+                    >
+                      {student.accessBlock
+                        ? "Desbloquear"
+                        : "Bloquear neste curso"}
+                    </Button>
+                    {student.accessBlock && (
+                      <div className="mt-2 break-words text-xs text-muted-foreground">
+                        <p>{student.accessBlock.reason}</p>
+                        <p>
+                          {student.accessBlock.blockedByName} ·{" "}
+                          {new Date(
+                            student.accessBlock.blockedAt,
+                          ).toLocaleString("pt-BR", {
+                            timeZone: "America/Sao_Paulo",
+                          })}{" "}
+                          (Brasília)
+                        </p>
+                      </div>
+                    )}
+                  </TableCell>
+                </TableRow>
+              ))}
+          </TableBody>
+        </Table>
       )}
-      <Dialog open={Boolean(blockTarget)} onOpenChange={(open) => { if (!open && !pending) setBlockTarget(null) }}>
+      <Dialog
+        open={Boolean(blockTarget)}
+        onOpenChange={(open) => {
+          if (!open && !pending) setBlockTarget(null)
+        }}
+      >
         <DialogContent showCloseButton={!pending}>
           <form onSubmit={handleBlock} className="flex flex-col gap-4">
             <DialogHeader>
-              <DialogTitle>{blockTarget?.accessBlock ? "Desbloquear neste curso" : "Bloquear neste curso"}</DialogTitle>
+              <DialogTitle>
+                {blockTarget?.accessBlock
+                  ? "Desbloquear neste curso"
+                  : "Bloquear neste curso"}
+              </DialogTitle>
               <DialogDescription>
-                {blockTarget?.fullName}. {blockTarget?.accessBlock
+                {blockTarget?.fullName}.{" "}
+                {blockTarget?.accessBlock
                   ? "O acesso só voltará se houver compra válida ou concessão manual ativa."
                   : "O aluno ficará sem acesso a este curso, mesmo com compra válida. Outros cursos, conta e progresso serão preservados."}
               </DialogDescription>
             </DialogHeader>
             <div className="grid gap-2">
               <Label htmlFor="course-block-reason">Motivo administrativo</Label>
-              <Textarea id="course-block-reason" value={reason} onChange={(event) => setReason(event.target.value)}
-                required minLength={3} maxLength={500} disabled={pending} />
-              <p className="text-xs text-muted-foreground">Visível somente aos administradores. Não inclua dados pessoais sensíveis. A ação fica registrada com data e responsável.</p>
+              <Textarea
+                id="course-block-reason"
+                value={reason}
+                onChange={(event) => setReason(event.target.value)}
+                required
+                minLength={3}
+                maxLength={500}
+                disabled={pending}
+              />
+              <p className="text-xs text-muted-foreground">
+                Visível somente aos administradores. Não inclua dados pessoais
+                sensíveis. A ação fica registrada com data e responsável.
+              </p>
             </div>
             <DialogFooter>
-              <Button type="button" variant="outline" disabled={pending} onClick={() => setBlockTarget(null)}>Cancelar</Button>
-              <Button type="submit" variant={blockTarget?.accessBlock ? "default" : "destructive"} disabled={pending || reason.trim().length < 3}>
-                {pending ? "Salvando..." : blockTarget?.accessBlock ? "Confirmar desbloqueio" : "Confirmar bloqueio"}
+              <Button
+                type="button"
+                variant="outline"
+                disabled={pending}
+                onClick={() => setBlockTarget(null)}
+              >
+                Cancelar
+              </Button>
+              <Button
+                type="submit"
+                variant={blockTarget?.accessBlock ? "default" : "destructive"}
+                disabled={pending || reason.trim().length < 3}
+              >
+                {pending
+                  ? "Salvando..."
+                  : blockTarget?.accessBlock
+                    ? "Confirmar desbloqueio"
+                    : "Confirmar bloqueio"}
               </Button>
             </DialogFooter>
           </form>

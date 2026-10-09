@@ -14,7 +14,10 @@ import type {
 export async function listAdminCourses(): Promise<AdminCourse[]> {
   const supabase = await createClient()
 
-  const { data: courses } = await supabase.from("courses").select("*").order("created_at", { ascending: false })
+  const { data: courses } = await supabase
+    .from("courses")
+    .select("*")
+    .order("created_at", { ascending: false })
 
   if (!courses) return []
 
@@ -35,8 +38,14 @@ export async function listAdminCourses(): Promise<AdminCourse[]> {
     status: course.status,
     createdAt: course.created_at,
     updatedAt: course.updated_at,
-    studentsCount: enrollmentCounts?.filter((enrollment) => enrollment.course_id === course.id).length ?? 0,
-    goalsCount: goalCounts?.filter((g) => g.course_id === course.id).length ?? 0,
+    groupsEnabled: course.groups_enabled ?? false,
+    questionnaireSchema: course.questionnaire_schema ?? [],
+    studentsCount:
+      enrollmentCounts?.filter(
+        (enrollment) => enrollment.course_id === course.id,
+      ).length ?? 0,
+    goalsCount:
+      goalCounts?.filter((g) => g.course_id === course.id).length ?? 0,
   }))
 }
 
@@ -47,13 +56,20 @@ export async function countActiveStudents(): Promise<number> {
     .select("user_id")
     .eq("status", "active")
 
-  return new Set((enrollments ?? []).map((enrollment) => enrollment.user_id)).size
+  return new Set((enrollments ?? []).map((enrollment) => enrollment.user_id))
+    .size
 }
 
-export async function getAdminCourse(courseId: string): Promise<AdminCourse | null> {
+export async function getAdminCourse(
+  courseId: string,
+): Promise<AdminCourse | null> {
   const supabase = await createClient()
 
-  const { data: course } = await supabase.from("courses").select("*").eq("id", courseId).single()
+  const { data: course } = await supabase
+    .from("courses")
+    .select("*")
+    .eq("id", courseId)
+    .single()
   if (!course) return null
 
   const { count: studentsCount } = await supabase
@@ -77,12 +93,16 @@ export async function getAdminCourse(courseId: string): Promise<AdminCourse | nu
     status: course.status,
     createdAt: course.created_at,
     updatedAt: course.updated_at,
+    groupsEnabled: course.groups_enabled ?? false,
+    questionnaireSchema: course.questionnaire_schema ?? [],
     studentsCount: studentsCount ?? 0,
     goalsCount: goalsCount ?? 0,
   }
 }
 
-export async function listCourseSubjects(courseId: string): Promise<AdminSubject[]> {
+export async function listCourseSubjects(
+  courseId: string,
+): Promise<AdminSubject[]> {
   const supabase = await createClient()
 
   const { data: subjects } = await supabase
@@ -102,7 +122,9 @@ export async function listCourseSubjects(courseId: string): Promise<AdminSubject
   }))
 }
 
-export async function listSubjectTopics(subjectId: string): Promise<AdminSyllabusTopic[]> {
+export async function listSubjectTopics(
+  subjectId: string,
+): Promise<AdminSyllabusTopic[]> {
   const supabase = await createClient()
 
   const { data: topics } = await supabase
@@ -129,7 +151,12 @@ export async function listCourseEdital(
   const { data: topics } = await supabase
     .from("syllabus_topics")
     .select("*")
-    .in("subject_id", subjects.map((s) => s.id).length ? subjects.map((s) => s.id) : ["00000000-0000-0000-0000-000000000000"])
+    .in(
+      "subject_id",
+      subjects.map((s) => s.id).length
+        ? subjects.map((s) => s.id)
+        : ["00000000-0000-0000-0000-000000000000"],
+    )
     .order("position", { ascending: true })
 
   return subjects.map((subject) => ({
@@ -146,10 +173,15 @@ export async function listCourseEdital(
   }))
 }
 
-export async function listMaterials(courseId?: string): Promise<AdminMaterial[]> {
+export async function listMaterials(
+  courseId?: string,
+): Promise<AdminMaterial[]> {
   const supabase = await createClient()
 
-  let query = supabase.from("materials").select("*").order("created_at", { ascending: false })
+  let query = supabase
+    .from("materials")
+    .select("*")
+    .order("created_at", { ascending: false })
   if (courseId) query = query.eq("course_id", courseId)
 
   const { data: materials } = await query
@@ -183,7 +215,11 @@ export async function listCourseGoals(courseId: string): Promise<AdminGoal[]> {
 export async function getAdminGoal(goalId: string): Promise<AdminGoal | null> {
   const supabase = await createClient()
 
-  const { data: goal } = await supabase.from("goals").select("*").eq("id", goalId).single()
+  const { data: goal } = await supabase
+    .from("goals")
+    .select("*")
+    .eq("id", goalId)
+    .single()
   if (!goal) return null
 
   return hydrateGoal(goal)
@@ -221,55 +257,89 @@ async function hydrateGoal(goal: any): Promise<AdminGoal> {
     dueDate: goal.due_date,
     createdAt: goal.created_at,
     updatedAt: goal.updated_at,
+    targetGroups: goal.target_groups ?? [1, 2],
     items: goalItems,
   }
 }
 
-export async function listCourseStudents(courseId: string): Promise<AdminCourseStudent[]> {
+export async function listCourseStudents(
+  courseId: string,
+): Promise<AdminCourseStudent[]> {
   const supabase = await createClient()
 
   const { data: enrollments, error: enrollmentError } = await supabase
     .from("enrollments")
-    .select("id, user_id, course_id, status, enrolled_at, profiles!enrollments_user_id_fkey(full_name, avatar_initials)")
+    .select(
+      "id, user_id, course_id, status, enrolled_at, study_group, group_manual_override, questionnaire, profiles!enrollments_user_id_fkey(full_name, avatar_initials)",
+    )
     .eq("course_id", courseId)
     .order("enrolled_at", { ascending: false })
 
   const [manual, rights, blocks] = await Promise.all([
-    supabase.from("manual_course_grants").select("user_id, status").eq("course_id", courseId),
-    supabase.from("hotmart_entitlements").select("user_id, status").eq("course_id", courseId),
-    supabase.from("course_access_blocks")
-      .select("user_id, reason, blocked_at, profiles!course_access_blocks_blocked_by_fkey(full_name)")
-      .eq("course_id", courseId).is("released_at", null),
+    supabase
+      .from("manual_course_grants")
+      .select("user_id, status")
+      .eq("course_id", courseId),
+    supabase
+      .from("hotmart_entitlements")
+      .select("user_id, status")
+      .eq("course_id", courseId),
+    supabase
+      .from("course_access_blocks")
+      .select(
+        "user_id, reason, blocked_at, profiles!course_access_blocks_blocked_by_fkey(full_name)",
+      )
+      .eq("course_id", courseId)
+      .is("released_at", null),
   ])
   if (enrollmentError || manual.error || rights.error || blocks.error) {
-    throw new Error("Não foi possível consultar os acessos. Confira a migration de bloqueios administrativos.")
+    throw new Error(
+      "Não foi possível consultar os acessos. Confira a migration de bloqueios administrativos.",
+    )
   }
 
   return (enrollments ?? []).map((enrollment: any) => {
-    const profile = Array.isArray(enrollment.profiles) ? enrollment.profiles[0] : enrollment.profiles
+    const profile = Array.isArray(enrollment.profiles)
+      ? enrollment.profiles[0]
+      : enrollment.profiles
     const block = blocks.data?.find((row) => row.user_id === enrollment.user_id)
-    const actor = Array.isArray(block?.profiles) ? block.profiles[0] : block?.profiles
-    const purchases = rights.data?.filter((row) => row.user_id === enrollment.user_id) ?? []
+    const actor = Array.isArray(block?.profiles)
+      ? block.profiles[0]
+      : block?.profiles
+    const purchases =
+      rights.data?.filter((row) => row.user_id === enrollment.user_id) ?? []
 
     return {
-    id: enrollment.id,
-    userId: enrollment.user_id,
-    fullName: profile?.full_name || "Aluno",
-    email: "",
-    avatarInitials: profile?.avatar_initials || "AL",
-    courseId: enrollment.course_id,
-    enrollmentStatus: enrollment.status,
-    enrolledAt: enrollment.enrolled_at,
-    manualStatus: manual.data?.find((row) => row.user_id === enrollment.user_id)?.status ?? null,
-    hotmartActiveCount: purchases.filter((row) => row.status === "active").length,
-    hotmartSuspendedCount: purchases.filter((row) => row.status === "suspended").length,
-    hotmartRevokedCount: purchases.filter((row) => row.status === "revoked").length,
-    accessBlock: block ? {
-      reason: block.reason,
-      blockedAt: block.blocked_at,
-      blockedByName: actor?.full_name || "Administrador",
-    } : null,
-  }})
+      id: enrollment.id,
+      userId: enrollment.user_id,
+      fullName: profile?.full_name || "Aluno",
+      email: "",
+      avatarInitials: profile?.avatar_initials || "AL",
+      courseId: enrollment.course_id,
+      enrollmentStatus: enrollment.status,
+      enrolledAt: enrollment.enrolled_at,
+      studyGroup: enrollment.study_group,
+      groupManualOverride: enrollment.group_manual_override,
+      questionnaire: enrollment.questionnaire,
+      manualStatus:
+        manual.data?.find((row) => row.user_id === enrollment.user_id)
+          ?.status ?? null,
+      hotmartActiveCount: purchases.filter((row) => row.status === "active")
+        .length,
+      hotmartSuspendedCount: purchases.filter(
+        (row) => row.status === "suspended",
+      ).length,
+      hotmartRevokedCount: purchases.filter((row) => row.status === "revoked")
+        .length,
+      accessBlock: block
+        ? {
+            reason: block.reason,
+            blockedAt: block.blocked_at,
+            blockedByName: actor?.full_name || "Administrador",
+          }
+        : null,
+    }
+  })
 }
 
 export async function listAllStudents(): Promise<AdminStudent[]> {
@@ -277,25 +347,32 @@ export async function listAllStudents(): Promise<AdminStudent[]> {
 
   const { data: enrollments } = await supabase
     .from("enrollments")
-    .select("id, user_id, course_id, status, enrolled_at, profiles!enrollments_user_id_fkey(full_name, avatar_initials)")
+    .select(
+      "id, user_id, course_id, status, enrolled_at, study_group, group_manual_override, questionnaire, profiles!enrollments_user_id_fkey(full_name, avatar_initials)",
+    )
     .order("enrolled_at", { ascending: false })
 
   return (enrollments ?? []).map((enrollment: any) => {
-    const profile = Array.isArray(enrollment.profiles) ? enrollment.profiles[0] : enrollment.profiles
+    const profile = Array.isArray(enrollment.profiles)
+      ? enrollment.profiles[0]
+      : enrollment.profiles
 
     return {
-    id: enrollment.id,
-    userId: enrollment.user_id,
-    fullName: profile?.full_name || "Aluno",
-    email: "",
-    avatarInitials: profile?.avatar_initials || "AL",
-    courseId: enrollment.course_id,
-    enrollmentStatus: enrollment.status,
-    enrolledAt: enrollment.enrolled_at,
-  }})
+      id: enrollment.id,
+      userId: enrollment.user_id,
+      fullName: profile?.full_name || "Aluno",
+      email: "",
+      avatarInitials: profile?.avatar_initials || "AL",
+      courseId: enrollment.course_id,
+      enrollmentStatus: enrollment.status,
+      enrolledAt: enrollment.enrolled_at,
+    }
+  })
 }
 
-export async function listHotmartProductMappings(courseId: string): Promise<HotmartProductMapping[]> {
+export async function listHotmartProductMappings(
+  courseId: string,
+): Promise<HotmartProductMapping[]> {
   const supabase = await createClient()
 
   const { data: mappings } = await supabase
