@@ -14,6 +14,8 @@ export interface AdminCourse {
   status: CourseStatus
   createdAt: string
   updatedAt: string
+  groupsEnabled: boolean
+  questionnaireSchema: unknown[]
   studentsCount: number
   goalsCount: number
 }
@@ -74,6 +76,7 @@ export interface AdminGoal {
   dueDate: string | null
   createdAt: string
   updatedAt: string
+  targetGroups: number[]
   items: AdminGoalItem[]
 }
 
@@ -99,6 +102,11 @@ export interface HotmartProductMapping {
 }
 
 export interface AdminCourseStudent extends AdminStudent {
+  studyGroup: number | null
+  groupManualOverride: boolean
+  questionnaire:
+    | import("@/lib/groups/questionnaire.mjs").QuestionnairePayload
+    | null
   manualStatus: "active" | "suspended" | "revoked" | null
   hotmartActiveCount: number
   hotmartSuspendedCount: number

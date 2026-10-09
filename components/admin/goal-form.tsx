@@ -17,12 +17,33 @@ import {
   FieldLegend,
   FieldDescription,
 } from "@/components/ui/field"
-import { Select, SelectContent, SelectGroup, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
+import {
+  Select,
+  SelectContent,
+  SelectGroup,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select"
 import { Card, CardContent } from "@/components/ui/card"
 import { MaterialFormDialog } from "@/components/admin/material-form-dialog"
-import { MaterialTypeIcon, materialTypeLabel } from "@/components/admin/material-type-icon"
-import { createGoal, updateGoal, type GoalFormInput, type GoalItemInput } from "@/lib/admin/actions/goals"
-import type { AdminGoal, AdminMaterial, AdminSubject, AdminSyllabusTopic, GoalStatus } from "@/lib/admin/types"
+import {
+  MaterialTypeIcon,
+  materialTypeLabel,
+} from "@/components/admin/material-type-icon"
+import {
+  createGoal,
+  updateGoal,
+  type GoalFormInput,
+  type GoalItemInput,
+} from "@/lib/admin/actions/goals"
+import type {
+  AdminGoal,
+  AdminMaterial,
+  AdminSubject,
+  AdminSyllabusTopic,
+  GoalStatus,
+} from "@/lib/admin/types"
 
 interface DraftItem {
   id?: string
@@ -55,7 +76,8 @@ function goalToDrafts(goal: AdminGoal): DraftItem[] {
     topicId: item.topicId ?? "",
     subtopicId: item.subtopicId ?? "",
     instructions: item.instructions ?? "",
-    suggestedQuestions: item.suggestedQuestions != null ? String(item.suggestedQuestions) : "",
+    suggestedQuestions:
+      item.suggestedQuestions != null ? String(item.suggestedQuestions) : "",
     materialIds: item.materialIds,
   }))
 }
@@ -72,11 +94,20 @@ interface GoalFormProps {
   goal?: AdminGoal
 }
 
-export function GoalForm({ courseId, subjects, topicsBySubject, materials, goal }: GoalFormProps) {
+export function GoalForm({
+  courseId,
+  subjects,
+  topicsBySubject,
+  materials,
+  goal,
+}: GoalFormProps) {
   const router = useRouter()
   const isEditing = Boolean(goal)
   const nextKey = useRef(1)
 
+  const [targetGroups, setTargetGroups] = useState<number[]>(
+    goal?.targetGroups ?? [1, 2],
+  )
   const [title, setTitle] = useState(goal?.title ?? "")
   const [dueDate, setDueDate] = useState(goal?.dueDate ?? "")
   const [description, setDescription] = useState(goal?.description ?? "")
@@ -85,13 +116,20 @@ export function GoalForm({ courseId, subjects, topicsBySubject, materials, goal 
     goal ? goalToDrafts(goal) : [emptyItem("item-0", subjects)],
   )
   const [goalMaterials, setGoalMaterials] = useState<AdminMaterial[]>(materials)
-  const [materialSearchByItem, setMaterialSearchByItem] = useState<Record<string, string>>({})
+  const [materialSearchByItem, setMaterialSearchByItem] = useState<
+    Record<string, string>
+  >({})
   const [pending, setPending] = useState(false)
 
-  const subjectSelectItems = subjects.map((s) => ({ label: s.name, value: s.id }))
+  const subjectSelectItems = subjects.map((s) => ({
+    label: s.name,
+    value: s.id,
+  }))
 
   function updateItem(key: string, patch: Partial<DraftItem>) {
-    setItems((prev) => prev.map((item) => (item.key === key ? { ...item, ...patch } : item)))
+    setItems((prev) =>
+      prev.map((item) => (item.key === key ? { ...item, ...patch } : item)),
+    )
   }
 
   function addItem() {
@@ -100,7 +138,9 @@ export function GoalForm({ courseId, subjects, topicsBySubject, materials, goal 
   }
 
   function removeItem(key: string) {
-    setItems((prev) => (prev.length > 1 ? prev.filter((item) => item.key !== key) : prev))
+    setItems((prev) =>
+      prev.length > 1 ? prev.filter((item) => item.key !== key) : prev,
+    )
   }
 
   function toggleMaterial(key: string, materialId: string) {
@@ -110,7 +150,9 @@ export function GoalForm({ courseId, subjects, topicsBySubject, materials, goal 
         const has = item.materialIds.includes(materialId)
         return {
           ...item,
-          materialIds: has ? item.materialIds.filter((id) => id !== materialId) : [...item.materialIds, materialId],
+          materialIds: has
+            ? item.materialIds.filter((id) => id !== materialId)
+            : [...item.materialIds, materialId],
         }
       }),
     )
@@ -121,7 +163,9 @@ export function GoalForm({ courseId, subjects, topicsBySubject, materials, goal 
   }
 
   function handleMaterialCreated(key: string, material: AdminMaterial) {
-    setGoalMaterials((prev) => (prev.some((item) => item.id === material.id) ? prev : [material, ...prev]))
+    setGoalMaterials((prev) =>
+      prev.some((item) => item.id === material.id) ? prev : [material, ...prev],
+    )
     setItems((prev) =>
       prev.map((item) =>
         item.key === key
@@ -137,7 +181,10 @@ export function GoalForm({ courseId, subjects, topicsBySubject, materials, goal 
     updateMaterialSearch(key, "")
   }
 
-  async function handleSubmit(event: React.FormEvent, submitStatus?: GoalStatus) {
+  async function handleSubmit(
+    event: React.FormEvent,
+    submitStatus?: GoalStatus,
+  ) {
     event.preventDefault()
     setPending(true)
     try {
@@ -147,7 +194,9 @@ export function GoalForm({ courseId, subjects, topicsBySubject, materials, goal 
         topicId: item.topicId || null,
         subtopicId: item.subtopicId || null,
         instructions: item.instructions,
-        suggestedQuestions: item.suggestedQuestions.trim() ? Number(item.suggestedQuestions) : null,
+        suggestedQuestions: item.suggestedQuestions.trim()
+          ? Number(item.suggestedQuestions)
+          : null,
         materialIds: item.materialIds,
       }))
 
@@ -157,6 +206,7 @@ export function GoalForm({ courseId, subjects, topicsBySubject, materials, goal 
         description,
         dueDate: dueDate || null,
         status: submitStatus ?? (isEditing && goal ? goal.status : status),
+        targetGroups,
         updatedAt: goal?.updatedAt,
         items: goalItems,
       }
@@ -166,12 +216,18 @@ export function GoalForm({ courseId, subjects, topicsBySubject, materials, goal 
         toast.success("Meta atualizada com sucesso")
       } else {
         await createGoal(input)
-        toast.success("Meta criada com sucesso", { description: `"${title}" foi salva.` })
+        toast.success("Meta criada com sucesso", {
+          description: `"${title}" foi salva.`,
+        })
       }
       router.push(`/admin/cursos/${courseId}`)
       router.refresh()
     } catch (error) {
-      toast.error(error instanceof Error ? error.message : "Não foi possível salvar a meta.")
+      toast.error(
+        error instanceof Error
+          ? error.message
+          : "Não foi possível salvar a meta.",
+      )
     } finally {
       setPending(false)
     }
@@ -181,8 +237,9 @@ export function GoalForm({ courseId, subjects, topicsBySubject, materials, goal 
     <form onSubmit={handleSubmit} className="flex flex-col gap-6">
       {isEditing && (
         <p className="text-sm text-muted-foreground">
-          Editar textos, materiais ou a ordem mantém as conclusões. Remover um item ou trocar
-          sua disciplina/tópico arquiva o item anterior; o histórico é preservado e um novo tópico começa sem conclusão.
+          Editar textos, materiais ou a ordem mantém as conclusões. Remover um
+          item ou trocar sua disciplina/tópico arquiva o item anterior; o
+          histórico é preservado e um novo tópico começa sem conclusão.
         </p>
       )}
       <Card>
@@ -200,8 +257,15 @@ export function GoalForm({ courseId, subjects, topicsBySubject, materials, goal 
             </Field>
             <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
               <Field>
-                <FieldLabel htmlFor="goal-date">Data de liberação (opcional)</FieldLabel>
-                <Input id="goal-date" type="date" value={dueDate ?? ""} onChange={(e) => setDueDate(e.target.value)} />
+                <FieldLabel htmlFor="goal-date">
+                  Data de liberação (opcional)
+                </FieldLabel>
+                <Input
+                  id="goal-date"
+                  type="date"
+                  value={dueDate ?? ""}
+                  onChange={(e) => setDueDate(e.target.value)}
+                />
                 <FieldDescription>
                   {dueDate
                     ? "Até esta data, a meta ficará visível ao aluno, mas bloqueada para alterações."
@@ -217,7 +281,9 @@ export function GoalForm({ courseId, subjects, topicsBySubject, materials, goal 
                       { label: "Publicada", value: "published" },
                     ]}
                     value={status}
-                    onValueChange={(value) => value && setStatus(value as GoalStatus)}
+                    onValueChange={(value) =>
+                      value && setStatus(value as GoalStatus)
+                    }
                   >
                     <SelectTrigger className="w-full">
                       <SelectValue placeholder="Selecione o status" />
@@ -232,6 +298,34 @@ export function GoalForm({ courseId, subjects, topicsBySubject, materials, goal 
                 </Field>
               ) : null}
             </div>
+            <Field>
+              <FieldLabel>Grupos que recebem esta meta</FieldLabel>
+              <div className="flex gap-6">
+                {[1, 2].map((group) => (
+                  <label
+                    key={group}
+                    className="flex items-center gap-2 text-sm"
+                  >
+                    <input
+                      type="checkbox"
+                      checked={targetGroups.includes(group)}
+                      onChange={(event) =>
+                        setTargetGroups((prev) =>
+                          event.target.checked
+                            ? [...prev, group]
+                            : prev.filter((g) => g !== group),
+                        )
+                      }
+                    />
+                    Grupo {group}
+                  </label>
+                ))}
+              </div>
+              <FieldDescription>
+                Marque ambos para compartilhar. Em cursos com divisão ativa,
+                alunos sem grupo não recebem metas.
+              </FieldDescription>
+            </Field>
             <Field>
               <FieldLabel htmlFor="goal-description">Descrição</FieldLabel>
               <Textarea
@@ -254,7 +348,9 @@ export function GoalForm({ courseId, subjects, topicsBySubject, materials, goal 
             Adicionar item
           </Button>
         </div>
-        <FieldDescription>Cada item representa um tópico de disciplina que o aluno deve estudar.</FieldDescription>
+        <FieldDescription>
+          Cada item representa um tópico de disciplina que o aluno deve estudar.
+        </FieldDescription>
 
         <div className="flex flex-col gap-4">
           {items.map((item, index) => {
@@ -263,8 +359,11 @@ export function GoalForm({ courseId, subjects, topicsBySubject, materials, goal 
             const subtopics = item.topicId
               ? topics.filter((topic) => topic.parentTopicId === item.topicId)
               : []
-            const materialSearch = materialSearchByItem[item.key]?.trim().toLowerCase() ?? ""
-            const scopedMaterials = goalMaterials.filter((m) => !m.subjectId || m.subjectId === item.subjectId)
+            const materialSearch =
+              materialSearchByItem[item.key]?.trim().toLowerCase() ?? ""
+            const scopedMaterials = goalMaterials.filter(
+              (m) => !m.subjectId || m.subjectId === item.subjectId,
+            )
             const availableMaterials = materialSearch
               ? scopedMaterials.filter((material) =>
                   [
@@ -283,7 +382,9 @@ export function GoalForm({ courseId, subjects, topicsBySubject, materials, goal 
                 <CardContent>
                   <FieldGroup>
                     <div className="flex items-center justify-between">
-                      <span className="text-xs font-medium text-muted-foreground">Item {index + 1}</span>
+                      <span className="text-xs font-medium text-muted-foreground">
+                        Item {index + 1}
+                      </span>
                       {items.length > 1 ? (
                         <Button
                           type="button"
@@ -304,7 +405,12 @@ export function GoalForm({ courseId, subjects, topicsBySubject, materials, goal 
                           items={subjectSelectItems}
                           value={item.subjectId}
                           onValueChange={(value) =>
-                            value && updateItem(item.key, { subjectId: value, topicId: "", subtopicId: "" })
+                            value &&
+                            updateItem(item.key, {
+                              subjectId: value,
+                              topicId: "",
+                              subtopicId: "",
+                            })
                           }
                         >
                           <SelectTrigger className="w-full">
@@ -324,21 +430,34 @@ export function GoalForm({ courseId, subjects, topicsBySubject, materials, goal 
                       <Field>
                         <FieldLabel>Tópico do edital</FieldLabel>
                         <Select
-                          items={rootTopics.map((t, topicIndex) => ({ label: `${topicIndex + 1}. ${topicDisplayTitle(t.title)}`, value: t.id }))}
+                          items={rootTopics.map((t, topicIndex) => ({
+                            label: `${topicIndex + 1}. ${topicDisplayTitle(t.title)}`,
+                            value: t.id,
+                          }))}
                           value={item.topicId}
-                          onValueChange={(value) => updateItem(item.key, { topicId: value ?? "", subtopicId: "" })}
+                          onValueChange={(value) =>
+                            updateItem(item.key, {
+                              topicId: value ?? "",
+                              subtopicId: "",
+                            })
+                          }
                           disabled={rootTopics.length === 0}
                         >
                           <SelectTrigger className="w-full">
                             <SelectValue
-                              placeholder={rootTopics.length === 0 ? "Sem tópicos cadastrados" : "Selecione o tópico"}
+                              placeholder={
+                                rootTopics.length === 0
+                                  ? "Sem tópicos cadastrados"
+                                  : "Selecione o tópico"
+                              }
                             />
                           </SelectTrigger>
                           <SelectContent>
                             <SelectGroup>
                               {rootTopics.map((topic, topicIndex) => (
                                 <SelectItem key={topic.id} value={topic.id}>
-                                  {topicIndex + 1}. {topicDisplayTitle(topic.title)}
+                                  {topicIndex + 1}.{" "}
+                                  {topicDisplayTitle(topic.title)}
                                 </SelectItem>
                               ))}
                             </SelectGroup>
@@ -353,51 +472,77 @@ export function GoalForm({ courseId, subjects, topicsBySubject, materials, goal 
                             value: t.id,
                           }))}
                           value={item.subtopicId || "none"}
-                          onValueChange={(value) => updateItem(item.key, { subtopicId: value === "none" ? "" : value ?? "" })}
+                          onValueChange={(value) =>
+                            updateItem(item.key, {
+                              subtopicId: value === "none" ? "" : (value ?? ""),
+                            })
+                          }
                           disabled={subtopics.length === 0}
                         >
                           <SelectTrigger className="w-full">
                             <SelectValue
-                              placeholder={subtopics.length === 0 ? "Sem subtópicos para este tópico" : "Selecione o subtópico"}
+                              placeholder={
+                                subtopics.length === 0
+                                  ? "Sem subtópicos para este tópico"
+                                  : "Selecione o subtópico"
+                              }
                             />
                           </SelectTrigger>
                           <SelectContent>
                             <SelectGroup>
-                              <SelectItem value="none">Sem subtópico</SelectItem>
+                              <SelectItem value="none">
+                                Sem subtópico
+                              </SelectItem>
                               {subtopics.map((topic, subtopicIndex) => (
                                 <SelectItem key={topic.id} value={topic.id}>
-                                  {rootTopics.findIndex((rootTopic) => rootTopic.id === item.topicId) + 1}.{subtopicIndex + 1} {topicDisplayTitle(topic.title)}
+                                  {rootTopics.findIndex(
+                                    (rootTopic) =>
+                                      rootTopic.id === item.topicId,
+                                  ) + 1}
+                                  .{subtopicIndex + 1}{" "}
+                                  {topicDisplayTitle(topic.title)}
                                 </SelectItem>
                               ))}
                             </SelectGroup>
                           </SelectContent>
                         </Select>
                         <FieldDescription>
-                          Você pode vincular a meta somente ao tópico principal, se preferir.
+                          Você pode vincular a meta somente ao tópico principal,
+                          se preferir.
                         </FieldDescription>
                       </Field>
                     </div>
 
                     <Field>
-                      <FieldLabel htmlFor={`orientation-${item.key}`}>Orientação de estudo</FieldLabel>
+                      <FieldLabel htmlFor={`orientation-${item.key}`}>
+                        Orientação de estudo
+                      </FieldLabel>
                       <Textarea
                         id={`orientation-${item.key}`}
                         placeholder="Instruções para o aluno sobre como estudar este tópico."
                         value={item.instructions}
-                        onChange={(e) => updateItem(item.key, { instructions: e.target.value })}
+                        onChange={(e) =>
+                          updateItem(item.key, { instructions: e.target.value })
+                        }
                         rows={2}
                       />
                     </Field>
 
                     <Field>
-                      <FieldLabel htmlFor={`questions-${item.key}`}>Questões sugeridas</FieldLabel>
+                      <FieldLabel htmlFor={`questions-${item.key}`}>
+                        Questões sugeridas
+                      </FieldLabel>
                       <Input
                         id={`questions-${item.key}`}
                         type="number"
                         min={0}
                         className="max-w-32"
                         value={item.suggestedQuestions}
-                        onChange={(e) => updateItem(item.key, { suggestedQuestions: e.target.value })}
+                        onChange={(e) =>
+                          updateItem(item.key, {
+                            suggestedQuestions: e.target.value,
+                          })
+                        }
                       />
                     </Field>
 
@@ -409,7 +554,9 @@ export function GoalForm({ courseId, subjects, topicsBySubject, materials, goal 
                             aria-label="Pesquisar materiais"
                             placeholder="Pesquisar materiais"
                             value={materialSearchByItem[item.key] ?? ""}
-                            onChange={(event) => updateMaterialSearch(item.key, event.target.value)}
+                            onChange={(event) =>
+                              updateMaterialSearch(item.key, event.target.value)
+                            }
                             onKeyDown={(event) => {
                               if (event.key === "Enter") event.preventDefault()
                             }}
@@ -418,9 +565,15 @@ export function GoalForm({ courseId, subjects, topicsBySubject, materials, goal 
                             fixedCourseId={courseId}
                             initialSubjectId={item.subjectId || null}
                             subjects={subjects}
-                            onCreated={(material) => handleMaterialCreated(item.key, material)}
+                            onCreated={(material) =>
+                              handleMaterialCreated(item.key, material)
+                            }
                             trigger={
-                              <Button type="button" variant="outline" className="shrink-0">
+                              <Button
+                                type="button"
+                                variant="outline"
+                                className="shrink-0"
+                              >
                                 <Plus data-icon="inline-start" />
                                 Criar novo material
                               </Button>
@@ -436,7 +589,9 @@ export function GoalForm({ courseId, subjects, topicsBySubject, materials, goal 
                         ) : (
                           <div className="flex flex-col gap-1.5 rounded-lg border border-border p-2">
                             {availableMaterials.map((material) => {
-                              const checked = item.materialIds.includes(material.id)
+                              const checked = item.materialIds.includes(
+                                material.id,
+                              )
                               return (
                                 <label
                                   key={material.id}
@@ -444,7 +599,9 @@ export function GoalForm({ courseId, subjects, topicsBySubject, materials, goal 
                                 >
                                   <Checkbox
                                     checked={checked}
-                                    onCheckedChange={() => toggleMaterial(item.key, material.id)}
+                                    onCheckedChange={() =>
+                                      toggleMaterial(item.key, material.id)
+                                    }
                                   />
                                   <MaterialTypeIcon type={material.type} />
                                   <span className="min-w-0 flex-1 truncate text-sm text-foreground">
@@ -471,7 +628,12 @@ export function GoalForm({ courseId, subjects, topicsBySubject, materials, goal 
       <FieldSeparator />
 
       <div className="flex items-center justify-end gap-3">
-        <Button type="button" variant="outline" onClick={() => router.back()} disabled={pending}>
+        <Button
+          type="button"
+          variant="outline"
+          onClick={() => router.back()}
+          disabled={pending}
+        >
           Cancelar
         </Button>
         <Button type="submit" disabled={pending}>

@@ -6,12 +6,19 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { Button } from "@/components/ui/button"
 import { AdminGoalRow } from "@/components/admin/admin-goal-row"
 import { CourseEditalEditor } from "@/components/admin/course-edital-editor"
+import { CourseGroupsPanel } from "@/components/admin/course-groups-panel"
 import { CourseStudentsTable } from "@/components/admin/course-students-table"
 import { CourseMaterialsPanel } from "@/components/admin/course-materials-panel"
 import { CourseFormDialog } from "@/components/admin/course-form-dialog"
 import { HotmartIntegrationPanel } from "@/components/admin/hotmart-integration-panel"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
-import { Empty, EmptyHeader, EmptyTitle, EmptyDescription, EmptyMedia } from "@/components/ui/empty"
+import {
+  Empty,
+  EmptyHeader,
+  EmptyTitle,
+  EmptyDescription,
+  EmptyMedia,
+} from "@/components/ui/empty"
 import type {
   AdminCourse,
   AdminGoal,
@@ -39,7 +46,10 @@ export function CourseDetailTabs({
   materials,
   hotmartMappings,
 }: CourseDetailTabsProps) {
-  const totalTopics = edital.reduce((acc, group) => acc + group.topics.length, 0)
+  const totalTopics = edital.reduce(
+    (acc, group) => acc + group.topics.length,
+    0,
+  )
 
   return (
     <Tabs defaultValue="overview">
@@ -56,30 +66,43 @@ export function CourseDetailTabs({
         <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
           <Card>
             <CardHeader className="pb-2">
-              <CardTitle className="text-sm font-medium text-muted-foreground">Alunos</CardTitle>
+              <CardTitle className="text-sm font-medium text-muted-foreground">
+                Alunos
+              </CardTitle>
             </CardHeader>
             <CardContent>
               <span className="text-2xl font-semibold tabular-nums text-foreground">
-                {students.filter((student) => student.enrollmentStatus === "active").length}
+                {
+                  students.filter(
+                    (student) => student.enrollmentStatus === "active",
+                  ).length
+                }
               </span>
             </CardContent>
           </Card>
           <Card>
             <CardHeader className="pb-2">
-              <CardTitle className="text-sm font-medium text-muted-foreground">Metas</CardTitle>
+              <CardTitle className="text-sm font-medium text-muted-foreground">
+                Metas
+              </CardTitle>
             </CardHeader>
             <CardContent>
               <span className="text-2xl font-semibold tabular-nums text-foreground">
-                {goals.filter((g) => g.status === "published").length}/{goals.length}
+                {goals.filter((g) => g.status === "published").length}/
+                {goals.length}
               </span>
             </CardContent>
           </Card>
           <Card>
             <CardHeader className="pb-2">
-              <CardTitle className="text-sm font-medium text-muted-foreground">Tópicos no edital</CardTitle>
+              <CardTitle className="text-sm font-medium text-muted-foreground">
+                Tópicos no edital
+              </CardTitle>
             </CardHeader>
             <CardContent>
-              <span className="text-2xl font-semibold tabular-nums text-foreground">{totalTopics}</span>
+              <span className="text-2xl font-semibold tabular-nums text-foreground">
+                {totalTopics}
+              </span>
             </CardContent>
           </Card>
         </div>
@@ -87,7 +110,11 @@ export function CourseDetailTabs({
 
       <TabsContent value="goals" className="flex flex-col gap-4">
         <div className="flex items-center justify-end">
-          <Button render={<Link href={`/admin/cursos/${course.id}/metas/nova`} />} nativeButton={false} size="sm">
+          <Button
+            render={<Link href={`/admin/cursos/${course.id}/metas/nova`} />}
+            nativeButton={false}
+            size="sm"
+          >
             <Plus data-icon="inline-start" />
             Criar meta
           </Button>
@@ -99,7 +126,9 @@ export function CourseDetailTabs({
                 <ListChecks />
               </EmptyMedia>
               <EmptyTitle>Nenhuma meta criada</EmptyTitle>
-              <EmptyDescription>Crie a primeira meta para este curso.</EmptyDescription>
+              <EmptyDescription>
+                Crie a primeira meta para este curso.
+              </EmptyDescription>
             </EmptyHeader>
           </Empty>
         ) : (
@@ -119,7 +148,9 @@ export function CourseDetailTabs({
                 <BookOpen />
               </EmptyMedia>
               <EmptyTitle>Nenhuma disciplina cadastrada</EmptyTitle>
-              <EmptyDescription>Adicione disciplinas e tópicos para montar o edital deste curso.</EmptyDescription>
+              <EmptyDescription>
+                Adicione disciplinas e tópicos para montar o edital deste curso.
+              </EmptyDescription>
             </EmptyHeader>
           </Empty>
         ) : null}
@@ -134,7 +165,9 @@ export function CourseDetailTabs({
                 <FileText />
               </EmptyMedia>
               <EmptyTitle>Nenhum material vinculado</EmptyTitle>
-              <EmptyDescription>Adicione videoaulas, apostilas ou links para este curso.</EmptyDescription>
+              <EmptyDescription>
+                Adicione videoaulas, apostilas ou links para este curso.
+              </EmptyDescription>
             </EmptyHeader>
           </Empty>
         ) : null}
@@ -156,25 +189,32 @@ export function CourseDetailTabs({
       <TabsContent value="settings" className="flex flex-col gap-4">
         <Card>
           <CardHeader>
-            <CardTitle className="text-sm font-medium text-foreground">Informações do curso</CardTitle>
+            <CardTitle className="text-sm font-medium text-foreground">
+              Informações do curso
+            </CardTitle>
           </CardHeader>
           <CardContent className="flex flex-col gap-4">
             <p className="text-sm text-muted-foreground">
-              Atualize o nome, a instituição, a descrição e o status de publicação deste curso.
+              Atualize o nome, a instituição, a descrição e o status de
+              publicação deste curso.
             </p>
             <div>
               <CourseFormDialog
                 course={course}
-                trigger={
-                  <Button variant="outline">
-                    Editar informações
-                  </Button>
-                }
+                trigger={<Button variant="outline">Editar informações</Button>}
               />
             </div>
           </CardContent>
         </Card>
-        <HotmartIntegrationPanel courseId={course.id} mappings={hotmartMappings} />
+        <CourseGroupsPanel
+          courseId={course.id}
+          enabled={course.groupsEnabled}
+          schema={course.questionnaireSchema}
+        />
+        <HotmartIntegrationPanel
+          courseId={course.id}
+          mappings={hotmartMappings}
+        />
       </TabsContent>
     </Tabs>
   )

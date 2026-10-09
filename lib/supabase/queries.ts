@@ -13,11 +13,17 @@ export interface CurrentEnrollment {
   id: string
   courseId: string
   status: "active" | "suspended" | "revoked"
+  studyGroup: number | null
+  questionnaire:
+    | import("@/lib/groups/questionnaire.mjs").QuestionnairePayload
+    | null
   enrolledAt: string
   course: {
     id: string
     name: string
     slug: string
+    questionnaire_schema: unknown[]
+    groups_enabled: boolean
     status: string
   } | null
 }
@@ -41,7 +47,9 @@ export async function getCurrentProfile(): Promise<CurrentProfile | null> {
 
   const { data: enrollments } = await supabase
     .from("enrollments")
-    .select("id, course_id, status, enrolled_at, courses!enrollments_course_id_fkey(id, name, slug, status)")
+    .select(
+      "id, course_id, status, enrolled_at, study_group, questionnaire, courses!enrollments_course_id_fkey(id, name, slug, status, groups_enabled, questionnaire_schema)",
+    )
     .eq("user_id", user.id)
     .order("enrolled_at", { ascending: false })
 
@@ -63,7 +71,11 @@ export async function getCurrentProfile(): Promise<CurrentProfile | null> {
       courseId: enrollment.course_id,
       status: enrollment.status,
       enrolledAt: enrollment.enrolled_at,
-      course: Array.isArray(enrollment.courses) ? enrollment.courses[0] ?? null : enrollment.courses,
+      studyGroup: enrollment.study_group,
+      questionnaire: enrollment.questionnaire,
+      course: Array.isArray(enrollment.courses)
+        ? (enrollment.courses[0] ?? null)
+        : enrollment.courses,
     })),
   }
 }

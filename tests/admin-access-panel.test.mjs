@@ -19,29 +19,61 @@ function load(path) {
   const exports = {}
   modules.set(path, exports)
   const code = ts.transpileModule(readFileSync(path, "utf8"), {
-    compilerOptions: { module: ts.ModuleKind.CommonJS, jsx: ts.JsxEmit.ReactJSX, esModuleInterop: true },
+    compilerOptions: {
+      module: ts.ModuleKind.CommonJS,
+      jsx: ts.JsxEmit.ReactJSX,
+      esModuleInterop: true,
+    },
   }).outputText
-  runInNewContext(code, { exports, require: (name) => {
-    if (name === "next/navigation") return { useRouter: () => ({ refresh() {} }) }
-    if (name === "@/lib/admin/actions/enrollments") return {}
-    if (name.startsWith("@/")) {
-      const stem = resolve(root, name.slice(2))
-      const file = [stem + ".tsx", stem + ".ts"].find(existsSync)
-      if (!file) throw new Error("Unexpected module: " + name)
-      return load(file)
-    }
-    return require(name)
-  } })
+  runInNewContext(code, {
+    exports,
+    require: (name) => {
+      if (name === "next/navigation")
+        return { useRouter: () => ({ refresh() {} }) }
+      if (
+        name === "@/lib/admin/actions/enrollments" ||
+        name === "@/lib/admin/actions/groups"
+      )
+        return {}
+      if (name.startsWith("@/")) {
+        const stem = resolve(root, name.slice(2))
+        const file = [stem + ".tsx", stem + ".ts"].find(existsSync)
+        if (!file) throw new Error("Unexpected module: " + name)
+        return load(file)
+      }
+      return require(name)
+    },
+  })
   return exports
 }
-const { CourseStudentsTable } = load(resolve(root, "components/admin/course-students-table.tsx"))
+const { CourseStudentsTable } = load(
+  resolve(root, "components/admin/course-students-table.tsx"),
+)
 const student = {
-  id: "enrollment", userId: "student", fullName: "Aluno teste", avatarInitials: "AT",
-  email: "", courseId: "course", enrolledAt: "2026-09-04T12:00:00Z",
-  enrollmentStatus: "active", manualStatus: null, hotmartActiveCount: 1,
-  hotmartSuspendedCount: 0, hotmartRevokedCount: 0, accessBlock: null,
+  id: "enrollment",
+  userId: "student",
+  fullName: "Aluno teste",
+  avatarInitials: "AT",
+  email: "",
+  courseId: "course",
+  enrolledAt: "2026-09-04T12:00:00Z",
+  studyGroup: null,
+  groupManualOverride: false,
+  questionnaire: null,
+  enrollmentStatus: "active",
+  manualStatus: null,
+  hotmartActiveCount: 1,
+  hotmartSuspendedCount: 0,
+  hotmartRevokedCount: 0,
+  accessBlock: null,
 }
-const render = (row) => renderToStaticMarkup(React.createElement(CourseStudentsTable, { courseId: "course", students: [row] }))
+const render = (row) =>
+  renderToStaticMarkup(
+    React.createElement(CourseStudentsTable, {
+      courseId: "course",
+      students: [row],
+    }),
+  )
 
 test("painel separa compra ativa, concessão ausente e botão de bloqueio", () => {
   const html = render(student)
@@ -54,12 +86,39 @@ test("painel separa compra ativa, concessão ausente e botão de bloqueio", () =
 })
 
 test("painel mostra bloqueio, mantém concessão independente e escapa motivo", () => {
-  const html = render({ ...student, enrollmentStatus: "suspended", manualStatus: "active",
-    accessBlock: { reason: "<script>privado</script>", blockedByName: "Admin teste", blockedAt: "2026-09-04T12:00:00Z" },
+  const html = render({
+    ...student,
+    enrollmentStatus: "suspended",
+    manualStatus: "active",
+    accessBlock: {
+      reason: "<script>privado</script>",
+      blockedByName: "Admin teste",
+      blockedAt: "2026-09-04T12:00:00Z",
+    },
   })
   assert.match(html, /Bloqueado pelo admin/)
   assert.match(html, /Desbloquear/)
   assert.match(html, /value="active"[^>]*selected/)
   assert.match(html, /&lt;script&gt;privado&lt;\/script&gt;/)
   assert.match(html, /Admin teste/)
+})
+
+test("painel apresenta grupos, sem grupo e respostas sem permitir HTML injetado", () => {
+  const html = render({
+    ...student,
+    studyGroup: 1,
+    groupManualOverride: true,
+    questionnaire: {
+      whatsapp: "(85) 00000-0000",
+      labels: {
+        q01: "Mais de 2 até 3 horas",
+        q20: "<script>alert(1)</script>",
+      },
+    },
+  })
+  assert.match(html, /Filtrar grupo/)
+  assert.match(html, /Sem grupo/)
+  assert.match(html, /Definido pelo administrador/)
+  assert.match(html, /Respostas do formulário/)
+  assert.match(html, /&lt;script&gt;alert\(1\)&lt;\/script&gt;/)
 })
