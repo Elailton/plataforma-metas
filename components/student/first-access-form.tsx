@@ -1,165 +1,467 @@
-"use client"
+"use client";
 
-import { submitFirstAccessQuestionnaire } from "@/lib/groups/student-actions"
-import { QuestionnaireFields } from "@/components/student/questionnaire-fields"
-import type { QuestionnaireQuestion } from "@/lib/groups/schema.mjs"
-import { useState } from "react"
-import { useRouter } from "next/navigation"
-import { KeyRound } from "lucide-react"
-import { Button } from "@/components/ui/button"
+import { useEffect, useMemo, useRef, useState } from "react";
+import { useRouter } from "next/navigation";
+import { ArrowRight, Check, ChevronLeft, LockKeyhole } from "lucide-react";
+import { submitFirstAccessQuestionnaire } from "@/lib/groups/student-actions";
+import { createClient } from "@/lib/supabase/client";
 import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card"
-import { Input } from "@/components/ui/input"
-import { Label } from "@/components/ui/label"
-import { createClient } from "@/lib/supabase/client"
+  buildQuestionSteps,
+  isStepAnswered,
+  readOnboardingDraft,
+  reviewAnswer,
+  setStepAnswer,
+  stepValue,
+  toggleMultipleOption,
+  validateOnboardingAnswers,
+} from "@/lib/groups/onboarding.mjs";
+import type {
+  OnboardingAnswers,
+  OnboardingQuestionnaire,
+} from "@/lib/groups/onboarding.mjs";
+import styles from "./first-access-form.module.css";
 
 export function FirstAccessForm({
   questionnaires,
+  userId,
+  email,
 }: {
-  questionnaires: {
-    enrollmentId: string
-    courseName: string
-    schema: QuestionnaireQuestion[]
-  }[]
+  questionnaires: OnboardingQuestionnaire[];
+  userId: string;
+  email: string;
 }) {
-  const [answers, setAnswers] = useState<
-    Record<string, Record<string, unknown>>
-  >({})
-  const [whatsapp, setWhatsapp] = useState("")
-  const router = useRouter()
-  const [password, setPassword] = useState("")
-  const [repeatPassword, setRepeatPassword] = useState("")
-  const [error, setError] = useState<string | null>(null)
-  const [pending, setPending] = useState(false)
-
-  async function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
-    event.preventDefault()
-    setError(null)
-
+  const router = useRouter();
+  const steps = useMemo(
+    () => buildQuestionSteps(questionnaires),
+    [questionnaires],
+  );
+  const signature = JSON.stringify(questionnaires);
+  const storageKey = `sg-first-access:${userId}`;
+  const [answers, setAnswers] = useState<OnboardingAnswers>({});
+  const [whatsapp, setWhatsapp] = useState("");
+  const [loaded, setLoaded] = useState(false);
+  const [screen, setScreen] = useState<
+    "welcome" | "question" | "review" | "password"
+  >("welcome");
+  const [index, setIndex] = useState(0);
+  const [editing, setEditing] = useState(false);
+  const [password, setPassword] = useState("");
+  const [repeatPassword, setRepeatPassword] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+  const [pending, setPending] = useState(false);
+  const title = useRef<HTMLHeadingElement>(null);
+  const step = steps[index];
+  const completed = steps.filter((s) => isStepAnswered(s, answers)).length;
+  useEffect(() => {
+    try {
+      const saved = readOnboardingDraft(
+        sessionStorage.getItem(storageKey) ?? "",
+        signature,
+      );
+      if (saved) {
+        setAnswers(saved.answers);
+        setWhatsapp(saved.whatsapp);
+      }
+    } catch {
+      /* Storage may be unavailable; the form still works. */
+    }
+    setLoaded(true);
+  }, [storageKey, signature]);
+  useEffect(() => {
+    if (!loaded) return;
+    try {
+      sessionStorage.setItem(
+        storageKey,
+        JSON.stringify({ version: 1, signature, answers, whatsapp }),
+      );
+    } catch {
+      /* Keep in memory. */
+    }
+  }, [answers, whatsapp, loaded, storageKey, signature]);
+  useEffect(() => {
+    title.current?.focus();
+    setError(null);
+  }, [screen, index]);
+  function next() {
+    if (!isStepAnswered(step, answers)) {
+      setError("Selecione uma resposta para continuar.");
+      return;
+    }
+    if (editing || index === steps.length - 1) {
+      setEditing(false);
+      setScreen("review");
+    } else setIndex(index + 1);
+  }
+  async function submit(event: React.FormEvent<HTMLFormElement>) {
+    event.preventDefault();
+    setError(null);
     if (password.length < 8) {
-      setError("Use uma senha com pelo menos 8 caracteres.")
-      return
+      setError("Use uma senha com pelo menos 8 caracteres.");
+      return;
     }
     if (password !== repeatPassword) {
-      setError("As senhas não coincidem.")
-      return
+      setError("As senhas não coincidem.");
+      return;
     }
-
-    setPending(true)
+    setPending(true);
     try {
-      for (const questionnaire of questionnaires)
+      validateOnboardingAnswers(questionnaires, answers);
+      for (const q of questionnaires)
         await submitFirstAccessQuestionnaire(
-          questionnaire.enrollmentId,
-          answers[questionnaire.enrollmentId] ?? {},
+          q.enrollmentId,
+          answers[q.enrollmentId] ?? {},
           whatsapp,
-        )
-    } catch (error) {
+        );
+      const { error: updateError } = await createClient().auth.updateUser({
+        password,
+      });
+      if (updateError)
+        throw new Error(
+          "Não foi possível definir sua senha. Tente novamente ou solicite um novo convite.",
+        );
+      try {
+        sessionStorage.removeItem(storageKey);
+      } catch {
+        /* Optional storage. */
+      }
+      router.replace("/aluno");
+      router.refresh();
+    } catch (err) {
       setError(
-        error instanceof Error
-          ? error.message
-          : "Não foi possível salvar o questionário.",
-      )
-      setPending(false)
-      return
+        err instanceof Error
+          ? err.message
+          : "Não foi possível concluir seu acesso. Tente novamente.",
+      );
+    } finally {
+      setPending(false);
     }
-    const supabase = createClient()
-    const { error: updateError } = await supabase.auth.updateUser({ password })
-    setPending(false)
-
-    if (updateError) {
-      setError("Não foi possível definir sua senha. Solicite um novo convite.")
-      return
-    }
-
-    router.replace("/aluno")
-    router.refresh()
   }
-
   return (
-    <div className="flex min-h-screen items-center justify-center bg-background px-6 py-16">
-      <Card className="w-full max-w-2xl">
-        <CardHeader>
-          <div className="mb-2 flex size-11 items-center justify-center rounded-xl bg-primary/10 text-primary">
-            <KeyRound className="size-5" />
-          </div>
-          <CardTitle>Primeiro acesso</CardTitle>
-          <CardDescription>
-            Defina uma senha para entrar novamente com o e-mail usado na compra.
-          </CardDescription>
-        </CardHeader>
-        <CardContent>
-          <form onSubmit={handleSubmit} className="flex flex-col gap-4">
-            {questionnaires.map((questionnaire) => (
-              <section key={questionnaire.enrollmentId} className="space-y-4">
-                <h2 className="font-semibold">
-                  Seu plano de estudos — {questionnaire.courseName}
-                </h2>
-                <p className="text-sm text-muted-foreground">
-                  Suas respostas ajudam o mentor a organizar seus estudos. A
-                  disponibilidade diária define seu grupo inicial.
-                </p>
-                <QuestionnaireFields
-                  schema={questionnaire.schema}
-                  answers={answers[questionnaire.enrollmentId] ?? {}}
-                  onChange={(next) =>
-                    setAnswers((prev) => ({
-                      ...prev,
-                      [questionnaire.enrollmentId]: next,
-                    }))
-                  }
-                />
-              </section>
-            ))}
-            {questionnaires.length > 0 && (
-              <div className="grid gap-2">
-                <Label htmlFor="whatsapp">WhatsApp (opcional)</Label>
-                <Input
-                  id="whatsapp"
-                  type="tel"
-                  maxLength={40}
-                  value={whatsapp}
-                  onChange={(event) => setWhatsapp(event.target.value)}
-                />
-              </div>
-            )}
-            <div className="grid gap-2">
-              <Label htmlFor="password">Nova senha</Label>
-              <Input
-                id="password"
-                type="password"
-                minLength={8}
-                required
-                value={password}
-                onChange={(event) => setPassword(event.target.value)}
-              />
-            </div>
-            <div className="grid gap-2">
-              <Label htmlFor="repeat-password">Repita a senha</Label>
-              <Input
-                id="repeat-password"
-                type="password"
-                minLength={8}
-                required
-                value={repeatPassword}
-                onChange={(event) => setRepeatPassword(event.target.value)}
-              />
-            </div>
-            {error && (
-              <p role="alert" className="text-sm text-destructive">
-                {error}
+    <main className={styles.page}>
+      <header className={styles.header}>
+        <span className={styles.logo}>SG</span>
+        <div>
+          <strong>Sistema Guiado de Aprovação</strong>
+          <small>SEU PRIMEIRO ACESSO</small>
+        </div>
+        <span className={styles.secure}>
+          <LockKeyhole size={15} /> Acesso seguro
+        </span>
+      </header>
+      <div
+        className={styles.progress}
+        aria-label={`${completed} de ${steps.length} etapas respondidas`}
+      >
+        <span
+          style={{
+            width: `${steps.length ? (completed / steps.length) * 100 : screen === "password" ? 100 : 0}%`,
+          }}
+        />
+      </div>
+      <section className={styles.card}>
+        <div className={styles.stages}>
+          <span data-active={screen === "welcome" || screen === "question"}>
+            01 · Seu perfil
+          </span>
+          <span data-active={screen === "review"}>02 · Revisão</span>
+          <span data-active={screen === "password"}>03 · Seu acesso</span>
+        </div>
+        <div className={styles.content} key={`${screen}-${index}`}>
+          {screen === "welcome" && (
+            <>
+              <p className={styles.eyebrow}>UMA PREPARAÇÃO COM A SUA CARA</p>
+              <h1 ref={title} tabIndex={-1}>
+                Sua aprovação começa com um plano.
+              </h1>
+              <p className={styles.description}>
+                {steps.length
+                  ? "Conte como você estuda e como é sua rotina. Vamos usar essas informações para organizar sua preparação."
+                  : "Defina sua senha para acessar sua área de estudos."}
               </p>
-            )}
-            <Button type="submit" disabled={pending}>
-              {pending ? "Salvando..." : "Definir senha e entrar"}
-            </Button>
-          </form>
-        </CardContent>
-      </Card>
-    </div>
-  )
+              <div className={styles.identity}>
+                <small>SEU E-MAIL DE ACESSO</small>
+                <strong>{email}</strong>
+              </div>
+              {steps.length > 0 && (
+                <>
+                  <div className={styles.features}>
+                    <span>
+                      <Check size={18} /> Uma pergunta por vez
+                    </span>
+                    <span>
+                      <Check size={18} /> Revise antes de concluir
+                    </span>
+                    <span>
+                      <Check size={18} /> No seu ritmo
+                    </span>
+                  </div>
+                  <label className={styles.label}>
+                    WhatsApp <small>(opcional)</small>
+                    <input
+                      type="tel"
+                      autoComplete="tel"
+                      maxLength={40}
+                      value={whatsapp}
+                      onChange={(e) => setWhatsapp(e.target.value)}
+                    />
+                  </label>
+                  <p className={styles.note}>
+                    Sua disponibilidade diária define seu grupo inicial. As
+                    demais respostas ajudam seu mentor a conhecer você.
+                  </p>
+                </>
+              )}
+              <button
+                className={styles.primary}
+                disabled={!loaded}
+                onClick={() => {
+                  const first = steps.findIndex(
+                    (s) => !isStepAnswered(s, answers),
+                  );
+                  setIndex(Math.max(first, 0));
+                  setScreen(
+                    steps.length
+                      ? first === -1
+                        ? "review"
+                        : "question"
+                      : "password",
+                  );
+                }}
+              >
+                {completed ? "Continuar preenchimento" : "Vamos começar"}
+                <ArrowRight size={18} />
+              </button>
+            </>
+          )}
+          {screen === "question" && step && (
+            <>
+              <p className={styles.eyebrow}>
+                {step.question.section ?? "SEU PERFIL DE ESTUDOS"} · PERGUNTA{" "}
+                {step.questionIndex + 1} DE {step.questionCount}
+              </p>
+              {questionnaires.length > 1 && (
+                <p className={styles.note}>{step.courseName}</p>
+              )}
+              <h1 ref={title} tabIndex={-1}>
+                {step.row?.label ?? step.question.title}
+              </h1>
+              <p className={styles.description}>
+                {step.row
+                  ? `${step.question.title} · Disciplina ${(step.rowIndex ?? 0) + 1} de ${step.question.rows?.length}`
+                  : (step.question.description ??
+                    (step.question.type === "multiple"
+                      ? "Você pode selecionar mais de uma opção."
+                      : "Escolha a opção que melhor representa você."))}
+              </p>
+              <div
+                className={styles.options}
+                role="group"
+                aria-label={step.question.title}
+              >
+                {step.question.options.map((option) => {
+                  const value = stepValue(step, answers);
+                  const multiple = step.question.type === "multiple";
+                  const selected = multiple
+                    ? Array.isArray(value) && value.includes(option.value)
+                    : String(value ?? "") === option.value;
+                  return (
+                    <label
+                      key={option.value}
+                      className={styles.option}
+                      data-selected={selected}
+                    >
+                      <input
+                        type={multiple ? "checkbox" : "radio"}
+                        name={`answer-${index}`}
+                        checked={selected}
+                        onChange={() => {
+                          setAnswers((prev) =>
+                            setStepAnswer(
+                              step,
+                              prev,
+                              multiple
+                                ? toggleMultipleOption(
+                                    step.question,
+                                    option.value,
+                                    stepValue(step, prev) as string[],
+                                  )
+                                : option.value,
+                            ),
+                          );
+                          setError(null);
+                        }}
+                      />
+                      <span>
+                        <strong>{option.label}</strong>
+                        {option.description && (
+                          <small>{option.description}</small>
+                        )}
+                      </span>
+                      {selected && <Check size={18} />}
+                    </label>
+                  );
+                })}
+              </div>
+              {error && (
+                <p role="alert" className={styles.error}>
+                  {error}
+                </p>
+              )}
+              <div className={styles.actions}>
+                <button
+                  className={styles.secondary}
+                  onClick={() =>
+                    editing
+                      ? (setEditing(false), setScreen("review"))
+                      : index
+                        ? setIndex(index - 1)
+                        : setScreen("welcome")
+                  }
+                >
+                  <ChevronLeft size={18} />
+                  Voltar
+                </button>
+                <button className={styles.primary} onClick={next}>
+                  {editing ? "Salvar resposta" : "Continuar"}
+                  <ArrowRight size={18} />
+                </button>
+              </div>
+              <p className={styles.note}>
+                {completed} de {steps.length} etapas respondidas. Você pode
+                voltar para ajustar suas respostas.
+              </p>
+            </>
+          )}
+          {screen === "review" && (
+            <>
+              <p className={styles.eyebrow}>CONFIRA SEU PERFIL</p>
+              <h1 ref={title} tabIndex={-1}>
+                Tudo certo com suas respostas?
+              </h1>
+              <p className={styles.description}>
+                Você pode ajustar qualquer resposta antes de definir sua senha.
+              </p>
+              <div className={styles.review}>
+                {steps.map((s, i) => (
+                  <div key={`${s.enrollmentId}-${i}`}>
+                    <div>
+                      <small>{s.row?.label ?? s.question.title}</small>
+                      <strong>
+                        {reviewAnswer(s.question, stepValue(s, answers))}
+                      </strong>
+                    </div>
+                    <button
+                      aria-label={`Editar ${s.row?.label ?? s.question.title}`}
+                      onClick={() => {
+                        setIndex(i);
+                        setEditing(true);
+                        setScreen("question");
+                      }}
+                    >
+                      Editar
+                    </button>
+                  </div>
+                ))}
+              </div>
+              <button
+                className={styles.primary}
+                onClick={() => {
+                  const missing = steps.findIndex(
+                    (s) => !isStepAnswered(s, answers),
+                  );
+                  if (missing >= 0) {
+                    setIndex(missing);
+                    setScreen("question");
+                  } else setScreen("password");
+                }}
+              >
+                Definir minha senha
+                <ArrowRight size={18} />
+              </button>
+            </>
+          )}
+          {screen === "password" && (
+            <>
+              <p className={styles.eyebrow}>ÚLTIMO PASSO</p>
+              <h1 ref={title} tabIndex={-1}>
+                Seu próximo passo está aqui.
+              </h1>
+              <p className={styles.description}>
+                Crie uma senha para entrar com {email} e acessar seu plano de
+                estudos.
+              </p>
+              <form onSubmit={submit} className={styles.form}>
+                <label className={styles.label}>
+                  Nova senha
+                  <input
+                    autoComplete="new-password"
+                    type={showPassword ? "text" : "password"}
+                    minLength={8}
+                    required
+                    value={password}
+                    onChange={(e) => setPassword(e.target.value)}
+                    disabled={pending}
+                  />
+                </label>
+                <label className={styles.label}>
+                  Repita a senha
+                  <input
+                    autoComplete="new-password"
+                    type={showPassword ? "text" : "password"}
+                    minLength={8}
+                    required
+                    value={repeatPassword}
+                    onChange={(e) => setRepeatPassword(e.target.value)}
+                    disabled={pending}
+                  />
+                </label>
+                <label className={styles.show}>
+                  <input
+                    type="checkbox"
+                    checked={showPassword}
+                    onChange={(e) => setShowPassword(e.target.checked)}
+                  />{" "}
+                  Mostrar senha
+                </label>
+                <p className={styles.note}>
+                  Use pelo menos 8 caracteres. Sua senha não é guardada no
+                  rascunho.
+                </p>
+                {error && (
+                  <p role="alert" className={styles.error}>
+                    {error}
+                  </p>
+                )}
+                <div className={styles.actions}>
+                  {steps.length > 0 && (
+                    <button
+                      type="button"
+                      disabled={pending}
+                      className={styles.secondary}
+                      onClick={() => setScreen("review")}
+                    >
+                      <ChevronLeft size={18} />
+                      Revisar
+                    </button>
+                  )}
+                  <button
+                    type="submit"
+                    className={styles.primary}
+                    disabled={pending}
+                  >
+                    {pending ? "Preparando seu acesso…" : "Concluir e acessar"}
+                    <ArrowRight size={18} />
+                  </button>
+                </div>
+              </form>
+            </>
+          )}
+        </div>
+      </section>
+      <footer className={styles.footer}>
+        Sistema Guiado de Aprovação · Cada etapa conta.
+      </footer>
+    </main>
+  );
 }
