@@ -6,6 +6,8 @@ import { ArrowRight, Check, ChevronLeft, LockKeyhole } from "lucide-react";
 import { submitFirstAccessQuestionnaire } from "@/lib/groups/student-actions";
 import { createClient } from "@/lib/supabase/client";
 import {
+  formatWhatsapp,
+  isValidWhatsapp,
   buildQuestionSteps,
   isStepAnswered,
   readOnboardingDraft,
@@ -61,7 +63,7 @@ export function FirstAccessForm({
       );
       if (saved) {
         setAnswers(saved.answers);
-        setWhatsapp(saved.whatsapp);
+        setWhatsapp(formatWhatsapp(saved.whatsapp));
       }
     } catch {
       /* Storage may be unavailable; the form still works. */
@@ -96,6 +98,11 @@ export function FirstAccessForm({
   async function submit(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
     setError(null);
+    if (steps.length && !isValidWhatsapp(whatsapp)) {
+      setScreen("welcome");
+      setError("Informe seu WhatsApp no formato (00)900000000.");
+      return;
+    }
     if (password.length < 8) {
       setError("Use uma senha com pelo menos 8 caracteres.");
       return;
@@ -197,13 +204,20 @@ export function FirstAccessForm({
                     </span>
                   </div>
                   <label className={styles.label}>
-                    WhatsApp <small>(opcional)</small>
+                    WhatsApp <small>(obrigatório)</small>
                     <input
                       type="tel"
                       autoComplete="tel"
-                      maxLength={40}
+                      inputMode="numeric"
+                      placeholder="(00)900000000"
+                      required
+                      pattern={"\\([1-9][0-9]\\)9[0-9]{8}"}
+                      maxLength={13}
                       value={whatsapp}
-                      onChange={(e) => setWhatsapp(e.target.value)}
+                      onChange={(e) => {
+                        setWhatsapp(formatWhatsapp(e.target.value));
+                        setError(null);
+                      }}
                     />
                   </label>
                   <p className={styles.note}>
@@ -212,10 +226,19 @@ export function FirstAccessForm({
                   </p>
                 </>
               )}
+              {error && (
+                <p role="alert" className={styles.error}>
+                  {error}
+                </p>
+              )}
               <button
                 className={styles.primary}
                 disabled={!loaded}
                 onClick={() => {
+                  if (steps.length && !isValidWhatsapp(whatsapp)) {
+                    setError("Informe seu WhatsApp no formato (00)900000000.");
+                    return;
+                  }
                   const first = steps.findIndex(
                     (s) => !isStepAnswered(s, answers),
                   );

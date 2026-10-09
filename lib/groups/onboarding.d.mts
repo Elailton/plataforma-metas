@@ -47,3 +47,6 @@ export function validateOnboardingAnswers(
   questionnaires: OnboardingQuestionnaire[],
   answers: OnboardingAnswers,
 ): void;
+
+export function formatWhatsapp(value: string): string;
+export function isValidWhatsapp(value: unknown): boolean;
