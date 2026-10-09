@@ -91,6 +91,16 @@ export interface AdminStudent {
   enrolledAt: string
 }
 
+export type HotmartOfferPolicy = "any" | "authorized_offers"
+
+export interface HotmartOfferRule {
+  id: string
+  offerCode: string
+  grantsAccess: boolean
+  label: string | null
+  createdAt: string
+}
+
 export interface HotmartProductMapping {
   id: string
   courseId: string
@@ -98,6 +108,19 @@ export interface HotmartProductMapping {
   hotmartProductUcode: string
   hotmartProductName: string | null
   active: boolean
+  createdAt: string
+  offerPolicy: HotmartOfferPolicy
+  offerRules: HotmartOfferRule[]
+}
+
+/** Evento recebido da Hotmart, sem dados pessoais, para conferência administrativa. */
+export interface HotmartEventSummary {
+  id: string
+  eventType: string
+  productUcode: string | null
+  offerCode: string | null
+  status: string
+  message: string | null
   createdAt: string
 }
 

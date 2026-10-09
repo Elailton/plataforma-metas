@@ -27,6 +27,7 @@ import type {
   AdminSubject,
   AdminSyllabusTopic,
   HotmartProductMapping,
+  HotmartEventSummary,
 } from "@/lib/admin/types"
 
 interface CourseDetailTabsProps {
@@ -36,6 +37,8 @@ interface CourseDetailTabsProps {
   students: AdminCourseStudent[]
   materials: AdminMaterial[]
   hotmartMappings: HotmartProductMapping[]
+  hotmartEvents: HotmartEventSummary[]
+  hotmartWebhookUrl: string | null
 }
 
 export function CourseDetailTabs({
@@ -45,6 +48,8 @@ export function CourseDetailTabs({
   students,
   materials,
   hotmartMappings,
+  hotmartEvents,
+  hotmartWebhookUrl,
 }: CourseDetailTabsProps) {
   const totalTopics = edital.reduce(
     (acc, group) => acc + group.topics.length,
@@ -214,6 +219,8 @@ export function CourseDetailTabs({
         <HotmartIntegrationPanel
           courseId={course.id}
           mappings={hotmartMappings}
+          events={hotmartEvents}
+          webhookUrl={hotmartWebhookUrl}
         />
       </TabsContent>
     </Tabs>

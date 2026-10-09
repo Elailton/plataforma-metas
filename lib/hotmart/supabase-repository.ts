@@ -57,26 +57,28 @@ export function createHotmartRepository(): HotmartRepository {
       }
     },
 
-    async finishEvent(eventId, status, message) {
+    async finishEvent(eventId, status, message, details) {
       const { error } = await supabase
         .from("hotmart_webhook_events")
         .update({
           processing_status: status,
           processed_at: new Date().toISOString(),
           error_message: message,
+          offer_code: details?.offerCode ?? null,
         })
         .eq("hotmart_event_id", eventId)
 
       throwDatabaseError(error)
     },
 
-    async failEvent(eventId, message) {
+    async failEvent(eventId, message, details) {
       const { error } = await supabase
         .from("hotmart_webhook_events")
         .update({
           processing_status: "failed",
           processed_at: null,
           error_message: message.slice(0, 1000),
+          offer_code: details?.offerCode ?? null,
         })
         .eq("hotmart_event_id", eventId)
 
@@ -88,12 +90,19 @@ export function createHotmartRepository(): HotmartRepository {
 
       const { data, error } = await supabase
         .from("hotmart_product_mappings")
-        .select("course_id, active")
+        .select("course_id, active, offer_policy, hotmart_offer_rules(offer_code, grants_access)")
         .eq("hotmart_product_ucode", productUcode)
         .maybeSingle()
 
       throwDatabaseError(error)
-      return data ? { courseId: data.course_id as string, active: Boolean(data.active) } : null
+      if (!data) return null
+      const rules = (data.hotmart_offer_rules ?? []) as { offer_code: string; grants_access: boolean }[]
+      return {
+        courseId: data.course_id as string,
+        active: Boolean(data.active),
+        offerPolicy: data.offer_policy === "authorized_offers" ? "authorized_offers" : "any",
+        offers: rules.map((rule) => ({ code: rule.offer_code, grantsAccess: Boolean(rule.grants_access) })),
+      }
     },
 
     findUserByEmail,
@@ -175,12 +184,13 @@ export function createHotmartRepository(): HotmartRepository {
 
     async findEntitlement(transaction) {
       const { data, error } = await supabase.from("hotmart_entitlements")
-        .select("user_id, course_id, product_ucode, status, last_event_creation_date")
+        .select("user_id, course_id, product_ucode, status, last_event_creation_date, offer_code")
         .eq("transaction", transaction).maybeSingle()
       throwDatabaseError(error)
       return data ? {
         userId: data.user_id, courseId: data.course_id, productUcode: data.product_ucode,
         status: data.status, eventCreationDate: data.last_event_creation_date,
+        offerCode: data.offer_code ?? null,
       } : null
     },
 
@@ -194,6 +204,7 @@ export function createHotmartRepository(): HotmartRepository {
       status,
       eventId,
       eventCreationDate,
+      offerCode,
     }) {
       const { data, error } = await supabase
         .rpc("apply_hotmart_entitlement_event", {
@@ -219,6 +230,16 @@ export function createHotmartRepository(): HotmartRepository {
 
       if (!result?.entitlement_status || result.enrollment_status === undefined) {
         throw new Error("A reconciliação do acesso Hotmart não retornou um estado válido.")
+      }
+
+      // Registra a oferta da transação na primeira vez em que ela aparece (rastreabilidade).
+      if (offerCode) {
+        const { error: offerError } = await supabase
+          .from("hotmart_entitlements")
+          .update({ offer_code: offerCode })
+          .eq("transaction", transaction)
+          .is("offer_code", null)
+        throwDatabaseError(offerError)
       }
 
       return {
