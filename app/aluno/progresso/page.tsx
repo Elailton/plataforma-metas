@@ -1,6 +1,8 @@
 import { redirect } from "next/navigation"
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
+import { BookOpen, CheckCircle2, ListChecks } from "lucide-react"
 import { PageContainer, PageHeading } from "@/components/student/page-container"
+import { SectionHeader } from "@/components/page-header"
+import { StatCard } from "@/components/stat-card"
 import { DisciplineProgressChart } from "@/components/student/discipline-progress-chart"
 import { getStudentContext, getStudentCourseSnapshot } from "@/lib/student/queries"
 
@@ -16,41 +18,43 @@ export default async function ProgressPage() {
     <PageContainer>
       <PageHeading title="Progresso" description="Sua evolução geral no curso." />
 
-      <div className="mb-6 grid grid-cols-3 gap-3">
-        <Card className="gap-1.5 py-3.5">
-          <CardHeader className="px-3.5">
-            <CardTitle className="text-[11px] font-medium text-muted-foreground">Edital</CardTitle>
-          </CardHeader>
-          <CardContent className="px-3.5">
-            <span className="text-xl font-semibold tabular-nums text-foreground">{snapshot.editalPercentage}%</span>
-          </CardContent>
-        </Card>
-        <Card className="gap-1.5 py-3.5">
-          <CardHeader className="px-3.5">
-            <CardTitle className="text-[11px] font-medium text-muted-foreground">Concluídas</CardTitle>
-          </CardHeader>
-          <CardContent className="px-3.5">
-            <span className="text-xl font-semibold tabular-nums text-success">{completedGoals}</span>
-          </CardContent>
-        </Card>
-        <Card className="gap-1.5 py-3.5">
-          <CardHeader className="px-3.5">
-            <CardTitle className="text-[11px] font-medium text-muted-foreground">Em curso</CardTitle>
-          </CardHeader>
-          <CardContent className="px-3.5">
-            <span className="text-xl font-semibold tabular-nums text-foreground">{inProgressGoals}</span>
-          </CardContent>
-        </Card>
+      <div className="mb-8 grid grid-cols-2 gap-3 md:grid-cols-3 md:gap-4">
+        <StatCard
+          label="Edital estudado"
+          value={`${snapshot.editalPercentage}%`}
+          hint={`${snapshot.studiedTopics} de ${snapshot.totalTopics} tópicos`}
+          icon={BookOpen}
+          tone="primary"
+        />
+        <StatCard
+          label="Metas concluídas"
+          value={completedGoals}
+          suffix={`/ ${snapshot.goals.length}`}
+          icon={CheckCircle2}
+          tone="success"
+        />
+        <StatCard
+          label="Em andamento"
+          value={inProgressGoals}
+          suffix={inProgressGoals === 1 ? "meta" : "metas"}
+          icon={ListChecks}
+          className="col-span-2 md:col-span-1"
+        />
       </div>
 
-      <Card className="min-w-0 overflow-hidden">
-        <CardHeader>
-          <CardTitle className="text-sm font-semibold text-foreground">Progresso por disciplina</CardTitle>
-        </CardHeader>
-        <CardContent className="min-w-0 overflow-hidden">
-          <DisciplineProgressChart subjects={snapshot.subjects} />
-        </CardContent>
-      </Card>
+      <section aria-labelledby="progresso-por-disciplina">
+        <SectionHeader
+          title={<span id="progresso-por-disciplina">Progresso por disciplina</span>}
+          description="Percentual de tópicos do edital estudados."
+        />
+        <div className="min-w-0 overflow-hidden rounded-xl border border-border bg-card p-4 md:p-5">
+          {snapshot.subjects.length === 0 ? (
+            <p className="text-sm text-muted-foreground">O edital deste curso ainda não foi cadastrado.</p>
+          ) : (
+            <DisciplineProgressChart subjects={snapshot.subjects} />
+          )}
+        </div>
+      </section>
     </PageContainer>
   )
 }

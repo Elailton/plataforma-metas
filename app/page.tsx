@@ -1,9 +1,14 @@
-
-import { BrandSkull } from "@/components/brand-skull"
 import Link from "next/link"
 import { redirect } from "next/navigation"
-import { LogIn, ArrowRight } from "lucide-react"
+import { LogIn, ArrowRight, Target, BookOpen, LineChart } from "lucide-react"
+import { AuthShell, AuthCard } from "@/components/auth-shell"
 import { getCurrentProfile } from "@/lib/supabase/queries"
+
+const highlights = [
+  { icon: Target, label: "Metas de estudo organizadas pelo seu mentor" },
+  { icon: BookOpen, label: "Progresso no edital por disciplina e tópico" },
+  { icon: LineChart, label: "Acompanhamento da sua evolução no curso" },
+]
 
 export default async function Home() {
   const profile = await getCurrentProfile()
@@ -14,36 +19,29 @@ export default async function Home() {
   }
 
   return (
-    <div className="flex min-h-screen flex-col items-center justify-center bg-background px-6 py-16 font-sans">
-      <main className="flex w-full max-w-lg flex-col items-center gap-10 text-center">
-        <div className="flex flex-col items-center gap-4">
-          <BrandSkull className="size-12" />
-          <div className="flex flex-col gap-1.5">
-            <h1 className="text-balance text-3xl font-semibold tracking-tight text-foreground">Mentoria Imparáveis</h1>
-            <p className="max-w-sm text-pretty text-sm leading-relaxed text-muted-foreground">
-              Acompanhamento de metas de estudo para concursos públicos. Entre com sua conta para continuar.
-            </p>
-          </div>
-        </div>
-
-        <div className="flex w-full flex-col gap-3">
-          <Link
-            href="/auth/login"
-            className="group flex items-center gap-4 rounded-2xl border border-border bg-card p-5 text-left transition-colors hover:border-foreground/15 hover:bg-secondary/40"
-          >
-            <div className="flex size-11 shrink-0 items-center justify-center rounded-xl bg-primary/10 text-primary">
-              <LogIn className="size-5" />
-            </div>
-            <div className="flex flex-1 flex-col gap-0.5">
-              <span className="text-sm font-semibold text-foreground">Entrar</span>
-              <span className="text-xs text-muted-foreground">Acesse sua conta de aluno ou administrador</span>
-            </div>
-            <ArrowRight className="size-4 shrink-0 text-muted-foreground transition-transform group-hover:translate-x-0.5" />
-          </Link>
-
-        </div>
-      </main>
-    </div>
+    <AuthShell>
+      <AuthCard
+        title="Boas-vindas"
+        description="Acesse sua conta para acompanhar suas metas de estudo para concursos públicos."
+      >
+        <ul className="flex flex-col gap-3">
+          {highlights.map(({ icon: Icon, label }) => (
+            <li key={label} className="flex items-start gap-3 text-sm text-muted-foreground">
+              <Icon className="mt-0.5 size-4 shrink-0 text-primary" aria-hidden="true" />
+              {label}
+            </li>
+          ))}
+        </ul>
+        <Link
+          href="/auth/login"
+          className="group flex h-11 items-center justify-center gap-2 rounded-lg bg-primary px-4 text-sm font-semibold text-primary-foreground transition-colors hover:bg-primary/90 focus-visible:outline-none focus-visible:ring-3 focus-visible:ring-ring/50"
+        >
+          <LogIn className="size-4" aria-hidden="true" />
+          Entrar
+          <ArrowRight className="size-4 transition-transform group-hover:translate-x-0.5" aria-hidden="true" />
+        </Link>
+        <p className="text-center text-xs text-muted-foreground">Acesso para alunos matriculados e administradores.</p>
+      </AuthCard>
+    </AuthShell>
   )
 }
-

@@ -58,21 +58,24 @@ export function MaterialsBrowser({
 
   return (
     <div className="flex flex-col gap-4">
-      <div className="flex flex-wrap items-center justify-between gap-3">
+      <div className="flex flex-col gap-3 rounded-xl border border-border bg-card p-3 sm:flex-row sm:items-center sm:justify-between">
         <Select items={courseSelectItems} value={courseId} onValueChange={(value) => setCourseId(value ?? "all")}>
-          <SelectTrigger className="w-56"><SelectValue placeholder="Filtrar por curso" /></SelectTrigger>
+          <SelectTrigger className="w-full sm:w-64" aria-label="Filtrar por curso"><SelectValue placeholder="Filtrar por curso" /></SelectTrigger>
           <SelectContent><SelectGroup>
             {courseSelectItems.map((item) => <SelectItem key={item.value} value={item.value}>{item.label}</SelectItem>)}
           </SelectGroup></SelectContent>
         </Select>
-        <div className="flex items-center gap-2">
+        <div className="flex flex-wrap items-center gap-2">
+          <span className="mr-1 text-xs tabular-nums text-muted-foreground">
+            {filtered.length} {filtered.length === 1 ? "material" : "materiais"}
+          </span>
           <MaterialImportDialog courses={courses} subjects={subjects} />
           <MaterialFormDialog courses={courses.map((course) => ({ id: course.id, name: course.name }))} />
         </div>
       </div>
 
       {filtered.length === 0 ? (
-        <Empty>
+        <Empty className="border border-dashed border-border">
           <EmptyHeader>
             <EmptyMedia variant="icon"><FolderKanban /></EmptyMedia>
             <EmptyTitle>Nenhum material encontrado</EmptyTitle>
@@ -80,12 +83,12 @@ export function MaterialsBrowser({
           </EmptyHeader>
         </Empty>
       ) : (
-        <Card>
+        <Card className="py-0">
           <CardContent className="flex flex-col divide-y divide-border p-0">
             {filtered.map((material) => {
               const course = courses.find((candidate) => candidate.id === material.courseId)
               return (
-                <div key={material.id} className="flex items-center gap-3.5 px-4 py-3.5">
+                <div key={material.id} className="flex items-center gap-3 px-4 py-3 transition-colors hover:bg-secondary/30 md:gap-3.5">
                   <MaterialTypeIcon type={material.type} />
                   <div className="flex min-w-0 flex-1 flex-col gap-0.5">
                     <span className="truncate text-sm font-medium text-foreground">{material.title}</span>

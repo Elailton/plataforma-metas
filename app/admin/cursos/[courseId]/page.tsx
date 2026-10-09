@@ -1,10 +1,8 @@
 import { notFound } from "next/navigation"
-import Link from "next/link"
-import { ArrowLeft } from "lucide-react"
-import { Button } from "@/components/ui/button"
-import { Badge } from "@/components/ui/badge"
+import { PageHeader } from "@/components/page-header"
 import { CourseDetailTabs } from "./course-detail-tabs"
 import { CourseStatusActions } from "@/components/admin/course-status-actions"
+import { CourseStatusBadge } from "@/components/admin/course-card"
 import {
   getAdminCourse,
   listCourseEdital,
@@ -14,12 +12,6 @@ import {
   listRecentHotmartEvents,
   listMaterials,
 } from "@/lib/admin/queries"
-
-const STATUS_LABEL: Record<string, string> = {
-  draft: "Rascunho",
-  published: "Publicado",
-  archived: "Arquivado",
-}
 
 export default async function AdminCourseDetailPage({
   params,
@@ -43,28 +35,15 @@ export default async function AdminCourseDetailPage({
     : null
 
   return (
-    <div className="flex flex-col gap-6">
-      <div className="flex items-center gap-3">
-        <Button
-          render={<Link href="/admin/cursos" aria-label="Voltar" />}
-          nativeButton={false}
-          variant="ghost"
-          size="icon"
-          className="-ml-2 shrink-0"
-        >
-          <ArrowLeft />
-        </Button>
-        <div className="flex min-w-0 flex-1 flex-col">
-          <div className="flex items-center gap-2.5">
-            <h1 className="truncate text-2xl font-semibold tracking-tight text-foreground">{course.name}</h1>
-            <Badge variant={course.status === "published" ? "default" : "secondary"} className="shrink-0">
-              {STATUS_LABEL[course.status]}
-            </Badge>
-          </div>
-          <p className="text-sm text-muted-foreground">{course.organization || "Sem instituição"}</p>
-        </div>
-        <CourseStatusActions course={course} />
-      </div>
+    <>
+      <PageHeader
+        backHref="/admin/cursos"
+        backLabel="Cursos"
+        title={course.name}
+        badge={<CourseStatusBadge status={course.status} />}
+        description={course.organization || "Sem instituição"}
+        actions={<CourseStatusActions course={course} />}
+      />
 
       <CourseDetailTabs
         course={course}
@@ -76,6 +55,6 @@ export default async function AdminCourseDetailPage({
         hotmartEvents={hotmartEvents}
         hotmartWebhookUrl={hotmartWebhookUrl}
       />
-    </div>
+    </>
   )
 }

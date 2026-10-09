@@ -1,6 +1,6 @@
 "use client"
 
-import { BrandSkull } from "@/components/brand-skull"
+import { AuthShell, AuthCard } from "@/components/auth-shell"
 
 import type React from "react"
 
@@ -9,7 +9,6 @@ import { useRouter, useSearchParams } from "next/navigation"
 import { Suspense, useState } from "react"
 import { createClient } from "@/lib/supabase/client"
 import { Button } from "@/components/ui/button"
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 
@@ -87,74 +86,61 @@ function LoginForm() {
   }
 
   return (
-    <div className="flex min-h-screen w-full items-center justify-center bg-background px-6 py-16 font-sans">
-      <div className="w-full max-w-sm">
-        <div className="mb-8 flex flex-col items-center gap-4 text-center">
-          <BrandSkull className="size-12" />
-          <div className="flex flex-col gap-1.5">
-            <h1 className="text-balance text-2xl font-semibold tracking-tight text-foreground">Mentoria Imparáveis</h1>
-            <p className="text-sm text-muted-foreground">Entre para acompanhar suas metas de estudo</p>
-          </div>
-        </div>
-
-        <Card>
-          <CardHeader>
-            <CardTitle className="text-lg">Entrar</CardTitle>
-            <CardDescription>
-              Acesse com o e-mail e a senha vinculados à sua matrícula.
-            </CardDescription>
-          </CardHeader>
-          <CardContent>
-            <form onSubmit={handleLogin}>
-              <div className="flex flex-col gap-5">
-                <div className="grid gap-2">
-                  <Label htmlFor="email">E-mail</Label>
-                  <Input
-                    id="email"
-                    type="email"
-                    placeholder="voce@email.com"
-                    required
-                    value={email}
-                    onChange={(e) => setEmail(e.target.value)}
-                  />
-                </div>
-                <div className="grid gap-2">
-                  <Label htmlFor="password">Senha</Label>
-                  <Input
-                    id="password"
-                    type="password"
-                    required
-                    value={password}
-                    onChange={(e) => setPassword(e.target.value)}
-                  />
-                </div>
-                {error && (
-                  <p role="alert" className="text-sm text-destructive">
-                    {error}
-                  </p>
-                )}
-                <Button type="submit" className="w-full" disabled={isLoading}>
-                  {isLoading ? "Entrando..." : "Entrar"}
-                </Button>
-              </div>
-            </form>
-            <p className="mt-5 text-center text-sm text-muted-foreground">
-              Primeiro acesso ou não recebeu o e-mail?{" "}
-              <Link href="/auth/reenviar-acesso" className="font-medium text-foreground underline-offset-4 hover:underline">
-                Reenviar acesso
-              </Link>
-            </p>
-          </CardContent>
-        </Card>
-
-        <Link
-          href="/"
-          className="mt-6 block text-center text-sm text-muted-foreground underline-offset-4 hover:underline"
-        >
+    <AuthShell
+      footer={
+        <Link href="/" className="underline-offset-4 hover:text-foreground hover:underline">
           Voltar ao início
         </Link>
-      </div>
-    </div>
+      }
+    >
+      <AuthCard
+        title="Entrar"
+        description="O acesso é liberado para alunos matriculados. Use o mesmo e-mail da compra."
+      >
+        <form onSubmit={handleLogin} className="flex flex-col gap-5">
+          <div className="grid gap-2">
+            <Label htmlFor="email">E-mail</Label>
+            <Input
+              id="email"
+              type="email"
+              inputMode="email"
+              autoComplete="email"
+              placeholder="voce@email.com"
+              required
+              className="h-11"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+            />
+          </div>
+          <div className="grid gap-2">
+            <Label htmlFor="password">Senha</Label>
+            <Input
+              id="password"
+              type="password"
+              autoComplete="current-password"
+              required
+              className="h-11"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+            />
+          </div>
+          {error && (
+            <p role="alert" className="rounded-lg border border-destructive/30 bg-destructive/10 px-3 py-2 text-sm text-destructive">
+              {error}
+            </p>
+          )}
+          <Button type="submit" className="h-11 w-full text-sm font-semibold" disabled={isLoading}>
+            {isLoading ? "Entrando..." : "Entrar"}
+          </Button>
+        </form>
+        <p className="text-center text-sm text-muted-foreground">
+          Primeiro acesso ou não recebeu o e-mail?{" "}
+          <Link href="/auth/reenviar-acesso" className="font-medium text-foreground underline-offset-4 hover:underline">
+            Reenviar acesso
+          </Link>
+        </p>
+      </AuthCard>
+    </AuthShell>
   )
 }
 

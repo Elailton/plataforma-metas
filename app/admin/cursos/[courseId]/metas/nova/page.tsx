@@ -1,7 +1,5 @@
 import { notFound } from "next/navigation"
-import Link from "next/link"
-import { ArrowLeft } from "lucide-react"
-import { Button } from "@/components/ui/button"
+import { PageHeader } from "@/components/page-header"
 import { GoalForm } from "@/components/admin/goal-form"
 import { getAdminCourse, listCourseEdital, listMaterials } from "@/lib/admin/queries"
 
@@ -20,24 +18,10 @@ export default async function NewGoalPage({
 
   return (
     <div className="flex flex-col gap-6">
-      <div className="flex items-center gap-3">
-        <Button
-          render={<Link href={`/admin/cursos/${course.id}`} aria-label="Voltar" />}
-          nativeButton={false}
-          variant="ghost"
-          size="icon"
-          className="-ml-2 shrink-0"
-        >
-          <ArrowLeft />
-        </Button>
-        <div className="flex flex-col">
-          <h1 className="text-2xl font-semibold tracking-tight text-foreground">Criar meta</h1>
-          <p className="text-sm text-muted-foreground">{course.name}</p>
-        </div>
-      </div>
+      <PageHeader className="mb-0 md:mb-0" backHref={`/admin/cursos/${course.id}`} backLabel={course.name} title="Criar meta" description="Monte os itens da meta com disciplina, tópico, orientação e materiais." />
 
       {subjects.length === 0 ? (
-        <p className="text-sm text-muted-foreground">
+        <p className="rounded-xl border border-dashed border-border p-6 text-center text-sm text-muted-foreground">
           Cadastre ao menos uma disciplina no edital deste curso antes de criar uma meta.
         </p>
       ) : (

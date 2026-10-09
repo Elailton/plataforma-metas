@@ -1,5 +1,7 @@
+import Link from "next/link"
 import { CircleAlert } from "lucide-react"
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
+import { Button } from "@/components/ui/button"
+import { AuthShell, AuthCard } from "@/components/auth-shell"
 
 export default async function AuthErrorPage({
   searchParams,
@@ -14,24 +16,26 @@ export default async function AuthErrorPage({
   const isErrorCode = typeof code === "string" && /^[a-z0-9_]{1,64}$/.test(code)
 
   return (
-    <div className="flex min-h-screen w-full items-center justify-center bg-background px-6 py-16 font-sans">
-      <div className="w-full max-w-sm">
-        <Card>
-          <CardHeader>
-            <div className="mb-2 flex size-11 items-center justify-center rounded-xl bg-destructive/10 text-destructive">
-              <CircleAlert className="size-5" />
-            </div>
-            <CardTitle className="text-lg">Algo deu errado</CardTitle>
-          </CardHeader>
-          <CardContent>
-            {isErrorCode ? (
-              <p className="text-sm text-muted-foreground">Código do erro: {code}</p>
-            ) : (
-              <p className="text-sm text-muted-foreground">Ocorreu um erro inesperado. Tente novamente.</p>
-            )}
-          </CardContent>
-        </Card>
-      </div>
-    </div>
+    <AuthShell>
+      <AuthCard
+        tone="danger"
+        icon={<CircleAlert className="size-5" />}
+        title="Algo deu errado"
+        description={
+          isErrorCode ? (
+            <>
+              Não foi possível concluir o acesso. Código do erro:{" "}
+              <code className="rounded bg-muted px-1.5 py-0.5 font-mono text-xs text-foreground">{code}</code>
+            </>
+          ) : (
+            "Ocorreu um erro inesperado. Tente novamente."
+          )
+        }
+      >
+        <Button render={<Link href="/auth/login" />} nativeButton={false} variant="outline" className="h-11 w-full">
+          Ir para o login
+        </Button>
+      </AuthCard>
+    </AuthShell>
   )
 }

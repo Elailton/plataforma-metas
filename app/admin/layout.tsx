@@ -12,7 +12,9 @@ export default async function AdminLayout({ children }: { children: React.ReactN
       <AdminSidebar />
       <SidebarInset>
         <AdminTopbar avatarInitials={profile?.avatarInitials} />
-        <main className="flex-1 bg-secondary/30 p-4 md:p-6">{children}</main>
+        <main className="flex-1 bg-background">
+          <div className="mx-auto w-full max-w-6xl px-4 pb-10 pt-5 sm:px-6 md:px-8 md:pb-14 md:pt-8">{children}</div>
+        </main>
       </SidebarInset>
     </SidebarProvider>
   )

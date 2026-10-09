@@ -1,10 +1,10 @@
 import { studySummary } from "@/lib/groups/questionnaire.mjs"
 import { redirect } from "next/navigation"
-import { LogOut, Mail, GraduationCap, ChevronRight } from "lucide-react"
+import { LogOut, Mail, GraduationCap, ChevronRight, Pencil, LifeBuoy } from "lucide-react"
 import { Avatar, AvatarFallback } from "@/components/ui/avatar"
-import { Card, CardContent } from "@/components/ui/card"
 import { Separator } from "@/components/ui/separator"
 import { PageContainer, PageHeading } from "@/components/student/page-container"
+import { SectionHeader } from "@/components/page-header"
 import { getCurrentProfile } from "@/lib/supabase/queries"
 import { signOut } from "@/lib/supabase/actions"
 import { ProfileNameDialog } from "@/components/student/profile-name-dialog"
@@ -20,120 +20,110 @@ export default async function AccountPage() {
 
   return (
     <PageContainer>
-      <PageHeading title="Conta" />
+      <PageHeading title="Conta" description="Seus dados de acesso e cursos ativos." />
 
-      <Card className="mb-6">
-        <CardContent className="flex items-center gap-4">
-          <Avatar className="size-14">
-            <AvatarFallback className="bg-secondary text-base font-semibold text-secondary-foreground">
-              {profile.avatarInitials}
-            </AvatarFallback>
-          </Avatar>
-          <div className="flex flex-col gap-0.5">
-            <span className="text-base font-semibold text-foreground">
-              {profile.fullName}
-            </span>
-            <span className="flex items-center gap-1.5 text-sm text-muted-foreground">
-              <Mail className="size-3.5" />
-              {profile.email}
-            </span>
-          </div>
-        </CardContent>
-      </Card>
+      <div className="mb-8 flex items-center gap-4 rounded-xl border border-border bg-card p-4 md:p-5">
+        <Avatar className="size-14 shrink-0">
+          <AvatarFallback className="bg-secondary text-base font-semibold text-secondary-foreground">
+            {profile.avatarInitials}
+          </AvatarFallback>
+        </Avatar>
+        <div className="flex min-w-0 flex-col gap-1">
+          <span className="truncate text-base font-semibold text-foreground">{profile.fullName}</span>
+          <span className="flex min-w-0 items-center gap-1.5 text-sm text-muted-foreground">
+            <Mail className="size-3.5 shrink-0" aria-hidden="true" />
+            <span className="truncate">{profile.email}</span>
+          </span>
+        </div>
+      </div>
 
-      {activeEnrollments.length > 0 && (
-        <Card className="mb-6">
-          <CardContent className="flex flex-col gap-4">
+      {activeEnrollments.length > 0 ? (
+        <section aria-labelledby="cursos-ativos" className="mb-8">
+          <SectionHeader title={<span id="cursos-ativos">Cursos ativos</span>} />
+          <ul className="flex flex-col divide-y divide-border overflow-hidden rounded-xl border border-border bg-card">
             {activeEnrollments.map((enrollment) => (
-              <div key={enrollment.id} className="flex items-center gap-3">
-                <div className="flex size-9 items-center justify-center rounded-lg bg-secondary text-foreground">
-                  <GraduationCap className="size-4.5" />
+              <li key={enrollment.id} className="flex items-center gap-3 px-4 py-3.5">
+                <div className="flex size-9 shrink-0 items-center justify-center rounded-lg bg-secondary text-foreground">
+                  <GraduationCap className="size-4.5" aria-hidden="true" />
                 </div>
-                <div className="flex flex-1 flex-col">
-                  <span className="text-sm font-medium text-foreground">
+                <div className="flex min-w-0 flex-1 flex-col">
+                  <span className="truncate text-sm font-medium text-foreground">
                     {enrollment.course?.name || "Curso matriculado"}
                   </span>
-                  <span className="text-xs text-muted-foreground">
-                    Curso ativo
-                  </span>
+                  <span className="text-xs text-success">Matrícula ativa</span>
                 </div>
-              </div>
+              </li>
             ))}
-          </CardContent>
-        </Card>
-      )}
+          </ul>
+        </section>
+      ) : null}
 
       {activeEnrollments
         .filter((enrollment) => enrollment.questionnaire)
         .map((enrollment) => (
-          <Card key={enrollment.id} className="mb-6">
-            <CardContent className="space-y-3">
-              <h2 className="font-semibold">
-                Informações de estudo — {enrollment.course?.name}
-              </h2>
+          <section key={enrollment.id} aria-label={`Informações de estudo — ${enrollment.course?.name ?? "curso"}`} className="mb-8">
+            <SectionHeader title={`Informações de estudo — ${enrollment.course?.name ?? "curso"}`} />
+            <div className="flex flex-col gap-3 rounded-xl border border-border bg-card p-4 md:p-5">
               <p className="text-sm text-muted-foreground">
                 {studySummary(enrollment.questionnaire).join(" · ")}
               </p>
               {enrollment.questionnaire?.whatsapp && (
-                <p className="text-sm">
-                  WhatsApp: {enrollment.questionnaire.whatsapp}
-                </p>
+                <p className="text-sm text-foreground">WhatsApp: {enrollment.questionnaire.whatsapp}</p>
               )}
-              <details>
-                <summary className="cursor-pointer text-sm font-medium">
+              <details className="group">
+                <summary className="cursor-pointer text-sm font-medium text-foreground">
                   Todas as respostas do questionário
                 </summary>
-                <dl className="mt-3 space-y-3">
-                  {Object.entries(enrollment.questionnaire!.labels).map(
-                    ([key, value]) => (
-                      <div key={key}>
-                        <dt className="text-xs font-medium">
-                          Pergunta {Number(key.slice(1))}
-                        </dt>
-                        <dd className="text-sm text-muted-foreground">
-                          {value}
-                        </dd>
-                      </div>
-                    ),
-                  )}
+                <dl className="mt-3 flex flex-col gap-3">
+                  {Object.entries(enrollment.questionnaire!.labels).map(([key, value]) => (
+                    <div key={key}>
+                      <dt className="text-xs font-medium text-foreground">Pergunta {Number(key.slice(1))}</dt>
+                      <dd className="text-sm text-muted-foreground">{value}</dd>
+                    </div>
+                  ))}
                 </dl>
               </details>
-            </CardContent>
-          </Card>
+            </div>
+          </section>
         ))}
 
-      <nav className="flex flex-col overflow-hidden rounded-xl border border-border bg-card">
-        <ProfileNameDialog
-          currentName={profile.fullName}
-          trigger={
-            <button
-              type="button"
-              className="flex w-full items-center justify-between px-4 py-3.5 text-left text-sm font-medium text-foreground transition-colors hover:bg-secondary/50"
-            >
-              Editar perfil
-              <ChevronRight className="size-4 text-muted-foreground" />
-            </button>
-          }
-        />
-        <Separator />
-        <a
-          href={supportUrl || undefined}
-          target="_blank"
-          rel="noreferrer"
-          aria-disabled={!supportUrl}
-          className="flex items-center justify-between px-4 py-3.5 text-left text-sm font-medium text-foreground transition-colors hover:bg-secondary/50 aria-disabled:pointer-events-none aria-disabled:opacity-50"
-        >
-          Ajuda e suporte
-          <ChevronRight className="size-4 text-muted-foreground" />
-        </a>
-      </nav>
+      <section aria-labelledby="preferencias" className="mb-8">
+        <SectionHeader title={<span id="preferencias">Configurações</span>} />
+        <nav className="flex flex-col overflow-hidden rounded-xl border border-border bg-card">
+          <ProfileNameDialog
+            currentName={profile.fullName}
+            trigger={
+              <button
+                type="button"
+                className="flex min-h-12 w-full items-center gap-3 px-4 py-3.5 text-left text-sm font-medium text-foreground transition-colors hover:bg-secondary/50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-ring"
+              >
+                <Pencil className="size-4 text-muted-foreground" aria-hidden="true" />
+                <span className="flex-1">Editar perfil</span>
+                <ChevronRight className="size-4 text-muted-foreground" aria-hidden="true" />
+              </button>
+            }
+          />
+          <Separator />
+          <a
+            href={supportUrl || undefined}
+            target="_blank"
+            rel="noreferrer"
+            aria-disabled={!supportUrl}
+            className="flex min-h-12 items-center gap-3 px-4 py-3.5 text-left text-sm font-medium text-foreground transition-colors hover:bg-secondary/50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-ring aria-disabled:pointer-events-none aria-disabled:opacity-50"
+          >
+            <LifeBuoy className="size-4 text-muted-foreground" aria-hidden="true" />
+            <span className="flex-1">Ajuda e suporte</span>
+            <ChevronRight className="size-4 text-muted-foreground" aria-hidden="true" />
+          </a>
+        </nav>
+      </section>
 
       <form action={signOut}>
         <button
           type="submit"
-          className="mt-6 flex w-full items-center justify-center gap-2 rounded-xl border border-border py-3 text-sm font-medium text-destructive transition-colors hover:bg-destructive/5"
+          className="flex min-h-12 w-full items-center justify-center gap-2 rounded-xl border border-border text-sm font-medium text-destructive transition-colors hover:bg-destructive/5 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
         >
-          <LogOut className="size-4" />
+          <LogOut className="size-4" aria-hidden="true" />
           Sair da plataforma
         </button>
       </form>

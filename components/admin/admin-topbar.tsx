@@ -23,11 +23,11 @@ export function AdminTopbar({ avatarInitials = "AD" }: { avatarInitials?: string
   const pathname = usePathname()
 
   return (
-    <header className="flex h-14 shrink-0 items-center justify-between gap-2 border-b border-border bg-background px-4">
+    <header className="sticky top-0 z-30 flex h-14 shrink-0 items-center justify-between gap-2 border-b border-border bg-background/90 px-4 backdrop-blur supports-backdrop-filter:bg-background/75 md:px-6">
       <div className="flex items-center gap-2">
         <SidebarTrigger />
         <Separator orientation="vertical" className="h-5!" />
-        <span className="text-sm font-medium text-foreground">{getSectionLabel(pathname)}</span>
+        <span className="truncate text-sm font-medium text-foreground">{getSectionLabel(pathname)}</span>
       </div>
       <DropdownMenu>
         <DropdownMenuTrigger className="rounded-full outline-none focus-visible:ring-2 focus-visible:ring-ring">

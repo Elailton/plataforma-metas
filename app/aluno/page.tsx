@@ -1,9 +1,10 @@
 import { studySummary } from "@/lib/groups/questionnaire.mjs"
 import Link from "next/link"
 import { redirect } from "next/navigation"
-import { CheckCircle2 } from "lucide-react"
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
+import { ArrowRight, BookOpen, CalendarClock, CheckCircle2, ListChecks } from "lucide-react"
 import { PageContainer } from "@/components/student/page-container"
+import { PageHeader, SectionHeader } from "@/components/page-header"
+import { StatCard } from "@/components/stat-card"
 import { GoalCard } from "@/components/student/goal-card"
 import { NextGoalCard } from "@/components/student/next-goal-card"
 import { DisciplineProgressList } from "@/components/student/discipline-progress-list"
@@ -25,9 +26,8 @@ export default async function StudentHomePage() {
     enrollment?.course?.groups_enabled && enrollment.studyGroup == null
   const summary = studySummary(enrollment?.questionnaire)
 
-  const completedGoals = snapshot.goals.filter(
-    (goal) => goal.progressStatus === "completed",
-  ).length
+  const completedGoals = snapshot.goals.filter((goal) => goal.progressStatus === "completed").length
+  const inProgressGoals = snapshot.goals.filter((goal) => goal.progressStatus === "in_progress").length
   const nextGoal =
     snapshot.goals.find(
       (goal) => goal.isReleased && goal.progressStatus === "in_progress",
@@ -38,109 +38,116 @@ export default async function StudentHomePage() {
     snapshot.goals.find((goal) => !goal.isReleased)
   const recentGoals = snapshot.goals.slice(0, 3)
   const firstName = context.profile.fullName.split(" ")[0]
+  const hasGoals = snapshot.goals.length > 0
 
   return (
-    <PageContainer className="max-w-2xl">
-      <div className="mb-6 flex flex-col gap-1">
-        <p className="text-sm text-muted-foreground">Olá, {firstName}</p>
-        {summary.length > 0 && (
-          <p className="text-xs leading-relaxed text-muted-foreground">
-            {summary.join(" · ")}
-          </p>
-        )}
-        <h1 className="text-2xl font-semibold tracking-tight text-foreground">
-          {snapshot.course.name}
-        </h1>
+    <PageContainer size="wide">
+      <PageHeader
+        eyebrow={`Olá, ${firstName}`}
+        title={snapshot.course.name}
+        description={summary.length > 0 ? summary.join(" · ") : "Seu plano de estudos e o progresso no edital."}
+      />
+
+      <div className="mb-8 grid grid-cols-2 gap-3 md:mb-10 md:grid-cols-3 md:gap-4">
+        <StatCard
+          label="Edital estudado"
+          value={`${snapshot.editalPercentage}%`}
+          hint={`${snapshot.studiedTopics} de ${snapshot.totalTopics} tópicos`}
+          icon={BookOpen}
+          tone="primary"
+        />
+        <StatCard
+          label="Metas concluídas"
+          value={completedGoals}
+          suffix={`/ ${snapshot.goals.length}`}
+          icon={CheckCircle2}
+        />
+        <StatCard
+          label="Em andamento"
+          value={inProgressGoals}
+          suffix={inProgressGoals === 1 ? "meta" : "metas"}
+          icon={ListChecks}
+          className="col-span-2 md:col-span-1"
+        />
       </div>
 
-      <div className="mb-6 grid grid-cols-2 gap-3">
-        <Card className="gap-2 py-4">
-          <CardHeader className="px-4">
-            <CardTitle className="text-xs font-medium text-muted-foreground">
-              Edital concluído
-            </CardTitle>
-          </CardHeader>
-          <CardContent className="px-4">
-            <span className="text-2xl font-semibold tabular-nums text-foreground">
-              {snapshot.editalPercentage}%
-            </span>
-          </CardContent>
-        </Card>
-        <Card className="gap-2 py-4">
-          <CardHeader className="px-4">
-            <CardTitle className="text-xs font-medium text-muted-foreground">
-              Metas concluídas
-            </CardTitle>
-          </CardHeader>
-          <CardContent className="px-4 flex items-center gap-2">
-            <span className="text-2xl font-semibold tabular-nums text-foreground">
-              {completedGoals}
-            </span>
-            <span className="text-sm text-muted-foreground">
-              / {snapshot.goals.length}
-            </span>
-          </CardContent>
-        </Card>
-      </div>
+      <div className="grid grid-cols-1 gap-8 lg:grid-cols-[minmax(0,1fr)_340px] lg:gap-10">
+        <div className="flex min-w-0 flex-col gap-8">
+          <section aria-labelledby="proxima-meta">
+            <SectionHeader title={<span id="proxima-meta">Próxima meta</span>} />
+            {withoutGroup ? (
+              <div className="flex flex-col items-center gap-2 rounded-2xl border border-dashed border-border px-6 py-10 text-center">
+                <CalendarClock className="size-8 text-muted-foreground" />
+                <p className="text-sm font-semibold text-foreground">Aguardando definição do seu plano de estudos</p>
+                <p className="text-sm text-muted-foreground">Você está sem grupo. Seu mentor precisa definir seu grupo para liberar as metas.</p>
+              </div>
+            ) : nextGoal ? (
+              <NextGoalCard goal={nextGoal} />
+            ) : hasGoals ? (
+              <div className="flex flex-col items-center gap-2 rounded-2xl border border-border bg-card px-6 py-10 text-center">
+                <CheckCircle2 className="size-8 text-success" />
+                <p className="text-sm font-semibold text-foreground">Todas as metas concluídas!</p>
+                <p className="text-sm text-muted-foreground">Aguarde novas metas publicadas pelo seu mentor.</p>
+              </div>
+            ) : (
+              <div className="flex flex-col items-center gap-2 rounded-2xl border border-dashed border-border px-6 py-10 text-center">
+                <CalendarClock className="size-8 text-muted-foreground" />
+                <p className="text-sm font-semibold text-foreground">Nenhuma meta publicada ainda</p>
+                <p className="text-sm text-muted-foreground">Suas metas aparecerão aqui assim que forem publicadas pelo seu mentor.</p>
+              </div>
+            )}
+          </section>
 
-      {withoutGroup ? (
-        <Card className="mb-8">
-          <CardContent className="py-6 text-center">
-            <p className="font-medium">
-              Aguardando definição do seu plano de estudos
-            </p>
-            <p className="mt-2 text-sm text-muted-foreground">
-              Você está sem grupo. Seu mentor precisa definir seu grupo para
-              liberar as metas.
-            </p>
-          </CardContent>
-        </Card>
-      ) : nextGoal ? (
-        <div className="mb-8">
-          <NextGoalCard goal={nextGoal} />
+          <section aria-labelledby="ultimas-metas">
+            <SectionHeader
+              title={<span id="ultimas-metas">Últimas metas</span>}
+              action={
+                hasGoals ? (
+                  <Link
+                    href="/aluno/metas"
+                    className="inline-flex items-center gap-1 rounded-md text-xs font-medium text-primary hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+                  >
+                    Ver todas
+                    <ArrowRight className="size-3.5" />
+                  </Link>
+                ) : null
+              }
+            />
+            {recentGoals.length === 0 ? (
+              <p className="rounded-xl border border-dashed border-border p-5 text-sm text-muted-foreground">
+                Nenhuma meta publicada para este curso ainda.
+              </p>
+            ) : (
+              <div className="flex flex-col gap-3">
+                {recentGoals.map((goal) => (
+                  <GoalCard key={goal.id} goal={goal} />
+                ))}
+              </div>
+            )}
+          </section>
         </div>
-      ) : (
-        <Card className="mb-8">
-          <CardContent className="flex flex-col items-center gap-2 py-8 text-center">
-            <CheckCircle2 className="size-8 text-success" />
-            <p className="text-sm font-medium text-foreground">
-              Todas as metas concluídas!
-            </p>
-            <p className="text-xs text-muted-foreground">
-              Aguarde novas metas publicadas pelo seu mentor.
-            </p>
-          </CardContent>
-        </Card>
-      )}
 
-      <div className="mb-8 flex flex-col gap-4">
-        <h2 className="text-sm font-semibold text-foreground">
-          Progresso por disciplina
-        </h2>
-        <DisciplineProgressList subjects={snapshot.subjects} />
-      </div>
-
-      <div className="flex flex-col gap-4">
-        <div className="flex items-center justify-between">
-          <h2 className="text-sm font-semibold text-foreground">
-            Últimas metas
-          </h2>
-          <Link
-            href="/aluno/metas"
-            className="text-xs font-medium text-primary hover:underline"
-          >
-            Ver todas
-          </Link>
-        </div>
-        <div className="flex flex-col gap-3">
-          {recentGoals.length === 0 ? (
-            <p className="rounded-xl border border-dashed border-border p-5 text-sm text-muted-foreground">
-              Nenhuma meta publicada para este curso ainda.
-            </p>
-          ) : (
-            recentGoals.map((goal) => <GoalCard key={goal.id} goal={goal} />)
-          )}
-        </div>
+        <section aria-labelledby="progresso-disciplinas" className="min-w-0">
+          <SectionHeader
+            title={<span id="progresso-disciplinas">Progresso por disciplina</span>}
+            action={
+              <Link
+                href="/aluno/edital"
+                className="inline-flex items-center gap-1 rounded-md text-xs font-medium text-primary hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+              >
+                Edital
+                <ArrowRight className="size-3.5" />
+              </Link>
+            }
+          />
+          <div className="rounded-xl border border-border bg-card p-4 md:p-5">
+            {snapshot.subjects.length === 0 ? (
+              <p className="text-sm text-muted-foreground">O edital deste curso ainda não foi cadastrado.</p>
+            ) : (
+              <DisciplineProgressList subjects={snapshot.subjects} />
+            )}
+          </div>
+        </section>
       </div>
     </PageContainer>
   )

@@ -17,7 +17,10 @@ export function CourseSwitcher({
 
   if (courses.length === 1) {
     return (
-      <span className={cn("truncate text-xs font-medium", compact ? "max-w-28" : "max-w-44")}>
+      <span
+        className={cn("block truncate font-medium text-foreground", compact ? "text-xs" : "text-sm")}
+        title={currentCourse.name}
+      >
         {currentCourse.name}
       </span>
     )
@@ -31,8 +34,8 @@ export function CourseSwitcher({
         onChange={(event) => event.currentTarget.form?.requestSubmit()}
         aria-label="Curso atual"
         className={cn(
-          "h-8 rounded-lg border border-border bg-background px-2 text-xs font-medium text-foreground",
-          compact ? "max-w-32" : "w-full max-w-48",
+          "w-full truncate rounded-lg border border-border bg-background px-2.5 font-medium text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring",
+          compact ? "h-8 text-xs" : "h-9 text-sm",
         )}
       >
         {courses.map((course) => (
@@ -44,4 +47,3 @@ export function CourseSwitcher({
     </form>
   )
 }
-
