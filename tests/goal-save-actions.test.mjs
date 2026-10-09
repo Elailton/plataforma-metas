@@ -88,3 +88,12 @@ test("formulário real conserva o ID carregado e envia a versão ao salvar", asy
   assert.equal(submitted[0][1].items[0].id, "stable-item")
   assert.equal(submitted[0][1].updatedAt, input.updatedAt)
 })
+
+test("orientação sem itens pode ser salva; meta sem itens nem descrição é rejeitada", async () => {
+  const action = actions()
+  await action.updateGoal("welcome", { ...input, description: "Como usar o sistema", items: [] })
+  assert.equal(action.calls.length, 1)
+  assert.equal(action.calls[0].args.requested_items.length, 0)
+  await assert.rejects(action.updateGoal("empty", { ...input, description: "  ", items: [] }), /descrição de orientação/)
+  assert.equal(action.calls.length, 1)
+})
