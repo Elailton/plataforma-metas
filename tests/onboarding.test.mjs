@@ -50,3 +50,18 @@ test("rascunho exige mesma configuração e nunca restaura senha", () => {
     whatsapp: "123",
   });
 });
+
+test("WhatsApp brasileiro exige DDD e nove dígitos iniciados em 9", async () => {
+  const { formatWhatsapp, isValidWhatsapp } =
+    await import("../lib/groups/onboarding.mjs");
+  assert.equal(formatWhatsapp("(85) 98660-3491"), "(85)986603491");
+  assert.equal(isValidWhatsapp(formatWhatsapp("85986603491")), true);
+  for (const value of [
+    "",
+    "(00)986603491",
+    "(85)86603491",
+    "(85)886603491",
+    "(85)9866034910",
+  ])
+    assert.equal(isValidWhatsapp(value), false);
+});
