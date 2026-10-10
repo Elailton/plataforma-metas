@@ -2,7 +2,7 @@
 
 import { useMemo, useState } from "react"
 import Link from "next/link"
-import { ListChecks, Plus, BookOpen, FileText, Users } from "lucide-react"
+import { Eye, ListChecks, Plus, BookOpen, FileText, Users } from "lucide-react"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { Button } from "@/components/ui/button"
 import { AdminGoalRow } from "@/components/admin/admin-goal-row"
@@ -114,12 +114,16 @@ export function CourseDetailTabs({
               className="sm:max-w-md"
             />
           ) : null}
-          <div className="flex items-center justify-between gap-3 sm:justify-end">
+          <div className="flex flex-wrap items-center justify-between gap-3 sm:justify-end">
             <span className="text-sm text-muted-foreground tabular-nums">
               {goalQuery
                 ? `${filteredGoals.length} de ${goals.length}`
                 : `${goals.length} ${goals.length === 1 ? "meta" : "metas"}`}
             </span>
+            <Button variant="outline" render={<Link href={`/admin/cursos/${course.id}/previa`} />} nativeButton={false}>
+              <Eye data-icon="inline-start" />
+              Prévia do aluno
+            </Button>
             <Button render={<Link href={`/admin/cursos/${course.id}/metas/nova`} />} nativeButton={false}>
               <Plus data-icon="inline-start" />
               Criar meta

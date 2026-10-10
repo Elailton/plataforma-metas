@@ -199,18 +199,19 @@ export async function listMaterials(
   }))
 }
 
+const GOAL_WITH_ITEMS = "*, goal_items(*, goal_item_materials(material_id, position))"
+
+// Uma única consulta traz metas, itens e materiais; antes eram 1 + N consultas.
 export async function listCourseGoals(courseId: string): Promise<AdminGoal[]> {
   const supabase = await createClient()
 
   const { data: goals } = await supabase
     .from("goals")
-    .select("*")
+    .select(GOAL_WITH_ITEMS)
     .eq("course_id", courseId)
     .order("created_at", { ascending: false })
 
-  if (!goals) return []
-
-  return Promise.all(goals.map((goal) => hydrateGoal(goal)))
+  return (goals ?? []).map(mapGoalRow)
 }
 
 export async function getAdminGoal(goalId: string): Promise<AdminGoal | null> {
@@ -218,36 +219,31 @@ export async function getAdminGoal(goalId: string): Promise<AdminGoal | null> {
 
   const { data: goal } = await supabase
     .from("goals")
-    .select("*")
+    .select(GOAL_WITH_ITEMS)
     .eq("id", goalId)
     .single()
   if (!goal) return null
 
-  return hydrateGoal(goal)
+  return mapGoalRow(goal)
 }
 
-async function hydrateGoal(goal: any): Promise<AdminGoal> {
-  const supabase = await createClient()
-
-  const { data: items } = await supabase
-    .from("goal_items")
-    .select("*, goal_item_materials(material_id, position)")
-    .eq("goal_id", goal.id)
-    .is("archived_at", null)
-    .order("position", { ascending: true })
-
-  const goalItems: AdminGoalItem[] = (items ?? []).map((item: any) => ({
-    id: item.id,
-    subjectId: item.subject_id,
-    topicId: item.topic_id,
-    subtopicId: item.subtopic_id ?? null,
-    instructions: item.instructions,
-    suggestedQuestions: item.suggested_questions,
-    position: item.position,
-    materialIds: (item.goal_item_materials ?? [])
-      .sort((a: any, b: any) => a.position - b.position)
-      .map((m: any) => m.material_id),
-  }))
+function mapGoalRow(goal: any): AdminGoal {
+  const goalItems: AdminGoalItem[] = (goal.goal_items ?? [])
+    .filter((item: any) => item.archived_at == null)
+    .sort((a: any, b: any) => a.position - b.position)
+    .map((item: any) => ({
+      id: item.id,
+      subjectId: item.subject_id,
+      topicId: item.topic_id,
+      subtopicId: item.subtopic_id ?? null,
+      instructions: item.instructions,
+      suggestedQuestions: item.suggested_questions,
+      position: item.position,
+      materialIds: (item.goal_item_materials ?? [])
+        .slice()
+        .sort((a: any, b: any) => a.position - b.position)
+        .map((m: any) => m.material_id),
+    }))
 
   return {
     id: goal.id,
