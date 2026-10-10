@@ -30,14 +30,23 @@ const materialGroupLabel: Record<"apostila" | "videoaula", string> = {
   videoaula: "Videoaulas",
 }
 
-export function GoalItemChecklist({ item, locked = false }: { item: StudentGoalItem; locked?: boolean }) {
+export function GoalItemChecklist({
+  item,
+  locked = false,
+  preview = false,
+}: {
+  item: StudentGoalItem
+  locked?: boolean
+  /** Prévia do administrador: mesma aparência do aluno, sem salvar progresso. */
+  preview?: boolean
+}) {
   const [isComplete, setIsComplete] = useState(item.completed)
   const [pending, startTransition] = useTransition()
   const [descExpanded, setDescExpanded] = useState(false)
   const [materialsExpanded, setMaterialsExpanded] = useState(false)
 
   function toggle(completed: boolean) {
-    if (locked) return
+    if (locked || preview) return
     const previous = isComplete
     setIsComplete(completed)
     startTransition(async () => {
@@ -176,18 +185,24 @@ export function GoalItemChecklist({ item, locked = false }: { item: StudentGoalI
       <label
         className={cn(
           "-mx-4 -mb-4 flex min-h-12 items-center gap-3 border-t border-border px-4 py-3 text-sm font-medium text-foreground transition-colors md:-mx-5 md:-mb-5 md:px-5",
-          locked ? "cursor-not-allowed text-muted-foreground" : "cursor-pointer hover:bg-secondary/40",
+          locked || preview ? "cursor-not-allowed text-muted-foreground" : "cursor-pointer hover:bg-secondary/40",
           isComplete && !locked && "bg-success/5",
         )}
       >
         <Checkbox
           checked={isComplete}
-          disabled={pending || locked}
+          disabled={pending || locked || preview}
           onCheckedChange={(checked) => toggle(checked === true)}
           className="size-5"
         />
         <span className={isComplete ? "text-muted-foreground line-through" : ""}>
-          {locked ? "Disponível na data de liberação" : isComplete ? "Item concluído" : "Marcar item como concluído"}
+          {preview
+            ? "Marcar item como concluído (prévia, não salva)"
+            : locked
+              ? "Disponível na data de liberação"
+              : isComplete
+                ? "Item concluído"
+                : "Marcar item como concluído"}
         </span>
       </label>
     </div>
