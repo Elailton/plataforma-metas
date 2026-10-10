@@ -37,6 +37,7 @@ import {
   type GoalFormInput,
   type GoalItemInput,
 } from "@/lib/admin/actions/goals"
+import { filterBySearch } from "@/lib/search.mjs"
 import type {
   AdminGoal,
   AdminMaterial,
@@ -359,23 +360,19 @@ export function GoalForm({
             const subtopics = item.topicId
               ? topics.filter((topic) => topic.parentTopicId === item.topicId)
               : []
-            const materialSearch =
-              materialSearchByItem[item.key]?.trim().toLowerCase() ?? ""
+            const materialSearch = materialSearchByItem[item.key] ?? ""
             const scopedMaterials = goalMaterials.filter(
               (m) => !m.subjectId || m.subjectId === item.subjectId,
             )
-            const availableMaterials = materialSearch
-              ? scopedMaterials.filter((material) =>
-                  [
-                    material.title,
-                    materialTypeLabel(material.type),
-                    material.description ?? "",
-                  ]
-                    .join(" ")
-                    .toLowerCase()
-                    .includes(materialSearch),
-                )
-              : scopedMaterials
+            const availableMaterials = filterBySearch(
+              scopedMaterials,
+              materialSearch,
+              (material) => [
+                material.title,
+                materialTypeLabel(material.type),
+                material.description,
+              ],
+            )
 
             return (
               <Card key={item.key}>

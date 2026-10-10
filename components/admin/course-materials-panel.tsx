@@ -1,5 +1,6 @@
 "use client"
 
+import { useMemo, useState } from "react"
 import { useRouter } from "next/navigation"
 import { toast } from "sonner"
 import { Trash2 } from "lucide-react"
@@ -18,7 +19,9 @@ import {
 } from "@/components/ui/alert-dialog"
 import { MaterialTypeIcon, materialTypeLabel } from "@/components/admin/material-type-icon"
 import { MaterialFormDialog } from "@/components/admin/material-form-dialog"
+import { SearchInput } from "@/components/search-input"
 import { deleteMaterial } from "@/lib/admin/actions/materials"
+import { filterBySearch } from "@/lib/search.mjs"
 import type { AdminMaterial, AdminSubject } from "@/lib/admin/types"
 
 export function CourseMaterialsPanel({
@@ -31,6 +34,16 @@ export function CourseMaterialsPanel({
   subjects: AdminSubject[]
 }) {
   const router = useRouter()
+  const [query, setQuery] = useState("")
+  const filtered = useMemo(() => {
+    const subjectNames = new Map(subjects.map((subject) => [subject.id, subject.name]))
+    return filterBySearch(materials, query, (material) => [
+      material.title,
+      material.description,
+      materialTypeLabel(material.type),
+      material.subjectId ? subjectNames.get(material.subjectId) : null,
+    ])
+  }, [materials, subjects, query])
 
   async function handleDelete(materialId: string) {
     try {
@@ -44,17 +57,36 @@ export function CourseMaterialsPanel({
 
   return (
     <div className="flex flex-col gap-4">
-      <div className="flex items-center justify-between gap-3">
-        <span className="text-sm text-muted-foreground tabular-nums">
-          {materials.length} {materials.length === 1 ? "material" : "materiais"}
-        </span>
-        <MaterialFormDialog fixedCourseId={courseId} subjects={subjects} />
+      <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+        {materials.length > 0 ? (
+          <SearchInput
+            value={query}
+            onChange={setQuery}
+            placeholder="Pesquisar por título, disciplina ou tipo"
+            label="Pesquisar materiais do curso"
+            className="sm:max-w-md"
+          />
+        ) : null}
+        <div className="flex items-center justify-between gap-3 sm:justify-end">
+          <span className="text-sm text-muted-foreground tabular-nums">
+            {query
+              ? `${filtered.length} de ${materials.length}`
+              : `${materials.length} ${materials.length === 1 ? "material" : "materiais"}`}
+          </span>
+          <MaterialFormDialog fixedCourseId={courseId} subjects={subjects} />
+        </div>
       </div>
 
-      {materials.length > 0 ? (
+      {materials.length > 0 && filtered.length === 0 ? (
+        <p className="rounded-xl border border-dashed border-border px-4 py-6 text-center text-sm text-muted-foreground">
+          Nenhum material encontrado para “{query.trim()}”.
+        </p>
+      ) : null}
+
+      {filtered.length > 0 ? (
         <Card className="py-0">
           <CardContent className="flex flex-col divide-y divide-border p-0">
-            {materials.map((material) => {
+            {filtered.map((material) => {
               const subject = subjects.find((s) => s.id === material.subjectId)
               return (
                 <div key={material.id} className="flex items-center gap-3 px-4 py-3 transition-colors hover:bg-secondary/30 md:gap-3.5">

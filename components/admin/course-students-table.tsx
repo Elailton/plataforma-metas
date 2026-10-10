@@ -1,6 +1,6 @@
 "use client"
 
-import { FormEvent, useState, useTransition } from "react"
+import { FormEvent, useMemo, useState, useTransition } from "react"
 import { useRouter } from "next/navigation"
 import { Avatar, AvatarFallback } from "@/components/ui/avatar"
 import { Badge } from "@/components/ui/badge"
@@ -33,7 +33,9 @@ import {
 } from "@/components/ui/empty"
 import { UserPlus, Users } from "lucide-react"
 import { toast } from "sonner"
+import { SearchInput } from "@/components/search-input"
 import { setStudentGroup } from "@/lib/admin/actions/groups"
+import { filterBySearch } from "@/lib/search.mjs"
 import type { AdminCourseStudent } from "@/lib/admin/types"
 import {
   enrollExistingStudent,
@@ -50,6 +52,22 @@ export function CourseStudentsTable({
 }) {
   const router = useRouter()
   const [groupFilter, setGroupFilter] = useState("all")
+  const [query, setQuery] = useState("")
+  const visibleStudents = useMemo(
+    () =>
+      filterBySearch(
+        students.filter(
+          (s) =>
+            groupFilter === "all" ||
+            (groupFilter === "none"
+              ? s.studyGroup == null
+              : s.studyGroup === Number(groupFilter)),
+        ),
+        query,
+        (student) => [student.fullName, student.email],
+      ),
+    [students, groupFilter, query],
+  )
   const [email, setEmail] = useState("")
   const [fullName, setFullName] = useState("")
   const [pending, startTransition] = useTransition()
@@ -160,6 +178,15 @@ export function CourseStudentsTable({
       </form>
 
       <div className="flex flex-wrap items-center gap-3 border-b p-4">
+        {students.length > 0 ? (
+          <SearchInput
+            value={query}
+            onChange={setQuery}
+            placeholder="Pesquisar aluno pelo nome"
+            label="Pesquisar aluno"
+            className="sm:max-w-xs"
+          />
+        ) : null}
         <label htmlFor="group-filter">Filtrar grupo</label>
         <select
           id="group-filter"
@@ -206,15 +233,17 @@ export function CourseStudentsTable({
             </TableRow>
           </TableHeader>
           <TableBody>
-            {students
-              .filter(
-                (s) =>
-                  groupFilter === "all" ||
-                  (groupFilter === "none"
-                    ? s.studyGroup == null
-                    : s.studyGroup === Number(groupFilter)),
-              )
-              .map((student) => (
+            {visibleStudents.length === 0 ? (
+              <TableRow>
+                <TableCell
+                  colSpan={6}
+                  className="py-8 text-center text-sm text-muted-foreground"
+                >
+                  Nenhum aluno encontrado com esta pesquisa e filtro.
+                </TableCell>
+              </TableRow>
+            ) : null}
+            {visibleStudents.map((student) => (
                 <TableRow key={student.id}>
                   <TableCell>
                     <div className="flex items-center gap-2.5">

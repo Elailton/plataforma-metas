@@ -37,7 +37,9 @@ function load(path) {
         return {}
       if (name.startsWith("@/")) {
         const stem = resolve(root, name.slice(2))
-        const file = [stem + ".tsx", stem + ".ts"].find(existsSync)
+        const file = [stem + ".tsx", stem + ".ts", stem].find(
+          (candidate) => /\.(tsx?|mjs)$/.test(candidate) && existsSync(candidate),
+        )
         if (!file) throw new Error("Unexpected module: " + name)
         return load(file)
       }
