@@ -33,11 +33,13 @@ export async function updateSession(request: NextRequest) {
     },
   )
 
-  // Não execute código entre createServerClient e supabase.auth.getUser().
+  // Não execute código entre createServerClient e supabase.auth.getClaims().
   // Um erro simples aqui pode causar logout aleatório de usuários.
-  const {
-    data: { user },
-  } = await supabase.auth.getUser()
+  // getClaims renova a sessão quando necessário e valida a assinatura do JWT
+  // localmente (chaves assimétricas publicadas pelo projeto), sem uma chamada
+  // de rede ao Auth em cada navegação. Papel e matrícula continuam vindo do banco.
+  const { data: claimsData } = await supabase.auth.getClaims()
+  const user = claimsData?.claims?.sub ? { id: claimsData.claims.sub } : null
 
   const { pathname } = request.nextUrl
   const isStudentArea = pathname.startsWith("/aluno")

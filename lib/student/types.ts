@@ -45,6 +45,18 @@ export interface StudentGoal {
   progressStatus: StudentGoalStatus
 }
 
+/** Meta resumida para listas (sem itens e materiais). */
+export interface StudentGoalSummary {
+  id: string
+  number: number
+  title: string
+  dueDate: string | null
+  isReleased: boolean
+  progress: number
+  progressStatus: StudentGoalStatus
+  subjectNames: string[]
+}
+
 export interface StudentTopic {
   id: string
   parentTopicId: string | null
