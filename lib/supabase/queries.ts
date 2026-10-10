@@ -1,3 +1,4 @@
+import { cache } from "react"
 import { createClient } from "@/lib/supabase/server"
 
 export interface CurrentProfile {
@@ -28,7 +29,9 @@ export interface CurrentEnrollment {
   } | null
 }
 
-export async function getCurrentProfile(): Promise<CurrentProfile | null> {
+// Reaproveitado dentro da mesma requisição: layout, página e consultas do aluno
+// chamam esta função várias vezes, e cada chamada repetia login, perfil e matrículas.
+export const getCurrentProfile = cache(async function getCurrentProfile(): Promise<CurrentProfile | null> {
   const supabase = await createClient()
 
   const {
@@ -37,21 +40,23 @@ export async function getCurrentProfile(): Promise<CurrentProfile | null> {
 
   if (!user) return null
 
-  const { data: profile } = await supabase
-    .from("profiles")
-    .select("full_name, role, avatar_initials")
-    .eq("id", user.id)
-    .single()
+  // Perfil e matrículas dependem apenas do usuário: buscar em paralelo.
+  const [{ data: profile }, { data: enrollments }] = await Promise.all([
+    supabase
+      .from("profiles")
+      .select("full_name, role, avatar_initials")
+      .eq("id", user.id)
+      .single(),
+    supabase
+      .from("enrollments")
+      .select(
+        "id, course_id, status, enrolled_at, study_group, questionnaire, courses!enrollments_course_id_fkey(id, name, slug, status, groups_enabled, questionnaire_schema)",
+      )
+      .eq("user_id", user.id)
+      .order("enrolled_at", { ascending: false }),
+  ])
 
   if (!profile) return null
-
-  const { data: enrollments } = await supabase
-    .from("enrollments")
-    .select(
-      "id, course_id, status, enrolled_at, study_group, questionnaire, courses!enrollments_course_id_fkey(id, name, slug, status, groups_enabled, questionnaire_schema)",
-    )
-    .eq("user_id", user.id)
-    .order("enrolled_at", { ascending: false })
 
   return {
     id: user.id,
@@ -78,4 +83,4 @@ export async function getCurrentProfile(): Promise<CurrentProfile | null> {
         : enrollment.courses,
     })),
   }
-}
+})
