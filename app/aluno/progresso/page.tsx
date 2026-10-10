@@ -5,6 +5,7 @@ import { SectionHeader } from "@/components/page-header"
 import { StatCard } from "@/components/stat-card"
 import { DisciplineProgressChart } from "@/components/student/discipline-progress-chart"
 import { getStudentContext, getStudentCourseSnapshot } from "@/lib/student/queries"
+import { studentGoalWindow } from "@/lib/student/snapshot.mjs"
 
 export default async function ProgressPage() {
   const context = await getStudentContext()
@@ -29,7 +30,7 @@ export default async function ProgressPage() {
         <StatCard
           label="Metas concluídas"
           value={completedGoals}
-          suffix={`/ ${snapshot.goals.length}`}
+          suffix={`/ ${studentGoalWindow(snapshot.goals).releasedCount}`}
           icon={CheckCircle2}
           tone="success"
         />

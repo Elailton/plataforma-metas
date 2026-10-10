@@ -7,6 +7,7 @@ import { StatusBadge } from "@/components/status-badge"
 import { Progress } from "@/components/ui/progress"
 import { SectionHeader } from "@/components/page-header"
 import { getStudentContext, getStudentCourseSnapshot } from "@/lib/student/queries"
+import { studentGoalWindow } from "@/lib/student/snapshot.mjs"
 import { formatDateLong } from "@/lib/format"
 import { GoalReleaseRefresh } from "@/components/student/goal-release-refresh"
 
@@ -19,7 +20,8 @@ export default async function GoalDetailPage({
   const context = await getStudentContext()
   if (!context) notFound()
   const snapshot = await getStudentCourseSnapshot(context.currentCourse.id)
-  const goal = snapshot?.goals.find((candidate) => candidate.id === goalId)
+  // Metas futuras além da próxima não são abertas nem por link direto.
+  const goal = snapshot ? studentGoalWindow(snapshot.goals).visible.find((candidate) => candidate.id === goalId) : undefined
   if (!goal) notFound()
 
   return (
