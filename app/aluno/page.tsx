@@ -6,6 +6,7 @@ import { PageContainer } from "@/components/student/page-container"
 import { PageHeader, SectionHeader } from "@/components/page-header"
 import { StatCard } from "@/components/stat-card"
 import { GoalCard } from "@/components/student/goal-card"
+import { toGoalSummary } from "@/lib/student/snapshot.mjs"
 import { NextGoalCard } from "@/components/student/next-goal-card"
 import { DisciplineProgressList } from "@/components/student/discipline-progress-list"
 import {
@@ -36,7 +37,9 @@ export default async function StudentHomePage() {
       (goal) => goal.isReleased && goal.progressStatus === "pending",
     ) ??
     snapshot.goals.find((goal) => !goal.isReleased)
-  const recentGoals = snapshot.goals.slice(0, 3)
+  // Últimas metas liberadas (mais recentes primeiro); antes da primeira liberação, as próximas.
+  const releasedGoals = snapshot.goals.filter((goal) => goal.isReleased)
+  const recentGoals = releasedGoals.length > 0 ? releasedGoals.slice(-3).reverse() : snapshot.goals.slice(0, 3)
   const firstName = context.profile.fullName.split(" ")[0]
   const hasGoals = snapshot.goals.length > 0
 
@@ -120,7 +123,7 @@ export default async function StudentHomePage() {
             ) : (
               <div className="flex flex-col gap-3">
                 {recentGoals.map((goal) => (
-                  <GoalCard key={goal.id} goal={goal} />
+                  <GoalCard key={goal.id} goal={toGoalSummary(goal)} />
                 ))}
               </div>
             )}

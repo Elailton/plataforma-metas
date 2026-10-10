@@ -2,12 +2,12 @@ import Link from "next/link"
 import { CalendarDays, ChevronRight, Lock } from "lucide-react"
 import { Progress } from "@/components/ui/progress"
 import { StatusBadge } from "@/components/status-badge"
-import type { StudentGoal } from "@/lib/student/types"
+import type { StudentGoalSummary } from "@/lib/student/types"
 import { formatDate } from "@/lib/format"
 import { cn } from "@/lib/utils"
 
-export function GoalCard({ goal }: { goal: StudentGoal }) {
-  const disciplineNames = Array.from(new Set(goal.items.map((item) => item.subjectName)))
+export function GoalCard({ goal }: { goal: StudentGoalSummary }) {
+  const disciplineNames = goal.subjectNames
   const releaseLabel = goal.dueDate
     ? `${goal.isReleased ? "Liberada em" : "Libera em"} ${formatDate(goal.dueDate)}`
     : "Disponível imediatamente"

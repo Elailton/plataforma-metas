@@ -34,11 +34,11 @@ export interface CurrentEnrollment {
 export const getCurrentProfile = cache(async function getCurrentProfile(): Promise<CurrentProfile | null> {
   const supabase = await createClient()
 
-  const {
-    data: { user },
-  } = await supabase.auth.getUser()
-
-  if (!user) return null
+  // Sessão já renovada pelo proxy; a assinatura do JWT é validada localmente.
+  const { data: claimsData } = await supabase.auth.getClaims()
+  const claims = claimsData?.claims
+  if (!claims?.sub) return null
+  const user = { id: claims.sub, email: typeof claims.email === "string" ? claims.email : "" }
 
   // Perfil e matrículas dependem apenas do usuário: buscar em paralelo.
   const [{ data: profile }, { data: enrollments }] = await Promise.all([

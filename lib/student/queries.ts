@@ -4,17 +4,9 @@ import { cache } from "react"
 import { cookies } from "next/headers"
 import { createClient } from "@/lib/supabase/server"
 import { getCurrentProfile, type CurrentProfile } from "@/lib/supabase/queries"
-import type {
-  StudentCourse,
-  StudentCourseSnapshot,
-  StudentGoal,
-  StudentGoalItem,
-  StudentMaterial,
-  StudentSubjectProgress,
-} from "@/lib/student/types"
-import { calculatePercentage, collectStudiedTopicIds, getGoalProgressStatus } from "@/lib/student/core.mjs"
+import type { StudentCourse, StudentCourseSnapshot } from "@/lib/student/types"
+import { buildStudentSnapshot, type SnapshotGoalRow, type SnapshotSubjectRow } from "@/lib/student/snapshot.mjs"
 import { logSafeServerError } from "@/lib/security/safe-error"
-import { isGoalReleased } from "@/lib/goals/release.mjs"
 
 export const STUDENT_COURSE_COOKIE = "student_course_id"
 
@@ -47,194 +39,57 @@ export const getStudentContext = cache(async function getStudentContext(): Promi
   return { profile, courses, currentCourse }
 })
 
-export async function getStudentCourseSnapshot(courseId: string): Promise<StudentCourseSnapshot | null> {
+const GOAL_SELECT =
+  "id, course_id, title, description, due_date, created_at, goal_items(id, subject_id, topic_id, subtopic_id, instructions, suggested_questions, position, archived_at, goal_item_materials(position, materials(id, title, type, url)))"
+
+const isMissingProgressRelation = (error: { code?: string; message?: string } | null) =>
+  Boolean(error && (error.code === "PGRST205" || error.code === "42P01" || /does not exist|Could not find the table/i.test(error.message ?? "")))
+
+/**
+ * Dados do curso para o aluno em uma única rodada de consultas paralelas.
+ * O RLS continua decidindo o que é visível (grupo, publicação, itens não arquivados).
+ * Cacheado por requisição: layout e página compartilham o mesmo resultado.
+ */
+export const getStudentCourseSnapshot = cache(async function getStudentCourseSnapshot(
+  courseId: string,
+): Promise<StudentCourseSnapshot | null> {
   const context = await getStudentContext()
   const course = context?.courses.find((candidate) => candidate.id === courseId)
   if (!context || !course) return null
 
   const supabase = await createClient()
 
-  const [{ data: courseRow, error: courseError }, { data: subjects, error: subjectsError }, { data: goals, error: goalsError }] =
-    await Promise.all([
-      supabase.from("courses").select("id, name, slug, organization, cover_color").eq("id", courseId).single(),
-      supabase.from("subjects").select("id, name, position").eq("course_id", courseId).order("position"),
-      supabase
-        .from("goals")
-        .select("id, course_id, title, description, due_date, created_at")
-        .eq("course_id", courseId)
-        .eq("status", "published")
-        .order("created_at", { ascending: true }),
-    ])
+  const [courseResult, subjectsResult, goalsResult, completionsResult] = await Promise.all([
+    supabase.from("courses").select("id, name, slug, organization, cover_color").eq("id", courseId).single(),
+    supabase
+      .from("subjects")
+      .select("id, name, position, syllabus_topics(id, subject_id, parent_topic_id, title, position)")
+      .eq("course_id", courseId),
+    supabase
+      .from("goals")
+      .select(GOAL_SELECT)
+      .eq("course_id", courseId)
+      .eq("status", "published")
+      .is("goal_items.archived_at", null),
+    supabase.from("student_goal_item_completions").select("goal_item_id").eq("user_id", context.profile.id),
+  ])
 
-  if (courseError || subjectsError || goalsError || !courseRow) {
+  const { data: courseRow, error: courseError } = courseResult
+  if (courseError || subjectsResult.error || goalsResult.error || !courseRow) {
+    logSafeServerError("student.snapshot.read_failed", courseError ?? subjectsResult.error ?? goalsResult.error)
     throw new Error("Não foi possível carregar o curso do aluno.")
   }
 
-  const subjectIds = (subjects ?? []).map((subject) => subject.id)
-  const goalIds = (goals ?? []).map((goal) => goal.id)
-
-  const [{ data: topics, error: topicsError }, { data: items, error: itemsError }] = await Promise.all([
-    subjectIds.length
-      ? supabase
-          .from("syllabus_topics")
-          .select("*")
-          .in("subject_id", subjectIds)
-          .order("position")
-      : Promise.resolve({ data: [], error: null }),
-    goalIds.length
-      ? supabase
-          .from("goal_items")
-          .select("*")
-          .in("goal_id", goalIds)
-          .is("archived_at", null)
-          .order("position")
-      : Promise.resolve({ data: [], error: null }),
-  ])
-
-  if (topicsError || itemsError) throw new Error("Não foi possível carregar as metas do aluno.")
-
-  const itemIds = (items ?? []).map((item) => item.id)
-  const [{ data: completionRows, error: completionsError }, { data: itemMaterials, error: itemMaterialsError }] =
-    await Promise.all([
-      itemIds.length
-        ? supabase
-            .from("student_goal_item_completions")
-            .select("goal_item_id")
-            .eq("user_id", context.profile.id)
-            .in("goal_item_id", itemIds)
-        : Promise.resolve({ data: [], error: null }),
-      itemIds.length
-        ? supabase
-            .from("goal_item_materials")
-            .select("goal_item_id, material_id, position")
-            .in("goal_item_id", itemIds)
-            .order("position")
-        : Promise.resolve({ data: [], error: null }),
-    ])
-
-  const isMissingProgressRelation = (error: { code?: string; message?: string } | null) =>
-    Boolean(error && (error.code === "PGRST205" || error.code === "42P01" || /does not exist|Could not find the table/i.test(error.message ?? "")))
-
-  if (completionsError && !isMissingProgressRelation(completionsError)) {
-    logSafeServerError("student.completions.read_failed", completionsError)
+  if (completionsResult.error && !isMissingProgressRelation(completionsResult.error)) {
+    logSafeServerError("student.completions.read_failed", completionsResult.error)
     throw new Error("Não foi possível carregar o progresso do aluno.")
   }
 
-  if (itemMaterialsError && !isMissingProgressRelation(itemMaterialsError)) {
-    logSafeServerError("student.goal_materials.read_failed", itemMaterialsError)
-    throw new Error("Não foi possível carregar os materiais das metas.")
-  }
-
-  const safeCompletionRows = completionsError ? [] : completionRows ?? []
-  const safeItemMaterials = itemMaterialsError ? [] : itemMaterials ?? []
-  const materialIds = [...new Set(safeItemMaterials.map((relation) => relation.material_id))]
-  const { data: materials, error: materialsError } = materialIds.length
-    ? await supabase.from("materials").select("id, title, type, url").in("id", materialIds)
-    : { data: [], error: null }
-
-  if (materialsError) throw new Error("Não foi possível carregar os materiais das metas.")
-
-  const completedItemIds = new Set(safeCompletionRows.map((completion) => completion.goal_item_id))
-  const subjectById = new Map((subjects ?? []).map((subject) => [subject.id, subject]))
-  const topicById = new Map((topics ?? []).map((topic) => [topic.id, topic]))
-  const materialById = new Map(
-    (materials ?? []).map((material) => [
-      material.id,
-      {
-        id: material.id,
-        title: material.title,
-        type: material.type,
-        url: material.url,
-      } satisfies StudentMaterial,
-    ]),
-  )
-
-  const mappedGoals: StudentGoal[] = (goals ?? []).map((goal, index) => {
-    const mappedItems: StudentGoalItem[] = (items ?? [])
-      .filter((item) => item.goal_id === goal.id)
-      .map((item) => {
-        const subject = subjectById.get(item.subject_id)
-        const topic = item.topic_id ? topicById.get(item.topic_id) : null
-        const subtopic = item.subtopic_id ? topicById.get(item.subtopic_id) : null
-        const linkedMaterials = safeItemMaterials
-          .filter((relation) => relation.goal_item_id === item.id)
-          .map((relation) => materialById.get(relation.material_id))
-          .filter((material): material is StudentMaterial => Boolean(material))
-
-        return {
-          id: item.id,
-          subjectId: item.subject_id,
-          subjectName: subject?.name ?? "Disciplina",
-          topicId: item.topic_id,
-          topicName: topic?.title ?? null,
-          subtopicId: item.subtopic_id ?? null,
-          subtopicName: subtopic?.title ?? null,
-          instructions: item.instructions,
-          suggestedQuestions: item.suggested_questions,
-          materials: linkedMaterials,
-          completed: completedItemIds.has(item.id),
-        }
-      })
-
-    const completedItems = mappedItems.filter((item) => item.completed).length
-    const totalItems = mappedItems.length
-    const progress = calculatePercentage(completedItems, totalItems)
-
-    return {
-      id: goal.id,
-      courseId: goal.course_id,
-      number: index + 1,
-      title: goal.title,
-      description: goal.description,
-      dueDate: goal.due_date,
-      isReleased: isGoalReleased(goal.due_date),
-      items: mappedItems,
-      completedItems,
-      totalItems,
-      progress,
-      progressStatus: getGoalProgressStatus(completedItems, totalItems),
-    }
+  const snapshot = buildStudentSnapshot({
+    subjects: subjectsResult.data as SnapshotSubjectRow[] | null,
+    goals: goalsResult.data as unknown as SnapshotGoalRow[] | null,
+    completedItemIds: (completionsResult.error ? [] : completionsResult.data ?? []).map((row) => row.goal_item_id),
   })
-
-  const studiedTopicIds = collectStudiedTopicIds(mappedGoals.flatMap((goal) => goal.items))
-
-  const mappedSubjects: StudentSubjectProgress[] = (subjects ?? []).map((subject) => {
-    const subjectTopics = (topics ?? []).filter((topic) => topic.subject_id === subject.id)
-    const rootTopics = subjectTopics.filter((topic) => !topic.parent_topic_id)
-    const mappedTopics = rootTopics
-      .map((topic) => ({
-        id: topic.id,
-        parentTopicId: topic.parent_topic_id ?? null,
-        title: topic.title,
-        position: topic.position,
-        studied: studiedTopicIds.has(topic.id),
-        subtopics: subjectTopics
-          .filter((subtopic) => subtopic.parent_topic_id === topic.id)
-          .map((subtopic) => ({
-            id: subtopic.id,
-            parentTopicId: subtopic.parent_topic_id ?? null,
-            title: subtopic.title,
-            position: subtopic.position,
-            studied: studiedTopicIds.has(subtopic.id),
-            subtopics: [],
-          })),
-      }))
-    const flatTopics = mappedTopics.flatMap((topic) => [topic, ...topic.subtopics])
-    const studied = flatTopics.filter((topic) => topic.studied).length
-
-    return {
-      id: subject.id,
-      name: subject.name,
-      position: subject.position,
-      topics: mappedTopics,
-      studied,
-      total: flatTopics.length,
-      percentage: calculatePercentage(studied, flatTopics.length),
-    }
-  })
-
-  const totalTopics = mappedSubjects.reduce((total, subject) => total + subject.total, 0)
-  const studiedTopics = mappedSubjects.reduce((total, subject) => total + subject.studied, 0)
 
   return {
     course: {
@@ -244,10 +99,6 @@ export async function getStudentCourseSnapshot(courseId: string): Promise<Studen
       organization: courseRow.organization,
       coverColor: courseRow.cover_color,
     },
-    goals: mappedGoals,
-    subjects: mappedSubjects,
-    studiedTopics,
-    totalTopics,
-    editalPercentage: calculatePercentage(studiedTopics, totalTopics),
+    ...snapshot,
   }
-}
+})
