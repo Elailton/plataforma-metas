@@ -1,5 +1,6 @@
 import "server-only"
 
+import { cache } from "react"
 import { cookies } from "next/headers"
 import { createClient } from "@/lib/supabase/server"
 import { getCurrentProfile, type CurrentProfile } from "@/lib/supabase/queries"
@@ -23,7 +24,7 @@ export interface StudentContext {
   currentCourse: StudentCourse
 }
 
-export async function getStudentContext(): Promise<StudentContext | null> {
+export const getStudentContext = cache(async function getStudentContext(): Promise<StudentContext | null> {
   const profile = await getCurrentProfile()
   if (!profile || profile.role !== "student") return null
 
@@ -44,7 +45,7 @@ export async function getStudentContext(): Promise<StudentContext | null> {
   const currentCourse = courses.find((course) => course.id === selectedCourseId) ?? courses[0]
 
   return { profile, courses, currentCourse }
-}
+})
 
 export async function getStudentCourseSnapshot(courseId: string): Promise<StudentCourseSnapshot | null> {
   const context = await getStudentContext()

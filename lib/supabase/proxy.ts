@@ -51,7 +51,19 @@ export async function updateSession(request: NextRequest) {
   }
 
   if ((isStudentArea || isAdminArea) && user) {
-    const { data: profile } = await supabase.from("profiles").select("role").eq("id", user.id).single()
+    // Papel e matrícula ativa são independentes: buscar em paralelo na área do aluno.
+    const [{ data: profile }, { data: enrollment }] = await Promise.all([
+      supabase.from("profiles").select("role").eq("id", user.id).single(),
+      isStudentArea
+        ? supabase
+            .from("enrollments")
+            .select("id")
+            .eq("user_id", user.id)
+            .eq("status", "active")
+            .limit(1)
+            .maybeSingle()
+        : Promise.resolve({ data: null }),
+    ])
     const role = profile?.role
 
     if (!role) {
@@ -73,14 +85,6 @@ export async function updateSession(request: NextRequest) {
     }
 
     if (isStudentArea && role === "student") {
-      const { data: enrollment } = await supabase
-        .from("enrollments")
-        .select("id")
-        .eq("user_id", user.id)
-        .eq("status", "active")
-        .limit(1)
-        .maybeSingle()
-
       if (!enrollment) {
         const url = request.nextUrl.clone()
         url.pathname = "/auth/sem-acesso"
