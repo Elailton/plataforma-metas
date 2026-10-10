@@ -4,6 +4,7 @@ import { readFileSync } from "node:fs"
 import { runInNewContext } from "node:vm"
 import { createRequire } from "node:module"
 import ts from "typescript"
+import * as search from "../lib/search.mjs"
 
 const require = createRequire(import.meta.url)
 function load(relativePath, dependencies) {
@@ -75,6 +76,7 @@ test("formulário real conserva o ID carregado e envia a versão ao salvar", asy
     "@/lib/admin/actions/goals": { updateGoal: async (...args) => submitted.push(args) },
     "@/components/admin/material-form-dialog": { MaterialFormDialog: ({ trigger }) => trigger ?? null },
     "@/components/admin/material-type-icon": { MaterialTypeIcon: "span", materialTypeLabel: {} },
+    "@/lib/search.mjs": search,
   }
   for (const name of ["button", "input", "textarea", "checkbox", "field", "select", "card"]) {
     dependencies["@/components/ui/" + name] = new Proxy({}, { get: (_, key) => key })
