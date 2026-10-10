@@ -1,5 +1,6 @@
 "use client"
 
+import { useMemo, useState } from "react"
 import Link from "next/link"
 import { ListChecks, Plus, BookOpen, FileText, Users } from "lucide-react"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
@@ -13,6 +14,8 @@ import { CourseFormDialog } from "@/components/admin/course-form-dialog"
 import { HotmartIntegrationPanel } from "@/components/admin/hotmart-integration-panel"
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card"
 import { StatCard } from "@/components/stat-card"
+import { SearchInput } from "@/components/search-input"
+import { filterBySearch } from "@/lib/search.mjs"
 import { Empty, EmptyHeader, EmptyTitle, EmptyDescription, EmptyMedia } from "@/components/ui/empty"
 import type {
   AdminCourse,
@@ -50,6 +53,24 @@ export function CourseDetailTabs({
     (acc, group) => acc + group.topics.length,
     0,
   )
+  const [goalQuery, setGoalQuery] = useState("")
+  const filteredGoals = useMemo(() => {
+    const subjectNames = new Map(edital.map((group) => [group.subject.id, group.subject.name]))
+    const topicTitles = new Map(
+      edital.flatMap((group) => group.topics.map((topic) => [topic.id, topic.title] as const)),
+    )
+    return filterBySearch(goals, goalQuery, (goal) => [
+      goal.title,
+      goal.description,
+      goal.status === "published" ? "Publicada" : goal.status === "archived" ? "Arquivada" : "Rascunho",
+      ...goal.items.flatMap((item) => [
+        subjectNames.get(item.subjectId),
+        item.topicId ? topicTitles.get(item.topicId) : null,
+        item.subtopicId ? topicTitles.get(item.subtopicId) : null,
+        item.instructions,
+      ]),
+    ])
+  }, [goals, goalQuery, edital])
 
   return (
     <Tabs defaultValue="overview" className="gap-5">
@@ -83,14 +104,27 @@ export function CourseDetailTabs({
       </TabsContent>
 
       <TabsContent value="goals" className="flex flex-col gap-4">
-        <div className="flex items-center justify-between gap-3">
-          <span className="text-sm text-muted-foreground tabular-nums">
-            {goals.length} {goals.length === 1 ? "meta" : "metas"}
-          </span>
-          <Button render={<Link href={`/admin/cursos/${course.id}/metas/nova`} />} nativeButton={false}>
-            <Plus data-icon="inline-start" />
-            Criar meta
-          </Button>
+        <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+          {goals.length > 0 ? (
+            <SearchInput
+              value={goalQuery}
+              onChange={setGoalQuery}
+              placeholder="Pesquisar por título, disciplina ou tópico"
+              label="Pesquisar metas"
+              className="sm:max-w-md"
+            />
+          ) : null}
+          <div className="flex items-center justify-between gap-3 sm:justify-end">
+            <span className="text-sm text-muted-foreground tabular-nums">
+              {goalQuery
+                ? `${filteredGoals.length} de ${goals.length}`
+                : `${goals.length} ${goals.length === 1 ? "meta" : "metas"}`}
+            </span>
+            <Button render={<Link href={`/admin/cursos/${course.id}/metas/nova`} />} nativeButton={false}>
+              <Plus data-icon="inline-start" />
+              Criar meta
+            </Button>
+          </div>
         </div>
         {goals.length === 0 ? (
           <Empty className="border border-dashed border-border">
@@ -104,9 +138,13 @@ export function CourseDetailTabs({
               </EmptyDescription>
             </EmptyHeader>
           </Empty>
+        ) : filteredGoals.length === 0 ? (
+          <p className="rounded-xl border border-dashed border-border px-4 py-6 text-center text-sm text-muted-foreground">
+            Nenhuma meta encontrada para “{goalQuery.trim()}”.
+          </p>
         ) : (
           <div className="flex flex-col divide-y divide-border overflow-hidden rounded-xl border border-border bg-card">
-            {goals.map((goal) => (
+            {filteredGoals.map((goal) => (
               <AdminGoalRow key={goal.id} goal={goal} />
             ))}
           </div>

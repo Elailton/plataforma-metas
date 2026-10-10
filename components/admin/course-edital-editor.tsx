@@ -1,6 +1,6 @@
 "use client"
 
-import { useState } from "react"
+import { useMemo, useState } from "react"
 import { useRouter } from "next/navigation"
 import { toast } from "sonner"
 import { Plus, Trash2, Pencil, Check, X } from "lucide-react"
@@ -38,6 +38,8 @@ import {
   deleteSyllabusTopic,
 } from "@/lib/admin/actions/edital"
 import type { AdminSubject, AdminSyllabusTopic } from "@/lib/admin/types"
+import { SearchInput } from "@/components/search-input"
+import { matchesSearch, searchTerms } from "@/lib/search.mjs"
 
 interface CourseEditalEditorProps {
   courseId: string
@@ -50,18 +52,66 @@ function topicDisplayTitle(title: string) {
 
 export function CourseEditalEditor({ courseId, groups }: CourseEditalEditorProps) {
   const router = useRouter()
+  const [query, setQuery] = useState("")
+  const [openItems, setOpenItems] = useState<string[]>([])
+  const searching = searchTerms(query).length > 0
+
+  const visibleGroups = useMemo(() => {
+    return groups.flatMap(({ subject, topics }) => {
+      const rootTopics = topics
+        .filter((topic) => !topic.parentTopicId)
+        .map((topic, index) => ({ topic, number: `${index + 1}` }))
+      if (!searching || matchesSearch(query, [subject.name])) {
+        return [{ subject, topics, rootTopics }]
+      }
+      const childrenOf = new Map<string, AdminSyllabusTopic[]>()
+      for (const topic of topics) {
+        if (!topic.parentTopicId) continue
+        const siblings = childrenOf.get(topic.parentTopicId) ?? []
+        siblings.push(topic)
+        childrenOf.set(topic.parentTopicId, siblings)
+      }
+      const branchMatches = (topic: AdminSyllabusTopic): boolean =>
+        matchesSearch(query, [topic.title]) ||
+        (childrenOf.get(topic.id) ?? []).some(branchMatches)
+      const matchingRoots = rootTopics.filter(({ topic }) => branchMatches(topic))
+      return matchingRoots.length > 0
+        ? [{ subject, topics, rootTopics: matchingRoots }]
+        : []
+    })
+  }, [groups, query, searching])
 
   return (
     <div className="flex flex-col gap-4">
-      <div className="flex items-center justify-end">
+      <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+        {groups.length > 0 ? (
+          <SearchInput
+            value={query}
+            onChange={setQuery}
+            placeholder="Pesquisar disciplina ou tópico"
+            label="Pesquisar no edital"
+            className="sm:max-w-md"
+          />
+        ) : <span />}
         <NewSubjectDialog courseId={courseId} onDone={() => router.refresh()} />
       </div>
 
-      {groups.length > 0 ? (
-        <Accordion className="rounded-xl border border-border bg-card">
-          {groups.map(({ subject, topics }) => {
-            const rootTopics = topics.filter((topic) => !topic.parentTopicId)
+      {groups.length > 0 && visibleGroups.length === 0 ? (
+        <p className="rounded-xl border border-dashed border-border px-4 py-6 text-center text-sm text-muted-foreground">
+          Nenhuma disciplina ou tópico encontrado para “{query.trim()}”.
+        </p>
+      ) : null}
 
+      {visibleGroups.length > 0 ? (
+        <Accordion
+          className="rounded-xl border border-border bg-card"
+          multiple={searching}
+          value={searching ? visibleGroups.map(({ subject }) => subject.id) : openItems}
+          onValueChange={(value) => {
+            if (!searching) setOpenItems(value as string[])
+          }}
+        >
+          {visibleGroups.map(({ subject, topics, rootTopics }) => {
             return (
               <AccordionItem key={subject.id} value={subject.id} className="px-4">
                 <div className="flex items-center gap-2">
@@ -74,13 +124,13 @@ export function CourseEditalEditor({ courseId, groups }: CourseEditalEditorProps
                 </div>
                 <AccordionContent>
                   <div className="flex flex-col gap-2 pb-4">
-                    {rootTopics.map((topic, index) => (
+                    {rootTopics.map(({ topic, number }) => (
                       <TopicRow
                         key={topic.id}
                         courseId={courseId}
                         subjectId={subject.id}
                         topic={topic}
-                        number={`${index + 1}`}
+                        number={number}
                         subtopics={topics.filter((subtopic) => subtopic.parentTopicId === topic.id)}
                         onDone={() => router.refresh()}
                         allTopics={topics}

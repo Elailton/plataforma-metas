@@ -22,7 +22,9 @@ import {
 import { MaterialTypeIcon, materialTypeLabel } from "@/components/admin/material-type-icon"
 import { MaterialFormDialog } from "@/components/admin/material-form-dialog"
 import { MaterialImportDialog } from "@/components/admin/material-import-dialog"
+import { SearchInput } from "@/components/search-input"
 import { deleteMaterial } from "@/lib/admin/actions/materials"
+import { filterBySearch } from "@/lib/search.mjs"
 import type { AdminCourse, AdminMaterial, AdminSubject } from "@/lib/admin/types"
 
 export function MaterialsBrowser({
@@ -36,15 +38,27 @@ export function MaterialsBrowser({
 }) {
   const router = useRouter()
   const [courseId, setCourseId] = useState<string>("all")
+  const [query, setQuery] = useState("")
   const courseSelectItems = [
     { label: "Todos os cursos", value: "all" },
     ...courses.map((course) => ({ label: course.name, value: course.id })),
   ]
 
   const filtered = useMemo(() => {
-    if (courseId === "all") return materials
-    return materials.filter((material) => material.courseId === courseId)
-  }, [materials, courseId])
+    const byCourse =
+      courseId === "all"
+        ? materials
+        : materials.filter((material) => material.courseId === courseId)
+    const courseNames = new Map(courses.map((course) => [course.id, course.name]))
+    const subjectNames = new Map(subjects.map((subject) => [subject.id, subject.name]))
+    return filterBySearch(byCourse, query, (material) => [
+      material.title,
+      material.description,
+      materialTypeLabel(material.type),
+      material.subjectId ? subjectNames.get(material.subjectId) : null,
+      material.courseId ? courseNames.get(material.courseId) : "Biblioteca geral",
+    ])
+  }, [materials, courseId, query, courses, subjects])
 
   async function handleDelete(materialId: string, materialCourseId: string | null) {
     try {
@@ -58,13 +72,21 @@ export function MaterialsBrowser({
 
   return (
     <div className="flex flex-col gap-4">
-      <div className="flex flex-col gap-3 rounded-xl border border-border bg-card p-3 sm:flex-row sm:items-center sm:justify-between">
+      <div className="flex flex-col gap-3 rounded-xl border border-border bg-card p-3 lg:flex-row lg:items-center lg:justify-between">
+        <div className="flex w-full flex-col gap-2 sm:flex-row lg:max-w-2xl">
         <Select items={courseSelectItems} value={courseId} onValueChange={(value) => setCourseId(value ?? "all")}>
           <SelectTrigger className="w-full sm:w-64" aria-label="Filtrar por curso"><SelectValue placeholder="Filtrar por curso" /></SelectTrigger>
           <SelectContent><SelectGroup>
             {courseSelectItems.map((item) => <SelectItem key={item.value} value={item.value}>{item.label}</SelectItem>)}
           </SelectGroup></SelectContent>
         </Select>
+        <SearchInput
+          value={query}
+          onChange={setQuery}
+          placeholder="Pesquisar por título, disciplina ou tipo"
+          label="Pesquisar materiais"
+        />
+        </div>
         <div className="flex flex-wrap items-center gap-2">
           <span className="mr-1 text-xs tabular-nums text-muted-foreground">
             {filtered.length} {filtered.length === 1 ? "material" : "materiais"}
@@ -79,7 +101,7 @@ export function MaterialsBrowser({
           <EmptyHeader>
             <EmptyMedia variant="icon"><FolderKanban /></EmptyMedia>
             <EmptyTitle>Nenhum material encontrado</EmptyTitle>
-            <EmptyDescription>Ajuste o filtro ou adicione um novo material.</EmptyDescription>
+            <EmptyDescription>Ajuste a pesquisa ou o filtro, ou adicione um novo material.</EmptyDescription>
           </EmptyHeader>
         </Empty>
       ) : (
