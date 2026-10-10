@@ -57,3 +57,7 @@ export function buildStudentSnapshot(input: {
   editalPercentage: number
 }
 export function toGoalSummary(goal: StudentGoal): StudentGoalSummary
+export function studentGoalWindow<T extends { isReleased: boolean }>(
+  goals: T[],
+  limit?: number,
+): { next: T | null; recent: T[]; earlier: T[]; visible: T[]; releasedCount: number }

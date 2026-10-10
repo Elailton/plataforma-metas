@@ -102,3 +102,21 @@ test("resumo de lista não leva itens nem materiais", () => {
   assert.deepEqual(Object.keys(summary).sort(), ["dueDate", "id", "isReleased", "number", "progress", "progressStatus", "subjectNames", "title"])
   assert.deepEqual(summary.subjectNames, ["Português"])
 })
+
+test("aluno vê só as 5 últimas liberadas, as anteriores à parte e a prévia da próxima", async () => {
+  const { studentGoalWindow } = await import("../lib/student/snapshot.mjs")
+  const goals = Array.from({ length: 81 }, (_, index) => ({ number: index + 1, isReleased: index < 7 }))
+  const view = studentGoalWindow(goals)
+  assert.deepEqual(view.recent.map((goal) => goal.number), [7, 6, 5, 4, 3])
+  assert.deepEqual(view.earlier.map((goal) => goal.number), [2, 1])
+  assert.equal(view.next.number, 8)
+  assert.equal(view.visible.length, 8)
+  assert.equal(view.releasedCount, 7)
+
+  const start = studentGoalWindow(goals.map((goal) => ({ ...goal, isReleased: goal.number === 1 })))
+  assert.deepEqual(start.recent.map((goal) => goal.number), [1])
+  assert.equal(start.next.number, 2)
+  const done = studentGoalWindow(goals.map((goal) => ({ ...goal, isReleased: true })))
+  assert.equal(done.next, null)
+  assert.equal(done.recent.length, 5)
+})
