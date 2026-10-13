@@ -23,7 +23,7 @@ export function BottomNav() {
                 href={item.href}
                 aria-current={isActive ? "page" : undefined}
                 className={cn(
-                  "relative flex min-h-14 flex-col items-center justify-center gap-1 text-[11px] font-medium transition-colors",
+                  "relative flex min-h-14 flex-col items-center justify-center gap-1 text-[10px] font-medium transition-colors sm:text-[11px]",
                   isActive ? "text-foreground" : "text-muted-foreground hover:text-foreground",
                 )}
               >
@@ -35,7 +35,7 @@ export function BottomNav() {
                   )}
                 />
                 <Icon className={cn("size-5", isActive && "text-primary")} strokeWidth={isActive ? 2.4 : 2} />
-                {item.label}
+                {item.shortLabel}
               </Link>
             </li>
           )
