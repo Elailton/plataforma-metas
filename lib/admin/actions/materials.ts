@@ -4,6 +4,14 @@ import { revalidatePath } from "next/cache"
 import { requireAdmin } from "@/lib/admin/auth"
 import type { AdminMaterial, AdminMaterialType } from "@/lib/admin/types"
 import { throwSafeDatabaseError } from "@/lib/security/safe-error"
+import {
+  isMaterialFileRoute,
+  isUuid,
+  materialFileRoute,
+  MAX_PDFS_PER_UPLOAD,
+  parsePdfStoragePath,
+  PDF_BUCKET,
+} from "@/lib/materials/pdf.mjs"
 
 export interface MaterialFormInput {
   title: string
@@ -30,9 +38,18 @@ export interface HotmartMaterialImportResult {
   skipped: number
 }
 
+export interface PdfMaterialRegistrationInput {
+  courseId: string
+  subjectId: string | null
+  type: "apostila" | "link"
+  files: Array<{ materialId: string; title: string; storagePath: string }>
+}
+
 function normalizeUrl(url: string) {
   const trimmed = url.trim()
   if (!trimmed) return trimmed
+  // PDFs guardados na plataforma usam o endereço interno que confere o acesso.
+  if (isMaterialFileRoute(trimmed)) return trimmed
   const candidate = /^https?:\/\//i.test(trimmed) ? trimmed : `https://${trimmed}`
 
   try {
@@ -161,6 +178,59 @@ export async function importHotmartMaterials(input: HotmartMaterialImportInput):
   return { created: toInsert.length, skipped: input.materials.length - toInsert.length }
 }
 
+/**
+ * Registra PDFs já enviados pelo administrador ao bucket privado. O arquivo é
+ * enviado pelo navegador com a sessão do administrador (a política do bucket
+ * exige papel admin); aqui só se cria o material que aponta para ele.
+ */
+export async function registerPdfMaterials(input: PdfMaterialRegistrationInput): Promise<{ created: number }> {
+  const { supabase } = await requireAdmin()
+  if (!isUuid(input.courseId)) throw new Error("Selecione o curso dos arquivos.")
+  if (input.files.length === 0) throw new Error("Nenhum arquivo foi enviado.")
+  if (input.files.length > MAX_PDFS_PER_UPLOAD) throw new Error(`Envie no máximo ${MAX_PDFS_PER_UPLOAD} arquivos por vez.`)
+  if (!["apostila", "link"].includes(input.type)) throw new Error("Tipo de material inválido.")
+
+  const { data: course } = await supabase.from("courses").select("id").eq("id", input.courseId).maybeSingle()
+  if (!course) throw new Error("O curso selecionado não foi encontrado.")
+  await assertSubjectBelongsToCourse(supabase, input.courseId, input.subjectId)
+
+  const rows = input.files.map((file) => {
+    const title = file.title.trim()
+    const parsed = parsePdfStoragePath(file.storagePath, input.courseId)
+    if (!title) throw new Error("Todos os arquivos precisam de título.")
+    if (title.length > 300) throw new Error(`O título "${title.slice(0, 40)}..." é muito longo.`)
+    if (!parsed || parsed.materialId !== file.materialId) throw new Error(`O arquivo de "${title}" não pertence a este curso.`)
+    return {
+      id: file.materialId,
+      title,
+      type: input.type,
+      url: materialFileRoute(file.materialId),
+      storage_path: file.storagePath,
+      description: "PDF na plataforma",
+      course_id: input.courseId,
+      subject_id: input.subjectId,
+    }
+  })
+
+  const { error } = await supabase.from("materials").insert(rows)
+  if (error) throwSafeDatabaseError("admin.material.pdf_register_failed", error, "Não foi possível registrar os PDFs.")
+
+  revalidatePath("/admin/materiais")
+  revalidatePath(`/admin/cursos/${input.courseId}`)
+  return { created: rows.length }
+}
+
+/** Remove arquivos enviados cujo registro falhou, para não deixar PDFs órfãos no bucket. */
+export async function discardUploadedPdfs(courseId: string, storagePaths: string[]) {
+  const { supabase } = await requireAdmin()
+  const paths = storagePaths.filter((path) => parsePdfStoragePath(path, courseId))
+  if (paths.length === 0) return
+  const { data: registered } = await supabase.from("materials").select("storage_path").in("storage_path", paths)
+  const keep = new Set((registered ?? []).map((row) => row.storage_path))
+  const orphan = paths.filter((path) => !keep.has(path))
+  if (orphan.length > 0) await supabase.storage.from(PDF_BUCKET).remove(orphan)
+}
+
 export async function updateMaterial(materialId: string, input: MaterialFormInput) {
   const { supabase } = await requireAdmin()
 
@@ -192,8 +262,10 @@ export async function updateMaterial(materialId: string, input: MaterialFormInpu
 export async function deleteMaterial(materialId: string, courseId: string | null) {
   const { supabase } = await requireAdmin()
 
+  const { data: existing } = await supabase.from("materials").select("storage_path").eq("id", materialId).maybeSingle()
   const { error } = await supabase.from("materials").delete().eq("id", materialId)
   if (error) throwSafeDatabaseError("admin.material.delete_failed", error, "Não foi possível excluir o material.")
+  if (existing?.storage_path) await supabase.storage.from(PDF_BUCKET).remove([existing.storage_path])
 
   revalidatePath("/admin/materiais")
   if (courseId) revalidatePath(`/admin/cursos/${courseId}`)
