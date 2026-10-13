@@ -25,6 +25,8 @@ Registro das decisões tomadas com o mentor para o curso **Sistema Guiado da Apr
   Festas, Analogias, Princípio multiplicativo.
 - História de PE tem cadernos pequenos (6 a 58 questões); as revisões passam a "refazer as erradas".
 - **Nunca misturar** cadernos do SGA com os da Imersão PRF.
+- **Nunca mencionar grupos** (Grupo 1/2, G1/G2) em títulos, descrições ou orientações vistas pelo aluno.
+  A descrição traz só a carga ("Meta de ~3h").
 - Os cadernos antigos (gerais) permanecem apenas nas metas já liberadas.
 
 ## Formato de cada bloco de disciplina
