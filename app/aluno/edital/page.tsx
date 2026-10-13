@@ -10,6 +10,7 @@ export default async function EditalPage() {
   if (!context) redirect("/auth/sem-acesso")
   const snapshot = await getStudentCourseSnapshot(context.currentCourse.id)
   if (!snapshot) redirect("/auth/sem-acesso")
+  const subjects = snapshot.subjects.filter((subject) => subject.topics.length > 0)
 
   return (
     <PageContainer>
@@ -31,17 +32,17 @@ export default async function EditalPage() {
         <Progress value={snapshot.editalPercentage} className="h-2" aria-label={`Edital: ${snapshot.editalPercentage}%`} />
       </div>
 
-      {snapshot.subjects.length === 0 ? (
+      {subjects.length === 0 ? (
         <p className="rounded-xl border border-dashed border-border p-6 text-center text-sm text-muted-foreground">
           O edital deste curso ainda não foi cadastrado.
         </p>
       ) : (
         <Accordion
           multiple
-          defaultValue={snapshot.subjects[0] ? [snapshot.subjects[0].id] : []}
+          defaultValue={subjects[0] ? [subjects[0].id] : []}
           className="flex flex-col gap-2.5"
         >
-          {snapshot.subjects.map((discipline) => (
+          {subjects.map((discipline) => (
             <AccordionItem
               key={discipline.id}
               value={discipline.id}
