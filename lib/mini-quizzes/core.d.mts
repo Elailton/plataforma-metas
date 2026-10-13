@@ -91,3 +91,4 @@ export function parseQuestionsText(text: string): Array<{
   correctKey: string
   explanation: string
 }>
+export function isUuid(value: unknown): value is string

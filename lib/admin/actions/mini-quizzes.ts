@@ -3,7 +3,7 @@
 import { revalidatePath } from "next/cache"
 import { requireAdmin } from "@/lib/admin/auth"
 import { logSafeServerError } from "@/lib/security/safe-error"
-import { isUuid } from "@/lib/materials/pdf.mjs"
+import { isUuid } from "@/lib/mini-quizzes/core.mjs"
 import { validateQuestionDraft } from "@/lib/mini-quizzes/core.mjs"
 import type { MiniQuizStatus } from "@/lib/admin/mini-quizzes"
 

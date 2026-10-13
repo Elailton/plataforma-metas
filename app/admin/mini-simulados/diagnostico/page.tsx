@@ -6,7 +6,7 @@ import { cn } from "@/lib/utils"
 import { listAdminCourses, listCourseStudents } from "@/lib/admin/queries"
 import { getDiagnosisData } from "@/lib/mini-quizzes/queries"
 import { buildDiagnosis, isValidMonthKey } from "@/lib/mini-quizzes/core.mjs"
-import { isUuid } from "@/lib/materials/pdf.mjs"
+import { isUuid } from "@/lib/mini-quizzes/core.mjs"
 import { resolveCourse } from "../course-param"
 
 export const dynamic = "force-dynamic"

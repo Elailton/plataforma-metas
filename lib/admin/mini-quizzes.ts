@@ -2,7 +2,7 @@ import "server-only"
 
 import { createClient } from "@/lib/supabase/server"
 import { logSafeServerError } from "@/lib/security/safe-error"
-import { isUuid } from "@/lib/materials/pdf.mjs"
+import { isUuid } from "@/lib/mini-quizzes/core.mjs"
 import type { AlternativeKey } from "@/lib/mini-quizzes/core.mjs"
 
 export type MiniQuizStatus = "draft" | "published" | "archived"

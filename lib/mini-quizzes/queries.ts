@@ -4,7 +4,7 @@ import { cache } from "react"
 import { createClient } from "@/lib/supabase/server"
 import { logSafeServerError } from "@/lib/security/safe-error"
 import type { AlternativeKey, QuizAttemptRow } from "@/lib/mini-quizzes/core.mjs"
-import { isUuid } from "@/lib/materials/pdf.mjs"
+import { isUuid } from "@/lib/mini-quizzes/core.mjs"
 
 export interface QuizAlternative {
   key: AlternativeKey

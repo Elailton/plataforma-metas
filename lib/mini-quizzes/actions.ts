@@ -4,7 +4,7 @@ import { revalidatePath } from "next/cache"
 import { createClient } from "@/lib/supabase/server"
 import { logSafeServerError } from "@/lib/security/safe-error"
 import { normalizeAnswers, parseCooldownError } from "@/lib/mini-quizzes/core.mjs"
-import { isUuid } from "@/lib/materials/pdf.mjs"
+import { isUuid } from "@/lib/mini-quizzes/core.mjs"
 
 export type SubmitMiniQuizResult =
   | { ok: true; attemptId: string }
