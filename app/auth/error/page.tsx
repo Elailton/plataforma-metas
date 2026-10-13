@@ -35,6 +35,9 @@ export default async function AuthErrorPage({
         <Button render={<Link href="/auth/login" />} nativeButton={false} variant="outline" className="h-11 w-full">
           Ir para o login
         </Button>
+        <Button render={<Link href="/auth/codigo" />} nativeButton={false} variant="ghost" className="h-11 w-full">
+          Entrar com o código do e-mail
+        </Button>
       </AuthCard>
     </AuthShell>
   )

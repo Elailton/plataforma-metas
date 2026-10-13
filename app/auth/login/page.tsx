@@ -138,6 +138,10 @@ function LoginForm() {
           <Link href="/auth/reenviar-acesso" className="font-medium text-foreground underline-offset-4 hover:underline">
             Reenviar acesso
           </Link>
+          {" · "}
+          <Link href="/auth/codigo" className="font-medium text-foreground underline-offset-4 hover:underline">
+            Tenho um código
+          </Link>
         </p>
       </AuthCard>
     </AuthShell>

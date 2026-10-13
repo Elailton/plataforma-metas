@@ -13,3 +13,5 @@ export function resolveConfirmRequest(input: {
   type: string | null
   next?: string | null
 }): ResolveConfirmRequestResult
+export function normalizeAccessCode(value: unknown): string | null
+export const ACCESS_CODE_TYPES: readonly ("recovery" | "invite")[]

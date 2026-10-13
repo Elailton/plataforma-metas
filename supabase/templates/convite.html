@@ -1,0 +1,17 @@
+<!-- Supabase › Authentication › Emails › Invite user. Assunto: Seu acesso ao Sistema Guiado de Aprovação -->
+<div style="margin:0;padding:24px;background:#f4f4f5;font-family:Arial,Helvetica,sans-serif;color:#18181b">
+  <div style="max-width:480px;margin:0 auto;background:#ffffff;border-radius:12px;padding:28px">
+    <h1 style="margin:0 0 12px;font-size:20px">Seu acesso está liberado</h1>
+    <p style="margin:0 0 20px;font-size:15px;line-height:1.5">Sua matrícula no Sistema Guiado de Aprovação foi confirmada. Crie sua senha para começar.</p>
+    <p style="margin:0 0 24px">
+      <a href="{{ .SiteURL }}/auth/confirm?token_hash={{ .TokenHash }}&type=invite&next=/auth/primeiro-acesso"
+         style="display:inline-block;background:#18181b;color:#ffffff;text-decoration:none;font-weight:bold;padding:12px 22px;border-radius:8px">
+        Criar minha senha
+      </a>
+    </p>
+    <p style="margin:0 0 8px;font-size:14px;line-height:1.5">Se o botão não funcionar, entre em
+      <strong>{{ .SiteURL }}/auth/codigo</strong> e digite este código com o seu e-mail:</p>
+    <p style="margin:0 0 24px;font-size:28px;font-weight:bold;letter-spacing:6px;font-family:'Courier New',monospace">{{ .Token }}</p>
+    <p style="margin:0;font-size:12px;color:#71717a;line-height:1.5">O link e o código valem uma única vez. Se você não pediu este acesso, ignore este e-mail.</p>
+  </div>
+</div>

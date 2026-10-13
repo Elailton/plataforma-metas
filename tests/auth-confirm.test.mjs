@@ -104,3 +104,16 @@ test("9. next para um caminho interno fora da allow-list também é ignorado", (
   assert.equal(result.valid, true)
   assert.equal(result.next, DEFAULT_NEXT_PATH)
 })
+
+test("código do e-mail aceita 6 a 10 dígitos, ignorando espaços e hífen", async () => {
+  const { normalizeAccessCode, ACCESS_CODE_TYPES } = await import("../lib/auth/confirm.mjs")
+  assert.equal(normalizeAccessCode("482915"), "482915")
+  assert.equal(normalizeAccessCode(" 482 915 "), "482915")
+  assert.equal(normalizeAccessCode("4829-1534"), "48291534")
+  assert.equal(normalizeAccessCode("48291"), null)
+  assert.equal(normalizeAccessCode("48291a"), null)
+  assert.equal(normalizeAccessCode("12345678901"), null)
+  assert.equal(normalizeAccessCode(null), null)
+  // Os tipos tentados com código continuam restritos à lista fechada da confirmação.
+  for (const type of ACCESS_CODE_TYPES) assert.ok(["invite", "recovery"].includes(type))
+})

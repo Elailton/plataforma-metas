@@ -1,0 +1,89 @@
+"use client"
+
+import { useState } from "react"
+import { Button } from "@/components/ui/button"
+import { Input } from "@/components/ui/input"
+import { Label } from "@/components/ui/label"
+import { createClient } from "@/lib/supabase/client"
+import { ACCESS_CODE_TYPES, DEFAULT_NEXT_PATH, normalizeAccessCode } from "@/lib/auth/confirm.mjs"
+import { normalizeEmail } from "@/lib/hotmart/core.mjs"
+
+const INVALID_MESSAGE = "Código inválido ou expirado. Confira o último e-mail recebido ou peça um novo acesso."
+
+export function AccessCodeForm() {
+  const [email, setEmail] = useState("")
+  const [code, setCode] = useState("")
+  const [pending, setPending] = useState(false)
+  const [error, setError] = useState<string | null>(null)
+
+  async function submit(event: React.FormEvent<HTMLFormElement>) {
+    event.preventDefault()
+    setError(null)
+    const normalizedEmail = normalizeEmail(email)
+    const token = normalizeAccessCode(code)
+    if (!normalizedEmail || !token) {
+      setError(!normalizedEmail ? "Informe um e-mail válido." : "O código tem apenas números (6 dígitos ou mais).")
+      return
+    }
+
+    setPending(true)
+    const supabase = createClient()
+    // O código pode ter vindo do convite ou do "Reenviar acesso"; só esses dois tipos são aceitos.
+    for (const type of ACCESS_CODE_TYPES) {
+      const { error: verifyError } = await supabase.auth.verifyOtp({ email: normalizedEmail, token, type })
+      if (!verifyError) {
+        window.location.assign(DEFAULT_NEXT_PATH)
+        return
+      }
+      if (verifyError.status === 429) {
+        setError("Muitas tentativas. Aguarde alguns minutos e tente de novo.")
+        setPending(false)
+        return
+      }
+    }
+    setError(INVALID_MESSAGE)
+    setPending(false)
+  }
+
+  return (
+    <form onSubmit={submit} className="flex flex-col gap-5" noValidate>
+      <div className="grid gap-2">
+        <Label htmlFor="email">E-mail da compra</Label>
+        <Input
+          id="email"
+          type="email"
+          inputMode="email"
+          autoComplete="email"
+          placeholder="voce@email.com"
+          required
+          maxLength={320}
+          className="h-11"
+          value={email}
+          onChange={(event) => setEmail(event.target.value)}
+        />
+      </div>
+      <div className="grid gap-2">
+        <Label htmlFor="code">Código do e-mail</Label>
+        <Input
+          id="code"
+          inputMode="numeric"
+          autoComplete="one-time-code"
+          placeholder="000000"
+          required
+          maxLength={14}
+          className="h-11 font-mono text-lg tracking-[0.3em]"
+          value={code}
+          onChange={(event) => setCode(event.target.value)}
+        />
+      </div>
+      {error ? (
+        <p role="alert" className="rounded-lg border border-destructive/30 bg-destructive/10 px-3 py-2 text-sm text-destructive">
+          {error}
+        </p>
+      ) : null}
+      <Button type="submit" className="h-11 w-full text-sm font-semibold" disabled={pending}>
+        {pending ? "Verificando..." : "Entrar"}
+      </Button>
+    </form>
+  )
+}
