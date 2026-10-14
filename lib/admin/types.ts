@@ -34,6 +34,7 @@ export interface AdminSyllabusTopic {
   parentTopicId: string | null
   title: string
   position: number
+  importance: "high" | "medium" | "low" | null
 }
 
 export type AdminMaterialType = "videoaula" | "apostila" | "link"

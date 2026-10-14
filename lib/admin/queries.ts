@@ -140,6 +140,7 @@ export async function listSubjectTopics(
     parentTopicId: topic.parent_topic_id ?? null,
     title: topic.title,
     position: topic.position,
+    importance: topic.importance ?? null,
   }))
 }
 
@@ -170,6 +171,7 @@ export async function listCourseEdital(
         parentTopicId: t.parent_topic_id ?? null,
         title: t.title,
         position: t.position,
+        importance: t.importance ?? null,
       })),
   }))
 }

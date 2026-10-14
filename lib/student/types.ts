@@ -16,6 +16,8 @@ export interface StudentMaterial {
   url: string
 }
 
+export type TopicImportance = "high" | "medium" | "low"
+
 export interface StudentGoalItem {
   id: string
   subjectId: string
@@ -24,6 +26,8 @@ export interface StudentGoalItem {
   topicName: string | null
   subtopicId: string | null
   subtopicName: string | null
+  /** Importância do subtópico (ou, sem ela, do tópico) no edital; null = sem selo. */
+  importance: TopicImportance | null
   instructions: string | null
   suggestedQuestions: number | null
   materials: StudentMaterial[]
