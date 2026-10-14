@@ -23,3 +23,4 @@ export function parseMiniQuizDocx(buffer: ArrayBuffer | Uint8Array): Promise<{
   warnings: string[]
 }>
 export function titleFromFilename(filename: string): string
+export function escapeUnderscores(value: string): string

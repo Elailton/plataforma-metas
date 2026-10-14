@@ -14,20 +14,23 @@ function renderInline(text: string, keyPrefix: string): React.ReactNode[] {
   return nodes
 }
 
+/** "\\_" é um sublinhado literal (lacunas e "(__)" de verdadeiro ou falso), nunca destaque. */
+const unescape = (value: string) => value.replace(/\\_/g, "_")
+
 function renderUnderline(text: string, keyPrefix: string): React.ReactNode[] {
-  return text.split(/(__[\s\S]+?__)/g).map((part, index) =>
+  return text.split(/((?<!\\)__[\s\S]+?(?<!\\)__)/g).map((part, index) =>
     /^__[\s\S]+__$/.test(part) ? (
       <u key={`${keyPrefix}-u${index}`} className="decoration-primary/70 underline-offset-2">
-        {part.slice(2, -2)}
+        {unescape(part.slice(2, -2))}
       </u>
     ) : (
-      part
+      unescape(part)
     ),
   )
 }
 
 /**
- * Texto das questões com **negrito**, __sublinhado__ e linhas [[imagem:hash]].
+ * Texto das questões com **negrito**, __sublinhado__, \\_ (sublinhado literal) e linhas [[imagem:hash]].
  * Nada é interpretado como HTML.
  */
 export function RichText({ text, className }: { text: string; className?: string }) {

@@ -249,7 +249,8 @@ export function MiniQuizEditor({
 
       <p className="-mt-3 text-xs text-muted-foreground">
         Use <code>**negrito**</code> e <code>__sublinhado__</code> para destaques. Imagens importadas do Word aparecem como{" "}
-        <code>[[imagem:…]]</code>; mantenha a linha para que a figura continue na questão.
+        <code>[[imagem:…]]</code>; mantenha a linha para que a figura continue na questão. Para um sublinhado
+        literal (lacunas, &quot;(__)&quot;), use <code>\_</code>.
       </p>
 
       {bulkOpen ? (

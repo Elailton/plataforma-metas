@@ -17,7 +17,7 @@ test("lê mini simulado do Word com apoio, ênfases, imagem e gabarito", async (
   assert.equal(first.correctKey, "C")
   assert.equal(first.explanation, "Gabarito: LETRA C.\nPorque sim.")
 
-  assert.match(second.statement, /^\[\[imagem:[0-9a-f]{16}\]\]\n\nObserve a figura acima\.$/)
+  assert.match(second.statement, /^\[\[imagem:[0-9a-f]{16}\]\]\n\nObserve a figura acima\.\n\(\\_\\_\) Lacuna \\_\\_\\_\\_\\_\\_ preenchida\.$/)
   assert.equal(second.alternatives.length, 4)
   assert.equal(second.correctKey, "B")
 
