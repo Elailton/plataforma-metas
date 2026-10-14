@@ -12,6 +12,8 @@ export default async function ProgressPage() {
   if (!context) redirect("/auth/sem-acesso")
   const snapshot = await getStudentCourseSnapshot(context.currentCourse.id)
   if (!snapshot) redirect("/auth/sem-acesso")
+  // Disciplinas sem tópicos no edital (ex.: áreas só de materiais) não entram no progresso.
+  const progressSubjects = snapshot.subjects.filter((subject) => subject.total > 0)
   const completedGoals = snapshot.goals.filter((goal) => goal.progressStatus === "completed").length
   const inProgressGoals = snapshot.goals.filter((goal) => goal.progressStatus === "in_progress").length
 
@@ -49,10 +51,10 @@ export default async function ProgressPage() {
           description="Percentual de tópicos do edital estudados."
         />
         <div className="min-w-0 overflow-hidden rounded-xl border border-border bg-card p-4 md:p-5">
-          {snapshot.subjects.length === 0 ? (
+          {progressSubjects.length === 0 ? (
             <p className="text-sm text-muted-foreground">O edital deste curso ainda não foi cadastrado.</p>
           ) : (
-            <DisciplineProgressChart subjects={snapshot.subjects} />
+            <DisciplineProgressChart subjects={progressSubjects} />
           )}
         </div>
       </section>
