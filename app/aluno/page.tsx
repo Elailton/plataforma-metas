@@ -19,6 +19,8 @@ export default async function StudentHomePage() {
   if (!context) redirect("/auth/sem-acesso")
   const snapshot = await getStudentCourseSnapshot(context.currentCourse.id)
   if (!snapshot) redirect("/auth/sem-acesso")
+  // Disciplinas sem tópicos no edital (ex.: áreas só de materiais) não entram no progresso.
+  const progressSubjects = snapshot.subjects.filter((subject) => subject.total > 0)
 
   const enrollment = context.profile.enrollments.find(
     (e) => e.courseId === context.currentCourse.id,
@@ -145,10 +147,10 @@ export default async function StudentHomePage() {
             }
           />
           <div className="rounded-xl border border-border bg-card p-4 md:p-5">
-            {snapshot.subjects.length === 0 ? (
+            {progressSubjects.length === 0 ? (
               <p className="text-sm text-muted-foreground">O edital deste curso ainda não foi cadastrado.</p>
             ) : (
-              <DisciplineProgressList subjects={snapshot.subjects} />
+              <DisciplineProgressList subjects={progressSubjects} />
             )}
           </div>
         </section>
