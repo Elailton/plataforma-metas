@@ -104,6 +104,8 @@ export function GoalItemChecklist({
         ) : null}
       </div>
 
+      {item.importance ? <ImportanceBadges importance={item.importance} /> : null}
+
       {item.instructions ? (
         <div className="flex flex-col gap-1.5 rounded-lg border-l-2 border-primary/60 bg-muted/30 py-2 pl-3 pr-3">
           <span className="text-[11px] font-medium uppercase tracking-wider text-muted-foreground">Orientação</span>
@@ -205,6 +207,28 @@ export function GoalItemChecklist({
                 : "Marcar item como concluído"}
         </span>
       </label>
+    </div>
+  )
+}
+
+const importanceLabel: Record<NonNullable<StudentGoalItem["importance"]>, { label: string; className: string }> = {
+  high: { label: "Alta importância", className: "bg-success/15 text-success-foreground dark:text-success" },
+  medium: { label: "Importante", className: "bg-amber-500/15 text-amber-700 dark:text-amber-400" },
+  low: { label: "Baixa importância", className: "bg-muted text-muted-foreground" },
+}
+
+function ImportanceBadges({ importance }: { importance: NonNullable<StudentGoalItem["importance"]> }) {
+  const { label, className } = importanceLabel[importance]
+  return (
+    <div className="flex flex-wrap items-center gap-1.5">
+      <span className={cn("rounded-full px-2 py-0.5 text-[11px] font-semibold uppercase tracking-wide", className)}>
+        {label}
+      </span>
+      {importance === "high" ? (
+        <span className="rounded-full bg-sky-500/15 px-2 py-0.5 text-[11px] font-semibold uppercase tracking-wide text-sky-700 dark:text-sky-400">
+          Muito cobrado
+        </span>
+      ) : null}
     </div>
   )
 }

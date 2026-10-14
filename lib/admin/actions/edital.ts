@@ -165,3 +165,25 @@ export async function deleteSyllabusTopic(topicId: string, courseId: string) {
   if (error) throwSafeDatabaseError("admin.topic.delete_failed", error, "Não foi possível excluir o tópico.")
   revalidatePath(`/admin/cursos/${courseId}`)
 }
+
+const IMPORTANCE_LEVELS = ["high", "medium", "low"] as const
+
+export async function setSyllabusTopicImportance(
+  topicId: string,
+  courseId: string,
+  importance: string | null,
+): Promise<EditalActionResult> {
+  const { supabase } = await requireAdmin()
+
+  if (importance !== null && !(IMPORTANCE_LEVELS as readonly string[]).includes(importance)) {
+    return actionError("Importância inválida.")
+  }
+
+  const { error } = await supabase.from("syllabus_topics").update({ importance }).eq("id", topicId)
+  if (error) {
+    logSafeServerError("admin.topic.importance_failed", error)
+    return actionError("Não foi possível salvar a importância.")
+  }
+  revalidatePath(`/admin/cursos/${courseId}`)
+  return { ok: true }
+}

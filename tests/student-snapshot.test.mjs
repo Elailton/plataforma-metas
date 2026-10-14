@@ -134,3 +134,38 @@ test("Meta 0 é concluível sem avançar o edital e não desloca as metas seguin
   assert.equal(after.studiedTopics,before.studiedTopics)
   assert.equal(after.totalTopics,before.totalTopics)
 })
+
+test("importância do item vem do subtópico e, sem ela, do tópico; valores inválidos viram null", () => {
+  const withImportance = [
+    {
+      id: "s",
+      name: "Disciplina",
+      position: 1,
+      syllabus_topics: [
+        { id: "t1", subject_id: "s", parent_topic_id: null, title: "Tópico alto", position: 1, importance: "high" },
+        { id: "t1a", subject_id: "s", parent_topic_id: "t1", title: "Sub sem selo", position: 1, importance: null },
+        { id: "t1b", subject_id: "s", parent_topic_id: "t1", title: "Sub baixo", position: 2, importance: "low" },
+        { id: "t2", subject_id: "s", parent_topic_id: null, title: "Tópico inválido", position: 2, importance: "urgente" },
+        { id: "t3", subject_id: "s", parent_topic_id: null, title: "Sem campo", position: 3 },
+      ],
+    },
+  ]
+  const g = [
+    {
+      id: "g",
+      course_id: "c",
+      title: "Meta 01",
+      description: null,
+      due_date: "2026-10-12",
+      created_at: CREATED,
+      goal_items: [
+        item("a", "s", "t1", 0, { subtopic_id: "t1a" }),
+        item("b", "s", "t1", 1, { subtopic_id: "t1b" }),
+        item("c", "s", "t2", 2),
+        item("d", "s", "t3", 3),
+      ],
+    },
+  ]
+  const { goals: out } = buildStudentSnapshot({ subjects: withImportance, goals: g, completedItemIds: [] })
+  assert.deepEqual(out[0].items.map((entry) => entry.importance), ["high", "low", null, null])
+})

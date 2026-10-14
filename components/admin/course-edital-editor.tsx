@@ -36,6 +36,7 @@ import {
   addSyllabusTopicsBulk,
   renameSyllabusTopic,
   deleteSyllabusTopic,
+  setSyllabusTopicImportance,
 } from "@/lib/admin/actions/edital"
 import type { AdminSubject, AdminSyllabusTopic } from "@/lib/admin/types"
 import { SearchInput } from "@/components/search-input"
@@ -360,6 +361,22 @@ function TopicRow({
     }
   }
 
+  async function handleImportance(value: string) {
+    setPending(true)
+    try {
+      const result = await setSyllabusTopicImportance(topic.id, courseId, value === "" ? null : value)
+      if (!result.ok) {
+        toast.error(result.message)
+        return
+      }
+      onDone()
+    } catch (error) {
+      toast.error(error instanceof Error ? error.message : "Não foi possível salvar a importância.")
+    } finally {
+      setPending(false)
+    }
+  }
+
   async function handleDelete() {
     setPending(true)
     try {
@@ -404,6 +421,20 @@ function TopicRow({
           <span className="mr-2 font-mono text-xs text-muted-foreground">{number}</span>
           {topicDisplayTitle(topic.title)}
         </span>
+        <div className="flex items-center gap-1">
+          <select
+            value={topic.importance ?? ""}
+            onChange={(event) => handleImportance(event.target.value)}
+            disabled={pending}
+            aria-label="Importância do tópico"
+            className="h-7 rounded-md border border-input bg-transparent px-1.5 text-xs text-muted-foreground"
+          >
+            <option value="">Sem selo</option>
+            <option value="high">Alta importância</option>
+            <option value="medium">Importante</option>
+            <option value="low">Baixa importância</option>
+          </select>
+        </div>
         <div className="flex items-center gap-1 opacity-0 group-hover:opacity-100">
           {!isSubtopic ? (
             <AddTopicsDialog

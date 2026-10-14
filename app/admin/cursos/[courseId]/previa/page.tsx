@@ -44,6 +44,7 @@ export default async function AdminGoalPreviewPage({
 
   const subjectNames = new Map(edital.map((entry) => [entry.subject.id, entry.subject.name]))
   const topicNames = new Map(edital.flatMap((entry) => entry.topics.map((topic) => [topic.id, topic.title] as const)))
+  const topicImportance = new Map(edital.flatMap((entry) => entry.topics.map((topic) => [topic.id, topic.importance] as const)))
   const materialById = new Map(materials.map((material) => [material.id, material]))
 
   const href = (params: { grupo?: number | null; meta?: string }) => {
@@ -63,6 +64,7 @@ export default async function AdminGoalPreviewPage({
       topicName: item.topicId ? (topicNames.get(item.topicId) ?? null) : null,
       subtopicId: item.subtopicId,
       subtopicName: item.subtopicId ? (topicNames.get(item.subtopicId) ?? null) : null,
+      importance: (item.subtopicId ? topicImportance.get(item.subtopicId) : null) ?? (item.topicId ? topicImportance.get(item.topicId) : null) ?? null,
       instructions: item.instructions,
       suggestedQuestions: item.suggestedQuestions,
       materials: item.materialIds

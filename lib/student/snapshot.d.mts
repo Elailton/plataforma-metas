@@ -6,6 +6,7 @@ export interface SnapshotTopicRow {
   parent_topic_id: string | null
   title: string
   position: number
+  importance?: string | null
 }
 export interface SnapshotSubjectRow {
   id: string
