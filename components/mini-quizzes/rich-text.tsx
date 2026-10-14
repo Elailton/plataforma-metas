@@ -5,11 +5,13 @@ const IMAGE_LINE = /^\[\[imagem:([0-9a-f]{16})\]\]$/
 
 function renderInline(text: string, keyPrefix: string): React.ReactNode[] {
   const parts = text.split(/(\*\*[\s\S]+?\*\*)/g)
-  return parts.flatMap((part, index) => {
+  const nodes: React.ReactNode[] = []
+  parts.forEach((part, index) => {
     const key = `${keyPrefix}-b${index}`
-    if (/^\*\*[\s\S]+\*\*$/.test(part)) return [<strong key={key}>{renderUnderline(part.slice(2, -2), key)}</strong>]
-    return renderUnderline(part, key)
+    if (/^\*\*[\s\S]+\*\*$/.test(part)) nodes.push(<strong key={key}>{renderUnderline(part.slice(2, -2), key)}</strong>)
+    else nodes.push(...renderUnderline(part, key))
   })
+  return nodes
 }
 
 function renderUnderline(text: string, keyPrefix: string): React.ReactNode[] {
