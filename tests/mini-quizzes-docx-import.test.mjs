@@ -35,3 +35,20 @@ test("título sugerido sem o prefixo da disciplina", () => {
 test("arquivo que não é .docx gera erro claro", async () => {
   await assert.rejects(parseMiniQuizDocx(new TextEncoder().encode("não é zip")), /inválido/)
 })
+
+test("alternativas que são figuras (imagem na letra ou no parágrafo seguinte) ficam na alternativa certa", async () => {
+  const buffer = await readFile(new URL("./fixtures/mini-simulado-alternativas-figura.docx", import.meta.url))
+  const result = await parseMiniQuizDocx(buffer)
+  assert.deepEqual(result.warnings, [])
+  const [first, second] = result.questions
+  assert.equal(first.statement, "Qual diagrama satisfaz as condições?")
+  const marker = /^\[\[imagem:[0-9a-f]{16}\]\]$/
+  for (const key of ["A", "B", "C", "E"]) {
+    assert.match(first.alternatives.find((item) => item.key === key).text, marker, `alternativa ${key}`)
+  }
+  assert.equal(first.alternatives.find((item) => item.key === "D").text, "Nenhum deles.")
+  assert.equal(new Set(first.alternatives.filter((item) => marker.test(item.text)).map((item) => item.text)).size, 4)
+  // Nenhuma figura "vaza" para a questão seguinte.
+  assert.equal(second.statement, "Questão simples?")
+  assert.equal(result.images.length, 4)
+})
