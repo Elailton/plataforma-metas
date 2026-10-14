@@ -19,6 +19,7 @@ import { submitMiniQuiz } from "@/lib/mini-quizzes/actions"
 import type { QuizQuestion } from "@/lib/mini-quizzes/queries"
 import { cn } from "@/lib/utils"
 import { formatDateTime } from "./format"
+import { RichText } from "./rich-text"
 
 /** Resolução livre (sem cronômetro). As respostas só saem do navegador no envio. */
 export function QuizRunner({ quizId, questions }: { quizId: string; questions: QuizQuestion[] }) {
@@ -65,7 +66,7 @@ export function QuizRunner({ quizId, questions }: { quizId: string; questions: Q
             <fieldset>
               <legend className="mb-3 flex gap-2 text-sm leading-relaxed text-foreground">
                 <span className="shrink-0 font-semibold tabular-nums text-primary">{String(index + 1).padStart(2, "0")}.</span>
-                <span className="whitespace-pre-line">{question.statement}</span>
+                <RichText text={question.statement} className="min-w-0 flex-1" />
               </legend>
               <div className="flex flex-col gap-2">
                 {question.alternatives.map((alternative) => {
@@ -95,7 +96,7 @@ export function QuizRunner({ quizId, questions }: { quizId: string; questions: Q
                       >
                         {alternative.key}
                       </span>
-                      <span className="whitespace-pre-line pt-0.5">{alternative.text}</span>
+                      <RichText text={alternative.text} className="min-w-0 flex-1 pt-0.5" />
                     </label>
                   )
                 })}

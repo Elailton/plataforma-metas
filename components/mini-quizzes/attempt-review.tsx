@@ -1,6 +1,7 @@
 import { CheckCircle2, CircleMinus, XCircle } from "lucide-react"
 import { cn } from "@/lib/utils"
 import type { ReviewedQuestion } from "@/lib/mini-quizzes/queries"
+import { RichText } from "./rich-text"
 
 /** Correção comentada de uma tentativa enviada. */
 export function AttemptReview({ questions }: { questions: ReviewedQuestion[] }) {
@@ -12,7 +13,7 @@ export function AttemptReview({ questions }: { questions: ReviewedQuestion[] }) 
           <li key={question.id} className="rounded-xl border border-border bg-card p-4 md:p-5">
             <div className="mb-3 flex items-start gap-2 text-sm leading-relaxed text-foreground">
               <span className="shrink-0 font-semibold tabular-nums text-primary">{String(index + 1).padStart(2, "0")}.</span>
-              <span className="min-w-0 flex-1 whitespace-pre-line">{question.statement}</span>
+              <RichText text={question.statement} className="min-w-0 flex-1" />
               {status === "correct" ? (
                 <CheckCircle2 className="size-5 shrink-0 text-success" aria-label="Acertou" />
               ) : status === "wrong" ? (
@@ -49,7 +50,7 @@ export function AttemptReview({ questions }: { questions: ReviewedQuestion[] }) 
                     >
                       {alternative.key}
                     </span>
-                    <span className="min-w-0 flex-1 whitespace-pre-line pt-0.5">{alternative.text}</span>
+                    <RichText text={alternative.text} className="min-w-0 flex-1 pt-0.5" />
                     {isChosen ? <span className="shrink-0 pt-0.5 text-xs font-medium text-muted-foreground">Sua resposta</span> : null}
                   </li>
                 )
@@ -60,7 +61,7 @@ export function AttemptReview({ questions }: { questions: ReviewedQuestion[] }) 
                 <summary className="cursor-pointer font-medium text-foreground">
                   Comentário {question.correctKey ? `· gabarito ${question.correctKey}` : ""}
                 </summary>
-                <p className="mt-2 whitespace-pre-line leading-relaxed text-muted-foreground">{question.explanation}</p>
+                <RichText text={question.explanation} className="mt-2 leading-relaxed text-muted-foreground" />
               </details>
             ) : question.correctKey ? (
               <p className="mt-3 text-sm text-muted-foreground">Gabarito: {question.correctKey}</p>

@@ -179,6 +179,24 @@ revoke all on public.mini_quizzes, public.mini_quiz_questions, public.mini_quiz_
 grant select, insert, update, delete on public.mini_quizzes, public.mini_quiz_questions, public.mini_quiz_answer_keys to authenticated;
 grant select on public.mini_quiz_attempts, public.mini_quiz_attempt_answers to authenticated;
 
+-- Imagens das questões (figuras, tirinhas, prints de planilha), guardadas no banco e
+-- referenciadas no enunciado por [[imagem:<hash>]]. Não contêm gabarito; qualquer
+-- usuário autenticado pode lê-las pela rota da plataforma. Só o administrador grava.
+create table if not exists public.mini_quiz_images (
+  hash text primary key check (hash ~ '^[0-9a-f]{16}$'),
+  mime text not null check (mime in ('image/png', 'image/jpeg', 'image/gif', 'image/webp')),
+  data bytea not null check (octet_length(data) between 1 and 3145728),
+  created_at timestamptz not null default timezone('utc', now())
+);
+alter table public.mini_quiz_images enable row level security;
+drop policy if exists mini_quiz_images_admin_all on public.mini_quiz_images;
+create policy mini_quiz_images_admin_all on public.mini_quiz_images for all to authenticated
+  using ((select public.is_admin())) with check ((select public.is_admin()));
+drop policy if exists mini_quiz_images_select on public.mini_quiz_images;
+create policy mini_quiz_images_select on public.mini_quiz_images for select to authenticated using (true);
+revoke all on public.mini_quiz_images from anon;
+grant select, insert, update, delete on public.mini_quiz_images to authenticated;
+
 -- Envio de uma tentativa: corrige no banco e devolve o resultado.
 -- p_answers: { "<question_id>": "A" | null, ... }
 create or replace function public.submit_mini_quiz(p_quiz_id uuid, p_answers jsonb)

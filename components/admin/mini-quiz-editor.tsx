@@ -247,6 +247,11 @@ export function MiniQuizEditor({
         </div>
       </div>
 
+      <p className="-mt-3 text-xs text-muted-foreground">
+        Use <code>**negrito**</code> e <code>__sublinhado__</code> para destaques. Imagens importadas do Word aparecem como{" "}
+        <code>[[imagem:…]]</code>; mantenha a linha para que a figura continue na questão.
+      </p>
+
       {bulkOpen ? (
         <div className="flex flex-col gap-3 rounded-xl border border-dashed border-border bg-card p-4">
           <p className="text-xs text-muted-foreground">

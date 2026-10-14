@@ -1,5 +1,6 @@
 "use server"
 
+import { createHash } from "node:crypto"
 import { revalidatePath } from "next/cache"
 import { requireAdmin } from "@/lib/admin/auth"
 import { logSafeServerError } from "@/lib/security/safe-error"
@@ -91,4 +92,28 @@ export async function saveMiniQuiz(input: MiniQuizSaveInput): Promise<{ ok: true
   revalidatePath("/admin/mini-simulados")
   revalidatePath("/aluno/mini-simulados")
   return { ok: true, quizId: data as string }
+}
+
+const IMAGE_MIMES = new Set(["image/png", "image/jpeg", "image/gif", "image/webp"])
+const MAX_IMAGE_BYTES = 3 * 1024 * 1024
+
+/**
+ * Guarda uma imagem de questão importada do Word. O hash é conferido no servidor
+ * (primeiros 16 caracteres do SHA-1) e o envio repetido é ignorado.
+ */
+export async function uploadMiniQuizImage(input: { hash: string; mime: string; base64: string }): Promise<{ ok: true } | { ok: false; error: string }> {
+  const { supabase } = await requireAdmin()
+  if (!/^[0-9a-f]{16}$/.test(input.hash) || !IMAGE_MIMES.has(input.mime)) return { ok: false, error: "Imagem inválida." }
+  const data = Buffer.from(input.base64, "base64")
+  if (data.length === 0 || data.length > MAX_IMAGE_BYTES) return { ok: false, error: "Imagem vazia ou maior que 3 MB." }
+  if (createHash("sha1").update(data).digest("hex").slice(0, 16) !== input.hash) return { ok: false, error: "Imagem corrompida no envio." }
+
+  const { data: existing } = await supabase.from("mini_quiz_images").select("hash").eq("hash", input.hash).maybeSingle()
+  if (existing) return { ok: true }
+  const { error } = await supabase.from("mini_quiz_images").insert({ hash: input.hash, mime: input.mime, data: `\\x${data.toString("hex")}` })
+  if (error && error.code !== "23505") {
+    logSafeServerError("admin.mini_quiz.image_failed", error)
+    return { ok: false, error: "Não foi possível guardar uma imagem." }
+  }
+  return { ok: true }
 }

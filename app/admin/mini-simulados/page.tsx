@@ -8,6 +8,7 @@ import { listAdminCourses } from "@/lib/admin/queries"
 import { listAdminMiniQuizzes } from "@/lib/admin/mini-quizzes"
 import { getCourseSubjects } from "@/lib/mini-quizzes/queries"
 import { resolveCourse } from "./course-param"
+import { MiniQuizDocxImport } from "@/components/admin/mini-quiz-docx-import"
 
 export const dynamic = "force-dynamic"
 
@@ -34,6 +35,11 @@ export default async function AdminMiniQuizzesPage({ searchParams }: { searchPar
         description="Questões resolvidas na plataforma, com correção comentada e diagnóstico por aluno."
         actions={
           <div className="flex flex-wrap gap-2">
+            <MiniQuizDocxImport
+              courseId={course.id}
+              subjects={orderedSubjects.map((subject) => ({ id: subject.id, name: subject.name }))}
+              existingTitles={quizzes.map((quiz) => ({ subjectId: quiz.subjectId, title: quiz.title }))}
+            />
             <Link href={`/admin/mini-simulados/diagnostico?curso=${course.id}`} className={buttonVariants({ variant: "outline" })}>
               <BarChart3 data-icon="inline-start" />
               Diagnóstico dos alunos
