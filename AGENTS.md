@@ -227,6 +227,24 @@ O usuário ampliou o escopo do beta em 1º de setembro de 2026. O progresso real
 
 As contas existentes de um administrador e de um aluno de teste são dados protegidos. Nunca as exclua, recrie ou altere suas senhas. O aluno de teste deve receber acesso somente aos cursos atribuídos por matrícula ativa; inicialmente, apenas o curso GMF existente no banco.
 
+## Mini Simulados
+
+Mini simulados por disciplina, cadastrados pelo administrador e resolvidos pelo aluno
+na plataforma, orientados por `courseId` (nada específico de um concurso).
+
+- Tabelas: `mini_quizzes`, `mini_quiz_questions`, `mini_quiz_answer_keys` (gabarito e
+  comentário, legíveis só pelo administrador), `mini_quiz_attempts` e
+  `mini_quiz_attempt_answers`.
+- A correção acontece só no banco (`submit_mini_quiz`). O gabarito nunca vai ao navegador
+  antes do envio; a revisão vem de `mini_quiz_attempt_review` para a própria tentativa.
+- Sem cronômetro. Nova tentativa do mesmo mini simulado só 7 dias após a anterior.
+- O diagnóstico mensal usa a primeira tentativa de cada mini simulado no mês (fuso de
+  Brasília, `is_first_of_month`). Refazer fica no histórico e não altera o mês.
+- Tentativas e respostas nunca são apagadas; questões removidas são arquivadas e um mini
+  simulado com tentativas não pode ser excluído, só arquivado.
+- Acesso do aluno segue `active_course_ids()`; o administrador salva por
+  `admin_save_mini_quiz`, com IDs estáveis e versão `updated_at`.
+
 ## Escopo atual
 
 O escopo atualmente autorizado inclui:
@@ -242,13 +260,14 @@ O escopo atualmente autorizado inclui:
 - progresso persistente por item de meta;
 - seleção independente entre vários cursos ativos;
 - matrícula manual administrativa de contas de aluno existentes durante o beta.
+- Mini Simulados (solicitados pelo usuário em 13 de outubro de 2026), descritos na seção "Mini Simulados".
 
 Fora de escopo até solicitação explícita:
 
 - IA para criar metas;
 - ranking;
 - gamificação;
-- simulados;
+- simulados completos (provas longas, cronometradas, com ranking), além dos Mini Simulados;
 - funcionalidades específicas de um concurso;
 - grandes reformulações visuais.
 
