@@ -1,6 +1,6 @@
 import "server-only"
 
-import { createHmac } from "node:crypto"
+import { createHmac, randomUUID } from "node:crypto"
 import { inviteRedirectUrl } from "@/lib/auth/invite-url"
 import { createAdminClient } from "@/lib/supabase/admin"
 import type { ResendDependencies } from "@/lib/auth/resend-access.mjs"
@@ -19,6 +19,13 @@ export function createResendAccessDependencies(): ResendDependencies {
   const key = hashKey()
 
   return {
+    async reserve({ emailHash, ipHash, requestKey }) {
+      const { data, error } = await admin.rpc("reserve_access_resend", {
+        requested_key: requestKey || randomUUID(), requested_email_hash: emailHash, requested_ip_hash: ipHash,
+      })
+      if (error) throw new Error("Não foi possível reservar o pedido de reenvio.")
+      return { accepted: data?.accepted === true, requestId: typeof data?.request_id === "number" ? data.request_id : null }
+    },
     hash(value) {
       return createHmac("sha256", key).update(value).digest("hex")
     },

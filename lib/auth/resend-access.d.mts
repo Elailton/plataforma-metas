@@ -4,6 +4,7 @@ export declare const RESEND_LIMITS: Readonly<{ windowMinutes: number; perEmail: 
 export type ResendOutcome = "accepted" | "limited" | "sent" | "skipped" | "failed"
 
 export interface ResendDependencies {
+  reserve?(input: { emailHash: string; ipHash: string; requestKey?: string }): Promise<{ accepted: boolean; requestId: number | null }>
   hash(value: string): string
   countRecent(input: { emailHash: string; ipHash: string; since: Date }): Promise<{ email: number; ip: number; total: number }>
   record(input: { emailHash: string; ipHash: string; outcome: "accepted" | "limited" }): Promise<number | null>
@@ -19,7 +20,7 @@ export declare function isRateLimited(
   limits?: typeof RESEND_LIMITS,
 ): boolean
 export declare function acceptResendRequest(
-  input: { email: unknown; ip: string; now?: Date },
+  input: { email: unknown; ip: string; requestKey?: string; now?: Date },
   deps: ResendDependencies,
 ): Promise<{
   message: string
