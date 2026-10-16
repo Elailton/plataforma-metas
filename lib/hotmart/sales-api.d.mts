@@ -12,7 +12,7 @@ export interface HotmartSalesClient {
   findPaidPurchases(email: string, signal?: AbortSignal): Promise<VerifiedPurchase[]>
   confirmPurchase(purchase: VerifiedPurchase, signal?: AbortSignal): Promise<boolean>
 }
-export class HotmartSalesError extends Error { code: string; constructor(code: string) }
+export class HotmartSalesError extends Error { code: string; status?: number; constructor(code: string, status?: number) }
 export function createHotmartSalesClient(options: {
   credentials(): { clientId?: string; clientSecret?: string; basic?: string }
   fetchImpl?: typeof fetch
