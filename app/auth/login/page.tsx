@@ -1,5 +1,7 @@
 "use client"
 
+import { AccessSupport } from "@/components/auth/access-support"
+
 import { AuthShell, AuthCard } from "@/components/auth-shell"
 
 import type React from "react"
@@ -143,6 +145,7 @@ function LoginForm() {
             Tenho um código
           </Link>
         </p>
+        <AccessSupport />
       </AuthCard>
     </AuthShell>
   )

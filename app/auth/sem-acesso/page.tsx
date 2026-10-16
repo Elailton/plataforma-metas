@@ -3,6 +3,7 @@ import { ShieldX } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { AuthShell, AuthCard } from "@/components/auth-shell"
 import { signOut } from "@/lib/supabase/actions"
+import { AccessSupport } from "@/components/auth/access-support"
 
 export default function NoAccessPage() {
   return (
@@ -14,9 +15,9 @@ export default function NoAccessPage() {
         description="Não encontramos uma matrícula ativa para esta conta."
       >
         <p className="text-sm leading-relaxed text-muted-foreground">
-          Entre com o mesmo e-mail usado na compra. Se a compra foi aprovada recentemente, aguarde o processamento do
-          convite ou fale com o suporte.
+          Entre com o mesmo e-mail usado na compra. Se a matrícula ainda não aparece, a atendente do suporte pode conferir sua situação.
         </p>
+        <AccessSupport />
         <div className="flex flex-col gap-2">
           <form action={signOut}>
             <Button type="submit" variant="outline" className="h-11 w-full">

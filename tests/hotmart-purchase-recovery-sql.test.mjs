@@ -83,23 +83,27 @@ test("recuperação com SQL real: conta ausente, vários cursos, oferta, bloquei
           and not exists(select 1 from course_access_blocks b where b.user_id=u.id and b.course_id=c.id and released_at is null)) eligible`, [email])
         return row.eligible
       },
-      recoverStudentAccess: email => recoverHotmartPurchases(email, { sales, repository:repo }),
       sendAccessEmail: async email => { sent.push(email) },
       updateOutcome: async (_,value) => { outcome = value },
+    }
+    // Exercise the legacy API domain explicitly; public resend never invokes it.
+    async function legacyRecovery() {
+      await recoverHotmartPurchases(EMAIL, { sales, repository:repo })
+      return deliverResend({email:EMAIL,requestId:1},deps)
     }
     await t.test("sem compra, oferta desconhecida ou reconfirmação recusada não cria conta", async () => {
       for (const list of [[],[purchase({offerCode:"no"})],[purchase({productUcode:"unmapped"})]]) {
         rows = list
-        assert.equal(await deliverResend({email:EMAIL,requestId:1},deps), "skipped")
+        assert.equal(await legacyRecovery(), "skipped")
       }
       rows = [purchase()]; confirmed = false
-      assert.equal(await deliverResend({email:EMAIL,requestId:1},deps), "skipped")
+      assert.equal(await legacyRecovery(), "skipped")
       confirmed = true
       assert.equal(accountsCreated,0)
     })
     await t.test("compra em dois cursos restaura uma conta e duas matrículas antes de um e-mail", async () => {
       rows = [purchase(),purchase({transaction:"HP456",productUcode:"product-two",productId:"456"})]
-      assert.equal(await deliverResend({email:EMAIL,requestId:1},deps),"sent")
+      assert.equal(await legacyRecovery(),"sent")
       assert.equal(accountsCreated,1)
       assert.equal((await one("select count(*)::int n from enrollments")).n,2)
       assert.deepEqual(sent,[EMAIL]); assert.equal(outcome,"sent")
@@ -113,7 +117,7 @@ test("recuperação com SQL real: conta ausente, vários cursos, oferta, bloquei
         await db.query("insert into course_access_blocks(user_id,course_id,reason,blocked_by) values($1,$2,'Teste de bloqueio',$3)",[uid,course,ADMIN])
         await db.query("select reconcile_course_enrollment($1,$2)",[uid,course])
       }
-      assert.equal(await deliverResend({email:EMAIL,requestId:1},deps),"skipped")
+      assert.equal(await legacyRecovery(),"skipped")
       assert.equal(sent.length,1)
       assert.equal((await one("select count(*)::int n from enrollments where status='suspended'")).n,2)
     })
@@ -123,7 +127,7 @@ test("recuperação com SQL real: conta ausente, vários cursos, oferta, bloquei
         await one("select * from apply_hotmart_entitlement_event($1,$2,$3,$4,$5,$6,'revoked','refund',$7)",
           [p.transaction,p.userId,p.courseId,p.productUcode,p.productId,p.buyerUcode,new Date(APPROVED+1000).toISOString()])
       }
-      assert.equal(await deliverResend({email:EMAIL,requestId:1},deps),"skipped")
+      assert.equal(await legacyRecovery(),"skipped")
       assert.equal((await one("select status from hotmart_entitlements where transaction='HP789'")).status,"revoked")
       assert.equal(sent.length,1)
     })

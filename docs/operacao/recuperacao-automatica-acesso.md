@@ -1,58 +1,32 @@
-# Recuperação automática de acesso
+# Reenvio de acesso e atendimento
 
-O formulário em `https://sg-diagnostico.vercel.app/` registra nome, WhatsApp e e-mail no banco de contatos e solicita à plataforma o reenvio para o próprio e-mail informado. Nenhum curso, papel ou destinatário alternativo é aceito.
+## Fluxo atual
 
-## Caminho do pedido
+O formulário https://sg-diagnostico.vercel.app/ registra nome, e-mail e WhatsApp e pede o reenvio à plataforma. O servidor considera somente contas de aluno com matrícula ativa em curso publicado e sem bloqueio administrativo. Ter grupo atribuído ou ter concluído o primeiro acesso não é requisito para receber o e-mail.
 
-1. O navegador grava os contatos no banco privado do diagnóstico.
-2. Chama `POST /api/access/request` no próprio diagnóstico. O servidor confere o contato salvo para o ID e encaminha somente `email` e `request_id` (UUID do envio) à rota da plataforma. Cookies, tokens e credenciais não são encaminhados. Esse caminho evita depender de chamadas entre domínios pelo navegador.
-3. A plataforma reserva o pedido no banco de forma atômica. O mesmo ID nunca dispara dois envios. Aplicam-se 3 pedidos/e-mail, 10/IP e 120 globais por hora, compartilhados com `/auth/reenviar-acesso`.
-4. Retorna `202 accepted`, igual para alunos e pessoas sem acesso. Isso confirma registro, não entrega de e-mail.
-5. Após a resposta, verifica conta de aluno, matrícula ativa em curso publicado e ausência de bloqueio administrativo. Se não houver acesso, consulta a API Hotmart por esse mesmo e-mail, desde o início do histórico, com paginação limitada e prazo total de 40 segundos. Aceita somente `APPROVED`/`COMPLETE` de pagamento único, com comprador e data de aprovação válidos.
-6. Resolve o ID numérico do produto pelo catálogo oficial para obter o `ucode`. Confere o mapeamento ativo para curso publicado e a oferta autorizada. Reconsulta cada transação antes da gravação; se mudou de comprador, produto, oferta, aprovação ou status, não libera.
-7. Usa o mesmo processador comercial do webhook, com ID `sales-api:<transação>:<data de aprovação>`, preservando a data **original** da aprovação. A data da consulta nunca substitui o watermark comercial: um reembolso recebido durante a recuperação vence a aprovação antiga. Os eventos de recuperação aparecem no histórico administrativo com esse prefixo; nunca fingem ser eventos entregues pela Hotmart.
-8. Cria a conta, quando ausente, sem senha e sem envio antecipado. Revalida o acesso efetivo no banco após reconciliar a matrícula e envia um único e-mail de recuperação ao próprio comprador. A pessoa confirma o e-mail e define a senha ao abrir o link. Falhas ficam como `failed`; não provocam concessão manual.
+O formulário e a opção Reenviar acesso do login não consultam vendas na API Hotmart, não criam contas ou matrículas, não atribuem grupo e não reativam acesso suspenso/revogado. Quem não tem matrícula ou não recebe as instruções encontra o atendimento em https://wa.me/5585996885832, telefone +55 (85) 99688-5832. O link abre a conversa; o site não envia mensagens de WhatsApp automaticamente.
 
-O webhook continua mantendo o direito comercial. A recuperação agora pode criar a conta e restaurar uma matrícula ausente mediante prova obtida exclusivamente da API Hotmart. Não remove bloqueios, não promove administradores, não aceita curso ou transação do formulário e não sobrescreve eventos comerciais mais recentes. Concessões manuais válidas são preservadas e continuam permitindo reenvio mesmo se a API Hotmart estiver indisponível.
+A matrícula de uma compra continua sendo criada pelo webhook Hotmart existente, respeitando produto, oferta, idempotência e bloqueios. Uma compra que não gerou matrícula é conferida pela atendente. Aluno matriculado sem grupo mantém essa condição até concluir o questionário ou receber uma atribuição administrativa.
 
-Assinaturas recorrentes não são provisionadas por essa consulta de vendas: uma parcela antiga aprovada não comprova assinatura vigente. Elas continuam dependendo do fluxo comercial já existente ou de atendimento até haver integração específica da situação da assinatura. Compras anteriores a 2020, catálogo sem identidade inequívoca, oferta ausente/restrita e histórico acima dos limites também exigem revisão, sem liberação automática. Uma transação já revogada/suspensa por evento posterior nunca é reativada só porque uma aprovação antiga consta na consulta.
+## Caminho técnico
 
-## Banco e implantação
+1. O navegador salva o contato no banco privado do diagnóstico.
+2. O servidor do diagnóstico valida se o e-mail corresponde ao ID salvo e encaminha somente e-mail e request_id à plataforma, sem cookies ou credenciais.
+3. A plataforma reserva a tentativa de forma atômica: mesmo ID não dispara dois envios; limites de 3/e-mail, 10/IP e 120 globais por hora.
+4. Retorna 202 genérico. Não revela publicamente se a conta existe e não comprova entrega na caixa de entrada.
+5. Após responder, verifica perfil, matrícula ativa, publicação do curso e bloqueios. Grupo não entra nessa consulta. Envia somente ao e-mail da própria conta.
+6. Sem acesso elegível, registra skipped. O WhatsApp do suporte está disponível em todas as respostas públicas, no diagnóstico, no login e na tela sem acesso.
 
-Aplicar `20261015192149_atomic_access_recovery.sql` **antes** da publicação. A migração adiciona somente `request_key` e a RPC `reserve_access_resend`, executável exclusivamente por `service_role`. Nenhuma conta, compra, senha ou matrícula é alterada pela migração.
+## Opções do login
 
-Continuam as mesmas variáveis `SITE_URL`, `NEXT_PUBLIC_SUPABASE_URL`, `NEXT_PUBLIC_SUPABASE_ANON_KEY` e `SUPABASE_SERVICE_ROLE_KEY`. Não copiar a chave administrativa da plataforma para o diagnóstico. O CORS aceita somente o site do diagnóstico e o `SITE_URL` da plataforma. A CSP do diagnóstico permite conexões somente à própria origem. O diagnóstico também aplica limite de 10 encaminhamentos por IP/hora. No serviço central, o IP observado pode ser o do servidor/proxy; o limite central de 10/IP/hora é conservador e pode agrupar solicitantes. Para volume maior, dimensionar esse limite junto ao limite do SMTP, sem remover os controles por e-mail e globais.
+- Reenviar acesso: confere uma matrícula existente e pede um novo e-mail, sujeito aos limites.
+- Tenho um código: valida o código numérico do e-mail de convite ou recuperação no Supabase Auth e encaminha para criar a senha. Não consulta compras nem cria matrícula. E-mail malformado, código inválido/expirado, falha de rede e excesso de tentativas exibem aviso sem deixar o botão preso.
+- Continuar, no link do e-mail: confirma o token somente após o clique da pessoa, preservando-o contra verificadores automáticos de links. Aceita apenas invite/recovery e destino interno de primeiro acesso.
 
-Publicar primeiro a plataforma, verificar `OPTIONS /api/access/request`, depois publicar o diagnóstico. A opção já existente `/auth/reenviar-acesso` continua funcionando.
+## Operação
 
-### Credenciais da consulta de compras
+access_resend_requests guarda hashes HMAC de e-mail/IP, request_key e outcome, com retenção de 30 dias. sent significa aceite pelo serviço de autenticação; skipped significa ausência de acesso elegível; limited significa limite de frequência/SMTP; failed significa falha interna ou de envio. Nunca conceder matrícula com base apenas no preenchimento do formulário.
 
-O `HOTMART_HOTTOK` valida apenas o webhook; não dá acesso ao histórico de vendas.
-Na conta produtora Hotmart, em **Ferramentas → Credenciais Developers**, criar uma credencial de **produção**, com acesso à consulta de vendas e produtos. Não usar sandbox para consultar compras reais.
-Cadastrar diretamente como segredos de **Production**, somente no projeto Vercel `plataforma-metas`:
+As credenciais da API de vendas que já estejam na Vercel não são necessárias para esse fluxo. Os módulos de consulta comercial antigos permanecem como referência interna, sem importação pelo reenvio público. O HOTTOK do webhook e as credenciais Supabase existentes continuam necessários. Nenhum segredo é copiado para o diagnóstico.
 
-- `HOTMART_CLIENT_ID`: campo Client ID da credencial.
-- `HOTMART_CLIENT_SECRET`: campo Client Secret.
-- `HOTMART_BASIC`: token Basic, com ou sem prefixo `Basic `.
-
-Não colar credenciais em chats, commits ou no projeto diagnóstico. Depois de salvar, republicar a plataforma: variáveis novas só entram em uma implantação nova. A aplicação obtém o bearer token no servidor, guarda somente em memória e renova uma vez em HTTP 401. Ausência de credenciais ou falha de API deixa o pedido como `failed`, sem criar matrícula.
-
-Referências oficiais: [autenticação Hotmart](https://developers.hotmart.com/docs/pt-BR/start/app-auth/), [histórico de vendas](https://developers.hotmart.com/docs/en/v1/sales/sales-history/), [catálogo de produtos](https://developers.hotmart.com/docs/en/v1/product/product-list/).
-
-Compatibilidade da busca: a primeira consulta solicita o histórico desde 2020. Se a Hotmart recusar o intervalo com `400 invalid_parameter`, a aplicação repete a busca sem as datas opcionais, preservando o filtro de e-mail e todas as verificações de acesso. Nesse caso a abrangência temporal é a padrão da Hotmart; ausência de resultado exige conferir uma compra antiga no atendimento. Falhas de autenticação, limite de requisições, rede ou paginação não acionam essa alternativa. Os logs indicam a etapa e, quando informado pela Hotmart, somente o nome do parâmetro rejeitado, sem guardar a descrição da resposta.
-
-Se o histórico também recusar a busca mínima por e-mail com o mesmo erro, o servidor localiza as transações em `sales/users` pelo e-mail exato do participante `BUYER`. Consulta então cada transação em `sales/history` (até 20), conferindo novamente e-mail do comprador, estado atual do pagamento, produto e oferta. Um participante produtor/afiliado não comprova compra e não é elegível. A confirmação final usa a transação e valida o e-mail na resposta, sem depender do filtro de e-mail do histórico. Nenhuma lista geral de compradores é consultada ou armazenada.
-
-## Conferência e atendimento
-
-`access_resend_requests` guarda hashes HMAC de e-mail/IP, o ID do pedido e o resultado interno: `accepted`, `sent`, `skipped` ou `failed`. Nunca guarda link, senha, HOTTOK ou payload de compra. A retenção dos registros é de 30 dias. O `request_key` permite relacionar o resultado ao `id_envio` do contato, sem copiar seus dados pessoais para a tabela de controle.
-
-- `sent`: o serviço de autenticação aceitou o envio. Isso não comprova entrega na caixa de entrada.
-- `skipped`: não havia acesso elegível após a consulta; conferir e-mail exato da compra, status, produto/oferta, matrícula, publicação do curso e bloqueio antes de qualquer concessão.
-- `limited`: limite de frequência, ou clique repetido em segundos (o Auth recusa novo link ao mesmo e-mail por ~60 s). O link anterior continua válido; não é falha.
-- `failed`: falha no envio/consulta/configuração. Conferir logs de servidor `hotmart.access_recovery_failed` (somente código técnico, sem e-mail, respostas ou segredo) e Auth/SMTP. `hotmart_not_configured` indica credenciais ausentes; `hotmart_auth_failed` indica falha de autenticação; `hotmart_query_failed` inclui permissão insuficiente, limite ou erro de API. Não liberar acesso em razão do formulário.
-- `accepted` antigo: a etapa posterior à resposta pode ter sido interrompida; investigar antes de reenviar. Um novo pedido fica sujeito aos mesmos limites de frequência.
-
-O fluxo não realiza varredura automática nem envia mensagens em massa aos contatos antigos. Testes em produção devem usar endereço fictício sem matrícula (sem envio) ou endereço de teste indicado pelo proprietário. Não usar contas reais de alunos para testes de e-mail.
-
-Validação: suíte de testes, TypeScript, build Next.js, migração PostgreSQL real em PGlite, RPC e permissões no banco publicado; conferir pedido fictício com resultado `skipped`, deduplicação e preflight CORS em produção.
+Validação: testes do reenvio com o repositório real simulando aluno sem grupo, ausência de matrícula, administrador, bloqueio e curso não publicado; testes da tela de código; suíte PostgreSQL de autorização; TypeScript e build Next.js. Em produção, usar somente pedido fictício sem matrícula para conferir skipped sem enviar mensagens a alunos.

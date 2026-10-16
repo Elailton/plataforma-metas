@@ -6,7 +6,7 @@ import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { createClient } from "@/lib/supabase/client"
 import { ACCESS_CODE_TYPES, DEFAULT_NEXT_PATH, normalizeAccessCode } from "@/lib/auth/confirm.mjs"
-import { normalizeEmail } from "@/lib/hotmart/core.mjs"
+import { normalizeResendEmail } from "@/lib/auth/resend-access.mjs"
 
 const INVALID_MESSAGE = "Código inválido ou expirado. Confira o último e-mail recebido ou peça um novo acesso."
 
@@ -19,7 +19,8 @@ export function AccessCodeForm() {
   async function submit(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault()
     setError(null)
-    const normalizedEmail = normalizeEmail(email)
+    if (pending) return
+    const normalizedEmail = normalizeResendEmail(email)
     const token = normalizeAccessCode(code)
     if (!normalizedEmail || !token) {
       setError(!normalizedEmail ? "Informe um e-mail válido." : "O código tem apenas números (6 dígitos ou mais).")
@@ -27,22 +28,26 @@ export function AccessCodeForm() {
     }
 
     setPending(true)
-    const supabase = createClient()
-    // O código pode ter vindo do convite ou do "Reenviar acesso"; só esses dois tipos são aceitos.
-    for (const type of ACCESS_CODE_TYPES) {
-      const { error: verifyError } = await supabase.auth.verifyOtp({ email: normalizedEmail, token, type })
-      if (!verifyError) {
-        window.location.assign(DEFAULT_NEXT_PATH)
-        return
+    try {
+      const supabase = createClient()
+      // O código pode ter vindo do convite ou do reenvio; só esses tipos são aceitos.
+      for (const type of ACCESS_CODE_TYPES) {
+        const { error: verifyError } = await supabase.auth.verifyOtp({ email: normalizedEmail, token, type })
+        if (!verifyError) {
+          window.location.assign(DEFAULT_NEXT_PATH)
+          return
+        }
+        if (verifyError.status === 429) {
+          setError("Muitas tentativas. Aguarde alguns minutos e tente de novo.")
+          return
+        }
       }
-      if (verifyError.status === 429) {
-        setError("Muitas tentativas. Aguarde alguns minutos e tente de novo.")
-        setPending(false)
-        return
-      }
+      setError(INVALID_MESSAGE)
+    } catch {
+      setError("Não foi possível confirmar o código. Confira sua conexão e tente novamente.")
+    } finally {
+      setPending(false)
     }
-    setError(INVALID_MESSAGE)
-    setPending(false)
   }
 
   return (

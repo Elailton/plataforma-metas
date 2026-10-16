@@ -8,6 +8,7 @@ import { SectionHeader } from "@/components/page-header"
 import { getCurrentProfile } from "@/lib/supabase/queries"
 import { signOut } from "@/lib/supabase/actions"
 import { ProfileNameDialog } from "@/components/student/profile-name-dialog"
+import { SUPPORT_WHATSAPP_URL } from "@/lib/support"
 
 export default async function AccountPage() {
   const profile = await getCurrentProfile()
@@ -16,7 +17,7 @@ export default async function AccountPage() {
   const activeEnrollments = profile.enrollments.filter(
     (enrollment) => enrollment.status === "active",
   )
-  const supportUrl = process.env.SUPPORT_WHATSAPP_URL
+  const supportUrl = SUPPORT_WHATSAPP_URL
 
   return (
     <PageContainer>

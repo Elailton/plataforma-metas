@@ -107,23 +107,22 @@ test("reenvio: IP e e-mail de entrada são tratados como não confiáveis", () =
   assert.equal(normalizeResendEmail("a".repeat(400) + "@x.com"), null)
 })
 
-test("recuperação: compra validada restaura matrícula antes de um único e-mail", async () => {
+test("reenvio: sem matrícula não consulta compras, não cria conta e não envia", async () => {
   const deps = fakeDeps()
   const steps = []
-  let active = false
-  deps.hasActiveStudentAccess = async () => { steps.push("check"); return active }
-  deps.recoverStudentAccess = async email => { assert.equal(email, "buyer@test.invalid"); steps.push("recover"); active = true }
+  deps.hasActiveStudentAccess = async () => { steps.push("check"); return false }
+  deps.recoverStudentAccess = async () => { assert.fail("Não pode consultar compras ou criar matrícula") }
   deps.sendAccessEmail = async email => { steps.push("send"); deps.sent.push(email) }
-  assert.equal((await run(deps, " BUYER@test.invalid ")).delivered, "sent")
-  assert.deepEqual(steps, ["check", "recover", "check", "send"])
-  assert.deepEqual(deps.sent, ["buyer@test.invalid"])
+  assert.equal((await run(deps, " BUYER@test.invalid ")).delivered, "skipped")
+  assert.deepEqual(steps, ["check"])
+  assert.deepEqual(deps.sent, [])
 })
 
-test("recuperação: sem compra elegível ou bloqueado não envia; API indisponível fica failed", async () => {
+test("reenvio: sem acesso elegível ou bloqueado não depende da API Hotmart", async () => {
   for (const fails of [false, true]) {
     const deps = fakeDeps()
     deps.recoverStudentAccess = async () => { if (fails) throw new Error("API unavailable") }
-    assert.equal((await run(deps, "buyer@test.invalid")).delivered, fails ? "failed" : "skipped")
+    assert.equal((await run(deps, "buyer@test.invalid")).delivered, "skipped")
     assert.deepEqual(deps.sent, [])
   }
 })

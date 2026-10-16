@@ -10,7 +10,6 @@ export interface ResendDependencies {
   record(input: { emailHash: string; ipHash: string; outcome: "accepted" | "limited" }): Promise<number | null>
   updateOutcome(requestId: number | null, outcome: "sent" | "skipped" | "failed" | "limited"): Promise<void>
   hasActiveStudentAccess(email: string): Promise<boolean>
-  recoverStudentAccess?(email: string): Promise<void>
   /** "cooldown" quando o Auth recusa por envio recente ao mesmo e-mail (HTTP 429). */
   sendAccessEmail(email: string): Promise<"sent" | "cooldown" | void>
 }
