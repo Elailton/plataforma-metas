@@ -41,6 +41,8 @@ Referências oficiais: [autenticação Hotmart](https://developers.hotmart.com/d
 
 Compatibilidade da busca: a primeira consulta solicita o histórico desde 2020. Se a Hotmart recusar o intervalo com `400 invalid_parameter`, a aplicação repete a busca sem as datas opcionais, preservando o filtro de e-mail e todas as verificações de acesso. Nesse caso a abrangência temporal é a padrão da Hotmart; ausência de resultado exige conferir uma compra antiga no atendimento. Falhas de autenticação, limite de requisições, rede ou paginação não acionam essa alternativa. Os logs indicam a etapa e, quando informado pela Hotmart, somente o nome do parâmetro rejeitado, sem guardar a descrição da resposta.
 
+Se o histórico também recusar a busca mínima por e-mail com o mesmo erro, o servidor localiza as transações em `sales/users` pelo e-mail exato do participante `BUYER`. Consulta então cada transação em `sales/history` (até 20), conferindo novamente e-mail do comprador, estado atual do pagamento, produto e oferta. Um participante produtor/afiliado não comprova compra e não é elegível. A confirmação final usa a transação e valida o e-mail na resposta, sem depender do filtro de e-mail do histórico. Nenhuma lista geral de compradores é consultada ou armazenada.
+
 ## Conferência e atendimento
 
 `access_resend_requests` guarda hashes HMAC de e-mail/IP, o ID do pedido e o resultado interno: `accepted`, `sent`, `skipped` ou `failed`. Nunca guarda link, senha, HOTTOK ou payload de compra. A retenção dos registros é de 30 dias. O `request_key` permite relacionar o resultado ao `id_envio` do contato, sem copiar seus dados pessoais para a tabela de controle.

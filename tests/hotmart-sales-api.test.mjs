@@ -124,7 +124,7 @@ test("API: intervalo rejeitado usa datas padrão, preserva e-mail e reconfirmaç
   const { client, calls } = setup(url => {
     if (url.pathname.endsWith("/token")) return token
     if (url.pathname.endsWith("/products")) return catalog
-    assert.equal(url.searchParams.get("buyer_email"),EMAIL)
+    if (!url.searchParams.has("transaction")) assert.equal(url.searchParams.get("buyer_email"),EMAIL)
     if (url.searchParams.has("start_date")) return {status:400,body:{error:"invalid_parameter",error_description:"The request was unacceptable"}}
     return {items:[sale()]}
   })
@@ -132,6 +132,29 @@ test("API: intervalo rejeitado usa datas padrão, preserva e-mail e reconfirmaç
   assert.equal(purchase.productUcode,UCODE)
   assert.equal(calls.filter(call=>call.url.pathname.endsWith("/history")).length,2)
   assert.equal(await client.confirmPurchase(purchase),true)
+})
+
+test("API: participantes localizam transação; só o histórico confirma pagamento e comprador", async () => {
+  let actual = sale()
+  const { client, calls } = setup(url => {
+    if (url.pathname.endsWith("/token")) return token
+    if (url.pathname.endsWith("/products")) return catalog
+    if (url.pathname.endsWith("/users")) return {items:[
+      {transaction:"HP123",users:[{role:"BUYER",user:{email:EMAIL}}]},
+      {transaction:"HP456",users:[{role:"PRODUCER",user:{email:EMAIL}}]},
+      {transaction:"HP789",users:[{role:"BUYER",user:{email:"other@test.invalid"}}]},
+    ]}
+    if (url.searchParams.has("buyer_email")) return {status:400,body:{error:"invalid_parameter"}}
+    assert.equal(url.searchParams.get("transaction"),"HP123")
+    return {items:[actual]}
+  })
+  const [purchase] = await client.findPaidPurchases(EMAIL)
+  assert.equal(purchase.transaction,"HP123")
+  assert.equal(await client.confirmPurchase(purchase),true)
+  actual = sale({purchase:{...sale().purchase,status:"REFUNDED"}})
+  assert.equal(await client.confirmPurchase(purchase),false)
+  assert.deepEqual(await client.findPaidPurchases(EMAIL),[])
+  assert.ok(calls.filter(c=>c.url.pathname.endsWith("/users")).every(c=>c.url.searchParams.get("buyer_email")===EMAIL))
 })
 
 test("API: fallback não libera comprador diferente nem compra reembolsada", async () => {

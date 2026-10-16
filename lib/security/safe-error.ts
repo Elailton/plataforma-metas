@@ -33,7 +33,7 @@ export function logSafeServerError(context: string, error: unknown) {
   if (typeof metadata.parameter === "string" && ["start_date", "end_date", "max_results", "page_token", "buyer_email", "product_id", "transaction", "date_range"].includes(metadata.parameter)) {
     safeMetadata.parameter = metadata.parameter
   }
-  if (typeof metadata.operation === "string" && ["product_catalog", "confirm_transaction", "find_sales"].includes(metadata.operation)) {
+  if (typeof metadata.operation === "string" && ["product_catalog", "confirm_transaction", "find_sales", "find_participants"].includes(metadata.operation)) {
     safeMetadata.operation = metadata.operation
   }
 
