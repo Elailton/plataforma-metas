@@ -35,7 +35,7 @@ test("API: autenticação privada, compra antiga, paginação e identidade ID→
   assert.equal(purchases[0].offerCode, "authorized")
   assert.equal(calls[0].init.headers.Authorization, "Basic basic-value")
   assert.equal(calls[1].url.searchParams.get("buyer_email"), EMAIL)
-  assert.equal(calls[1].url.searchParams.get("start_date"), "0")
+  assert.equal(calls[1].url.searchParams.get("start_date"), String(Date.UTC(2020, 0, 1)))
   assert.equal(calls[1].init.headers.Authorization, "Bearer bearer-value")
   assert.ok(calls.every(call => call.init.redirect === "error" && call.init.cache === "no-store" && call.init.signal))
 })
