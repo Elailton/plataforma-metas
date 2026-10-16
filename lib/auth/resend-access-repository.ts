@@ -96,7 +96,9 @@ export function createResendAccessDependencies(): ResendDependencies {
       // Link de recuperação enviado somente ao próprio e-mail da conta: nenhuma senha
       // é alterada até que o titular abra o link e defina a nova senha no primeiro acesso.
       const { error } = await admin.auth.resetPasswordForEmail(email, { redirectTo: inviteRedirectUrl() })
+      if (error?.status === 429) return "cooldown"
       if (error) throw new Error("Falha ao enviar o e-mail de acesso.")
+      return "sent"
     },
   }
 }
