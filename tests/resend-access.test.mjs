@@ -133,3 +133,11 @@ test("recuperação: matrícula ativa preserva reenvio mesmo sem API configurada
   deps.recoverStudentAccess = async () => { assert.fail("API unnecessary for existing active access") }
   assert.equal((await run(deps, "buyer@test.invalid")).delivered, "sent")
 })
+
+test("reenvio: clique repetido recusado pelo Auth (429) fica como limited, não failed", async () => {
+  const deps = fakeDeps({ students: ["aluno@teste.com"] })
+  deps.sendAccessEmail = async () => "cooldown"
+  const result = await run(deps, "aluno@teste.com")
+  assert.equal(result.delivered, "limited")
+  assert.equal(deps.rows.at(-1).outcome, "limited")
+})

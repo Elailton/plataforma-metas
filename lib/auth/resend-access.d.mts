@@ -11,7 +11,8 @@ export interface ResendDependencies {
   updateOutcome(requestId: number | null, outcome: "sent" | "skipped" | "failed"): Promise<void>
   hasActiveStudentAccess(email: string): Promise<boolean>
   recoverStudentAccess?(email: string): Promise<void>
-  sendAccessEmail(email: string): Promise<void>
+  /** "cooldown" quando o Auth recusa por envio recente ao mesmo e-mail (HTTP 429). */
+  sendAccessEmail(email: string): Promise<"sent" | "cooldown" | void>
 }
 
 export declare function normalizeResendEmail(value: unknown): string | null

@@ -45,6 +45,7 @@ Referências oficiais: [autenticação Hotmart](https://developers.hotmart.com/d
 
 - `sent`: o serviço de autenticação aceitou o envio. Isso não comprova entrega na caixa de entrada.
 - `skipped`: não havia acesso elegível após a consulta; conferir e-mail exato da compra, status, produto/oferta, matrícula, publicação do curso e bloqueio antes de qualquer concessão.
+- `limited`: limite de frequência, ou clique repetido em segundos (o Auth recusa novo link ao mesmo e-mail por ~60 s). O link anterior continua válido; não é falha.
 - `failed`: falha no envio/consulta/configuração. Conferir logs de servidor `hotmart.access_recovery_failed` (somente código técnico, sem e-mail, respostas ou segredo) e Auth/SMTP. `hotmart_not_configured` indica credenciais ausentes; `hotmart_auth_failed` indica falha de autenticação; `hotmart_query_failed` inclui permissão insuficiente, limite ou erro de API. Não liberar acesso em razão do formulário.
 - `accepted` antigo: a etapa posterior à resposta pode ter sido interrompida; investigar antes de reenviar. Um novo pedido fica sujeito aos mesmos limites de frequência.
 
