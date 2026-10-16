@@ -8,7 +8,7 @@ export interface ResendDependencies {
   hash(value: string): string
   countRecent(input: { emailHash: string; ipHash: string; since: Date }): Promise<{ email: number; ip: number; total: number }>
   record(input: { emailHash: string; ipHash: string; outcome: "accepted" | "limited" }): Promise<number | null>
-  updateOutcome(requestId: number | null, outcome: "sent" | "skipped" | "failed"): Promise<void>
+  updateOutcome(requestId: number | null, outcome: "sent" | "skipped" | "failed" | "limited"): Promise<void>
   hasActiveStudentAccess(email: string): Promise<boolean>
   recoverStudentAccess?(email: string): Promise<void>
   /** "cooldown" quando o Auth recusa por envio recente ao mesmo e-mail (HTTP 429). */
@@ -27,9 +27,9 @@ export declare function acceptResendRequest(
 ): Promise<{
   message: string
   outcome: "invalid" | "limited" | "accepted"
-  deliver: (() => Promise<"sent" | "skipped" | "failed">) | null
+  deliver: (() => Promise<"sent" | "skipped" | "failed" | "limited">) | null
 }>
 export declare function deliverResend(
   input: { email: string; requestId: number | null },
   deps: ResendDependencies,
-): Promise<"sent" | "skipped" | "failed">
+): Promise<"sent" | "skipped" | "failed" | "limited">

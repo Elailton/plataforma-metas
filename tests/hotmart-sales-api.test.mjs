@@ -105,3 +105,17 @@ test("API: erros de rede não vazam credenciais, URL nem dados pessoais", async 
     return error.code === "hotmart_unavailable"
   })
 })
+
+test("API: diagnóstico identifica somente etapa/parâmetro permitido sem expor a descrição", async () => {
+  const { client } = setup(url => url.pathname.endsWith("/token") ? token : {status:400,body:{
+    error:"invalid_parameter",error_description:`Invalid start_date for ${EMAIL} secret basic-value`,
+  }})
+  await assert.rejects(client.findPaidPurchases(EMAIL), error => {
+    assert.equal(error.operation,"find_sales")
+    assert.equal(error.parameter,"start_date")
+    assert.equal(error.status,400)
+    assert.equal(JSON.stringify(error).includes(EMAIL),false)
+    assert.equal(JSON.stringify(error).includes("basic-value"),false)
+    return true
+  })
+})
