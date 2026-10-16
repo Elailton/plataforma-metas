@@ -4,6 +4,7 @@ type ErrorMetadata = {
   code?: unknown
   name?: unknown
   status?: unknown
+  detail?: unknown
 }
 
 /**
@@ -22,6 +23,10 @@ export function logSafeServerError(context: string, error: unknown) {
   }
   if (typeof metadata.status === "number" && Number.isInteger(metadata.status)) {
     safeMetadata.status = metadata.status
+  }
+
+  if (typeof metadata.detail === "string" && /^[A-Za-z0-9_.-]{1,60}$/.test(metadata.detail)) {
+    safeMetadata.detail = metadata.detail
   }
 
   console.error(`[security] ${context}`, safeMetadata)
