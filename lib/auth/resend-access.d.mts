@@ -10,6 +10,7 @@ export interface ResendDependencies {
   record(input: { emailHash: string; ipHash: string; outcome: "accepted" | "limited" }): Promise<number | null>
   updateOutcome(requestId: number | null, outcome: "sent" | "skipped" | "failed"): Promise<void>
   hasActiveStudentAccess(email: string): Promise<boolean>
+  recoverStudentAccess?(email: string): Promise<void>
   sendAccessEmail(email: string): Promise<void>
 }
 

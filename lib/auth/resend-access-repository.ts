@@ -4,6 +4,7 @@ import { createHmac, randomUUID } from "node:crypto"
 import { inviteRedirectUrl } from "@/lib/auth/invite-url"
 import { createAdminClient } from "@/lib/supabase/admin"
 import type { ResendDependencies } from "@/lib/auth/resend-access.mjs"
+import { recoverMissingHotmartAccess } from "@/lib/hotmart/recovery-repository"
 
 const RETENTION_DAYS = 30
 
@@ -19,6 +20,7 @@ export function createResendAccessDependencies(): ResendDependencies {
   const key = hashKey()
 
   return {
+    recoverStudentAccess: recoverMissingHotmartAccess,
     async reserve({ emailHash, ipHash, requestKey }) {
       const { data, error } = await admin.rpc("reserve_access_resend", {
         requested_key: requestKey || randomUUID(), requested_email_hash: emailHash, requested_ip_hash: ipHash,

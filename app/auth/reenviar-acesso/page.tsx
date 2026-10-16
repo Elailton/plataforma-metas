@@ -17,7 +17,7 @@ export default function ResendAccessPage() {
       <AuthCard
         icon={<MailCheck className="size-5" />}
         title="Reenviar acesso"
-        description="Informe o mesmo e-mail usado na compra. O link é enviado somente para alunos matriculados."
+        description="Informe o mesmo e-mail usado na compra. Vamos verificar seu acesso antes de enviar o link."
       >
         <ResendAccessForm />
       </AuthCard>

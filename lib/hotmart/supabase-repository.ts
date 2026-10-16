@@ -19,7 +19,7 @@ function throwDatabaseError(error: { message: string } | null) {
   }
 }
 
-export function createHotmartRepository(): HotmartRepository {
+export function createHotmartRepository({ sendInvitation = true } = {}): HotmartRepository {
   const supabase = createAdminClient()
 
   async function findUserByEmail(email: string | null) {
@@ -108,6 +108,21 @@ export function createHotmartRepository(): HotmartRepository {
     findUserByEmail,
 
     async inviteStudent({ email, fullName, avatarInitials }) {
+      if (!sendInvitation) {
+        // A verified API purchase creates the account without sending a message.
+        // Recovery sends exactly one link only AFTER effective access is checked.
+        const { data, error } = await supabase.auth.admin.createUser({
+          email, email_confirm: false,
+          user_metadata: { full_name: fullName, avatar_initials: avatarInitials, role: "student" },
+        })
+        if (error) {
+          const existingUserId = await findUserByEmail(email)
+          if (existingUserId) return existingUserId
+          throwSafeDatabaseError("hotmart.repository.create_failed", error, "Não foi possível provisionar a conta do aluno.")
+        }
+        if (!data.user) throw new Error("Não foi possível provisionar a conta do aluno.")
+        return data.user.id
+      }
       const { data, error } = await supabase.auth.admin.inviteUserByEmail(email, {
         redirectTo: inviteRedirectUrl(),
         data: {
