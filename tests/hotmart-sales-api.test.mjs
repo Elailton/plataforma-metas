@@ -108,14 +108,38 @@ test("API: erros de rede não vazam credenciais, URL nem dados pessoais", async 
 
 test("API: diagnóstico identifica somente etapa/parâmetro permitido sem expor a descrição", async () => {
   const { client } = setup(url => url.pathname.endsWith("/token") ? token : {status:400,body:{
-    error:"invalid_parameter",error_description:`Invalid start_date for ${EMAIL} secret basic-value`,
+    error:"invalid_parameter",error_description:`Invalid max_results for ${EMAIL} secret basic-value`,
   }})
   await assert.rejects(client.findPaidPurchases(EMAIL), error => {
     assert.equal(error.operation,"find_sales")
-    assert.equal(error.parameter,"start_date")
+    assert.equal(error.parameter,"max_results")
     assert.equal(error.status,400)
     assert.equal(JSON.stringify(error).includes(EMAIL),false)
     assert.equal(JSON.stringify(error).includes("basic-value"),false)
     return true
   })
+})
+
+test("API: intervalo rejeitado usa datas padrão, preserva e-mail e reconfirmação", async () => {
+  const { client, calls } = setup(url => {
+    if (url.pathname.endsWith("/token")) return token
+    if (url.pathname.endsWith("/products")) return catalog
+    assert.equal(url.searchParams.get("buyer_email"),EMAIL)
+    if (url.searchParams.has("start_date")) return {status:400,body:{error:"invalid_parameter",error_description:"The request was unacceptable"}}
+    return {items:[sale()]}
+  })
+  const [purchase] = await client.findPaidPurchases(EMAIL)
+  assert.equal(purchase.productUcode,UCODE)
+  assert.equal(calls.filter(call=>call.url.pathname.endsWith("/history")).length,2)
+  assert.equal(await client.confirmPurchase(purchase),true)
+})
+
+test("API: fallback não libera comprador diferente nem compra reembolsada", async () => {
+  const { client, calls } = setup(url => {
+    if (url.pathname.endsWith("/token")) return token
+    if (url.searchParams.has("start_date")) return {status:400,body:{error:"invalid_parameter",error_description:"Invalid start_date"}}
+    return {items:[sale({buyer:{email:"other@test.invalid"}}),sale({purchase:{...sale().purchase,status:"REFUNDED"}})]}
+  })
+  assert.deepEqual(await client.findPaidPurchases(EMAIL),[])
+  assert.equal(calls.length,3)
 })

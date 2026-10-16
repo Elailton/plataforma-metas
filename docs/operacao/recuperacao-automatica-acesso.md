@@ -39,6 +39,8 @@ Não colar credenciais em chats, commits ou no projeto diagnóstico. Depois de s
 
 Referências oficiais: [autenticação Hotmart](https://developers.hotmart.com/docs/pt-BR/start/app-auth/), [histórico de vendas](https://developers.hotmart.com/docs/en/v1/sales/sales-history/), [catálogo de produtos](https://developers.hotmart.com/docs/en/v1/product/product-list/).
 
+Compatibilidade da busca: a primeira consulta solicita o histórico desde 2020. Se a Hotmart recusar o intervalo com `400 invalid_parameter`, a aplicação repete a busca sem as datas opcionais, preservando o filtro de e-mail e todas as verificações de acesso. Nesse caso a abrangência temporal é a padrão da Hotmart; ausência de resultado exige conferir uma compra antiga no atendimento. Falhas de autenticação, limite de requisições, rede ou paginação não acionam essa alternativa. Os logs indicam a etapa e, quando informado pela Hotmart, somente o nome do parâmetro rejeitado, sem guardar a descrição da resposta.
+
 ## Conferência e atendimento
 
 `access_resend_requests` guarda hashes HMAC de e-mail/IP, o ID do pedido e o resultado interno: `accepted`, `sent`, `skipped` ou `failed`. Nunca guarda link, senha, HOTTOK ou payload de compra. A retenção dos registros é de 30 dias. O `request_key` permite relacionar o resultado ao `id_envio` do contato, sem copiar seus dados pessoais para a tabela de controle.
