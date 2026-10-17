@@ -14,9 +14,15 @@ export const metadata: Metadata = {
   applicationName: BRAND_NAME,
   description:
     'Acompanhe suas metas de estudo, o progresso no edital e a evolução por disciplina em um só lugar.',
-  generator: 'v0.app',
+  manifest: '/manifest.webmanifest',
+  appleWebApp: { capable: true, title: BRAND_NAME, statusBarStyle: 'black-translucent' },
   icons: {
-    icon: [{ url: '/logo-el-branca-transparente.png', type: 'image/png' }],
+    icon: [
+      { url: '/brand/sga-dark-32.png', type: 'image/png', sizes: '32x32' },
+      { url: '/brand/sga-dark-16.png', type: 'image/png', sizes: '16x16' },
+    ],
+    shortcut: '/brand/sga-dark-32.png',
+    apple: [{ url: '/brand/sga-dark-180.png', sizes: '180x180', type: 'image/png' }],
   },
 }
 

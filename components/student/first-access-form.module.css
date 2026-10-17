@@ -18,13 +18,9 @@
   gap: 12px;
 }
 .logo {
-  background: #ffe202;
-  color: #131417;
-  border-radius: 12px;
-  padding: 12px;
-  font-size: 20px;
-  font-weight: 900;
-  letter-spacing: -1px;
+  width: 80px;
+  height: auto;
+  flex-shrink: 0;
 }
 .header strong {
   font-size: 14px;

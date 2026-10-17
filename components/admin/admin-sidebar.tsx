@@ -1,6 +1,6 @@
 "use client"
 
-import { BrandLockup } from "@/components/brand-skull"
+import { BrandLockup } from "@/components/brand-logo"
 
 import Link from "next/link"
 import { usePathname } from "next/navigation"

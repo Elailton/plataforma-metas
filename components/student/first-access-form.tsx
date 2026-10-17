@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useMemo, useRef, useState } from "react";
+import { BrandLogo } from "@/components/brand-logo";
 import { useRouter } from "next/navigation";
 import { ArrowRight, Check, ChevronLeft, LockKeyhole } from "lucide-react";
 import { submitFirstAccessQuestionnaire } from "@/lib/groups/student-actions";
@@ -147,7 +148,7 @@ export function FirstAccessForm({
   return (
     <main className={styles.page}>
       <header className={styles.header}>
-        <span className={styles.logo}>SG</span>
+        <BrandLogo className={styles.logo} alt="" aria-hidden="true" />
         <div>
           <strong>Sistema Guiado da Aprovação</strong>
           <small>SEU PRIMEIRO ACESSO</small>
