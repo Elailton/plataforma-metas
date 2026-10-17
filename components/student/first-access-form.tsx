@@ -149,7 +149,7 @@ export function FirstAccessForm({
       <header className={styles.header}>
         <span className={styles.logo}>SG</span>
         <div>
-          <strong>Sistema Guiado de Aprovação</strong>
+          <strong>Sistema Guiado da Aprovação</strong>
           <small>SEU PRIMEIRO ACESSO</small>
         </div>
         <span className={styles.secure}>
@@ -483,7 +483,7 @@ export function FirstAccessForm({
         </div>
       </section>
       <footer className={styles.footer}>
-        Sistema Guiado de Aprovação · Cada etapa conta.
+        Sistema Guiado da Aprovação · Cada etapa conta.
       </footer>
     </main>
   );

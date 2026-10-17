@@ -40,7 +40,7 @@
 
 ## Texto para a trilha da Hotmart
 
-> **Acesse o Sistema Guiado de Aprovação**
+> **Acesse o Sistema Guiado da Aprovação**
 > Entre em https://mentoria.cursoprofericklima.com.br/auth/login com o mesmo e-mail da compra.
 > No primeiro acesso, use o link enviado por e-mail para definir sua senha.
 > Não recebeu? Peça um novo link em https://mentoria.cursoprofericklima.com.br/auth/reenviar-acesso

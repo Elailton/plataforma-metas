@@ -34,7 +34,7 @@ export default async function ConfirmAccessPage({
       <AuthCard
         icon={<KeyRound className="size-5" />}
         title={resolved.type === "invite" ? "Seu acesso está pronto" : "Redefinir acesso"}
-        description="Toque em continuar para criar sua senha e entrar no Sistema Guiado de Aprovação."
+        description="Toque em continuar para criar sua senha e entrar no Sistema Guiado da Aprovação."
       >
         <ConfirmAccessButton tokenHash={resolved.tokenHash} type={resolved.type} next={resolved.next} />
       </AuthCard>
