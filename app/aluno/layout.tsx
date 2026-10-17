@@ -1,3 +1,4 @@
+import { InstallAppProvider } from "@/components/student/install-app"
 import type React from "react"
 import { redirect } from "next/navigation"
 import { SideNav } from "@/components/student/side-nav"
@@ -25,17 +26,19 @@ export default async function StudentLayout({
     redirect("/auth/primeiro-acesso")
 
   return (
-    <div className="flex min-h-screen bg-background">
-      <SideNav courses={context.courses} currentCourse={context.currentCourse} />
-      <div className="flex min-h-screen min-w-0 flex-1 flex-col">
-        <MobileTopbar
-          courses={context.courses}
-          currentCourse={context.currentCourse}
-          avatarInitials={context.profile.avatarInitials}
-        />
-        <main className="flex-1 pb-[calc(4.5rem+env(safe-area-inset-bottom))] md:pb-0">{children}</main>
-        <BottomNav />
+    <InstallAppProvider>
+      <div className="flex min-h-screen bg-background">
+        <SideNav courses={context.courses} currentCourse={context.currentCourse} />
+        <div className="flex min-h-screen min-w-0 flex-1 flex-col">
+          <MobileTopbar
+            courses={context.courses}
+            currentCourse={context.currentCourse}
+            avatarInitials={context.profile.avatarInitials}
+          />
+          <main className="flex-1 pb-[calc(4.5rem+env(safe-area-inset-bottom))] md:pb-0">{children}</main>
+          <BottomNav />
+        </div>
       </div>
-    </div>
+    </InstallAppProvider>
   )
 }

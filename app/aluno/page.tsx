@@ -1,3 +1,4 @@
+import { InstallApp } from "@/components/student/install-app"
 import { studySummary } from "@/lib/groups/questionnaire.mjs"
 import Link from "next/link"
 import { redirect } from "next/navigation"
@@ -53,6 +54,8 @@ export default async function StudentHomePage() {
         title={snapshot.course.name}
         description={summary.length > 0 ? summary.join(" · ") : "Seu plano de estudos e o progresso no edital."}
       />
+
+      <InstallApp />
 
       <div className="mb-8 grid grid-cols-2 gap-3 md:mb-10 md:grid-cols-3 md:gap-4">
         <StatCard
