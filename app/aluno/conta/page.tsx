@@ -1,3 +1,4 @@
+import { InstallApp } from "@/components/student/install-app"
 import { studySummary } from "@/lib/groups/questionnaire.mjs"
 import { redirect } from "next/navigation"
 import { LogOut, Mail, GraduationCap, ChevronRight, Pencil, LifeBuoy } from "lucide-react"
@@ -87,6 +88,8 @@ export default async function AccountPage() {
             </div>
           </section>
         ))}
+
+      <InstallApp variant="account" />
 
       <section aria-labelledby="preferencias" className="mb-8">
         <SectionHeader title={<span id="preferencias">Configurações</span>} />
