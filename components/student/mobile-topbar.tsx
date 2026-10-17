@@ -1,5 +1,5 @@
 
-import { BrandSkull } from "@/components/brand-skull"
+import { BrandLogo } from "@/components/brand-logo"
 import Link from "next/link"
 import { Avatar, AvatarFallback } from "@/components/ui/avatar"
 import { CourseSwitcher } from "@/components/student/course-switcher"
@@ -19,7 +19,7 @@ export function MobileTopbar({
     <header className="sticky top-0 z-30 border-b border-border bg-background/90 backdrop-blur supports-backdrop-filter:bg-background/75 md:hidden">
       <div className="flex items-center justify-between gap-3 px-4 py-2.5">
         <Link href="/aluno" className="flex min-w-0 items-center gap-2.5" aria-label={`${BRAND_NAME} — início`}>
-          <BrandSkull className="size-7 shrink-0" alt="" aria-hidden="true" />
+          <BrandLogo className="h-6 w-14 shrink-0" alt="" aria-hidden="true" />
           <span className="truncate text-[13px] font-semibold tracking-tight text-foreground">{BRAND_NAME}</span>
         </Link>
         <Link href="/aluno/conta" aria-label="Minha conta" className="shrink-0 rounded-full focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring">

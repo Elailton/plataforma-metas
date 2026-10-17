@@ -1,5 +1,5 @@
 import type React from "react"
-import { BrandLockup } from "@/components/brand-skull"
+import { BrandLockup } from "@/components/brand-logo"
 import { cn } from "@/lib/utils"
 
 /** Moldura das telas públicas e de acesso: marca no topo e conteúdo centralizado. */
