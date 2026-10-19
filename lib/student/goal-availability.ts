@@ -1,4 +1,3 @@
-import { isGoalReleased } from "@/lib/goals/release.mjs"
 import type { GoalLockReason } from "@/lib/student/types"
 
 /** Texto de disponibilidade da meta para o aluno (cartões e detalhe). */
@@ -8,10 +7,6 @@ export function goalAvailabilityLabel(
   fallback = "Disponível imediatamente",
 ): string {
   if (goal.isReleased) return goal.dueDate ? `Liberada em ${formatDate(goal.dueDate)}` : fallback
-  if (goal.lockReason === "previous") {
-    return goal.dueDate && !isGoalReleased(goal.dueDate)
-      ? `Libera ao concluir a meta anterior, a partir de ${formatDate(goal.dueDate)}`
-      : "Libera ao concluir a meta anterior"
-  }
+  if (goal.lockReason === "previous") return "Conclua a meta anterior"
   return goal.dueDate ? `Libera em ${formatDate(goal.dueDate)}` : fallback
 }

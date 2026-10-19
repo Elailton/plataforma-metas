@@ -69,7 +69,7 @@ export async function setGoalItemCompleted(goalItemId: string, completed: boolea
   const studentGoal = snapshot?.goals.find((candidate) => candidate.id === item.goal_id)
   if (!studentGoal) throw new Error("Esta meta não está disponível.")
   if (studentGoal.lockReason === "previous") {
-    throw new Error("Conclua a meta anterior para liberar esta meta.")
+    throw new Error("Conclua a meta anterior.")
   }
 
   const { data: enrollment } = await supabase
