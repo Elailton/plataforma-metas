@@ -39,7 +39,8 @@ export default async function StudentHomePage() {
     snapshot.goals.find(
       (goal) => goal.isReleased && goal.progressStatus === "pending",
     ) ??
-    snapshot.goals.find((goal) => !goal.isReleased)
+    // Meta com data futura nunca aparece para o aluno; só as que esperam a anterior.
+    snapshot.goals.find((goal) => !goal.isReleased && goal.isDateReleased)
   // O aluno não vê o cronograma inteiro: últimas liberadas ou, antes disso, só a próxima.
   const goalWindow = studentGoalWindow(snapshot.goals)
   const recentGoals =

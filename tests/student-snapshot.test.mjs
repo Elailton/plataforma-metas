@@ -103,9 +103,10 @@ test("resumo de lista não leva itens nem materiais", () => {
   assert.deepEqual(summary.subjectNames, ["Português"])
 })
 
-const windowGoal = (number, { done = false, released = false } = {}) => ({
+const windowGoal = (number, { done = false, released = false, dated = true } = {}) => ({
   number,
   isReleased: released,
+  isDateReleased: dated,
   totalItems: 2,
   completedItems: done ? 2 : 0,
 })
@@ -135,6 +136,25 @@ test("aluno vê as metas até 10 à frente da atual (primeira não concluída)",
   assert.deepEqual(done.upcoming, [])
   assert.equal(done.recent.length, 5)
   assert.equal(done.visible.length, 81)
+})
+
+test("meta com data futura não aparece nem como prévia", async () => {
+  const { studentGoalWindow } = await import("../lib/student/snapshot.mjs")
+  // Hoje é dia da Meta 8: a 8 está em andamento; da 9 em diante a data não chegou.
+  const goals = Array.from({ length: 30 }, (_, index) =>
+    windowGoal(index + 1, { done: index < 7, released: index < 8, dated: index < 8 }),
+  )
+  const view = studentGoalWindow(goals)
+  assert.deepEqual(view.upcoming, [])
+  assert.equal(view.next, null)
+  assert.equal(view.visible.at(-1).number, 8)
+
+  // Atrasado na Meta 2 com a data da Meta 8: vê da 2 à 8 (bloqueadas pela anterior), nada além.
+  const behind = studentGoalWindow(
+    goals.map((goal) => ({ ...goal, completedItems: goal.number < 2 ? 2 : 0, isReleased: goal.number <= 2 })),
+  )
+  assert.deepEqual(behind.upcoming.map((goal) => goal.number), [3, 4, 5, 6, 7, 8])
+  assert.equal(behind.visible.at(-1).number, 8)
 })
 
 test("meta só libera com a data alcançada E a anterior concluída", () => {
