@@ -65,7 +65,7 @@ export function withSequentialRelease<T extends { isDateReleased: boolean; total
   list: T[],
 ): T & { isReleased: boolean; lockReason: "previous" | "date" | null }
 export const GOAL_PREVIEW_WINDOW: number
-export function studentGoalWindow<T extends { isReleased: boolean; totalItems: number; completedItems: number }>(
+export function studentGoalWindow<T extends { isReleased: boolean; isDateReleased: boolean; totalItems: number; completedItems: number }>(
   goals: T[],
   limit?: number,
   preview?: number,
