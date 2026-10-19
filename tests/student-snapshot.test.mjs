@@ -99,26 +99,86 @@ test("monta metas, materiais e edital com progresso sem contar tópico repetido"
 test("resumo de lista não leva itens nem materiais", () => {
   const snapshot = buildStudentSnapshot({ subjects, goals, completedItemIds: [], now: new Date("2026-10-13T15:00:00Z") })
   const summary = toGoalSummary(snapshot.goals[1])
-  assert.deepEqual(Object.keys(summary).sort(), ["dueDate", "id", "isReleased", "number", "progress", "progressStatus", "subjectNames", "title"])
+  assert.deepEqual(Object.keys(summary).sort(), ["dueDate", "id", "isReleased", "lockReason", "number", "progress", "progressStatus", "subjectNames", "title"])
   assert.deepEqual(summary.subjectNames, ["Português"])
 })
 
-test("aluno vê só as 5 últimas liberadas, as anteriores à parte e a prévia da próxima", async () => {
-  const { studentGoalWindow } = await import("../lib/student/snapshot.mjs")
-  const goals = Array.from({ length: 81 }, (_, index) => ({ number: index + 1, isReleased: index < 7 }))
-  const view = studentGoalWindow(goals)
-  assert.deepEqual(view.recent.map((goal) => goal.number), [7, 6, 5, 4, 3])
-  assert.deepEqual(view.earlier.map((goal) => goal.number), [2, 1])
-  assert.equal(view.next.number, 8)
-  assert.equal(view.visible.length, 8)
-  assert.equal(view.releasedCount, 7)
+const windowGoal = (number, { done = false, released = false } = {}) => ({
+  number,
+  isReleased: released,
+  totalItems: 2,
+  completedItems: done ? 2 : 0,
+})
 
-  const start = studentGoalWindow(goals.map((goal) => ({ ...goal, isReleased: goal.number === 1 })))
+test("aluno vê as metas até 10 à frente da atual (primeira não concluída)", async () => {
+  const { studentGoalWindow } = await import("../lib/student/snapshot.mjs")
+  // Concluiu as metas 1 a 7; a 8 é a atual e está liberada.
+  const goals = Array.from({ length: 81 }, (_, index) =>
+    windowGoal(index + 1, { done: index < 7, released: index < 8 }),
+  )
+  const view = studentGoalWindow(goals)
+  assert.deepEqual(view.recent.map((goal) => goal.number), [8, 7, 6, 5, 4])
+  assert.deepEqual(view.earlier.map((goal) => goal.number), [3, 2, 1])
+  assert.deepEqual(view.upcoming.map((goal) => goal.number), [9, 10, 11, 12, 13, 14, 15, 16, 17])
+  assert.equal(view.next.number, 9)
+  assert.equal(view.visible.length, 17)
+  assert.equal(view.releasedCount, 8)
+
+  // Não concluiu a Meta 1: aparecem só até a Meta 10.
+  const start = studentGoalWindow(goals.map((goal) => ({ ...goal, completedItems: 0, isReleased: goal.number === 1 })))
   assert.deepEqual(start.recent.map((goal) => goal.number), [1])
   assert.equal(start.next.number, 2)
-  const done = studentGoalWindow(goals.map((goal) => ({ ...goal, isReleased: true })))
+  assert.equal(start.visible.at(-1).number, 10)
+
+  const done = studentGoalWindow(goals.map((goal) => ({ ...goal, completedItems: 2, isReleased: true })))
   assert.equal(done.next, null)
+  assert.deepEqual(done.upcoming, [])
   assert.equal(done.recent.length, 5)
+  assert.equal(done.visible.length, 81)
+})
+
+test("meta só libera com a data alcançada E a anterior concluída", () => {
+  const now = new Date("2026-10-27T15:00:00Z")
+  const seq = [
+    { id: "a", course_id: "c", title: "Meta 1", due_date: "2026-10-26", created_at: CREATED, goal_items: [item("a1", "pt", "pt1", 0)] },
+    { id: "b", course_id: "c", title: "Meta 2", due_date: "2026-10-27", created_at: CREATED, goal_items: [item("b1", "pt", "pt2", 0)] },
+    { id: "c", course_id: "c", title: "Meta 3", due_date: "2026-10-28", created_at: CREATED, goal_items: [item("c1", "rl", "rl1", 0)] },
+  ]
+  const state = (completedItemIds) =>
+    buildStudentSnapshot({ subjects, goals: seq, completedItemIds, now }).goals.map((goal) => [
+      goal.number,
+      goal.isReleased,
+      goal.lockReason,
+    ])
+  // Comprou no dia 27 sem concluir nada: a Meta 2 já tem data, mas espera a Meta 1.
+  assert.deepEqual(state([]), [
+    [1, true, null],
+    [2, false, "previous"],
+    [3, false, "previous"],
+  ])
+  // Concluiu a Meta 1: a 2 abre; a 3 ainda depende da 2 (e da data).
+  assert.deepEqual(state(["a1"]), [
+    [1, true, null],
+    [2, true, null],
+    [3, false, "previous"],
+  ])
+  // Concluiu a 1 e a 2 antes do dia 28: a 3 espera só a data.
+  assert.deepEqual(state(["a1", "b1"]), [
+    [1, true, null],
+    [2, true, null],
+    [3, false, "date"],
+  ])
+})
+
+test("meta sem itens não trava a sequência", () => {
+  const snapshot = buildStudentSnapshot({ subjects, goals, completedItemIds: [], now: new Date("2026-10-20T12:00:00Z") })
+  // g0 (Meta 0) não tem itens: a Meta 01 abre; a 02 espera a 01.
+  assert.deepEqual(snapshot.goals.map((goal) => [goal.number, goal.isReleased]), [
+    [0, true],
+    [1, true],
+    [2, false],
+    [3, false],
+  ])
 })
 
 test("Meta 0 é concluível sem avançar o edital e não desloca as metas seguintes", () => {

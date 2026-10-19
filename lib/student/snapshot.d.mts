@@ -58,7 +58,15 @@ export function buildStudentSnapshot(input: {
   editalPercentage: number
 }
 export function toGoalSummary(goal: StudentGoal): StudentGoalSummary
-export function studentGoalWindow<T extends { isReleased: boolean }>(
+export function isGoalComplete(goal: { totalItems: number; completedItems: number }): boolean
+export function withSequentialRelease<T extends { isDateReleased: boolean; totalItems: number; completedItems: number }>(
+  goal: T,
+  index: number,
+  list: T[],
+): T & { isReleased: boolean; lockReason: "previous" | "date" | null }
+export const GOAL_PREVIEW_WINDOW: number
+export function studentGoalWindow<T extends { isReleased: boolean; totalItems: number; completedItems: number }>(
   goals: T[],
   limit?: number,
-): { next: T | null; recent: T[]; earlier: T[]; visible: T[]; releasedCount: number }
+  preview?: number,
+): { next: T | null; upcoming: T[]; recent: T[]; earlier: T[]; visible: T[]; releasedCount: number }

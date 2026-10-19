@@ -1,4 +1,5 @@
 export type StudentGoalStatus = "pending" | "in_progress" | "completed"
+export type GoalLockReason = "previous" | "date" | null
 export type StudentMaterialType = "videoaula" | "apostila" | "link"
 
 export interface StudentCourse {
@@ -41,7 +42,12 @@ export interface StudentGoal {
   title: string
   description: string | null
   dueDate: string | null
+  /** A data de liberação já chegou (não considera a meta anterior). */
+  isDateReleased: boolean
+  /** Liberada de fato: data alcançada e todas as metas anteriores concluídas. */
   isReleased: boolean
+  /** Por que está bloqueada: falta concluir a anterior, ou só falta a data. */
+  lockReason: GoalLockReason
   items: StudentGoalItem[]
   completedItems: number
   totalItems: number
@@ -56,6 +62,7 @@ export interface StudentGoalSummary {
   title: string
   dueDate: string | null
   isReleased: boolean
+  lockReason: GoalLockReason
   progress: number
   progressStatus: StudentGoalStatus
   subjectNames: string[]

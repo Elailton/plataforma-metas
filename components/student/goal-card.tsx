@@ -4,13 +4,12 @@ import { Progress } from "@/components/ui/progress"
 import { StatusBadge } from "@/components/status-badge"
 import type { StudentGoalSummary } from "@/lib/student/types"
 import { formatDate } from "@/lib/format"
+import { goalAvailabilityLabel } from "@/lib/student/goal-availability"
 import { cn } from "@/lib/utils"
 
 export function GoalCard({ goal }: { goal: StudentGoalSummary }) {
   const disciplineNames = goal.subjectNames
-  const releaseLabel = goal.dueDate
-    ? `${goal.isReleased ? "Liberada em" : "Libera em"} ${formatDate(goal.dueDate)}`
-    : "Disponível imediatamente"
+  const releaseLabel = goalAvailabilityLabel(goal, formatDate)
 
   const content = (
     <>
