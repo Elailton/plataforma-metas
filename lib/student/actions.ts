@@ -4,7 +4,7 @@ import { cookies } from "next/headers"
 import { redirect } from "next/navigation"
 import { revalidatePath } from "next/cache"
 import { createClient } from "@/lib/supabase/server"
-import { STUDENT_COURSE_COOKIE } from "@/lib/student/queries"
+import { STUDENT_COURSE_COOKIE, getStudentCourseSnapshot } from "@/lib/student/queries"
 import { isGoalReleased } from "@/lib/goals/release.mjs"
 import { formatDateLong } from "@/lib/format"
 
@@ -63,6 +63,13 @@ export async function setGoalItemCompleted(goalItemId: string, completed: boolea
   if (!goal || goal.status !== "published") throw new Error("Esta meta não está disponível.")
   if (!isGoalReleased(goal.due_date)) {
     throw new Error(`Esta meta estará disponível a partir de ${formatDateLong(goal.due_date)}.`)
+  }
+  // Além da data, a meta só abre com todas as anteriores concluídas (mesma regra da tela).
+  const snapshot = await getStudentCourseSnapshot(goal.course_id)
+  const studentGoal = snapshot?.goals.find((candidate) => candidate.id === item.goal_id)
+  if (!studentGoal) throw new Error("Esta meta não está disponível.")
+  if (studentGoal.lockReason === "previous") {
+    throw new Error("Conclua a meta anterior para liberar esta meta.")
   }
 
   const { data: enrollment } = await supabase

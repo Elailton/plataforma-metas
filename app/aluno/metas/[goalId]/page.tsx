@@ -9,6 +9,7 @@ import { SectionHeader } from "@/components/page-header"
 import { getStudentContext, getStudentCourseSnapshot } from "@/lib/student/queries"
 import { studentGoalWindow } from "@/lib/student/snapshot.mjs"
 import { formatDateLong } from "@/lib/format"
+import { goalAvailabilityLabel } from "@/lib/student/goal-availability"
 import { GoalReleaseRefresh } from "@/components/student/goal-release-refresh"
 
 export default async function GoalDetailPage({
@@ -20,7 +21,7 @@ export default async function GoalDetailPage({
   const context = await getStudentContext()
   if (!context) notFound()
   const snapshot = await getStudentCourseSnapshot(context.currentCourse.id)
-  // Metas futuras além da próxima não são abertas nem por link direto.
+  // Metas além da janela de prévia não são abertas nem por link direto.
   const goal = snapshot ? studentGoalWindow(snapshot.goals).visible.find((candidate) => candidate.id === goalId) : undefined
   if (!goal) notFound()
 
@@ -32,15 +33,13 @@ export default async function GoalDetailPage({
         title={goal.title}
         action={<StatusBadge status={goal.isReleased ? goal.progressStatus : "locked"} />}
       />
-      <GoalReleaseRefresh releaseDate={goal.dueDate} released={goal.isReleased} />
+      <GoalReleaseRefresh releaseDate={goal.dueDate} released={goal.lockReason !== "date"} />
 
       <div className="mb-8 flex flex-col gap-4 rounded-xl border border-border bg-card p-4 md:p-5">
         <div className="flex flex-wrap items-center justify-between gap-x-4 gap-y-1.5">
           <span className="flex items-center gap-1.5 text-sm text-muted-foreground">
             <CalendarDays className="size-4" aria-hidden="true" />
-            {goal.dueDate
-              ? `${goal.isReleased ? "Liberada em" : "Libera em"} ${formatDateLong(goal.dueDate)}`
-              : "Disponível imediatamente"}
+            {goalAvailabilityLabel(goal, formatDateLong)}
           </span>
           <span className="text-sm text-muted-foreground">
             <span className="font-semibold tabular-nums text-foreground">{goal.completedItems}</span> de{" "}

@@ -13,15 +13,17 @@ type Filter = "all" | "in_progress" | "completed"
 export function GoalsFilter({
   recent,
   earlier,
-  next,
+  upcoming,
 }: {
   recent: StudentGoalSummary[]
   earlier: StudentGoalSummary[]
-  next: StudentGoalSummary | null
+  /** Metas bloqueadas dentro da janela de prévia, em ordem. */
+  upcoming: StudentGoalSummary[]
 }) {
   const [filter, setFilter] = useState<Filter>("all")
   const [showEarlier, setShowEarlier] = useState(false)
   const released = useMemo(() => [...recent, ...earlier], [recent, earlier])
+  const next = upcoming[0] ?? null
 
   // Filtrando por status, busca em todas as liberadas; em "Todas", só as 5 últimas.
   const filtered = useMemo(() => {
@@ -31,7 +33,7 @@ export function GoalsFilter({
 
   return (
     <div className="flex flex-col gap-5">
-      {next ? <GoalReleaseRefresh releaseDate={next.dueDate} released={next.isReleased} /> : null}
+      {next ? <GoalReleaseRefresh releaseDate={next.dueDate} released={next.lockReason !== "date"} /> : null}
       <ToggleGroup
         value={[filter]}
         onValueChange={(value) => value[0] && setFilter(value[0] as Filter)}
@@ -65,11 +67,13 @@ export function GoalsFilter({
       ) : (
         <div className="flex flex-col gap-3">
           {filter === "all" && next ? (
-            <section aria-labelledby="proxima-meta" className="flex flex-col gap-2">
-              <h2 id="proxima-meta" className="text-xs font-medium uppercase tracking-wider text-muted-foreground">
-                Próxima meta
+            <section aria-labelledby="proximas-metas" className="flex flex-col gap-2">
+              <h2 id="proximas-metas" className="text-xs font-medium uppercase tracking-wider text-muted-foreground">
+                {upcoming.length === 1 ? "Próxima meta" : "Próximas metas"}
               </h2>
-              <GoalCard goal={next} />
+              {upcoming.map((goal) => (
+                <GoalCard key={goal.id} goal={goal} />
+              ))}
             </section>
           ) : null}
           {filter === "all" && next && filtered.length > 0 ? (

@@ -4,6 +4,7 @@ import { Button } from "@/components/ui/button"
 import { Progress } from "@/components/ui/progress"
 import type { StudentGoal } from "@/lib/student/types"
 import { formatDate } from "@/lib/format"
+import { goalAvailabilityLabel } from "@/lib/student/goal-availability"
 import { GoalReleaseRefresh } from "@/components/student/goal-release-refresh"
 import { cn } from "@/lib/utils"
 
@@ -20,7 +21,7 @@ export function NextGoalCard({ goal }: { goal: StudentGoal }) {
           : "select-none border-border/50 bg-black/30 opacity-75",
       )}
     >
-      <GoalReleaseRefresh releaseDate={goal.dueDate} released={goal.isReleased} />
+      <GoalReleaseRefresh releaseDate={goal.dueDate} released={goal.lockReason !== "date"} />
       <div className="flex items-center justify-between gap-3">
         <span className="flex items-center gap-2 text-xs font-medium uppercase tracking-wider text-muted-foreground">
           <Target className={cn("size-4", goal.isReleased && "text-primary")} aria-hidden="true" />
@@ -28,7 +29,7 @@ export function NextGoalCard({ goal }: { goal: StudentGoal }) {
         </span>
         <span className="flex items-center gap-1.5 text-xs text-muted-foreground">
           <CalendarDays className="size-3.5" aria-hidden="true" />
-          {goal.dueDate ? `${goal.isReleased ? "Liberada em" : "Libera em"} ${formatDate(goal.dueDate)}` : "Disponível"}
+          {goalAvailabilityLabel(goal, formatDate, "Disponível")}
         </span>
       </div>
 
