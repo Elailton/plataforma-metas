@@ -6,6 +6,7 @@ import { useRouter } from "next/navigation";
 import { ArrowRight, Check, ChevronLeft, LockKeyhole } from "lucide-react";
 import { submitFirstAccessQuestionnaire } from "@/lib/groups/student-actions";
 import { createClient } from "@/lib/supabase/client";
+import { passwordErrorMessage } from "@/lib/auth/password-error.mjs";
 import {
   formatWhatsapp,
   isValidWhatsapp,
@@ -124,10 +125,7 @@ export function FirstAccessForm({
       const { error: updateError } = await createClient().auth.updateUser({
         password,
       });
-      if (updateError)
-        throw new Error(
-          "Não foi possível definir sua senha. Tente novamente ou solicite um novo convite.",
-        );
+      if (updateError) throw new Error(passwordErrorMessage(updateError));
       try {
         sessionStorage.removeItem(storageKey);
       } catch {
@@ -449,8 +447,9 @@ export function FirstAccessForm({
                   Mostrar senha
                 </label>
                 <p className={styles.note}>
-                  Use pelo menos 8 caracteres. Sua senha não é guardada no
-                  rascunho.
+                  Use pelo menos 8 caracteres, misturando letras, números e
+                  símbolos. Senhas comuns (como 12345678 ou seu nome com o ano)
+                  são recusadas. Sua senha não é guardada no rascunho.
                 </p>
                 {error && (
                   <p role="alert" className={styles.error}>
