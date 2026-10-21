@@ -133,3 +133,20 @@ Gabarito: A`)
   assert.equal(parsed[1].statement, "Outra questão")
   assert.equal(parsed[1].correctKey, "A")
 })
+
+test("simulados semanais (sem disciplina) vêm primeiro, ordenados pela semana", async () => {
+  const { groupQuizzesBySubject, WEEKLY_GROUP_ID } = await import("../lib/mini-quizzes/core.mjs")
+  const groups = groupQuizzesBySubject({
+    subjects: [{ id: "pt", name: "Português", position: 1 }],
+    quizzes: [
+      { id: "w2", subject_id: null, title: "Semana 2", week_number: 2, release_date: "2026-11-08" },
+      { id: "p1", subject_id: "pt", title: "Crase", position: 1 },
+      { id: "w1", subject_id: null, title: "Semana 1", week_number: 1, release_date: "2026-11-01" },
+    ],
+    questionCounts: { w1: 50, w2: 50, p1: 10 },
+    attempts: [],
+  })
+  assert.deepEqual(groups.map((group) => group.id), [WEEKLY_GROUP_ID, "pt"])
+  assert.equal(groups[0].name, "Simulados semanais")
+  assert.deepEqual(groups[0].quizzes.map((quiz) => [quiz.id, quiz.weekNumber, quiz.questionCount]), [["w1", 1, 50], ["w2", 2, 50]])
+})

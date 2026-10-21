@@ -34,6 +34,13 @@ function fail(event: string, error: unknown, message: string): never {
 }
 
 /** Disciplinas do curso com os assuntos do edital (para nomes e diagnóstico). */
+/** Rótulo acima do título: disciplina ou, no simulado semanal, a semana. */
+function quizLabel(subject: unknown, weekNumber: number | null | undefined) {
+  const name = (Array.isArray(subject) ? subject[0] : subject) as { name?: string } | null
+  if (name?.name) return name.name
+  return weekNumber ? `Simulado semanal · Semana ${weekNumber}` : "Simulado semanal"
+}
+
 export const getCourseSubjects = cache(async function getCourseSubjects(courseId: string): Promise<DiagnosisSubjectRow[]> {
   const supabase = await createClient()
   const { data, error } = await supabase
@@ -55,7 +62,7 @@ export async function getStudentQuizOverview(courseId: string, userId: string) {
   const [quizzesResult, attemptsResult, subjects] = await Promise.all([
     supabase
       .from("mini_quizzes")
-      .select("id, subject_id, title, description, position, mini_quiz_questions(id, archived_at)")
+      .select("id, subject_id, title, description, position, week_number, release_date, mini_quiz_questions(id, archived_at)")
       .eq("course_id", courseId)
       .eq("status", "published"),
     supabase.from("mini_quiz_attempts").select(ATTEMPT_COLUMNS).eq("course_id", courseId).eq("user_id", userId),
@@ -83,7 +90,7 @@ export async function getStudentQuiz(quizId: string, userId: string) {
   const [quizResult, questionsResult, attemptsResult] = await Promise.all([
     supabase
       .from("mini_quizzes")
-      .select("id, course_id, subject_id, title, description, status, subjects(name)")
+      .select("id, course_id, subject_id, title, description, status, week_number, subjects(name)")
       .eq("id", quizId)
       .eq("status", "published")
       .maybeSingle(),
@@ -111,7 +118,7 @@ export async function getStudentQuiz(quizId: string, userId: string) {
       courseId: quizResult.data.course_id,
       title: quizResult.data.title,
       description: quizResult.data.description,
-      subjectName: (subject as { name?: string } | null)?.name ?? "Disciplina",
+      subjectName: quizLabel(subject, quizResult.data.week_number),
     },
     questions: (questionsResult.data ?? []) as QuizQuestion[],
     attempts: (attemptsResult.data ?? []) as QuizAttemptRow[],
@@ -131,7 +138,7 @@ export async function getAttemptReview(attemptId: string) {
   const supabase = await createClient()
   const { data: attempt, error } = await supabase
     .from("mini_quiz_attempts")
-    .select(`${ATTEMPT_COLUMNS}, user_id, course_id, mini_quizzes(title, subjects(name))`)
+    .select(`${ATTEMPT_COLUMNS}, user_id, course_id, mini_quizzes(title, week_number, subjects(name))`)
     .eq("id", attemptId)
     .maybeSingle()
   if (error) fail("mini_quiz.attempt_read_failed", error, "Não foi possível carregar a tentativa.")
@@ -176,7 +183,7 @@ export async function getAttemptReview(attemptId: string) {
   return {
     attempt: attempt as unknown as QuizAttemptRow & { user_id: string; course_id: string; answered_count: number },
     quizTitle: (quiz as { title?: string } | null)?.title ?? "Mini simulado",
-    subjectName: (subject as { name?: string } | null)?.name ?? "Disciplina",
+    subjectName: quizLabel(subject, (quiz as { week_number?: number | null } | null)?.week_number),
     questions,
   }
 }

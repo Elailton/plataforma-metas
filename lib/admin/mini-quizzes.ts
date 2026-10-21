@@ -10,7 +10,11 @@ export type MiniQuizStatus = "draft" | "published" | "archived"
 export interface AdminMiniQuizSummary {
   id: string
   courseId: string
-  subjectId: string
+  /** null = simulado com várias disciplinas (semanal). */
+  subjectId: string | null
+  targetGroups: number[]
+  releaseDate: string | null
+  weekNumber: number | null
   title: string
   status: MiniQuizStatus
   position: number
@@ -31,7 +35,7 @@ export interface AdminMiniQuizQuestion {
 export interface AdminMiniQuiz {
   id: string
   courseId: string
-  subjectId: string
+  subjectId: string | null
   topicId: string | null
   title: string
   description: string
@@ -52,7 +56,7 @@ export async function listAdminMiniQuizzes(courseId: string): Promise<AdminMiniQ
   const [quizzes, attempts] = await Promise.all([
     supabase
       .from("mini_quizzes")
-      .select("id, course_id, subject_id, title, status, position, updated_at, mini_quiz_questions(id, archived_at)")
+      .select("id, course_id, subject_id, title, status, position, updated_at, target_groups, release_date, week_number, mini_quiz_questions(id, archived_at)")
       .eq("course_id", courseId)
       .order("position")
       .order("title"),
@@ -66,6 +70,9 @@ export async function listAdminMiniQuizzes(courseId: string): Promise<AdminMiniQ
     id: quiz.id,
     courseId: quiz.course_id,
     subjectId: quiz.subject_id,
+    targetGroups: (quiz.target_groups ?? [1, 2]) as number[],
+    releaseDate: quiz.release_date ?? null,
+    weekNumber: quiz.week_number ?? null,
     title: quiz.title,
     status: quiz.status as MiniQuizStatus,
     position: quiz.position,

@@ -253,3 +253,52 @@ test("salvamento administrativo é atômico, versiona e arquiva questões removi
     await db.close()
   }
 })
+
+test("simulado semanal: cada grupo vê só o seu, só a partir da data, e as respostas guardam a disciplina da questão", async () => {
+  const db = await setup()
+  try {
+    await applyMigration(db, "20261021000100_mini_quiz_weekly_groups.sql")
+    const W = { g1: id(950), g2: id(951), future: id(952) }
+    const WQ = { g1: id(960), g2: id(961), future: id(962) }
+    const alts = JSON.stringify(["A", "B", "C", "D"].map((key) => ({ key, text: `Alternativa ${key}` })))
+    await db.exec(`
+      insert into public.mini_quizzes (id, course_id, subject_id, title, status, target_groups, release_date, week_number) values
+        ('${W.g1}', '${COURSE_A}', null, 'Semana 1 G1', 'published', array[1]::smallint[], current_date - 1, 1),
+        ('${W.g2}', '${COURSE_A}', null, 'Semana 1 G2', 'published', array[2]::smallint[], current_date - 1, 1),
+        ('${W.future}', '${COURSE_A}', null, 'Semana 2 G1', 'published', array[1]::smallint[], current_date + 30, 2);
+      insert into public.mini_quiz_questions (id, quiz_id, position, statement, alternatives, subject_id, topic_id) values
+        ('${WQ.g1}', '${W.g1}', 0, 'Semanal G1', '${alts}', '${SUBJECT_A}', '${TOPIC_A}'),
+        ('${WQ.g2}', '${W.g2}', 0, 'Semanal G2', '${alts}', '${SUBJECT_A}', null),
+        ('${WQ.future}', '${W.future}', 0, 'Futuro', '${alts}', '${SUBJECT_A}', null);
+      insert into public.mini_quiz_answer_keys (question_id, correct_key) values
+        ('${WQ.g1}', 'A'), ('${WQ.g2}', 'A'), ('${WQ.future}', 'A');
+    `)
+    const weekly = async (user) =>
+      (await asStudent(db, user, "select id from public.mini_quizzes where subject_id is null order by id")).rows.map((row) => row.id)
+    assert.deepEqual(await weekly(USERS.groupOne), [W.g1])
+    assert.deepEqual(await weekly(USERS.groupTwo), [W.g2])
+    assert.equal((await weekly(USERS.admin)).length, 3)
+
+    // Questões herdam o filtro do simulado.
+    const questions = await asStudent(db, USERS.groupOne, "select id from public.mini_quiz_questions where quiz_id in ($1, $2, $3)", [W.g1, W.g2, W.future])
+    assert.deepEqual(questions.rows.map((row) => row.id), [WQ.g1])
+
+    // Não envia simulado do outro grupo nem antes da data.
+    await assert.rejects(submit(db, USERS.groupOne, W.g2, {}), /MINI_QUIZ_NOT_AVAILABLE/)
+    await assert.rejects(submit(db, USERS.groupOne, W.future, {}), /MINI_QUIZ_NOT_AVAILABLE/)
+
+    const result = await submit(db, USERS.groupOne, W.g1, { [WQ.g1]: "A" })
+    assert.equal(result.correct, 1)
+    const answer = await db.query("select subject_id, topic_id from public.mini_quiz_attempt_answers where question_id = $1", [WQ.g1])
+    assert.deepEqual(answer.rows[0], { subject_id: SUBJECT_A, topic_id: TOPIC_A })
+
+    // Questão com assunto de outra disciplina é recusada.
+    await assert.rejects(
+      db.exec(`insert into public.mini_quiz_questions (quiz_id, position, statement, alternatives, subject_id, topic_id)
+               values ('${W.g1}', 1, 'X', '${alts}', '${SUBJECT_A}', '${TOPIC_B}')`),
+      /MINI_QUIZ_INVALID_TOPIC/,
+    )
+  } finally {
+    await db.close()
+  }
+})
