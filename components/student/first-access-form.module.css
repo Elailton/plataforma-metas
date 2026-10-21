@@ -252,6 +252,12 @@
   color: #ffe202;
   flex-shrink: 0;
 }
+.warning {
+  color: #ffd27a;
+  font-size: 13px;
+  line-height: 1.6;
+  margin: 14px 0 0;
+}
 .error {
   color: #ffaaa5;
   font-size: 14px;

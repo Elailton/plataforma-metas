@@ -7,6 +7,7 @@ import { ArrowRight, Check, ChevronLeft, LockKeyhole } from "lucide-react";
 import { submitFirstAccessQuestionnaire } from "@/lib/groups/student-actions";
 import { createClient } from "@/lib/supabase/client";
 import { passwordErrorMessage } from "@/lib/auth/password-error.mjs";
+import { WEAK_PASSWORD_HINT, weakPasswordReason } from "@/lib/auth/password-strength.mjs";
 import {
   formatWhatsapp,
   isValidWhatsapp,
@@ -446,10 +447,15 @@ export function FirstAccessForm({
                   />{" "}
                   Mostrar senha
                 </label>
+                {weakPasswordReason(password) ? (
+                  <p role="status" className={styles.warning}>
+                    {WEAK_PASSWORD_HINT}
+                  </p>
+                ) : null}
                 <p className={styles.note}>
-                  Use pelo menos 8 caracteres, misturando letras, números e
-                  símbolos. Senhas comuns (como 12345678 ou seu nome com o ano)
-                  são recusadas. Sua senha não é guardada no rascunho.
+                  Use pelo menos 8 caracteres. Para mais segurança, misture
+                  letras, números e símbolos. Sua senha não é guardada no
+                  rascunho.
                 </p>
                 {error && (
                   <p role="alert" className={styles.error}>
