@@ -10,6 +10,8 @@ import { GoalCard } from "@/components/student/goal-card"
 import { studentGoalWindow, toGoalSummary } from "@/lib/student/snapshot.mjs"
 import { NextGoalCard } from "@/components/student/next-goal-card"
 import { DisciplineProgressList } from "@/components/student/discipline-progress-list"
+import { RankingCard } from "@/components/mini-quizzes/ranking-card"
+import { getLatestWeeklyRanking } from "@/lib/mini-quizzes/queries"
 import {
   getStudentContext,
   getStudentCourseSnapshot,
@@ -18,7 +20,10 @@ import {
 export default async function StudentHomePage() {
   const context = await getStudentContext()
   if (!context) redirect("/auth/sem-acesso")
-  const snapshot = await getStudentCourseSnapshot(context.currentCourse.id)
+  const [snapshot, weeklyRanking] = await Promise.all([
+    getStudentCourseSnapshot(context.currentCourse.id),
+    getLatestWeeklyRanking(context.currentCourse.id).catch(() => null),
+  ])
   if (!snapshot) redirect("/auth/sem-acesso")
   // Disciplinas sem tópicos no edital (ex.: áreas só de materiais) não entram no progresso.
   const progressSubjects = snapshot.subjects.filter((subject) => subject.total > 0)
@@ -137,6 +142,15 @@ export default async function StudentHomePage() {
           </section>
         </div>
 
+        <div className="flex min-w-0 flex-col gap-8">
+        {weeklyRanking ? (
+          <RankingCard
+            rows={weeklyRanking.rows}
+            title={weeklyRanking.quiz.week_number ? `Ranking · Semana ${weeklyRanking.quiz.week_number}` : "Ranking da semana"}
+            href={`/aluno/mini-simulados/${weeklyRanking.quiz.id}`}
+            hrefLabel="Simulado"
+          />
+        ) : null}
         <section aria-labelledby="progresso-disciplinas" className="min-w-0">
           <SectionHeader
             title={<span id="progresso-disciplinas">Progresso por disciplina</span>}
@@ -158,6 +172,7 @@ export default async function StudentHomePage() {
             )}
           </div>
         </section>
+        </div>
       </div>
     </PageContainer>
   )

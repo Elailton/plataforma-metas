@@ -237,7 +237,12 @@ na plataforma, orientados por `courseId` (nada específico de um concurso).
   `mini_quiz_attempt_answers`.
 - A correção acontece só no banco (`submit_mini_quiz`). O gabarito nunca vai ao navegador
   antes do envio; a revisão vem de `mini_quiz_attempt_review` para a própria tentativa.
-- Sem cronômetro. Nova tentativa do mesmo mini simulado só 7 dias após a anterior.
+- Cronômetro: `start_mini_quiz` registra o início no banco e `submit_mini_quiz` grava `duration_seconds`;
+  recarregar a página retoma o mesmo início. Nova tentativa do mesmo simulado só 7 dias após a anterior.
+- Ranking (pedido em 21 de outubro de 2026): o aluno escolhe ao iniciar se quer aparecer; só a primeira
+  tentativa entra; ordem por acertos e, no empate, menor tempo (`mini_quiz_ranking`, nome curto: primeiro
+  nome e inicial do sobrenome). Card na tela inicial (simulado semanal mais recente) e em cada simulado.
+- Na área do aluno a aba se chama "Simulados semanais".
 - O diagnóstico mensal usa a primeira tentativa de cada mini simulado no mês (fuso de
   Brasília, `is_first_of_month`). Refazer fica no histórico e não altera o mês.
 - Tentativas e respostas nunca são apagadas; questões removidas são arquivadas e um mini
@@ -265,9 +270,8 @@ O escopo atualmente autorizado inclui:
 Fora de escopo até solicitação explícita:
 
 - IA para criar metas;
-- ranking;
 - gamificação;
-- simulados completos (provas longas, cronometradas, com ranking), além dos Mini Simulados;
+- simulados completos além dos Mini Simulados e simulados semanais;
 - funcionalidades específicas de um concurso;
 - grandes reformulações visuais.
 

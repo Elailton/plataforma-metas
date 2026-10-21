@@ -150,3 +150,16 @@ test("simulados semanais (sem disciplina) vêm primeiro, ordenados pela semana",
   assert.equal(groups[0].name, "Simulados semanais")
   assert.deepEqual(groups[0].quizzes.map((quiz) => [quiz.id, quiz.weekNumber, quiz.questionCount]), [["w1", 1, 50], ["w2", 2, 50]])
 })
+
+test("cronômetro: tempo decorrido e formatos", async () => {
+  const { elapsedSeconds, formatClock, formatDuration } = await import("../lib/mini-quizzes/core.mjs")
+  assert.equal(elapsedSeconds("2026-10-21T12:00:00Z", new Date("2026-10-21T12:01:05Z")), 65)
+  assert.equal(elapsedSeconds("2026-10-21T12:00:00Z", new Date("2026-10-21T11:00:00Z")), 0)
+  assert.equal(elapsedSeconds("inválido"), 0)
+  assert.equal(formatClock(65), "01:05")
+  assert.equal(formatClock(3723), "1:02:03")
+  assert.equal(formatDuration(null), "—")
+  assert.equal(formatDuration(42), "42 s")
+  assert.equal(formatDuration(2530), "42 min 10 s")
+  assert.equal(formatDuration(3900), "1 h 05 min")
+})

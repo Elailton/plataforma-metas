@@ -19,9 +19,9 @@ export default async function StudentDiagnosisPage({ searchParams }: { searchPar
     <PageContainer>
       <PageHeader
         title="Meu diagnóstico"
-        description="Seu desempenho nos mini simulados, por disciplina e assunto, mês a mês."
+        description="Seu desempenho nos simulados, por disciplina e assunto, mês a mês."
         backHref="/aluno/mini-simulados"
-        backLabel="Mini Simulados"
+        backLabel="Simulados semanais"
       />
       <DiagnosisView
         diagnosis={diagnosis}
