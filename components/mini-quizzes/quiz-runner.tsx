@@ -60,7 +60,7 @@ export function QuizRunner({ quizId, questions, startedAt }: { quizId: string; q
         return
       }
       setSubmitted(true)
-      router.push(`/aluno/mini-simulados/tentativas/${result.attemptId}`)
+      router.push(`/aluno/diagnostico-semanal/tentativas/${result.attemptId}`)
     } catch {
       toast.error("Não foi possível enviar suas respostas. Tente novamente.")
     } finally {
@@ -68,8 +68,23 @@ export function QuizRunner({ quizId, questions, startedAt }: { quizId: string; q
     }
   }
 
+  // Durante a prova o texto não pode ser copiado nem selecionado: só clicar nas alternativas.
+  useEffect(() => {
+    if (submitted) return
+    const block = (event: Event) => event.preventDefault()
+    const keys = (event: KeyboardEvent) => {
+      if ((event.ctrlKey || event.metaKey) && ["c", "x", "a", "p", "s", "u"].includes(event.key.toLowerCase())) event.preventDefault()
+    }
+    for (const type of ["copy", "cut", "contextmenu", "dragstart", "selectstart"]) document.addEventListener(type, block)
+    document.addEventListener("keydown", keys)
+    return () => {
+      for (const type of ["copy", "cut", "contextmenu", "dragstart", "selectstart"]) document.removeEventListener(type, block)
+      document.removeEventListener("keydown", keys)
+    }
+  }, [submitted])
+
   return (
-    <div className="flex flex-col gap-5">
+    <div className="flex select-none flex-col gap-5 [-webkit-touch-callout:none]" onCopy={(event) => event.preventDefault()}>
       <ol className="flex flex-col gap-5">
         {questions.map((question, index) => (
           <li key={question.id} className="rounded-xl border border-border bg-card p-4 md:p-5">
@@ -140,7 +155,7 @@ export function QuizRunner({ quizId, questions, startedAt }: { quizId: string; q
             <AlertDialogTitle>Enviar com questões em branco?</AlertDialogTitle>
             <AlertDialogDescription>
               {unanswered === 1 ? "1 questão está sem resposta" : `${unanswered} questões estão sem resposta`} e contará como erro.
-              Ao enviar, o cronômetro para e uma nova tentativa só fica liberada em 7 dias.
+              Ao enviar, o cronômetro para e não é possível refazer.
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>

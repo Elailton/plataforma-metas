@@ -147,7 +147,7 @@ test("simulados semanais (sem disciplina) vêm primeiro, ordenados pela semana",
     attempts: [],
   })
   assert.deepEqual(groups.map((group) => group.id), [WEEKLY_GROUP_ID, "pt"])
-  assert.equal(groups[0].name, "Simulados semanais")
+  assert.equal(groups[0].name, "Diagnóstico Semanal")
   assert.deepEqual(groups[0].quizzes.map((quiz) => [quiz.id, quiz.weekNumber, quiz.questionCount]), [["w1", 1, 50], ["w2", 2, 50]])
 })
 

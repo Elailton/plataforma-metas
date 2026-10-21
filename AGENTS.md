@@ -237,12 +237,16 @@ na plataforma, orientados por `courseId` (nada específico de um concurso).
   `mini_quiz_attempt_answers`.
 - A correção acontece só no banco (`submit_mini_quiz`). O gabarito nunca vai ao navegador
   antes do envio; a revisão vem de `mini_quiz_attempt_review` para a própria tentativa.
-- Cronômetro: `start_mini_quiz` registra o início no banco e `submit_mini_quiz` grava `duration_seconds`;
-  recarregar a página retoma o mesmo início. Nova tentativa do mesmo simulado só 7 dias após a anterior.
-- Ranking (pedido em 21 de outubro de 2026): o aluno escolhe ao iniciar se quer aparecer; só a primeira
-  tentativa entra; ordem por acertos e, no empate, menor tempo (`mini_quiz_ranking`, nome curto: primeiro
-  nome e inicial do sobrenome). Card na tela inicial (simulado semanal mais recente) e em cada simulado.
-- Na área do aluno a aba se chama "Simulados semanais".
+- Diagnóstico Semanal (simulado sem disciplina própria, pedido em 21 de outubro de 2026): tentativa
+  única (`MINI_QUIZ_ALREADY_DONE`), só pode ser enviado depois de iniciado (`MINI_QUIZ_NOT_STARTED`).
+  `start_mini_quiz` registra o início e `submit_mini_quiz` grava `duration_seconds` (cronômetro).
+  Mini simulados por disciplina mantêm o intervalo de 7 dias para refazer.
+- Durante a prova o texto não pode ser copiado nem selecionado (só clicar nas alternativas).
+- Ranking: o aluno escolhe ao iniciar se quer aparecer; ordem por acertos e, no empate, menor tempo
+  (`mini_quiz_ranking`, nome curto). Fica dentro de cada diagnóstico e num card da tela inicial.
+- Área do aluno: abas "Diagnóstico Semanal" (`/aluno/diagnostico-semanal`) e "Relatório"
+  (`/aluno/relatorio`, erros por disciplina e assunto). As rotas antigas `/aluno/mini-simulados` redirecionam.
+- O administrador faz a prévia do diagnóstico como aluno (nada é gravado) e publica pela própria tela.
 - O diagnóstico mensal usa a primeira tentativa de cada mini simulado no mês (fuso de
   Brasília, `is_first_of_month`). Refazer fica no histórico e não altera o mês.
 - Tentativas e respostas nunca são apagadas; questões removidas são arquivadas e um mini

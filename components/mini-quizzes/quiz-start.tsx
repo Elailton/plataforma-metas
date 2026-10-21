@@ -26,7 +26,7 @@ export function QuizStart({ quizId, questionCount, firstAttempt }: { quizId: str
       }
       router.refresh()
     } catch {
-      toast.error("Não foi possível iniciar o simulado. Tente novamente.")
+      toast.error("Não foi possível iniciar. Tente novamente.")
     } finally {
       setPending(false)
     }
@@ -41,8 +41,8 @@ export function QuizStart({ quizId, questionCount, firstAttempt }: { quizId: str
         <div className="min-w-0 text-sm">
           <p className="font-semibold text-foreground">Antes de começar</p>
           <p className="mt-1 leading-relaxed text-muted-foreground">
-            São {questionCount} questões. O cronômetro começa quando você clicar em <strong className="text-foreground">Iniciar simulado</strong> e
-            só para quando você conferir suas respostas e enviar. Se for resolver pelo PDF, inicie aqui antes de começar a prova.
+            São {questionCount} questões. O cronômetro começa quando você clicar em <strong className="text-foreground">Iniciar diagnóstico</strong> e
+            só para quando você conferir suas respostas e enviar. Durante a prova não é possível copiar o texto das questões.
           </p>
         </div>
       </div>
@@ -51,7 +51,7 @@ export function QuizStart({ quizId, questionCount, firstAttempt }: { quizId: str
         <fieldset className="flex flex-col gap-2">
           <legend className="mb-2 flex items-center gap-2 text-sm font-semibold text-foreground">
             <Trophy className="size-4 text-primary" aria-hidden="true" />
-            Deseja aparecer no ranking deste simulado?
+            Deseja aparecer no ranking deste diagnóstico?
           </legend>
           {[
             { value: true, title: "Sim, quero aparecer", hint: "Seu primeiro nome e a inicial do sobrenome aparecem com acertos e tempo." },
@@ -80,7 +80,7 @@ export function QuizStart({ quizId, questionCount, firstAttempt }: { quizId: str
               </label>
             )
           })}
-          <p className="text-xs text-muted-foreground">Só a primeira tentativa entra no ranking. A escolha vale para esta tentativa.</p>
+          <p className="text-xs text-muted-foreground">A escolha não pode ser mudada depois de iniciar.</p>
         </fieldset>
       ) : (
         <p className="rounded-lg bg-muted/50 px-3 py-2 text-xs text-muted-foreground">
@@ -91,7 +91,7 @@ export function QuizStart({ quizId, questionCount, firstAttempt }: { quizId: str
       <div>
         <Button onClick={start} disabled={pending || ranking === null}>
           <Play data-icon="inline-start" />
-          {pending ? "Iniciando..." : "Iniciar simulado"}
+          {pending ? "Iniciando..." : "Iniciar diagnóstico"}
         </Button>
       </div>
     </div>

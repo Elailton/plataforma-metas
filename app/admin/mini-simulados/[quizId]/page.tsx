@@ -3,6 +3,9 @@ import { PageHeader } from "@/components/page-header"
 import { MiniQuizEditor } from "@/components/admin/mini-quiz-editor"
 import { getAdminMiniQuiz } from "@/lib/admin/mini-quizzes"
 import { getCourseSubjects } from "@/lib/mini-quizzes/queries"
+import { Badge } from "@/components/ui/badge"
+import { formatDate } from "@/lib/format"
+import { WeeklyDiagnosticPreview, WeeklyDiagnosticStatusButton } from "@/components/admin/weekly-diagnostic-preview"
 
 export const dynamic = "force-dynamic"
 
@@ -11,13 +14,34 @@ export default async function EditMiniQuizPage({ params }: { params: Promise<{ q
   const quiz = await getAdminMiniQuiz(quizId)
   if (!quiz) notFound()
   if (!quiz.subjectId) {
-    // Simulado semanal (várias disciplinas): o editor atual é por disciplina e o converteria.
+    // Diagnóstico Semanal (várias disciplinas): prévia como aluno e publicação. As questões vêm do banco.
+    const subjects = await getCourseSubjects(quiz.courseId)
+    const names = new Map(subjects.map((subject) => [subject.id, subject.name]))
+    const groups = quiz.targetGroups.length === 2 ? "Todos os grupos" : `Grupo ${quiz.targetGroups[0]}`
     return (
       <>
-        <PageHeader title={quiz.title} description="Simulado semanal" backHref={`/admin/mini-simulados?curso=${quiz.courseId}`} backLabel="Mini Simulados" />
-        <p className="rounded-xl border border-dashed border-border bg-card p-4 text-sm text-muted-foreground">
-          Simulados semanais misturam disciplinas e ainda não podem ser editados por esta tela. Ajustes são feitos pelo suporte.
-        </p>
+        <PageHeader
+          title={quiz.title}
+          description={`Diagnóstico Semanal · ${groups}${quiz.releaseDate ? ` · libera em ${formatDate(quiz.releaseDate)}` : ""} · ${quiz.questions.length} questões · ${quiz.attemptCount} ${quiz.attemptCount === 1 ? "aluno fez" : "alunos fizeram"}`}
+          backHref={`/admin/mini-simulados?curso=${quiz.courseId}`}
+          backLabel="Diagnóstico Semanal"
+          actions={
+            <div className="flex flex-wrap items-center gap-2">
+              <Badge variant={quiz.status === "published" ? "default" : "secondary"}>{quiz.status === "published" ? "Publicado" : "Rascunho"}</Badge>
+              <WeeklyDiagnosticStatusButton quizId={quiz.id} status={quiz.status} />
+            </div>
+          }
+        />
+        <WeeklyDiagnosticPreview
+          questions={quiz.questions.map((question) => ({
+            id: question.id,
+            statement: question.statement,
+            alternatives: question.alternatives,
+            correctKey: question.correctKey,
+            explanation: question.explanation,
+            subjectName: (question.subjectId && names.get(question.subjectId)) || "Sem disciplina",
+          }))}
+        />
       </>
     )
   }

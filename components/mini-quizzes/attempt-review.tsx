@@ -10,7 +10,7 @@ export function AttemptReview({ questions }: { questions: ReviewedQuestion[] }) 
       {questions.map((question, index) => {
         const status = question.chosenKey === null ? "blank" : question.isCorrect ? "correct" : "wrong"
         return (
-          <li key={question.id} className="rounded-xl border border-border bg-card p-4 md:p-5">
+          <li key={question.id} id={`q-${question.id}`} className="scroll-mt-20 rounded-xl border border-border bg-card p-4 md:p-5">
             <div className="mb-3 flex items-start gap-2 text-sm leading-relaxed text-foreground">
               <span className="shrink-0 font-semibold tabular-nums text-primary">{String(index + 1).padStart(2, "0")}.</span>
               <RichText text={question.statement} className="min-w-0 flex-1" />
