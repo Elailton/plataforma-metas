@@ -33,11 +33,23 @@ export interface StudentQuizEntry {
   lastAttemptId: string | null
   nextAvailableAt: string | null
   status: "new" | "retake" | "waiting"
+  weekNumber: number | null
+  releaseDate: string | null
 }
+
+export const WEEKLY_GROUP_ID: string
 
 export function groupQuizzesBySubject(input: {
   subjects: Array<{ id: string; name: string; position: number | null }>
-  quizzes: Array<{ id: string; subject_id: string; title: string; description?: string | null; position?: number | null }>
+  quizzes: Array<{
+    id: string
+    subject_id: string | null
+    title: string
+    description?: string | null
+    position?: number | null
+    week_number?: number | null
+    release_date?: string | null
+  }>
   questionCounts: Record<string, number>
   attempts: QuizAttemptRow[]
   now?: Date

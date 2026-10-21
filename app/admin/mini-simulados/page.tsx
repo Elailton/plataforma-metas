@@ -9,6 +9,7 @@ import { listAdminMiniQuizzes } from "@/lib/admin/mini-quizzes"
 import { getCourseSubjects } from "@/lib/mini-quizzes/queries"
 import { resolveCourse } from "./course-param"
 import { MiniQuizDocxImport } from "@/components/admin/mini-quiz-docx-import"
+import { formatDate } from "@/lib/format"
 
 export const dynamic = "force-dynamic"
 
@@ -27,6 +28,9 @@ export default async function AdminMiniQuizzesPage({ searchParams }: { searchPar
   }
   const [subjects, quizzes] = await Promise.all([getCourseSubjects(course.id), listAdminMiniQuizzes(course.id)])
   const orderedSubjects = [...subjects].sort((a, b) => (a.position ?? 0) - (b.position ?? 0))
+  const weekly = quizzes
+    .filter((quiz) => !quiz.subjectId)
+    .sort((a, b) => (a.weekNumber ?? 0) - (b.weekNumber ?? 0) || (a.targetGroups[0] ?? 0) - (b.targetGroups[0] ?? 0))
 
   return (
     <>
@@ -38,7 +42,7 @@ export default async function AdminMiniQuizzesPage({ searchParams }: { searchPar
             <MiniQuizDocxImport
               courseId={course.id}
               subjects={orderedSubjects.map((subject) => ({ id: subject.id, name: subject.name }))}
-              existingTitles={quizzes.map((quiz) => ({ subjectId: quiz.subjectId, title: quiz.title }))}
+              existingTitles={quizzes.flatMap((quiz) => (quiz.subjectId ? [{ subjectId: quiz.subjectId, title: quiz.title }] : []))}
             />
             <Link href={`/admin/mini-simulados/diagnostico?curso=${course.id}`} className={buttonVariants({ variant: "outline" })}>
               <BarChart3 data-icon="inline-start" />
@@ -71,6 +75,29 @@ export default async function AdminMiniQuizzesPage({ searchParams }: { searchPar
       ) : null}
 
       <div className="flex flex-col gap-8">
+        {weekly.length > 0 ? (
+          <section aria-labelledby="adm-semanais">
+            <SectionHeader
+              title={<span id="adm-semanais">Simulados semanais</span>}
+              description={`${weekly.filter((quiz) => quiz.status === "published").length} publicados · cada grupo vê só os seus, a partir da data de liberação`}
+            />
+            <ul className="flex flex-col divide-y divide-border overflow-hidden rounded-xl border border-border bg-card">
+              {weekly.map((quiz) => (
+                <li key={quiz.id} className="flex items-center gap-3 px-4 py-3">
+                  <span className="min-w-0 flex-1">
+                    <span className="block truncate text-sm font-medium">{quiz.title}</span>
+                    <span className="block text-xs text-muted-foreground tabular-nums">
+                      {quiz.targetGroups.length === 2 ? "Todos os grupos" : `Grupo ${quiz.targetGroups[0]}`}
+                      {quiz.releaseDate ? ` · libera em ${formatDate(quiz.releaseDate)}` : ""} · {quiz.questionCount} questões ·{" "}
+                      {quiz.attemptCount} {quiz.attemptCount === 1 ? "tentativa" : "tentativas"}
+                    </span>
+                  </span>
+                  <Badge variant={STATUS[quiz.status].variant}>{STATUS[quiz.status].label}</Badge>
+                </li>
+              ))}
+            </ul>
+          </section>
+        ) : null}
         {orderedSubjects.map((subject) => {
           const list = quizzes.filter((quiz) => quiz.subjectId === subject.id)
           return (

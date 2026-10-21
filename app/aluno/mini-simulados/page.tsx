@@ -22,7 +22,7 @@ export default async function MiniQuizzesPage() {
     <PageContainer>
       <PageHeading
         title="Mini Simulados"
-        description="Resolva por disciplina, sem tempo. Depois de enviar, você pode refazer após 7 dias."
+        description="Simulados da semana e por disciplina, sem tempo. Depois de enviar, você pode refazer após 7 dias."
         actions={
           <Link href="/aluno/mini-simulados/diagnostico" className={buttonVariants({ variant: "outline" })}>
             <BarChart3 data-icon="inline-start" />
