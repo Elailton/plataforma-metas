@@ -6,14 +6,14 @@ import type { RankingRow } from "@/lib/mini-quizzes/queries"
 
 const MEDAL = ["text-primary", "text-zinc-300", "text-amber-600"]
 
-/** Ranking de um simulado: acertos e, no empate, o menor tempo. Só aparece quem escolheu participar. */
+/** Ranking de um diagnóstico: acertos e, no empate, o menor tempo. Só aparece quem escolheu participar. */
 export function RankingCard({
   rows,
   title = "Ranking",
   subtitle,
   href,
-  hrefLabel = "Ver simulado",
-  emptyText = "Ninguém entrou no ranking ainda. Resolva o simulado e escolha aparecer.",
+  hrefLabel = "Abrir",
+  emptyText = "Ninguém entrou no ranking ainda. Faça o diagnóstico e escolha aparecer.",
   className,
 }: {
   rows: RankingRow[]

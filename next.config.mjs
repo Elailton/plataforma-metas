@@ -25,6 +25,14 @@ const nextConfig = {
     // Importação de mini simulados do Word envia imagens de questões por server action.
     serverActions: { bodySizeLimit: "4mb" },
   },
+  async redirects() {
+    // A aba "Mini Simulados" virou "Diagnóstico Semanal" e o diagnóstico mensal virou "Relatório".
+    return [
+      { source: "/aluno/mini-simulados/diagnostico", destination: "/aluno/relatorio", permanent: false },
+      { source: "/aluno/mini-simulados", destination: "/aluno/diagnostico-semanal", permanent: false },
+      { source: "/aluno/mini-simulados/:path*", destination: "/aluno/diagnostico-semanal/:path*", permanent: false },
+    ]
+  },
   async headers() {
     return [{ source: "/:path*", headers: securityHeaders }]
   },

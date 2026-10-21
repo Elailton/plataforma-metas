@@ -146,9 +146,9 @@ export default async function StudentHomePage() {
         {weeklyRanking ? (
           <RankingCard
             rows={weeklyRanking.rows}
-            title={weeklyRanking.quiz.week_number ? `Ranking · Semana ${weeklyRanking.quiz.week_number}` : "Ranking da semana"}
-            href={`/aluno/mini-simulados/${weeklyRanking.quiz.id}`}
-            hrefLabel="Simulado"
+            title={weeklyRanking.quiz.week_number ? `Ranking · Diagnóstico Semana ${weeklyRanking.quiz.week_number}` : "Ranking do Diagnóstico Semanal"}
+            href={`/aluno/diagnostico-semanal/${weeklyRanking.quiz.id}`}
+            hrefLabel="Abrir"
           />
         ) : null}
         <section aria-labelledby="progresso-disciplinas" className="min-w-0">

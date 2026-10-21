@@ -38,7 +38,7 @@ function fail(event: string, error: unknown, message: string): never {
 function quizLabel(subject: unknown, weekNumber: number | null | undefined) {
   const name = (Array.isArray(subject) ? subject[0] : subject) as { name?: string } | null
   if (name?.name) return name.name
-  return weekNumber ? `Simulado semanal · Semana ${weekNumber}` : "Simulado semanal"
+  return weekNumber ? `Semana ${weekNumber}` : "Diagnóstico Semanal"
 }
 
 export const getCourseSubjects = cache(async function getCourseSubjects(courseId: string): Promise<DiagnosisSubjectRow[]> {
@@ -126,6 +126,7 @@ export async function getStudentQuiz(quizId: string, userId: string) {
       title: quizResult.data.title,
       description: quizResult.data.description,
       subjectName: quizLabel(subject, quizResult.data.week_number),
+      isWeekly: !quizResult.data.subject_id,
     },
     questions: (questionsResult.data ?? []) as QuizQuestion[],
     attempts: (attemptsResult.data ?? []) as QuizAttemptRow[],
@@ -190,7 +191,7 @@ export async function getAttemptReview(attemptId: string) {
   const supabase = await createClient()
   const { data: attempt, error } = await supabase
     .from("mini_quiz_attempts")
-    .select(`${ATTEMPT_COLUMNS}, user_id, course_id, mini_quizzes(title, week_number, subjects(name))`)
+    .select(`${ATTEMPT_COLUMNS}, user_id, course_id, mini_quizzes(title, week_number, subject_id, subjects(name))`)
     .eq("id", attemptId)
     .maybeSingle()
   if (error) fail("mini_quiz.attempt_read_failed", error, "Não foi possível carregar a tentativa.")
@@ -236,6 +237,7 @@ export async function getAttemptReview(attemptId: string) {
     attempt: attempt as unknown as QuizAttemptRow & { user_id: string; course_id: string; answered_count: number },
     quizTitle: (quiz as { title?: string } | null)?.title ?? "Mini simulado",
     subjectName: quizLabel(subject, (quiz as { week_number?: number | null } | null)?.week_number),
+    isWeekly: !(quiz as { subject_id?: string | null } | null)?.subject_id,
     questions,
   }
 }
@@ -273,4 +275,103 @@ export async function getDiagnosisData(courseId: string, userId: string) {
     })),
     answers,
   }
+}
+
+
+/** Acertos por disciplina de uma tentativa (a RLS libera só a própria ou o administrador). */
+export async function getAttemptSubjectBreakdown(attemptId: string, courseId: string) {
+  if (!isUuid(attemptId)) return []
+  const supabase = await createClient()
+  const [answersResult, subjects] = await Promise.all([
+    supabase.from("mini_quiz_attempt_answers").select("subject_id, is_correct, position").eq("attempt_id", attemptId),
+    getCourseSubjects(courseId),
+  ])
+  if (answersResult.error) {
+    logSafeServerError("mini_quiz.breakdown_failed", answersResult.error)
+    return []
+  }
+  const order = new Map(subjects.map((subject) => [subject.id, subject]))
+  const tally = new Map<string, { id: string; name: string; correct: number; total: number; first: number }>()
+  for (const answer of answersResult.data ?? []) {
+    const id = answer.subject_id ?? "sem-disciplina"
+    const entry = tally.get(id) ?? { id, name: order.get(id)?.name ?? "Outras", correct: 0, total: 0, first: answer.position }
+    entry.total += 1
+    if (answer.is_correct) entry.correct += 1
+    entry.first = Math.min(entry.first, answer.position)
+    tally.set(id, entry)
+  }
+  return [...tally.values()].sort((a, b) => a.first - b.first)
+}
+
+export interface ErrorReportItem {
+  attemptId: string
+  quizTitle: string
+  questionId: string
+  number: number
+  excerpt: string
+  chosenKey: AlternativeKey | null
+  correctKey: AlternativeKey | null
+  subjectId: string | null
+  topicId: string | null
+}
+
+/** Questões erradas ou em branco de todas as tentativas do aluno no curso, para o Relatório. */
+export async function getErrorReport(courseId: string, userId: string): Promise<ErrorReportItem[]> {
+  const supabase = await createClient()
+  const { data: attempts, error } = await supabase
+    .from("mini_quiz_attempts")
+    .select("id, submitted_at, mini_quizzes(title)")
+    .eq("course_id", courseId)
+    .eq("user_id", userId)
+    .order("submitted_at", { ascending: false })
+  if (error) fail("mini_quiz.report_attempts_failed", error, "Não foi possível carregar o relatório.")
+  const items: ErrorReportItem[] = []
+  for (const attempt of attempts ?? []) {
+    const [questionsResult, reviewResult, answersResult] = await Promise.all([
+      supabase.rpc("mini_quiz_attempt_questions", { p_attempt_id: attempt.id }),
+      supabase.rpc("mini_quiz_attempt_review", { p_attempt_id: attempt.id }),
+      supabase.from("mini_quiz_attempt_answers").select("question_id, subject_id, topic_id").eq("attempt_id", attempt.id),
+    ])
+    if (questionsResult.error || reviewResult.error || answersResult.error) {
+      logSafeServerError("mini_quiz.report_attempt_failed", questionsResult.error ?? reviewResult.error ?? answersResult.error)
+      continue
+    }
+    const review = new Map(
+      ((reviewResult.data ?? []) as Array<{ question_id: string; chosen_key: AlternativeKey | null; correct_key: AlternativeKey | null; is_correct: boolean }>).map(
+        (row) => [row.question_id, row],
+      ),
+    )
+    const scope = new Map((answersResult.data ?? []).map((row) => [row.question_id, row]))
+    const quiz = Array.isArray(attempt.mini_quizzes) ? attempt.mini_quizzes[0] : attempt.mini_quizzes
+    const questions = ((questionsResult.data ?? []) as Array<{ question_id: string; question_position: number; statement: string }>).sort(
+      (a, b) => a.question_position - b.question_position,
+    )
+    questions.forEach((question, index) => {
+      const row = review.get(question.question_id)
+      if (!row || row.is_correct) return
+      items.push({
+        attemptId: attempt.id,
+        quizTitle: (quiz as { title?: string } | null)?.title ?? "Diagnóstico Semanal",
+        questionId: question.question_id,
+        number: index + 1,
+        excerpt: statementExcerpt(question.statement),
+        chosenKey: row.chosen_key,
+        correctKey: row.correct_key,
+        subjectId: scope.get(question.question_id)?.subject_id ?? null,
+        topicId: scope.get(question.question_id)?.topic_id ?? null,
+      })
+    })
+  }
+  return items
+}
+
+/** Último parágrafo do enunciado (a pergunta), sem marcações, para listas curtas. */
+function statementExcerpt(statement: string) {
+  const blocks = statement.split(/\n\s*\n/).map((block) => block.trim()).filter(Boolean)
+  const stem = (blocks.length > 1 && statement.startsWith("**Texto associado**") ? blocks[blocks.length - 1] : statement)
+    .replace(/\*\*|__/g, "")
+    .replace(/\\_/g, "_")
+    .replace(/\s+/g, " ")
+    .trim()
+  return stem.length > 180 ? `${stem.slice(0, 177)}…` : stem
 }

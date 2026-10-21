@@ -18,7 +18,7 @@ export function BottomNav() {
           const isActive = item.href === "/aluno" ? pathname === "/aluno" : pathname.startsWith(item.href)
           const Icon = item.icon
           return (
-            <li key={item.href} className="flex-1">
+            <li key={item.href} className="min-w-0 flex-1">
               <Link
                 href={item.href}
                 aria-current={isActive ? "page" : undefined}
@@ -35,7 +35,7 @@ export function BottomNav() {
                   )}
                 />
                 <Icon className={cn("size-5", isActive && "text-primary")} strokeWidth={isActive ? 2.4 : 2} />
-                {item.shortLabel}
+                <span className="max-w-full truncate px-0.5">{item.shortLabel}</span>
               </Link>
             </li>
           )

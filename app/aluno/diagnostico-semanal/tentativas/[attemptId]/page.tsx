@@ -30,14 +30,14 @@ export default async function MiniQuizAttemptPage({ params }: { params: Promise<
     <PageContainer>
       <PageHeader
         title={review.quizTitle}
-        eyebrow={`${review.subjectName} · ${attempt.attempt_number}ª tentativa`}
-        description={`Enviado em ${formatDateTime(attempt.submitted_at)}${next && next.getTime() > Date.now() ? ` · refazer a partir de ${formatDateTime(next.toISOString())}` : ""}`}
-        backHref="/aluno/mini-simulados"
-        backLabel="Simulados semanais"
+        eyebrow={`${review.subjectName} · correção comentada`}
+        description={`Enviado em ${formatDateTime(attempt.submitted_at)}${!review.isWeekly && next && next.getTime() > Date.now() ? ` · refazer a partir de ${formatDateTime(next.toISOString())}` : ""}`}
+        backHref={`/aluno/diagnostico-semanal/${attempt.quiz_id}`}
+        backLabel="Diagnóstico Semanal"
         actions={
-          <Link href="/aluno/mini-simulados/diagnostico" className={buttonVariants({ variant: "outline" })}>
+          <Link href="/aluno/relatorio" className={buttonVariants({ variant: "outline" })}>
             <BarChart3 data-icon="inline-start" />
-            Meu diagnóstico
+            Relatório
           </Link>
         }
       />
@@ -47,12 +47,12 @@ export default async function MiniQuizAttemptPage({ params }: { params: Promise<
         <StatCard label="Tempo" value={formatDuration(attempt.duration_seconds)} />
         <StatCard label="Em branco" value={attempt.total_count - attempt.answered_count} />
       </div>
-      {attempt.is_first_of_month ? null : (
+      {attempt.is_first_of_month || review.isWeekly ? null : (
         <p className="mb-5 rounded-lg bg-muted/50 px-3 py-2 text-xs text-muted-foreground">
-          Esta tentativa fica no histórico, mas não altera o diagnóstico do mês: ele usa a primeira tentativa de cada simulado no mês.
+          Esta tentativa fica no histórico, mas não altera o diagnóstico do mês: ele usa a primeira tentativa de cada diagnóstico no mês.
         </p>
       )}
-      <RankingCard rows={ranking} title="Ranking deste simulado" className="mb-6" />
+      <RankingCard rows={ranking} title="Ranking" className="mb-6" />
       <AttemptReview questions={review.questions} />
     </PageContainer>
   )

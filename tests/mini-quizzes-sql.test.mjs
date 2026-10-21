@@ -303,7 +303,7 @@ test("simulado semanal: cada grupo vê só o seu, só a partir da data, e as res
   }
 })
 
-test("cronômetro e ranking: tempo medido pelo banco, ranking só de quem aceitou e só da 1ª tentativa", async () => {
+test("diagnóstico semanal: tempo medido pelo banco, tentativa única e ranking só de quem aceitou", async () => {
   const db = await setup()
   try {
     await applyMigration(db, "20261021000100_mini_quiz_weekly_groups.sql")
@@ -356,14 +356,17 @@ test("cronômetro e ranking: tempo medido pelo banco, ranking só de quem aceito
     // Fora do topo, a própria linha também volta.
     assert.deepEqual((await ranking(ANA, 1)).map((row) => [row.rank, row.is_me]), [[1, false], [2, true]])
 
-    // Outro grupo não vê o ranking nem inicia; tentativa nova só depois de 7 dias.
+    // Outro grupo não vê o ranking nem inicia; o diagnóstico semanal não pode ser refeito, nem depois de dias.
     await assert.rejects(ranking(USERS.groupTwo), /MINI_QUIZ_NOT_AVAILABLE/)
     await assert.rejects(start(USERS.groupTwo, true), /MINI_QUIZ_NOT_AVAILABLE/)
-    await assert.rejects(start(USERS.groupOne, true), /MINI_QUIZ_COOLDOWN/)
+    await db.query("update public.mini_quiz_attempts set submitted_at = submitted_at - interval '30 days' where user_id = $1", [BRUNO])
+    await assert.rejects(start(BRUNO, true), /MINI_QUIZ_ALREADY_DONE/)
+    await assert.rejects(submit(db, BRUNO, W, {}), /MINI_QUIZ_ALREADY_DONE/)
 
-    // Segunda tentativa nunca entra no ranking.
-    await db.query("update public.mini_quiz_attempts set submitted_at = submitted_at - interval '8 days' where user_id = $1", [BRUNO])
-    assert.equal((await start(BRUNO, true)).show_in_ranking, false)
+    // Sem iniciar (sem cronômetro), o envio é recusado.
+    await db.exec(`insert into auth.users (id, email) values ('${id(23)}', 'c@test.invalid');
+      insert into public.enrollments (user_id, course_id, status, study_group) values ('${id(23)}', '${COURSE_A}', 'active', 1);`)
+    await assert.rejects(submit(db, id(23), W, allRight), /MINI_QUIZ_NOT_STARTED/)
 
     // Início só é gravado pela função; cada aluno lê apenas o próprio.
     await assert.rejects(

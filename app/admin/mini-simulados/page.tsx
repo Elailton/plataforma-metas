@@ -35,8 +35,8 @@ export default async function AdminMiniQuizzesPage({ searchParams }: { searchPar
   return (
     <>
       <PageHeader
-        title="Mini Simulados"
-        description="Questões resolvidas na plataforma, com correção comentada e diagnóstico por aluno."
+        title="Diagnóstico Semanal"
+        description="Diagnósticos semanais e mini simulados por disciplina, com correção comentada e relatório por aluno."
         actions={
           <div className="flex flex-wrap gap-2">
             <MiniQuizDocxImport
@@ -78,21 +78,24 @@ export default async function AdminMiniQuizzesPage({ searchParams }: { searchPar
         {weekly.length > 0 ? (
           <section aria-labelledby="adm-semanais">
             <SectionHeader
-              title={<span id="adm-semanais">Simulados semanais</span>}
-              description={`${weekly.filter((quiz) => quiz.status === "published").length} publicados · cada grupo vê só os seus, a partir da data de liberação`}
+              title={<span id="adm-semanais">Diagnóstico Semanal</span>}
+              description={`${weekly.filter((quiz) => quiz.status === "published").length} publicados · abra um para fazer a prévia e publicar. Cada grupo vê só o seu, a partir da data de liberação`}
             />
             <ul className="flex flex-col divide-y divide-border overflow-hidden rounded-xl border border-border bg-card">
               {weekly.map((quiz) => (
-                <li key={quiz.id} className="flex items-center gap-3 px-4 py-3">
+                <li key={quiz.id}>
+                  <Link href={`/admin/mini-simulados/${quiz.id}?curso=${course.id}`} className="flex items-center gap-3 px-4 py-3 hover:bg-muted/40">
                   <span className="min-w-0 flex-1">
                     <span className="block truncate text-sm font-medium">{quiz.title}</span>
                     <span className="block text-xs text-muted-foreground tabular-nums">
                       {quiz.targetGroups.length === 2 ? "Todos os grupos" : `Grupo ${quiz.targetGroups[0]}`}
                       {quiz.releaseDate ? ` · libera em ${formatDate(quiz.releaseDate)}` : ""} · {quiz.questionCount} questões ·{" "}
-                      {quiz.attemptCount} {quiz.attemptCount === 1 ? "tentativa" : "tentativas"}
+                      {quiz.attemptCount} {quiz.attemptCount === 1 ? "aluno fez" : "alunos fizeram"}
                     </span>
                   </span>
                   <Badge variant={STATUS[quiz.status].variant}>{STATUS[quiz.status].label}</Badge>
+                  <ChevronRight className="size-4 text-muted-foreground" aria-hidden="true" />
+                  </Link>
                 </li>
               ))}
             </ul>

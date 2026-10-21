@@ -1,9 +1,11 @@
--- Simulados com cronômetro e ranking opcional.
+-- Diagnóstico Semanal: cronômetro, tentativa única e ranking opcional.
 --
 -- O tempo é medido pelo banco: `start_mini_quiz` registra o início e o envio
--- (`submit_mini_quiz`) grava a duração. O aluno escolhe, ao iniciar, se quer
--- aparecer no ranking; só a primeira tentativa de cada simulado entra nele.
--- O ranking ordena por acertos e desempata pelo menor tempo.
+-- (`submit_mini_quiz`) grava a duração. O diagnóstico semanal (sem disciplina
+-- própria) só pode ser feito uma vez e só pode ser enviado depois de iniciado.
+-- Mini simulados por disciplina mantêm a regra antiga de refazer após 7 dias.
+-- O aluno escolhe, ao iniciar, se quer aparecer no ranking; ordem por acertos
+-- e desempate pelo menor tempo.
 
 alter table public.mini_quiz_attempts
   add column if not exists started_at timestamptz,
@@ -82,6 +84,9 @@ begin
 
   select max(submitted_at), count(*) > 0 into v_last, v_has_attempt
     from public.mini_quiz_attempts where user_id = v_uid and quiz_id = p_quiz_id;
+  if v_quiz.subject_id is null and v_has_attempt then
+    raise exception 'MINI_QUIZ_ALREADY_DONE' using errcode = 'P0001';
+  end if;
   if v_last is not null and v_last > v_now - interval '7 days' then
     raise exception 'MINI_QUIZ_COOLDOWN:%', to_char(v_last + interval '7 days', 'YYYY-MM-DD"T"HH24:MI:SS"Z"')
       using errcode = 'P0001';
@@ -136,6 +141,9 @@ begin
     into v_last, v_attempt_number
   from public.mini_quiz_attempts where user_id = v_uid and quiz_id = p_quiz_id;
 
+  if v_quiz.subject_id is null and v_attempt_number > 1 then
+    raise exception 'MINI_QUIZ_ALREADY_DONE' using errcode = 'P0001';
+  end if;
   if v_last is not null and v_last > v_now - interval '7 days' then
     raise exception 'MINI_QUIZ_COOLDOWN:%', to_char(v_last + interval '7 days', 'YYYY-MM-DD"T"HH24:MI:SS"Z"')
       using errcode = 'P0001';
@@ -171,6 +179,9 @@ begin
    for update;
   if found then
     v_duration := greatest(0, floor(extract(epoch from (v_now - v_start.started_at)))::integer);
+  elsif v_quiz.subject_id is null then
+    -- Diagnóstico semanal só é enviado depois de iniciado (o cronômetro é obrigatório).
+    raise exception 'MINI_QUIZ_NOT_STARTED' using errcode = 'P0001';
   end if;
 
   insert into public.mini_quiz_attempts (

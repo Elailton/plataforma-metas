@@ -90,8 +90,42 @@ export async function saveMiniQuiz(input: MiniQuizSaveInput): Promise<{ ok: true
   }
 
   revalidatePath("/admin/mini-simulados")
-  revalidatePath("/aluno/mini-simulados")
+  revalidatePath("/aluno/diagnostico-semanal")
   return { ok: true, quizId: data as string }
+}
+
+/** Publica ou volta para rascunho um Diagnóstico Semanal (as questões não mudam). */
+export async function setWeeklyDiagnosticStatus(
+  quizId: string,
+  status: "draft" | "published",
+): Promise<{ ok: true } | { ok: false; error: string }> {
+  const { supabase } = await requireAdmin()
+  if (!isUuid(quizId) || !["draft", "published"].includes(status)) return { ok: false, error: "Pedido inválido." }
+  const { data: quiz, error: readError } = await supabase
+    .from("mini_quizzes")
+    .select("id, subject_id")
+    .eq("id", quizId)
+    .maybeSingle()
+  if (readError || !quiz) return { ok: false, error: "Diagnóstico não encontrado." }
+  if (quiz.subject_id) return { ok: false, error: "Use o editor para mini simulados por disciplina." }
+  if (status === "published") {
+    const { count } = await supabase
+      .from("mini_quiz_questions")
+      .select("id", { count: "exact", head: true })
+      .eq("quiz_id", quizId)
+      .is("archived_at", null)
+    if (!count) return { ok: false, error: "Para publicar, o diagnóstico precisa ter questões." }
+  }
+  const { error } = await supabase.from("mini_quizzes").update({ status }).eq("id", quizId)
+  if (error) {
+    logSafeServerError("admin.weekly_diagnostic.status_failed", error)
+    return { ok: false, error: "Não foi possível alterar a situação." }
+  }
+  revalidatePath("/admin/mini-simulados")
+  revalidatePath(`/admin/mini-simulados/${quizId}`)
+  revalidatePath("/aluno/diagnostico-semanal")
+  revalidatePath("/aluno")
+  return { ok: true }
 }
 
 const IMAGE_MIMES = new Set(["image/png", "image/jpeg", "image/gif", "image/webp"])

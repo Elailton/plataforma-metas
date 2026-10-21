@@ -28,6 +28,7 @@ export interface AdminMiniQuizQuestion {
   statement: string
   alternatives: Array<{ key: AlternativeKey; text: string }>
   topicId: string | null
+  subjectId: string | null
   correctKey: AlternativeKey
   explanation: string
 }
@@ -43,6 +44,9 @@ export interface AdminMiniQuiz {
   position: number
   updatedAt: string
   attemptCount: number
+  targetGroups: number[]
+  releaseDate: string | null
+  weekNumber: number | null
   questions: AdminMiniQuizQuestion[]
 }
 
@@ -88,12 +92,12 @@ export async function getAdminMiniQuiz(quizId: string): Promise<AdminMiniQuiz | 
   const [quiz, questions, attempts] = await Promise.all([
     supabase
       .from("mini_quizzes")
-      .select("id, course_id, subject_id, topic_id, title, description, status, position, updated_at")
+      .select("id, course_id, subject_id, topic_id, title, description, status, position, updated_at, target_groups, release_date, week_number")
       .eq("id", quizId)
       .maybeSingle(),
     supabase
       .from("mini_quiz_questions")
-      .select("id, position, statement, alternatives, topic_id, mini_quiz_answer_keys(correct_key, explanation)")
+      .select("id, position, statement, alternatives, topic_id, subject_id, mini_quiz_answer_keys(correct_key, explanation)")
       .eq("quiz_id", quizId)
       .is("archived_at", null)
       .order("position"),
@@ -113,6 +117,9 @@ export async function getAdminMiniQuiz(quizId: string): Promise<AdminMiniQuiz | 
     position: quiz.data.position,
     updatedAt: quiz.data.updated_at,
     attemptCount: attempts.count ?? 0,
+    targetGroups: ((quiz.data.target_groups ?? [1, 2]) as number[]),
+    releaseDate: quiz.data.release_date ?? null,
+    weekNumber: quiz.data.week_number ?? null,
     questions: (questions.data ?? []).map((question) => {
       const key = Array.isArray(question.mini_quiz_answer_keys) ? question.mini_quiz_answer_keys[0] : question.mini_quiz_answer_keys
       return {
@@ -120,6 +127,7 @@ export async function getAdminMiniQuiz(quizId: string): Promise<AdminMiniQuiz | 
         statement: question.statement,
         alternatives: question.alternatives as AdminMiniQuizQuestion["alternatives"],
         topicId: question.topic_id,
+        subjectId: question.subject_id ?? null,
         correctKey: ((key as { correct_key?: string } | null)?.correct_key ?? "A") as AlternativeKey,
         explanation: (key as { explanation?: string | null } | null)?.explanation ?? "",
       }
