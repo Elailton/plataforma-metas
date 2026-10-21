@@ -6,10 +6,11 @@ import { PageHeader } from "@/components/page-header"
 import { StatCard } from "@/components/stat-card"
 import { buttonVariants } from "@/components/ui/button"
 import { AttemptReview } from "@/components/mini-quizzes/attempt-review"
+import { RankingCard } from "@/components/mini-quizzes/ranking-card"
 import { formatDateTime } from "@/components/mini-quizzes/format"
 import { getStudentContext } from "@/lib/student/queries"
-import { getAttemptReview } from "@/lib/mini-quizzes/queries"
-import { nextAvailableAt, percentage } from "@/lib/mini-quizzes/core.mjs"
+import { getAttemptReview, getQuizRanking } from "@/lib/mini-quizzes/queries"
+import { formatDuration, nextAvailableAt, percentage } from "@/lib/mini-quizzes/core.mjs"
 
 export const dynamic = "force-dynamic"
 
@@ -23,6 +24,7 @@ export default async function MiniQuizAttemptPage({ params }: { params: Promise<
   const { attempt } = review
   const score = percentage(attempt.correct_count, attempt.total_count)
   const next = nextAvailableAt(attempt.submitted_at)
+  const ranking = await getQuizRanking(attempt.quiz_id)
 
   return (
     <PageContainer>
@@ -31,7 +33,7 @@ export default async function MiniQuizAttemptPage({ params }: { params: Promise<
         eyebrow={`${review.subjectName} · ${attempt.attempt_number}ª tentativa`}
         description={`Enviado em ${formatDateTime(attempt.submitted_at)}${next && next.getTime() > Date.now() ? ` · refazer a partir de ${formatDateTime(next.toISOString())}` : ""}`}
         backHref="/aluno/mini-simulados"
-        backLabel="Mini Simulados"
+        backLabel="Simulados semanais"
         actions={
           <Link href="/aluno/mini-simulados/diagnostico" className={buttonVariants({ variant: "outline" })}>
             <BarChart3 data-icon="inline-start" />
@@ -39,16 +41,18 @@ export default async function MiniQuizAttemptPage({ params }: { params: Promise<
           </Link>
         }
       />
-      <div className="mb-6 grid grid-cols-3 gap-3">
+      <div className="mb-6 grid grid-cols-2 gap-3 md:grid-cols-4">
         <StatCard label="Acertos" value={attempt.correct_count} suffix={`/ ${attempt.total_count}`} tone="success" />
         <StatCard label="Aproveitamento" value={`${score}%`} tone="primary" />
+        <StatCard label="Tempo" value={formatDuration(attempt.duration_seconds)} />
         <StatCard label="Em branco" value={attempt.total_count - attempt.answered_count} />
       </div>
       {attempt.is_first_of_month ? null : (
         <p className="mb-5 rounded-lg bg-muted/50 px-3 py-2 text-xs text-muted-foreground">
-          Esta tentativa fica no histórico, mas não altera o diagnóstico do mês: ele usa a primeira tentativa de cada mini simulado no mês.
+          Esta tentativa fica no histórico, mas não altera o diagnóstico do mês: ele usa a primeira tentativa de cada simulado no mês.
         </p>
       )}
+      <RankingCard rows={ranking} title="Ranking deste simulado" className="mb-6" />
       <AttemptReview questions={review.questions} />
     </PageContainer>
   )

@@ -26,7 +26,7 @@ export interface DiagnosisSubjectRow {
 }
 
 const ATTEMPT_COLUMNS =
-  "id, quiz_id, attempt_number, correct_count, answered_count, total_count, submitted_at, month_start, is_first_of_month"
+  "id, quiz_id, attempt_number, correct_count, answered_count, total_count, submitted_at, month_start, is_first_of_month, duration_seconds"
 
 function fail(event: string, error: unknown, message: string): never {
   logSafeServerError(event, error)
@@ -68,7 +68,7 @@ export async function getStudentQuizOverview(courseId: string, userId: string) {
     supabase.from("mini_quiz_attempts").select(ATTEMPT_COLUMNS).eq("course_id", courseId).eq("user_id", userId),
     getCourseSubjects(courseId),
   ])
-  if (quizzesResult.error) fail("mini_quiz.list_failed", quizzesResult.error, "Não foi possível carregar os mini simulados.")
+  if (quizzesResult.error) fail("mini_quiz.list_failed", quizzesResult.error, "Não foi possível carregar os simulados.")
   if (attemptsResult.error) fail("mini_quiz.attempts_failed", attemptsResult.error, "Não foi possível carregar suas tentativas.")
 
   const questionCounts: Record<string, number> = {}
@@ -87,7 +87,7 @@ export async function getStudentQuizOverview(courseId: string, userId: string) {
 export async function getStudentQuiz(quizId: string, userId: string) {
   if (!isUuid(quizId)) return null
   const supabase = await createClient()
-  const [quizResult, questionsResult, attemptsResult] = await Promise.all([
+  const [quizResult, questionsResult, attemptsResult, startResult] = await Promise.all([
     supabase
       .from("mini_quizzes")
       .select("id, course_id, subject_id, title, description, status, week_number, subjects(name)")
@@ -106,8 +106,15 @@ export async function getStudentQuiz(quizId: string, userId: string) {
       .eq("quiz_id", quizId)
       .eq("user_id", userId)
       .order("attempt_number"),
+    supabase
+      .from("mini_quiz_starts")
+      .select("started_at, show_in_ranking")
+      .eq("quiz_id", quizId)
+      .eq("user_id", userId)
+      .is("finished_at", null)
+      .maybeSingle(),
   ])
-  if (quizResult.error) fail("mini_quiz.read_failed", quizResult.error, "Não foi possível carregar o mini simulado.")
+  if (quizResult.error) fail("mini_quiz.read_failed", quizResult.error, "Não foi possível carregar o simulado.")
   if (!quizResult.data) return null
   if (questionsResult.error) fail("mini_quiz.questions_failed", questionsResult.error, "Não foi possível carregar as questões.")
   if (attemptsResult.error) fail("mini_quiz.attempts_failed", attemptsResult.error, "Não foi possível carregar suas tentativas.")
@@ -122,7 +129,52 @@ export async function getStudentQuiz(quizId: string, userId: string) {
     },
     questions: (questionsResult.data ?? []) as QuizQuestion[],
     attempts: (attemptsResult.data ?? []) as QuizAttemptRow[],
+    // Resolução em andamento (cronômetro rodando). Sem a tabela/registro, começa do zero.
+    openStart: startResult.error ? null : ((startResult.data as { started_at: string; show_in_ranking: boolean } | null) ?? null),
   }
+}
+
+export interface RankingRow {
+  rank: number
+  display_name: string
+  correct_count: number
+  total_count: number
+  duration_seconds: number | null
+  is_me: boolean
+  participants: number
+}
+
+/** Ranking de um simulado (topo e a própria posição). Falha vira lista vazia: o ranking nunca derruba a página. */
+export async function getQuizRanking(quizId: string, limit = 10): Promise<RankingRow[]> {
+  if (!isUuid(quizId)) return []
+  const supabase = await createClient()
+  const { data, error } = await supabase.rpc("mini_quiz_ranking", { p_quiz_id: quizId, p_limit: limit })
+  if (error) {
+    logSafeServerError("mini_quiz.ranking_failed", error)
+    return []
+  }
+  return (data ?? []) as RankingRow[]
+}
+
+/** Simulado semanal mais recente liberado para o aluno (a RLS aplica grupo e data) e o seu ranking. */
+export async function getLatestWeeklyRanking(courseId: string, limit = 5) {
+  const supabase = await createClient()
+  const { data, error } = await supabase
+    .from("mini_quizzes")
+    .select("id, title, week_number, release_date")
+    .eq("course_id", courseId)
+    .eq("status", "published")
+    .is("subject_id", null)
+    .order("release_date", { ascending: false, nullsFirst: false })
+    .order("week_number", { ascending: false, nullsFirst: false })
+    .limit(1)
+    .maybeSingle()
+  if (error) {
+    logSafeServerError("mini_quiz.latest_weekly_failed", error)
+    return null
+  }
+  if (!data) return null
+  return { quiz: data as { id: string; title: string; week_number: number | null }, rows: await getQuizRanking(data.id, limit) }
 }
 
 export interface ReviewedQuestion extends QuizQuestion {

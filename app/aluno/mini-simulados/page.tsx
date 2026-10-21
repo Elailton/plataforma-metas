@@ -21,8 +21,8 @@ export default async function MiniQuizzesPage() {
   return (
     <PageContainer>
       <PageHeading
-        title="Mini Simulados"
-        description="Simulados da semana e por disciplina, sem tempo. Depois de enviar, você pode refazer após 7 dias."
+        title="Simulados semanais"
+        description="Simulados da semana com cronômetro e ranking. Depois de enviar, você pode refazer após 7 dias."
         actions={
           <Link href="/aluno/mini-simulados/diagnostico" className={buttonVariants({ variant: "outline" })}>
             <BarChart3 data-icon="inline-start" />
@@ -33,7 +33,7 @@ export default async function MiniQuizzesPage() {
 
       {groups.length === 0 ? (
         <div className="rounded-xl border border-dashed border-border bg-card p-6 text-center text-sm text-muted-foreground">
-          Os mini simulados deste curso ainda não foram liberados.
+          Os simulados deste curso ainda não foram liberados.
         </div>
       ) : (
         <>

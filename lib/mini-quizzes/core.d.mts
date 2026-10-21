@@ -20,6 +20,7 @@ export interface QuizAttemptRow {
   submitted_at: string
   month_start: string
   is_first_of_month: boolean
+  duration_seconds?: number | null
 }
 
 export interface StudentQuizEntry {
@@ -104,3 +105,6 @@ export function parseQuestionsText(text: string): Array<{
   explanation: string
 }>
 export function isUuid(value: unknown): value is string
+export function elapsedSeconds(startedAt: string | Date, now?: Date): number
+export function formatClock(seconds: number): string
+export function formatDuration(seconds: number | null | undefined): string

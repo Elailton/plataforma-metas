@@ -35,7 +35,7 @@ export function DiagnosisView({
     return (
       <div className="rounded-xl border border-dashed border-border bg-card p-6 text-center">
         <ClipboardCheck className="mx-auto mb-3 size-6 text-muted-foreground" aria-hidden="true" />
-        <p className="text-sm font-medium text-foreground">Ainda não há mini simulados resolvidos.</p>
+        <p className="text-sm font-medium text-foreground">Ainda não há simulados resolvidos.</p>
         <p className="mt-1 text-sm text-muted-foreground">O diagnóstico aparece depois da primeira tentativa.</p>
       </div>
     )
@@ -92,7 +92,7 @@ export function DiagnosisView({
       <section aria-labelledby="diagnostico-disciplinas">
         <SectionHeader
           title={<span id="diagnostico-disciplinas">Por disciplina</span>}
-          description="Percentual de acerto na primeira tentativa de cada mini simulado do mês."
+          description="Percentual de acerto na primeira tentativa de cada simulado do mês."
         />
         <div className="flex flex-col divide-y divide-border overflow-hidden rounded-xl border border-border bg-card">
           {studied.map((subject) => (

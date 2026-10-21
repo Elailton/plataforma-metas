@@ -2,7 +2,7 @@
 
 import { useEffect, useMemo, useState } from "react"
 import { useRouter } from "next/navigation"
-import { Send } from "lucide-react"
+import { Send, Timer } from "lucide-react"
 import { toast } from "sonner"
 import { Button } from "@/components/ui/button"
 import {
@@ -20,9 +20,10 @@ import type { QuizQuestion } from "@/lib/mini-quizzes/queries"
 import { cn } from "@/lib/utils"
 import { formatDateTime } from "./format"
 import { RichText } from "./rich-text"
+import { elapsedSeconds, formatClock } from "@/lib/mini-quizzes/core.mjs"
 
-/** Resolução livre (sem cronômetro). As respostas só saem do navegador no envio. */
-export function QuizRunner({ quizId, questions }: { quizId: string; questions: QuizQuestion[] }) {
+/** Resolução com cronômetro (início registrado pelo banco). As respostas só saem do navegador no envio. */
+export function QuizRunner({ quizId, questions, startedAt }: { quizId: string; questions: QuizQuestion[]; startedAt: string | null }) {
   const router = useRouter()
   const [answers, setAnswers] = useState<Record<string, string>>({})
   const [pending, setPending] = useState(false)
@@ -30,6 +31,15 @@ export function QuizRunner({ quizId, questions }: { quizId: string; questions: Q
   const [submitted, setSubmitted] = useState(false)
   const answered = useMemo(() => questions.filter((question) => answers[question.id]).length, [answers, questions])
   const unanswered = questions.length - answered
+  const [elapsed, setElapsed] = useState(() => (startedAt ? elapsedSeconds(startedAt) : 0))
+
+  useEffect(() => {
+    if (!startedAt || submitted) return
+    const tick = () => setElapsed(elapsedSeconds(startedAt))
+    tick()
+    const timer = window.setInterval(tick, 1000)
+    return () => window.clearInterval(timer)
+  }, [startedAt, submitted])
 
   useEffect(() => {
     if (answered === 0 || submitted) return
@@ -107,8 +117,16 @@ export function QuizRunner({ quizId, questions }: { quizId: string; questions: Q
       </ol>
 
       <div className="sticky bottom-[calc(4.5rem+env(safe-area-inset-bottom))] z-10 flex items-center justify-between gap-3 rounded-xl border border-border bg-card/95 p-3 shadow-sm backdrop-blur md:bottom-4">
-        <span className="text-sm text-muted-foreground tabular-nums">
-          {answered} de {questions.length} respondidas
+        <span className="flex min-w-0 flex-wrap items-center gap-x-3 gap-y-0.5 text-sm text-muted-foreground tabular-nums">
+          {startedAt ? (
+            <span className="inline-flex items-center gap-1.5 font-semibold text-foreground" aria-label={`Tempo de prova ${formatClock(elapsed)}`}>
+              <Timer className="size-4 text-primary" aria-hidden="true" />
+              <span role="timer">{formatClock(elapsed)}</span>
+            </span>
+          ) : null}
+          <span>
+            {answered} de {questions.length} respondidas
+          </span>
         </span>
         <Button onClick={() => (unanswered > 0 ? setConfirmOpen(true) : send())} disabled={pending || answered === 0}>
           <Send data-icon="inline-start" />
@@ -122,7 +140,7 @@ export function QuizRunner({ quizId, questions }: { quizId: string; questions: Q
             <AlertDialogTitle>Enviar com questões em branco?</AlertDialogTitle>
             <AlertDialogDescription>
               {unanswered === 1 ? "1 questão está sem resposta" : `${unanswered} questões estão sem resposta`} e contará como erro.
-              Depois do envio, uma nova tentativa só fica liberada em 7 dias.
+              Ao enviar, o cronômetro para e uma nova tentativa só fica liberada em 7 dias.
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>

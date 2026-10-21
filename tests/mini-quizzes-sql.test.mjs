@@ -302,3 +302,77 @@ test("simulado semanal: cada grupo vê só o seu, só a partir da data, e as res
     await db.close()
   }
 })
+
+test("cronômetro e ranking: tempo medido pelo banco, ranking só de quem aceitou e só da 1ª tentativa", async () => {
+  const db = await setup()
+  try {
+    await applyMigration(db, "20261021000100_mini_quiz_weekly_groups.sql")
+    await applyMigration(db, "20261021000200_mini_quiz_timer_ranking.sql")
+    const ANA = id(21)
+    const BRUNO = id(22)
+    const W = id(950)
+    const WQ = [id(960), id(961)]
+    const alts = JSON.stringify(["A", "B"].map((key) => ({ key, text: key })))
+    await db.exec(`
+      insert into auth.users (id, email) values ('${ANA}', 'ana@test.invalid'), ('${BRUNO}', 'bruno@test.invalid');
+      update public.profiles set full_name = 'Ana Maria Souza' where id = '${ANA}';
+      update public.profiles set full_name = 'Carlos Lima Neto' where id = '${USERS.groupOne}';
+      insert into public.enrollments (user_id, course_id, status, study_group) values
+        ('${ANA}', '${COURSE_A}', 'active', 1), ('${BRUNO}', '${COURSE_A}', 'active', 1);
+      insert into public.mini_quizzes (id, course_id, subject_id, title, status, target_groups, release_date, week_number)
+        values ('${W}', '${COURSE_A}', null, 'Semana 1', 'published', array[1]::smallint[], current_date - 1, 1);
+      insert into public.mini_quiz_questions (id, quiz_id, position, statement, alternatives, subject_id) values
+        ('${WQ[0]}', '${W}', 0, 'Q1', '${alts}', '${SUBJECT_A}'), ('${WQ[1]}', '${W}', 1, 'Q2', '${alts}', '${SUBJECT_A}');
+      insert into public.mini_quiz_answer_keys (question_id, correct_key) values ('${WQ[0]}', 'A'), ('${WQ[1]}', 'B');
+    `)
+    const start = (user, ranking) =>
+      asStudent(db, user, "select public.start_mini_quiz($1, $2) as r", [W, ranking]).then((res) => res.rows[0].r)
+    const ago = (user, seconds) =>
+      db.query(`update public.mini_quiz_starts set started_at = started_at - make_interval(secs => $2) where user_id = $1`, [user, seconds])
+    const allRight = { [WQ[0]]: "A", [WQ[1]]: "B" }
+
+    assert.equal((await start(USERS.groupOne, true)).resumed, false)
+    // Recarregar não zera o tempo nem muda a escolha do ranking.
+    const resumed = await start(USERS.groupOne, false)
+    assert.equal(resumed.resumed, true)
+    assert.equal(resumed.show_in_ranking, true)
+    await ago(USERS.groupOne, 600)
+    assert.equal((await submit(db, USERS.groupOne, W, allRight)).duration_seconds, 600)
+
+    await start(ANA, true)
+    await ago(ANA, 900)
+    await submit(db, ANA, W, allRight)
+
+    await start(BRUNO, false)
+    await submit(db, BRUNO, W, {})
+
+    const ranking = (user, limit = 10) =>
+      asStudent(db, user, "select * from public.mini_quiz_ranking($1, $2)", [W, limit]).then((res) => res.rows)
+    const rows = await ranking(BRUNO)
+    assert.deepEqual(
+      rows.map((row) => [row.rank, row.display_name, row.correct_count, row.duration_seconds, row.is_me, row.participants]),
+      [[1, "Carlos N.", 2, 600, false, 2], [2, "Ana S.", 2, 900, false, 2]],
+    )
+    // Fora do topo, a própria linha também volta.
+    assert.deepEqual((await ranking(ANA, 1)).map((row) => [row.rank, row.is_me]), [[1, false], [2, true]])
+
+    // Outro grupo não vê o ranking nem inicia; tentativa nova só depois de 7 dias.
+    await assert.rejects(ranking(USERS.groupTwo), /MINI_QUIZ_NOT_AVAILABLE/)
+    await assert.rejects(start(USERS.groupTwo, true), /MINI_QUIZ_NOT_AVAILABLE/)
+    await assert.rejects(start(USERS.groupOne, true), /MINI_QUIZ_COOLDOWN/)
+
+    // Segunda tentativa nunca entra no ranking.
+    await db.query("update public.mini_quiz_attempts set submitted_at = submitted_at - interval '8 days' where user_id = $1", [BRUNO])
+    assert.equal((await start(BRUNO, true)).show_in_ranking, false)
+
+    // Início só é gravado pela função; cada aluno lê apenas o próprio.
+    await assert.rejects(
+      asStudent(db, ANA, "insert into public.mini_quiz_starts (user_id, quiz_id) values ($1, $2)", [ANA, W]),
+      /permission denied/,
+    )
+    const own = await asStudent(db, ANA, "select count(*)::int as n from public.mini_quiz_starts")
+    assert.equal(own.rows[0].n, 1)
+  } finally {
+    await db.close()
+  }
+})
