@@ -8,7 +8,7 @@ import { createClient } from "@/lib/supabase/client"
 import { ACCESS_CODE_TYPES, DEFAULT_NEXT_PATH, normalizeAccessCode } from "@/lib/auth/confirm.mjs"
 import { normalizeResendEmail } from "@/lib/auth/resend-access.mjs"
 
-const INVALID_MESSAGE = "Código inválido ou expirado. Confira o último e-mail recebido ou peça um novo acesso."
+const INVALID_MESSAGE = "Código inválido ou expirado. Use o código do e-mail mais recente (cada novo pedido cancela os anteriores) ou peça um novo acesso."
 
 export function AccessCodeForm() {
   const [email, setEmail] = useState("")
@@ -23,7 +23,7 @@ export function AccessCodeForm() {
     const normalizedEmail = normalizeResendEmail(email)
     const token = normalizeAccessCode(code)
     if (!normalizedEmail || !token) {
-      setError(!normalizedEmail ? "Informe um e-mail válido." : "O código tem apenas números (6 dígitos ou mais).")
+      setError(!normalizedEmail ? "Informe um e-mail válido." : "O código tem só números (normalmente 8). Confira o e-mail mais recente.")
       return
     }
 
@@ -73,13 +73,17 @@ export function AccessCodeForm() {
           id="code"
           inputMode="numeric"
           autoComplete="one-time-code"
-          placeholder="000000"
+          placeholder="00000000"
           required
           maxLength={14}
           className="h-11 font-mono text-lg tracking-[0.3em]"
           value={code}
           onChange={(event) => setCode(event.target.value)}
         />
+        <p className="text-xs leading-relaxed text-muted-foreground">
+          Digite todos os números do código (normalmente 8). Use sempre o e-mail mais recente: cada novo pedido de acesso cancela os
+          códigos anteriores.
+        </p>
       </div>
       {error ? (
         <p role="alert" className="rounded-lg border border-destructive/30 bg-destructive/10 px-3 py-2 text-sm text-destructive">
