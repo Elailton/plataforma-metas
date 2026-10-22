@@ -227,6 +227,21 @@ O usuário ampliou o escopo do beta em 1º de setembro de 2026. O progresso real
 
 As contas existentes de um administrador e de um aluno de teste são dados protegidos. Nunca as exclua, recrie ou altere suas senhas. O aluno de teste deve receber acesso somente aos cursos atribuídos por matrícula ativa; inicialmente, apenas o curso GMF existente no banco.
 
+## Grupos, Grupo 3 (teste) e lançamentos
+
+- Grupos de estudo: 1 e 2 (alunos) e 3 (teste, só a conta de teste do administrador).
+  O Grupo 3 vê tudo do grupo que espelha (`enrollments.mirror_group`, 1 ou 2) e o que
+  foi lançado só para o Grupo 3. Contas do Grupo 3 não aparecem no ranking dos alunos.
+- `target_groups` de metas e diagnósticos aceita 1, 2 e 3. A visibilidade é decidida
+  no banco (`student_goal_scopes`, `student_group_allowed`).
+- `course_group_settings`: por curso e grupo, abas/funções desligadas
+  (`metas`, `edital`, `diagnostico_semanal`, `relatorio`, `ranking`, `progresso`) e aviso
+  da tela inicial. Aba desligada some do menu e a rota volta para `/aluno`.
+- Fluxo de lançamento: lançar primeiro só no Grupo 3, o administrador confere com a
+  conta de teste e depois libera nos Grupos 1 e 2. **Antes de lançar qualquer conteúdo
+  ou função, perguntar ao usuário em qual grupo lançar (1, 2, 3 ou combinação).**
+- Nunca mostrar o número do grupo ao aluno.
+
 ## Mini Simulados
 
 Mini simulados por disciplina, cadastrados pelo administrador e resolvidos pelo aluno

@@ -1,3 +1,4 @@
+import { audienceLabel } from "@/lib/groups/experience.mjs"
 import Link from "next/link"
 import { ChevronRight } from "lucide-react"
 import { Badge } from "@/components/ui/badge"
@@ -15,9 +16,7 @@ export function AdminGoalRow({ goal }: { goal: AdminGoal }) {
           {goal.title}
         </span>
         <span className="text-xs text-muted-foreground">
-          {goal.targetGroups.length === 2
-            ? "Grupos 1 e 2"
-            : `Grupo ${goal.targetGroups[0]}`}
+          {audienceLabel(goal.targetGroups)}
         </span>
         <span className="text-xs text-muted-foreground">
           {goal.dueDate ? `${formatDate(goal.dueDate)} · ` : ""}

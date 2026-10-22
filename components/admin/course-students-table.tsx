@@ -201,6 +201,9 @@ export function CourseStudentsTable({
           <option value="2">
             Grupo 2 ({students.filter((s) => s.studyGroup === 2).length})
           </option>
+          <option value="3">
+            Grupo 3 · teste ({students.filter((s) => s.studyGroup === 3).length})
+          </option>
           <option value="none">
             Sem grupo ({students.filter((s) => s.studyGroup == null).length})
           </option>
@@ -260,17 +263,19 @@ export function CourseStudentsTable({
                   <TableCell className="max-w-80 whitespace-normal">
                     <select
                       aria-label={`Grupo de ${student.fullName}`}
-                      value={student.studyGroup ?? "none"}
+                      value={student.studyGroup === 3 ? `3-${student.mirrorGroup ?? 1}` : student.studyGroup ?? "none"}
                       disabled={pending}
                       className="rounded border p-2"
                       onChange={(event) => {
                         const value = event.target.value
+                        const [group, mirror] = value.split("-")
                         startTransition(async () => {
                           try {
                             await setStudentGroup(
                               student.id,
                               courseId,
-                              value === "none" ? null : Number(value),
+                              value === "none" ? null : Number(group),
+                              mirror ? Number(mirror) : null,
                             )
                             toast.success(
                               "Grupo atualizado; histórico preservado.",
@@ -289,6 +294,8 @@ export function CourseStudentsTable({
                       <option value="none">Sem grupo</option>
                       <option value="1">Grupo 1 — até 4h</option>
                       <option value="2">Grupo 2 — mais de 4h</option>
+                      <option value="3-1">Grupo 3 · teste (vê o G1 + testes)</option>
+                      <option value="3-2">Grupo 3 · teste (vê o G2 + testes)</option>
                     </select>
                     {student.groupManualOverride && (
                       <p className="mt-1 text-xs text-muted-foreground">

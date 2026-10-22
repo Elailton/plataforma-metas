@@ -11,7 +11,7 @@ import { RichText } from "@/components/mini-quizzes/rich-text"
 import { AttemptReview } from "@/components/mini-quizzes/attempt-review"
 import { formatClock, formatDuration, percentage } from "@/lib/mini-quizzes/core.mjs"
 import type { AlternativeKey } from "@/lib/mini-quizzes/core.mjs"
-import { setWeeklyDiagnosticStatus } from "@/lib/admin/actions/mini-quizzes"
+import { setWeeklyDiagnosticGroups, setWeeklyDiagnosticStatus } from "@/lib/admin/actions/mini-quizzes"
 
 export interface PreviewQuestion {
   id: string
@@ -20,6 +20,48 @@ export interface PreviewQuestion {
   correctKey: AlternativeKey
   explanation: string
   subjectName: string
+}
+
+/** Para quais grupos o diagnóstico vale. Fluxo: lançar no Grupo 3 (teste), conferir e depois liberar. */
+export function WeeklyDiagnosticGroups({ quizId, groups }: { quizId: string; groups: number[] }) {
+  const router = useRouter()
+  const [selected, setSelected] = useState<number[]>(groups)
+  const [pending, setPending] = useState(false)
+  const changed = [...selected].sort().join(",") !== [...groups].sort().join(",")
+  async function save() {
+    setPending(true)
+    try {
+      const result = await setWeeklyDiagnosticGroups(quizId, selected)
+      if (!result.ok) {
+        toast.error(result.error)
+        return
+      }
+      toast.success("Grupos atualizados.")
+      router.refresh()
+    } finally {
+      setPending(false)
+    }
+  }
+  return (
+    <div className="flex flex-wrap items-center gap-x-5 gap-y-2 rounded-xl border border-border bg-card px-4 py-3 text-sm">
+      <span className="font-medium text-foreground">Liberado para:</span>
+      {[1, 2, 3].map((group) => (
+        <label key={group} className="flex items-center gap-2">
+          <input
+            type="checkbox"
+            checked={selected.includes(group)}
+            onChange={(event) =>
+              setSelected((current) => (event.target.checked ? [...current, group] : current.filter((g) => g !== group)))
+            }
+          />
+          {group === 3 ? "Grupo 3 (teste)" : `Grupo ${group}`}
+        </label>
+      ))}
+      <Button size="sm" variant="outline" onClick={save} disabled={pending || !changed || selected.length === 0}>
+        {pending ? "Salvando..." : "Salvar grupos"}
+      </Button>
+    </div>
+  )
 }
 
 /** Publicar / voltar para rascunho. */

@@ -76,7 +76,7 @@ export default async function AdminGoalPreviewPage({
 
   const groupTabs = course.groupsEnabled ? (
     <div className="flex rounded-lg border border-border bg-card p-0.5" role="tablist" aria-label="Grupo da prévia">
-      {[1, 2].map((option) => (
+      {[1, 2, 3].map((option) => (
         <Link
           key={option}
           href={href({ grupo: option })}
@@ -87,7 +87,7 @@ export default async function AdminGoalPreviewPage({
             group === option ? "bg-primary text-primary-foreground" : "text-muted-foreground hover:text-foreground",
           )}
         >
-          Grupo {option}
+          {option === 3 ? "Grupo 3 · teste" : `Grupo ${option}`}
         </Link>
       ))}
     </div>

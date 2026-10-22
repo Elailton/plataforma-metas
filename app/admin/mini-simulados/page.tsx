@@ -10,6 +10,7 @@ import { getCourseSubjects } from "@/lib/mini-quizzes/queries"
 import { resolveCourse } from "./course-param"
 import { MiniQuizDocxImport } from "@/components/admin/mini-quiz-docx-import"
 import { formatDate } from "@/lib/format"
+import { audienceLabel } from "@/lib/groups/experience.mjs"
 
 export const dynamic = "force-dynamic"
 
@@ -88,7 +89,7 @@ export default async function AdminMiniQuizzesPage({ searchParams }: { searchPar
                   <span className="min-w-0 flex-1">
                     <span className="block truncate text-sm font-medium">{quiz.title}</span>
                     <span className="block text-xs text-muted-foreground tabular-nums">
-                      {quiz.targetGroups.length === 2 ? "Todos os grupos" : `Grupo ${quiz.targetGroups[0]}`}
+                      {audienceLabel(quiz.targetGroups)}
                       {quiz.releaseDate ? ` · libera em ${formatDate(quiz.releaseDate)}` : ""} · {quiz.questionCount} questões ·{" "}
                       {quiz.attemptCount} {quiz.attemptCount === 1 ? "aluno fez" : "alunos fizeram"}
                     </span>

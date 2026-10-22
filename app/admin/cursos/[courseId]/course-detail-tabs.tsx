@@ -8,6 +8,8 @@ import { Button } from "@/components/ui/button"
 import { AdminGoalRow } from "@/components/admin/admin-goal-row"
 import { CourseEditalEditor } from "@/components/admin/course-edital-editor"
 import { CourseGroupsPanel } from "@/components/admin/course-groups-panel"
+import { GroupExperiencePanel } from "@/components/admin/group-experience-panel"
+import type { AdminGroupSettings } from "@/lib/admin/queries"
 import { CourseStudentsTable } from "@/components/admin/course-students-table"
 import { CourseMaterialsPanel } from "@/components/admin/course-materials-panel"
 import { CourseFormDialog } from "@/components/admin/course-form-dialog"
@@ -37,6 +39,7 @@ interface CourseDetailTabsProps {
   hotmartMappings: HotmartProductMapping[]
   hotmartEvents: HotmartEventSummary[]
   hotmartWebhookUrl: string | null
+  groupSettings: AdminGroupSettings[]
 }
 
 export function CourseDetailTabs({
@@ -48,6 +51,7 @@ export function CourseDetailTabs({
   hotmartMappings,
   hotmartEvents,
   hotmartWebhookUrl,
+  groupSettings,
 }: CourseDetailTabsProps) {
   const totalTopics = edital.reduce(
     (acc, group) => acc + group.topics.length,
@@ -81,6 +85,7 @@ export function CourseDetailTabs({
         <TabsTrigger value="edital">Edital</TabsTrigger>
         <TabsTrigger value="materials">Materiais</TabsTrigger>
         <TabsTrigger value="students">Alunos</TabsTrigger>
+        <TabsTrigger value="groups">Grupos</TabsTrigger>
         <TabsTrigger value="settings">Configurações</TabsTrigger>
       </TabsList>
       </div>
@@ -199,6 +204,10 @@ export function CourseDetailTabs({
             <CourseStudentsTable courseId={course.id} students={students} />
           </CardContent>
         </Card>
+      </TabsContent>
+
+      <TabsContent value="groups">
+        <GroupExperiencePanel courseId={course.id} groupsEnabled={course.groupsEnabled} settings={groupSettings} />
       </TabsContent>
 
       <TabsContent value="settings" className="flex flex-col gap-4">

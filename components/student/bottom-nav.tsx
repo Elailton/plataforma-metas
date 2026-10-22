@@ -5,7 +5,7 @@ import { usePathname } from "next/navigation"
 import { cn } from "@/lib/utils"
 import { studentNavItems } from "./student-nav-items"
 
-export function BottomNav() {
+export function BottomNav({ hiddenHrefs = [] }: { hiddenHrefs?: string[] }) {
   const pathname = usePathname()
 
   return (
@@ -14,7 +14,7 @@ export function BottomNav() {
       className="fixed inset-x-0 bottom-0 z-40 border-t border-border bg-card/95 backdrop-blur supports-backdrop-filter:bg-card/85 md:hidden"
     >
       <ul className="mx-auto flex max-w-lg items-stretch justify-between px-1 pb-[env(safe-area-inset-bottom)]">
-        {studentNavItems.map((item) => {
+        {studentNavItems.filter((item) => !hiddenHrefs.includes(item.href)).map((item) => {
           const isActive = item.href === "/aluno" ? pathname === "/aluno" : pathname.startsWith(item.href)
           const Icon = item.icon
           return (
