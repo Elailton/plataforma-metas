@@ -5,7 +5,8 @@ import { getAdminMiniQuiz } from "@/lib/admin/mini-quizzes"
 import { getCourseSubjects } from "@/lib/mini-quizzes/queries"
 import { Badge } from "@/components/ui/badge"
 import { formatDate } from "@/lib/format"
-import { WeeklyDiagnosticPreview, WeeklyDiagnosticStatusButton } from "@/components/admin/weekly-diagnostic-preview"
+import { WeeklyDiagnosticGroups, WeeklyDiagnosticPreview, WeeklyDiagnosticStatusButton } from "@/components/admin/weekly-diagnostic-preview"
+import { audienceLabel } from "@/lib/groups/experience.mjs"
 
 export const dynamic = "force-dynamic"
 
@@ -17,7 +18,7 @@ export default async function EditMiniQuizPage({ params }: { params: Promise<{ q
     // Diagnóstico Semanal (várias disciplinas): prévia como aluno e publicação. As questões vêm do banco.
     const subjects = await getCourseSubjects(quiz.courseId)
     const names = new Map(subjects.map((subject) => [subject.id, subject.name]))
-    const groups = quiz.targetGroups.length === 2 ? "Todos os grupos" : `Grupo ${quiz.targetGroups[0]}`
+    const groups = audienceLabel(quiz.targetGroups)
     return (
       <>
         <PageHeader
@@ -32,6 +33,9 @@ export default async function EditMiniQuizPage({ params }: { params: Promise<{ q
             </div>
           }
         />
+        <div className="mb-5">
+          <WeeklyDiagnosticGroups quizId={quiz.id} groups={quiz.targetGroups} />
+        </div>
         <WeeklyDiagnosticPreview
           questions={quiz.questions.map((question) => ({
             id: question.id,

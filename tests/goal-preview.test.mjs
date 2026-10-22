@@ -40,11 +40,14 @@ test("filtra por grupo, ignora arquivadas e ordena pela liberação", () => {
   assert.deepEqual(goalsForPreview(goals, 1).map((g) => g.title), ["Comece por aqui", "Meta 01", "Meta 02", "Rascunho"])
   assert.equal(goalsForPreview(goals, 2).length, 3)
   assert.equal(goalsForPreview(goals, null).length, 5)
+  // Teste (G3) vê o que é do G1 (espelho padrão) e o que é só dele.
+  assert.equal(goalsForPreview(goals, 3).length, goalsForPreview(goals, 1).length)
 })
 
-test("grupo da URL só aceita 1 ou 2", () => {
+test("grupo da URL aceita 1, 2 ou 3 (teste)", () => {
   assert.equal(parsePreviewGroup("1"), 1)
   assert.equal(parsePreviewGroup(["2"]), 2)
-  assert.equal(parsePreviewGroup("3"), null)
+  assert.equal(parsePreviewGroup("3"), 3)
+  assert.equal(parsePreviewGroup("4"), null)
   assert.equal(parsePreviewGroup(undefined), null)
 })

@@ -10,9 +10,20 @@ import { startMiniQuiz } from "@/lib/mini-quizzes/actions"
 import { formatDateTime } from "./format"
 
 /** Antes de começar: escolha do ranking (só na 1ª tentativa) e início do cronômetro no banco. */
-export function QuizStart({ quizId, questionCount, firstAttempt }: { quizId: string; questionCount: number; firstAttempt: boolean }) {
+export function QuizStart({
+  quizId,
+  questionCount,
+  firstAttempt,
+  rankingEnabled = true,
+}: {
+  quizId: string
+  questionCount: number
+  firstAttempt: boolean
+  rankingEnabled?: boolean
+}) {
   const router = useRouter()
-  const [ranking, setRanking] = useState<boolean | null>(firstAttempt ? null : false)
+  const askRanking = firstAttempt && rankingEnabled
+  const [ranking, setRanking] = useState<boolean | null>(askRanking ? null : false)
   const [pending, setPending] = useState(false)
 
   async function start() {
@@ -47,7 +58,7 @@ export function QuizStart({ quizId, questionCount, firstAttempt }: { quizId: str
         </div>
       </div>
 
-      {firstAttempt ? (
+      {askRanking ? (
         <fieldset className="flex flex-col gap-2">
           <legend className="mb-2 flex items-center gap-2 text-sm font-semibold text-foreground">
             <Trophy className="size-4 text-primary" aria-hidden="true" />
@@ -82,7 +93,7 @@ export function QuizStart({ quizId, questionCount, firstAttempt }: { quizId: str
           })}
           <p className="text-xs text-muted-foreground">A escolha não pode ser mudada depois de iniciar.</p>
         </fieldset>
-      ) : (
+      ) : firstAttempt ? null : (
         <p className="rounded-lg bg-muted/50 px-3 py-2 text-xs text-muted-foreground">
           Esta é uma nova tentativa: ela fica no seu histórico, mas não muda o ranking.
         </p>

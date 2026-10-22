@@ -151,3 +151,25 @@ export async function uploadMiniQuizImage(input: { hash: string; mime: string; b
   }
   return { ok: true }
 }
+
+/** Para quais grupos o Diagnóstico Semanal é liberado (3 = teste). */
+export async function setWeeklyDiagnosticGroups(
+  quizId: string,
+  groups: number[],
+): Promise<{ ok: true } | { ok: false; error: string }> {
+  const { supabase } = await requireAdmin()
+  const list = [...new Set(groups)].filter((group) => group === 1 || group === 2 || group === 3).sort()
+  if (!isUuid(quizId) || list.length === 0) return { ok: false, error: "Escolha pelo menos um grupo." }
+  const { data: quiz } = await supabase.from("mini_quizzes").select("id, subject_id").eq("id", quizId).maybeSingle()
+  if (!quiz || quiz.subject_id) return { ok: false, error: "Diagnóstico não encontrado." }
+  const { error } = await supabase.from("mini_quizzes").update({ target_groups: list }).eq("id", quizId)
+  if (error) {
+    logSafeServerError("admin.weekly_diagnostic.groups_failed", error)
+    return { ok: false, error: "Não foi possível alterar os grupos." }
+  }
+  revalidatePath("/admin/mini-simulados")
+  revalidatePath(`/admin/mini-simulados/${quizId}`)
+  revalidatePath("/aluno/diagnostico-semanal")
+  revalidatePath("/aluno")
+  return { ok: true }
+}

@@ -5,6 +5,7 @@ import { requireAdmin } from "@/lib/admin/auth"
 import { validateQuestionnaireSchema } from "@/lib/groups/schema.mjs"
 import { normalizeSubmission } from "@/lib/groups/questionnaire.mjs"
 import { throwSafeDatabaseError } from "@/lib/security/safe-error"
+import { normalizeDisabledFeatures } from "@/lib/groups/experience.mjs"
 
 function refresh(courseId: string) {
   revalidatePath(`/admin/cursos/${courseId}`)
@@ -39,14 +40,18 @@ export async function setStudentGroup(
   enrollmentId: string,
   courseId: string,
   group: number | null,
+  mirror: number | null = null,
 ) {
   const { supabase } = await requireAdmin()
-  if (group !== null && group !== 1 && group !== 2)
+  if (group !== null && group !== 1 && group !== 2 && group !== 3)
     throw new Error("Grupo inválido.")
+  if (mirror !== null && mirror !== 1 && mirror !== 2)
+    throw new Error("Grupo espelhado inválido.")
   const { error } = await supabase.rpc("admin_set_enrollment_group", {
     requested_enrollment_id: enrollmentId,
     requested_course_id: courseId,
     requested_group: group,
+    requested_mirror: group === 3 ? mirror ?? 1 : null,
   })
   if (error)
     throwSafeDatabaseError(
@@ -100,4 +105,34 @@ export async function importQuestionnaire(courseId: string, text: string) {
   return group === null
     ? "Respostas salvas. Aluno permanece sem grupo por decisão administrativa."
     : `Respostas salvas. Aluno no Grupo ${group}.`
+}
+
+/** Abas/funções desligadas e aviso da tela inicial de um grupo do curso. */
+export async function saveGroupSettings(
+  courseId: string,
+  group: number,
+  disabledFeatures: string[],
+  notice: string,
+) {
+  const { supabase } = await requireAdmin()
+  if (group !== 1 && group !== 2 && group !== 3) throw new Error("Grupo inválido.")
+  const text = typeof notice === "string" ? notice.trim() : ""
+  if (text.length > 600) throw new Error("O aviso deve ter até 600 caracteres.")
+  const { error } = await supabase.from("course_group_settings").upsert(
+    {
+      course_id: courseId,
+      study_group: group,
+      disabled_features: normalizeDisabledFeatures(disabledFeatures),
+      notice: text || null,
+      updated_at: new Date().toISOString(),
+    },
+    { onConflict: "course_id,study_group" },
+  )
+  if (error)
+    throwSafeDatabaseError(
+      "admin.groups.settings",
+      error,
+      "Não foi possível salvar a configuração do grupo.",
+    )
+  refresh(courseId)
 }

@@ -269,7 +269,7 @@ export async function listCourseStudents(
   const { data: enrollments, error: enrollmentError } = await supabase
     .from("enrollments")
     .select(
-      "id, user_id, course_id, status, enrolled_at, study_group, group_manual_override, questionnaire, profiles!enrollments_user_id_fkey(full_name, avatar_initials)",
+      "id, user_id, course_id, status, enrolled_at, study_group, mirror_group, group_manual_override, questionnaire, profiles!enrollments_user_id_fkey(full_name, avatar_initials)",
     )
     .eq("course_id", courseId)
     .order("enrolled_at", { ascending: false })
@@ -318,6 +318,7 @@ export async function listCourseStudents(
       enrollmentStatus: enrollment.status,
       enrolledAt: enrollment.enrolled_at,
       studyGroup: enrollment.study_group,
+      mirrorGroup: enrollment.mirror_group ?? 1,
       groupManualOverride: enrollment.group_manual_override,
       questionnaire: enrollment.questionnaire,
       manualStatus:
@@ -347,7 +348,7 @@ export async function listAllStudents(): Promise<AdminStudent[]> {
   const { data: enrollments } = await supabase
     .from("enrollments")
     .select(
-      "id, user_id, course_id, status, enrolled_at, study_group, group_manual_override, questionnaire, profiles!enrollments_user_id_fkey(full_name, avatar_initials)",
+      "id, user_id, course_id, status, enrolled_at, study_group, mirror_group, group_manual_override, questionnaire, profiles!enrollments_user_id_fkey(full_name, avatar_initials)",
     )
     .order("enrolled_at", { ascending: false })
 
@@ -421,5 +422,27 @@ export async function listRecentHotmartEvents(limit = 25): Promise<HotmartEventS
     status: event.processing_status,
     message: event.error_message,
     createdAt: event.created_at,
+  }))
+}
+
+
+export interface AdminGroupSettings {
+  studyGroup: number
+  disabledFeatures: string[]
+  notice: string
+}
+
+/** Abas/funções e aviso por grupo do curso (linhas ausentes = tudo ligado, sem aviso). */
+export async function listCourseGroupSettings(courseId: string): Promise<AdminGroupSettings[]> {
+  const supabase = await createClient()
+  const { data, error } = await supabase
+    .from("course_group_settings")
+    .select("study_group, disabled_features, notice")
+    .eq("course_id", courseId)
+  if (error) return []
+  return (data ?? []).map((row) => ({
+    studyGroup: row.study_group,
+    disabledFeatures: row.disabled_features ?? [],
+    notice: row.notice ?? "",
   }))
 }

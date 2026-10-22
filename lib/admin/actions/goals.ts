@@ -39,7 +39,7 @@ async function saveGoal(goalId: string | null, input: GoalFormInput) {
     throw new Error("Adicione ao menos um item ou uma descrição de orientação à meta.")
 
   const targetGroups = input.targetGroups ?? [1, 2]
-  if (!targetGroups.length || targetGroups.some((g) => g !== 1 && g !== 2))
+  if (!targetGroups.length || targetGroups.some((g) => g !== 1 && g !== 2 && g !== 3))
     throw new Error("Selecione ao menos um grupo válido.")
 
   // The RPC revalidates the admin, goal/course/item relationships and version,

@@ -11,6 +11,7 @@ import { RankingCard } from "@/components/mini-quizzes/ranking-card"
 import { DiagnosticGuidelines } from "@/components/mini-quizzes/diagnostic-guidelines"
 import { barTone, formatDateTime } from "@/components/mini-quizzes/format"
 import { getStudentContext } from "@/lib/student/queries"
+import { getStudentExperience } from "@/lib/student/experience"
 import { getAttemptSubjectBreakdown, getQuizRanking, getStudentQuiz } from "@/lib/mini-quizzes/queries"
 import { canAttempt, formatDuration, nextAvailableAt, percentage } from "@/lib/mini-quizzes/core.mjs"
 
@@ -49,8 +50,9 @@ export default async function WeeklyDiagnosticPage({ params }: { params: Promise
     )
   }
 
+  const rankingOn = (await getStudentExperience()).isEnabled("ranking")
   const [ranking, breakdown] = await Promise.all([
-    getQuizRanking(data.quiz.id),
+    rankingOn ? getQuizRanking(data.quiz.id) : Promise.resolve([]),
     first ? getAttemptSubjectBreakdown(first.id, data.quiz.courseId) : Promise.resolve([]),
   ])
   const myRank = ranking.find((row) => row.is_me)
@@ -69,7 +71,11 @@ export default async function WeeklyDiagnosticPage({ params }: { params: Promise
               <StatCard label="Acertos" value={first.correct_count} suffix={`/ ${first.total_count}`} tone="success" />
               <StatCard label="Aproveitamento" value={`${percentage(first.correct_count, first.total_count)}%`} tone="primary" />
               <StatCard label="Tempo" value={formatDuration(first.duration_seconds)} />
-              <StatCard label="Ranking" value={myRank ? `${myRank.rank}º` : "—"} hint={myRank ? `de ${myRank.participants}` : "Você não está no ranking"} />
+              {rankingOn ? (
+                <StatCard label="Ranking" value={myRank ? `${myRank.rank}º` : "—"} hint={myRank ? `de ${myRank.participants}` : "Você não está no ranking"} />
+              ) : (
+                <StatCard label="Em branco" value={first.total_count - first.answered_count} />
+              )}
             </div>
             {breakdown.length > 0 ? (
               <ul className="mb-4 flex flex-col gap-3 rounded-xl border border-border bg-card p-4 md:p-5">
@@ -106,7 +112,7 @@ export default async function WeeklyDiagnosticPage({ params }: { params: Promise
           data.questions.length === 0 ? (
             <p className="text-sm text-muted-foreground">Este diagnóstico ainda não tem questões.</p>
           ) : (
-            <QuizStart quizId={data.quiz.id} questionCount={data.questions.length} firstAttempt={data.attempts.length === 0} />
+            <QuizStart quizId={data.quiz.id} questionCount={data.questions.length} firstAttempt={data.attempts.length === 0} rankingEnabled={rankingOn} />
           )
         ) : !data.quiz.isWeekly && last ? (
           <div className="rounded-xl border border-border bg-card p-6 text-center">
@@ -117,7 +123,7 @@ export default async function WeeklyDiagnosticPage({ params }: { params: Promise
           </div>
         ) : null}
 
-        <RankingCard rows={ranking} title="Ranking" />
+        {rankingOn ? <RankingCard rows={ranking} title="Ranking" /> : null}
 
         <DiagnosticGuidelines questionCount={data.questions.length} weekly={data.quiz.isWeekly} />
       </div>

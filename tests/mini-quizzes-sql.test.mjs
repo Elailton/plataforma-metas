@@ -379,3 +379,53 @@ test("diagnóstico semanal: tempo medido pelo banco, tentativa única e ranking 
     await db.close()
   }
 })
+
+test("grupo 3 (teste): vê o grupo espelhado e o que é só de teste; fica fora do ranking dos alunos", async () => {
+  const db = await setup()
+  try {
+    await applyMigration(db, "20261021000100_mini_quiz_weekly_groups.sql")
+    await applyMigration(db, "20261021000200_mini_quiz_timer_ranking.sql")
+    await applyMigration(db, "20261022000100_test_group_and_group_settings.sql")
+    const TESTER = id(31)
+    const W = { g1: id(950), test: id(951) }
+    const alts = JSON.stringify(["A", "B"].map((key) => ({ key, text: key })))
+    await db.exec(`
+      insert into auth.users (id, email) values ('${TESTER}', 'teste@test.invalid');
+      insert into public.enrollments (user_id, course_id, status, study_group, mirror_group) values ('${TESTER}', '${COURSE_A}', 'active', 3, 1);
+      insert into public.mini_quizzes (id, course_id, subject_id, title, status, target_groups, release_date, week_number) values
+        ('${W.g1}', '${COURSE_A}', null, 'Semana 1', 'published', array[1]::smallint[], current_date - 1, 1),
+        ('${W.test}', '${COURSE_A}', null, 'Semana 2 (teste)', 'published', array[3]::smallint[], current_date - 1, 2);
+      insert into public.mini_quiz_questions (id, quiz_id, position, statement, alternatives, subject_id) values
+        ('${id(960)}', '${W.g1}', 0, 'Q', '${alts}', '${SUBJECT_A}'), ('${id(961)}', '${W.test}', 0, 'Q', '${alts}', '${SUBJECT_A}');
+      insert into public.mini_quiz_answer_keys (question_id, correct_key) values ('${id(960)}', 'A'), ('${id(961)}', 'A');
+    `)
+    const weekly = async (user) =>
+      (await asStudent(db, user, "select id from public.mini_quizzes where subject_id is null order by id")).rows.map((row) => row.id)
+    assert.deepEqual(await weekly(TESTER), [W.g1, W.test])
+    assert.deepEqual(await weekly(USERS.groupOne), [W.g1])
+    assert.deepEqual(await weekly(USERS.groupTwo), [])
+
+    // Teste e aluno fazem o diagnóstico do G1 com ranking: o teste só aparece para si mesmo.
+    for (const user of [TESTER, USERS.groupOne]) {
+      await asStudent(db, user, "select public.start_mini_quiz($1, true)", [W.g1])
+      await submit(db, user, W.g1, { [id(960)]: "A" })
+    }
+    const names = async (user) =>
+      (await asStudent(db, user, "select is_me from public.mini_quiz_ranking($1)", [W.g1])).rows.map((row) => row.is_me)
+    assert.deepEqual(await names(USERS.groupOne), [true])
+    assert.equal((await names(TESTER)).length, 2)
+
+    // Configuração por grupo: só o administrador grava; o aluno lê as do seu curso.
+    await db.exec(`insert into public.course_group_settings (course_id, study_group, disabled_features, notice)
+      values ('${COURSE_A}', 1, array['relatorio'], 'Aviso G1')`)
+    await assert.rejects(db.exec(`insert into public.course_group_settings (course_id, study_group, disabled_features) values ('${COURSE_A}', 2, array['inexistente'])`))
+    const read = await asStudent(db, USERS.groupOne, "select disabled_features from public.course_group_settings")
+    assert.deepEqual(read.rows[0].disabled_features, ["relatorio"])
+    await assert.rejects(
+      asStudent(db, USERS.groupOne, "insert into public.course_group_settings (course_id, study_group) values ($1, 2)", [COURSE_A]),
+    )
+    assert.equal((await asStudent(db, USERS.otherCourse, "select count(*)::int as n from public.course_group_settings")).rows[0].n, 0)
+  } finally {
+    await db.close()
+  }
+})

@@ -5,6 +5,7 @@ import { SideNav } from "@/components/student/side-nav"
 import { BottomNav } from "@/components/student/bottom-nav"
 import { MobileTopbar } from "@/components/student/mobile-topbar"
 import { getStudentContext } from "@/lib/student/queries"
+import { getStudentExperience } from "@/lib/student/experience"
 
 export default async function StudentLayout({
   children,
@@ -24,11 +25,12 @@ export default async function StudentLayout({
     )
   )
     redirect("/auth/primeiro-acesso")
+  const experience = await getStudentExperience()
 
   return (
     <InstallAppProvider>
       <div className="flex min-h-screen bg-background">
-        <SideNav courses={context.courses} currentCourse={context.currentCourse} />
+        <SideNav courses={context.courses} currentCourse={context.currentCourse} hiddenHrefs={experience.hiddenHrefs} />
         <div className="flex min-h-screen min-w-0 flex-1 flex-col">
           <MobileTopbar
             courses={context.courses}
@@ -36,7 +38,7 @@ export default async function StudentLayout({
             avatarInitials={context.profile.avatarInitials}
           />
           <main className="flex-1 pb-[calc(4.5rem+env(safe-area-inset-bottom))] md:pb-0">{children}</main>
-          <BottomNav />
+          <BottomNav hiddenHrefs={experience.hiddenHrefs} />
         </div>
       </div>
     </InstallAppProvider>

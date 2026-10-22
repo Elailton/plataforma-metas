@@ -301,8 +301,8 @@ export function GoalForm({
             </div>
             <Field>
               <FieldLabel>Grupos que recebem esta meta</FieldLabel>
-              <div className="flex gap-6">
-                {[1, 2].map((group) => (
+              <div className="flex flex-wrap gap-x-6 gap-y-2">
+                {[1, 2, 3].map((group) => (
                   <label
                     key={group}
                     className="flex items-center gap-2 text-sm"
@@ -318,12 +318,13 @@ export function GoalForm({
                         )
                       }
                     />
-                    Grupo {group}
+                    {group === 3 ? "Grupo 3 (teste)" : `Grupo ${group}`}
                   </label>
                 ))}
               </div>
               <FieldDescription>
-                Marque ambos para compartilhar. Em cursos com divisão ativa,
+                Para testar antes, marque só o Grupo 3 (sua conta de teste) e
+                depois libere para os Grupos 1 e 2. Em cursos com divisão ativa,
                 alunos sem grupo não recebem metas.
               </FieldDescription>
             </Field>

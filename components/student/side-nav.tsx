@@ -11,7 +11,15 @@ import { signOut } from "@/lib/supabase/actions"
 import { CourseSwitcher } from "@/components/student/course-switcher"
 import type { StudentCourse } from "@/lib/student/types"
 
-export function SideNav({ courses, currentCourse }: { courses: StudentCourse[]; currentCourse: StudentCourse }) {
+export function SideNav({
+  courses,
+  currentCourse,
+  hiddenHrefs = [],
+}: {
+  courses: StudentCourse[]
+  currentCourse: StudentCourse
+  hiddenHrefs?: string[]
+}) {
   const pathname = usePathname()
 
   return (
@@ -27,7 +35,7 @@ export function SideNav({ courses, currentCourse }: { courses: StudentCourse[]; 
 
       <nav aria-label="Navegação principal" className="flex-1 px-3">
         <ul className="flex flex-col gap-0.5">
-          {studentNavItems.map((item) => {
+          {studentNavItems.filter((item) => !hiddenHrefs.includes(item.href)).map((item) => {
             const isActive = item.href === "/aluno" ? pathname === "/aluno" : pathname.startsWith(item.href)
             const Icon = item.icon
             return (

@@ -127,6 +127,7 @@ export interface HotmartEventSummary {
 
 export interface AdminCourseStudent extends AdminStudent {
   studyGroup: number | null
+  mirrorGroup: number
   groupManualOverride: boolean
   questionnaire:
     | import("@/lib/groups/questionnaire.mjs").QuestionnairePayload

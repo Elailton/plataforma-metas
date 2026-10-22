@@ -12,6 +12,8 @@ import { NextGoalCard } from "@/components/student/next-goal-card"
 import { DisciplineProgressList } from "@/components/student/discipline-progress-list"
 import { RankingCard } from "@/components/mini-quizzes/ranking-card"
 import { getLatestWeeklyRanking } from "@/lib/mini-quizzes/queries"
+import { getStudentExperience } from "@/lib/student/experience"
+import { Megaphone } from "lucide-react"
 import {
   getStudentContext,
   getStudentCourseSnapshot,
@@ -20,9 +22,12 @@ import {
 export default async function StudentHomePage() {
   const context = await getStudentContext()
   if (!context) redirect("/auth/sem-acesso")
+  const experience = await getStudentExperience()
+  const showRanking = experience.isEnabled("ranking") && experience.isEnabled("diagnostico_semanal")
+  const showGoals = experience.isEnabled("metas")
   const [snapshot, weeklyRanking] = await Promise.all([
     getStudentCourseSnapshot(context.currentCourse.id),
-    getLatestWeeklyRanking(context.currentCourse.id).catch(() => null),
+    showRanking ? getLatestWeeklyRanking(context.currentCourse.id).catch(() => null) : Promise.resolve(null),
   ])
   if (!snapshot) redirect("/auth/sem-acesso")
   // Disciplinas sem tópicos no edital (ex.: áreas só de materiais) não entram no progresso.
@@ -63,6 +68,13 @@ export default async function StudentHomePage() {
 
       <InstallApp />
 
+      {experience.notice ? (
+        <div className="mb-6 flex items-start gap-3 rounded-xl border border-primary/40 bg-primary/10 p-4 text-sm text-foreground">
+          <Megaphone className="mt-0.5 size-4.5 shrink-0 text-primary" aria-hidden="true" />
+          <p className="whitespace-pre-line leading-relaxed">{experience.notice}</p>
+        </div>
+      ) : null}
+
       <div className="mb-8 grid grid-cols-2 gap-3 md:mb-10 md:grid-cols-3 md:gap-4">
         <StatCard
           label="Edital estudado"
@@ -88,6 +100,7 @@ export default async function StudentHomePage() {
 
       <div className="grid grid-cols-1 gap-8 lg:grid-cols-[minmax(0,1fr)_340px] lg:gap-10">
         <div className="flex min-w-0 flex-col gap-8">
+          {showGoals ? (<>
           <section aria-labelledby="proxima-meta">
             <SectionHeader title={<span id="proxima-meta">Próxima meta</span>} />
             {withoutGroup ? (
@@ -140,6 +153,7 @@ export default async function StudentHomePage() {
               </div>
             )}
           </section>
+          </>) : null}
         </div>
 
         <div className="flex min-w-0 flex-col gap-8">

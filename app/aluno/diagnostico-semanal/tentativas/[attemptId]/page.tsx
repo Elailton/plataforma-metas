@@ -10,6 +10,7 @@ import { RankingCard } from "@/components/mini-quizzes/ranking-card"
 import { formatDateTime } from "@/components/mini-quizzes/format"
 import { getStudentContext } from "@/lib/student/queries"
 import { getAttemptReview, getQuizRanking } from "@/lib/mini-quizzes/queries"
+import { getStudentExperience } from "@/lib/student/experience"
 import { formatDuration, nextAvailableAt, percentage } from "@/lib/mini-quizzes/core.mjs"
 
 export const dynamic = "force-dynamic"
@@ -24,7 +25,8 @@ export default async function MiniQuizAttemptPage({ params }: { params: Promise<
   const { attempt } = review
   const score = percentage(attempt.correct_count, attempt.total_count)
   const next = nextAvailableAt(attempt.submitted_at)
-  const ranking = await getQuizRanking(attempt.quiz_id)
+  const rankingOn = (await getStudentExperience()).isEnabled("ranking")
+  const ranking = rankingOn ? await getQuizRanking(attempt.quiz_id) : []
 
   return (
     <PageContainer>
@@ -52,7 +54,7 @@ export default async function MiniQuizAttemptPage({ params }: { params: Promise<
           Esta tentativa fica no histórico, mas não altera o diagnóstico do mês: ele usa a primeira tentativa de cada diagnóstico no mês.
         </p>
       )}
-      <RankingCard rows={ranking} title="Ranking" className="mb-6" />
+      {rankingOn ? <RankingCard rows={ranking} title="Ranking" className="mb-6" /> : null}
       <AttemptReview questions={review.questions} />
     </PageContainer>
   )
