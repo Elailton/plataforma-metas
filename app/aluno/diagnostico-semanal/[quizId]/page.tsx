@@ -74,7 +74,7 @@ export default async function WeeklyDiagnosticPage({ params }: { params: Promise
               {rankingOn ? (
                 <StatCard label="Ranking" value={myRank ? `${myRank.rank}º` : "—"} hint={myRank ? `de ${myRank.participants}` : "Você não está no ranking"} />
               ) : (
-                <StatCard label="Em branco" value={first.total_count - first.answered_count} />
+                <StatCard label="Em branco" value={first.total_count - (first.answered_count ?? first.total_count)} />
               )}
             </div>
             {breakdown.length > 0 ? (
