@@ -21,6 +21,7 @@ export interface QuizAttemptRow {
   month_start: string
   is_first_of_month: boolean
   duration_seconds?: number | null
+  answered_count?: number
 }
 
 export interface StudentQuizEntry {
