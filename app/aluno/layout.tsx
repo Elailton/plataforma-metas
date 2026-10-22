@@ -37,7 +37,8 @@ export default async function StudentLayout({
             currentCourse={context.currentCourse}
             avatarInitials={context.profile.avatarInitials}
           />
-          <main className="flex-1 pb-[calc(4.5rem+env(safe-area-inset-bottom))] md:pb-0">{children}</main>
+          {/* Respiro no fim de toda tela: o último item nunca fica atrás da barra inferior do celular. */}
+          <main className="flex-1 pb-[calc(10rem+env(safe-area-inset-bottom))] md:pb-24">{children}</main>
           <BottomNav hiddenHrefs={experience.hiddenHrefs} />
         </div>
       </div>
