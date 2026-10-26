@@ -202,8 +202,8 @@ export function FirstAccessForm({
               {steps.length > 0 && (
                 <>
                   <LockedAnswersNotice title="Atenção: depois de concluído, o questionário não pode ser editado">
-                    Suas respostas definem seu grupo e a organização das suas
-                    metas. Responda com calma e confira tudo na revisão antes de
+                    Suas respostas definem a organização das suas metas.
+                    Responda com calma e confira tudo na revisão antes de
                     concluir.
                   </LockedAnswersNotice>
                   <div className={styles.features}>
@@ -235,7 +235,7 @@ export function FirstAccessForm({
                     />
                   </label>
                   <p className={styles.note}>
-                    Sua disponibilidade diária define seu grupo inicial. As
+                    Sua disponibilidade diária define o ritmo das suas metas. As
                     demais respostas ajudam seu mentor a conhecer você.
                   </p>
                 </>
