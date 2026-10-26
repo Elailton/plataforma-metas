@@ -2,6 +2,8 @@ import type React from "react"
 import { cn } from "@/lib/utils"
 
 const IMAGE_LINE = /^\[\[imagem:([0-9a-f]{16})\]\]$/
+/** Linha "[[inedita]]" marca uma questão elaborada pela equipe (não veio de prova) e vira um selo. */
+export const ORIGINAL_LINE = /^\[\[inedita\]\]$/i
 
 function renderInline(text: string, keyPrefix: string): React.ReactNode[] {
   const parts = text.split(/(\*\*[\s\S]+?\*\*)/g)
@@ -30,7 +32,8 @@ function renderUnderline(text: string, keyPrefix: string): React.ReactNode[] {
 }
 
 /**
- * Texto das questões com **negrito**, __sublinhado__, \\_ (sublinhado literal) e linhas [[imagem:hash]].
+ * Texto das questões com **negrito**, __sublinhado__, \\_ (sublinhado literal), linhas [[imagem:hash]]
+ * e a linha [[inedita]] (selo "Inédita").
  * Nada é interpretado como HTML.
  */
 export function RichText({ text, className }: { text: string; className?: string }) {
@@ -49,6 +52,15 @@ export function RichText({ text, className }: { text: string; className?: string
               loading="lazy"
               className="my-2 block h-auto max-w-full rounded-md border border-border bg-white"
             />
+          )
+        }
+        if (ORIGINAL_LINE.test(line.trim())) {
+          return (
+            <span key={index} className="mb-1.5 block">
+              <span className="inline-flex items-center rounded-full border border-primary/30 bg-primary/10 px-2 py-0.5 text-[11px] font-semibold uppercase tracking-wide text-primary">
+                Inédita
+              </span>
+            </span>
           )
         }
         if (!line.trim()) return <span key={index} className="block h-2" aria-hidden="true" />
