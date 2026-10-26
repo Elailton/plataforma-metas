@@ -366,7 +366,8 @@ export async function getErrorReport(courseId: string, userId: string): Promise<
 }
 
 /** Último parágrafo do enunciado (a pergunta), sem marcações, para listas curtas. */
-function statementExcerpt(statement: string) {
+function statementExcerpt(rawStatement: string) {
+  const statement = rawStatement.replace(/^\s*\[\[inedita\]\]\s*\n?/i, "")
   const blocks = statement.split(/\n\s*\n/).map((block) => block.trim()).filter(Boolean)
   const stem = (blocks.length > 1 && statement.startsWith("**Texto associado**") ? blocks[blocks.length - 1] : statement)
     .replace(/\*\*|__/g, "")

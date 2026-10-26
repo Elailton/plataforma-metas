@@ -257,6 +257,8 @@ na plataforma, orientados por `courseId` (nada específico de um concurso).
   `start_mini_quiz` registra o início e `submit_mini_quiz` grava `duration_seconds` (cronômetro).
   Mini simulados por disciplina mantêm o intervalo de 7 dias para refazer.
 - Durante a prova o texto não pode ser copiado nem selecionado (só clicar nas alternativas).
+- Questões de prova trazem a fonte no comentário. Questão inédita (elaborada pela equipe, a pedido do
+  usuário em 26 de outubro de 2026) começa com a linha `[[inedita]]` no enunciado, exibida como selo "Inédita".
 - Ranking: o aluno escolhe ao iniciar se quer aparecer; ordem por acertos e, no empate, menor tempo
   (`mini_quiz_ranking`, nome curto). Fica dentro de cada diagnóstico e num card da tela inicial.
 - Área do aluno: abas "Diagnóstico Semanal" (`/aluno/diagnostico-semanal`) e "Relatório"
