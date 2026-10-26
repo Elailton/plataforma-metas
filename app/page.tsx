@@ -1,6 +1,6 @@
 import Link from "next/link"
 import { redirect } from "next/navigation"
-import { LogIn, ArrowRight, Target, BookOpen, LineChart } from "lucide-react"
+import { Target, BookOpen, LineChart } from "lucide-react"
 import { AuthShell, AuthCard } from "@/components/auth-shell"
 import { getCurrentProfile } from "@/lib/supabase/queries"
 
@@ -34,13 +34,11 @@ export default async function Home() {
         </ul>
         <Link
           href="/auth/login"
-          className="group flex h-11 items-center justify-center gap-2 rounded-lg bg-primary px-4 text-sm font-semibold text-primary-foreground transition-colors hover:bg-primary/90 focus-visible:outline-none focus-visible:ring-3 focus-visible:ring-ring/50"
+          className="flex h-11 items-center justify-center gap-2 rounded-lg bg-primary px-4 text-sm font-semibold text-primary-foreground transition-colors hover:bg-primary/90 focus-visible:outline-none focus-visible:ring-3 focus-visible:ring-ring/50"
         >
-          <LogIn className="size-4" aria-hidden="true" />
           Entrar
-          <ArrowRight className="size-4 transition-transform group-hover:translate-x-0.5" aria-hidden="true" />
         </Link>
-        <p className="text-center text-xs text-muted-foreground">Acesso para alunos matriculados e administradores.</p>
+        <p className="text-center text-xs text-muted-foreground">Acesso para alunos matriculados.</p>
       </AuthCard>
     </AuthShell>
   )
