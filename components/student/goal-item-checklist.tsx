@@ -109,7 +109,7 @@ export function GoalItemChecklist({
       {item.instructions ? (
         <div className="flex flex-col gap-1.5 rounded-lg border-l-2 border-primary/60 bg-muted/30 py-2 pl-3 pr-3">
           <span className="text-[11px] font-medium uppercase tracking-wider text-muted-foreground">Orientação</span>
-          <p className={cn("whitespace-pre-line text-sm leading-relaxed text-foreground/85", !descExpanded && "line-clamp-3")}>
+          <p className={cn("whitespace-pre-line text-sm leading-relaxed text-foreground/85 [overflow-wrap:anywhere]", !descExpanded && "line-clamp-3")}>
             {item.instructions}
           </p>
           {hasLongDescription ? (

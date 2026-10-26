@@ -14,7 +14,7 @@ export function QuestionnaireFields({
   return (
     <div className="space-y-6">
       {schema.map((q) => (
-        <fieldset key={q.id} className="space-y-2">
+        <fieldset key={q.id} className="min-w-0 space-y-2">
           <legend className="mb-2 text-sm font-medium">
             {q.id.slice(1)}. {q.title}
           </legend>

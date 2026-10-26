@@ -39,7 +39,7 @@ function renderUnderline(text: string, keyPrefix: string): React.ReactNode[] {
 export function RichText({ text, className }: { text: string; className?: string }) {
   const lines = text.split("\n")
   return (
-    <span className={cn("block", className)}>
+    <span className={cn("block [overflow-wrap:anywhere]", className)}>
       {lines.map((line, index) => {
         const image = IMAGE_LINE.exec(line.trim())
         if (image) {
