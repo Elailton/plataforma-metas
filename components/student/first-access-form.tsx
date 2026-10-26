@@ -3,7 +3,7 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import { BrandLogo } from "@/components/brand-logo";
 import { useRouter } from "next/navigation";
-import { ArrowRight, Check, ChevronLeft, LockKeyhole } from "lucide-react";
+import { AlertTriangle, ArrowRight, Check, ChevronLeft, LockKeyhole } from "lucide-react";
 import { submitFirstAccessQuestionnaire } from "@/lib/groups/student-actions";
 import { createClient } from "@/lib/supabase/client";
 import { passwordErrorMessage } from "@/lib/auth/password-error.mjs";
@@ -50,6 +50,7 @@ export function FirstAccessForm({
   >("welcome");
   const [index, setIndex] = useState(0);
   const [editing, setEditing] = useState(false);
+  const [confirming, setConfirming] = useState(false);
   const [password, setPassword] = useState("");
   const [repeatPassword, setRepeatPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
@@ -84,6 +85,14 @@ export function FirstAccessForm({
       /* Keep in memory. */
     }
   }, [answers, whatsapp, loaded, storageKey, signature]);
+  useEffect(() => {
+    if (!confirming) return;
+    const close = (event: KeyboardEvent) => {
+      if (event.key === "Escape") setConfirming(false);
+    };
+    document.addEventListener("keydown", close);
+    return () => document.removeEventListener("keydown", close);
+  }, [confirming]);
   useEffect(() => {
     title.current?.focus();
     setError(null);
@@ -192,6 +201,11 @@ export function FirstAccessForm({
               </div>
               {steps.length > 0 && (
                 <>
+                  <LockedAnswersNotice title="Atenção: depois de concluído, o questionário não pode ser editado">
+                    Suas respostas definem seu grupo e a organização das suas
+                    metas. Responda com calma e confira tudo na revisão antes de
+                    concluir.
+                  </LockedAnswersNotice>
                   <div className={styles.features}>
                     <span>
                       <Check size={18} /> Uma pergunta por vez
@@ -363,8 +377,13 @@ export function FirstAccessForm({
                 Tudo certo com suas respostas?
               </h1>
               <p className={styles.description}>
-                Você pode ajustar qualquer resposta antes de definir sua senha.
+                Ajuste o que for preciso agora: esta é a última etapa para
+                mudar suas respostas.
               </p>
+              <LockedAnswersNotice title="Depois de confirmar, suas respostas não poderão ser editadas">
+                Elas influenciam diretamente nas suas metas. Se depois você
+                precisar alterar alguma resposta, suas metas serão reiniciadas.
+              </LockedAnswersNotice>
               <div className={styles.review}>
                 {steps.map((s, i) => (
                   <div key={`${s.enrollmentId}-${i}`}>
@@ -396,12 +415,63 @@ export function FirstAccessForm({
                   if (missing >= 0) {
                     setIndex(missing);
                     setScreen("question");
-                  } else setScreen("password");
+                  } else setConfirming(true);
                 }}
               >
-                Definir minha senha
+                Confirmar respostas
                 <ArrowRight size={18} />
               </button>
+              {confirming && (
+                <div
+                  className={styles.overlay}
+                  onClick={(event) => {
+                    if (event.target === event.currentTarget) setConfirming(false);
+                  }}
+                >
+                  <div
+                    className={styles.dialog}
+                    role="alertdialog"
+                    aria-modal="true"
+                    aria-labelledby="confirm-answers-title"
+                    aria-describedby="confirm-answers-text"
+                  >
+                    <AlertTriangle size={22} className={styles.dialogIcon} aria-hidden="true" />
+                    <h2 id="confirm-answers-title">Confirmar suas respostas?</h2>
+                    <p id="confirm-answers-text">
+                      Depois de confirmar, <strong>não será possível alterar
+                      o questionário</strong>, porque suas respostas influenciam
+                      diretamente nas suas metas.
+                    </p>
+                    <p>
+                      Se no futuro você precisar mudar alguma resposta,{" "}
+                      <strong>suas metas serão reiniciadas</strong> e o plano
+                      recomeça do início.
+                    </p>
+                    <div className={styles.actions}>
+                      <button
+                        type="button"
+                        className={styles.secondary}
+                        autoFocus
+                        onClick={() => setConfirming(false)}
+                      >
+                        <ChevronLeft size={18} />
+                        Revisar
+                      </button>
+                      <button
+                        type="button"
+                        className={styles.primary}
+                        onClick={() => {
+                          setConfirming(false);
+                          setScreen("password");
+                        }}
+                      >
+                        Confirmar
+                        <ArrowRight size={18} />
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              )}
             </>
           )}
           {screen === "password" && (
@@ -492,5 +562,23 @@ export function FirstAccessForm({
         Sistema Guiado da Aprovação · Cada etapa conta.
       </footer>
     </main>
+  );
+}
+
+function LockedAnswersNotice({
+  title,
+  children,
+}: {
+  title: string;
+  children: React.ReactNode;
+}) {
+  return (
+    <div className={styles.locked} role="note">
+      <LockKeyhole size={18} aria-hidden="true" />
+      <div>
+        <strong>{title}</strong>
+        <p>{children}</p>
+      </div>
+    </div>
   );
 }
