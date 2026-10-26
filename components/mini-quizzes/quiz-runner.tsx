@@ -88,8 +88,8 @@ export function QuizRunner({ quizId, questions, startedAt }: { quizId: string; q
       <ol className="flex flex-col gap-5">
         {questions.map((question, index) => (
           <li key={question.id} className="rounded-xl border border-border bg-card p-4 md:p-5">
-            <fieldset>
-              <legend className="mb-3 flex gap-2 text-sm leading-relaxed text-foreground">
+            <fieldset className="min-w-0">
+              <legend className="mb-3 flex w-full min-w-0 gap-2 text-sm leading-relaxed text-foreground">
                 <span className="shrink-0 font-semibold tabular-nums text-primary">{String(index + 1).padStart(2, "0")}.</span>
                 <RichText text={question.statement} className="min-w-0 flex-1" />
               </legend>

@@ -96,6 +96,12 @@
   }
   body {
     @apply bg-background text-foreground;
+    /* Links e palavras longas quebram em vez de empurrar a tela para o lado no celular. */
+    overflow-wrap: break-word;
+  }
+  /* fieldset tem largura mínima = conteúdo por padrão; sem isto, um texto sem espaços estoura a tela. */
+  fieldset {
+    min-inline-size: 0;
   }
 }
 

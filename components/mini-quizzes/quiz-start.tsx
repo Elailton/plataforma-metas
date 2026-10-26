@@ -59,7 +59,7 @@ export function QuizStart({
       </div>
 
       {askRanking ? (
-        <fieldset className="flex flex-col gap-2">
+        <fieldset className="flex min-w-0 flex-col gap-2">
           <legend className="mb-2 flex items-center gap-2 text-sm font-semibold text-foreground">
             <Trophy className="size-4 text-primary" aria-hidden="true" />
             Deseja aparecer no ranking deste diagnóstico?
