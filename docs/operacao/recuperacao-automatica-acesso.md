@@ -30,3 +30,7 @@ access_resend_requests guarda hashes HMAC de e-mail/IP, request_key e outcome, c
 As credenciais da API de vendas que já estejam na Vercel não são necessárias para esse fluxo. Os módulos de consulta comercial antigos permanecem como referência interna, sem importação pelo reenvio público. O HOTTOK do webhook e as credenciais Supabase existentes continuam necessários. Nenhum segredo é copiado para o diagnóstico.
 
 Validação: testes do reenvio com o repositório real simulando aluno sem grupo, ausência de matrícula, administrador, bloqueio e curso não publicado; testes da tela de código; suíte PostgreSQL de autorização; TypeScript e build Next.js. Em produção, usar somente pedido fictício sem matrícula para conferir skipped sem enviar mensagens a alunos.
+
+## Encontrar minha compra (autoatendimento por código da transação)
+
+Desde 27/10/2026, `/auth/encontrar-compra` permite que o aluno informe o código da transação Hotmart (HP…). O servidor consulta somente essa venda na API de vendas (credenciais `HOTMART_CLIENT_ID`, `HOTMART_CLIENT_SECRET`, `HOTMART_BASIC`, só em produção) e aplica a mesma regra do webhook: produto mapeado, curso publicado e oferta cadastrada como "libera acesso". Ofertas "curso apenas" recebem a explicação e nenhuma matrícula. Quando libera, a conta é criada sem convite e o único e-mail é o link de acesso, enviado ao e-mail da própria compra; a tela mostra esse e-mail mascarado. Limites: os mesmos do reenvio (por código, por IP e global), registrados em `access_resend_requests` com hashes.
