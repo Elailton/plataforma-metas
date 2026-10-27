@@ -37,6 +37,11 @@ export function logSafeServerError(context: string, error: unknown) {
     safeMetadata.operation = metadata.operation
   }
 
+  // Dica de validação do fornecedor já higienizada (sem números/e-mails).
+  if (typeof (metadata as { hint?: unknown }).hint === "string" && /^[A-Za-z_ .,:()-]{1,140}$/.test((metadata as { hint: string }).hint)) {
+    safeMetadata.hint = (metadata as { hint: string }).hint
+  }
+
   console.error(`[security] ${context}`, safeMetadata)
 }
 
