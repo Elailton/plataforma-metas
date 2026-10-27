@@ -6,7 +6,7 @@ import { GoalItemChecklist } from "@/components/student/goal-item-checklist"
 import { StatusBadge } from "@/components/status-badge"
 import { Progress } from "@/components/ui/progress"
 import { SectionHeader } from "@/components/page-header"
-import { getStudentContext, getStudentCourseSnapshot } from "@/lib/student/queries"
+import { getGoalItemMaterials, getStudentContext, getStudentCourseSnapshot } from "@/lib/student/queries"
 import { studentGoalWindow } from "@/lib/student/snapshot.mjs"
 import { formatDateLong } from "@/lib/format"
 import { goalAvailabilityLabel } from "@/lib/student/goal-availability"
@@ -24,6 +24,9 @@ export default async function GoalDetailPage({
   // Metas além da janela de prévia não são abertas nem por link direto.
   const goal = snapshot ? studentGoalWindow(snapshot.goals).visible.find((candidate) => candidate.id === goalId) : undefined
   if (!goal) notFound()
+  // Materiais só desta meta (a lista geral de metas vem sem materiais).
+  const materialsByItem = await getGoalItemMaterials(goal.items.map((item) => item.id))
+  const items = goal.items.map((item) => ({ ...item, materials: materialsByItem.get(item.id) ?? [] }))
 
   return (
     <PageContainer>
@@ -58,7 +61,7 @@ export default async function GoalDetailPage({
       <section aria-labelledby="itens-meta">
         <SectionHeader title={<span id="itens-meta">Itens da meta</span>} />
         <div className="flex flex-col gap-3 md:gap-4">
-          {goal.items.map((item) => (
+          {items.map((item) => (
             <GoalItemChecklist key={item.id} item={item} locked={!goal.isReleased} />
           ))}
         </div>

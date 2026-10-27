@@ -42,9 +42,11 @@ export async function selectStudentCourse(formData: FormData) {
 
 export async function setGoalItemCompleted(goalItemId: string, completed: boolean) {
   const supabase = await createClient()
-  const {
-    data: { user },
-  } = await supabase.auth.getUser()
+  // Assinatura do JWT validada localmente (sem chamada ao servidor de Auth a cada
+  // clique); o RLS do banco continua sendo a barreira final.
+  const { data: claimsData } = await supabase.auth.getClaims()
+  const userId = claimsData?.claims?.sub
+  const user = userId ? { id: userId } : null
 
   if (!user) throw new Error("Você precisa estar autenticado.")
 
