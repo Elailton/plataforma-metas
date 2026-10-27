@@ -166,3 +166,21 @@ test("API: fallback não libera comprador diferente nem compra reembolsada", asy
   assert.deepEqual(await client.findPaidPurchases(EMAIL),[])
   assert.equal(calls.length,3)
 })
+
+test("API: busca por transação aceita parcelamento pago e devolve ucode; não paga ou inexistente = null", async () => {
+  const subscription = sale({ purchase: { ...sale().purchase, transaction: "HP999", is_subscription: true } })
+  const { client, calls } = setup(url => {
+    if (url.pathname.endsWith("/token")) return token
+    if (url.pathname.endsWith("/products")) return catalog
+    if (url.searchParams.get("transaction") === "HP999") return { items: [subscription] }
+    if (url.searchParams.get("transaction") === "HP777") return { items: [sale({ purchase: { ...sale().purchase, transaction: "HP777", status: "WAITING_PAYMENT" } })] }
+    return { items: [] }
+  })
+  const found = await client.findPaidSaleByTransaction("HP999")
+  assert.equal(found.productUcode, UCODE)
+  assert.equal(found.email, EMAIL)
+  assert.ok(calls.some(call => call.url.searchParams.get("transaction") === "HP999"))
+  assert.equal(await client.findPaidSaleByTransaction("HP777"), null)
+  assert.equal(await client.findPaidSaleByTransaction("HP000"), null)
+  assert.equal(await client.findPaidSaleByTransaction("x"), null)
+})

@@ -11,6 +11,7 @@ export interface VerifiedPurchase {
 export interface HotmartSalesClient {
   findPaidPurchases(email: string, signal?: AbortSignal): Promise<VerifiedPurchase[]>
   confirmPurchase(purchase: VerifiedPurchase, signal?: AbortSignal): Promise<boolean>
+  findPaidSaleByTransaction(transaction: string, signal?: AbortSignal): Promise<VerifiedPurchase | null>
 }
 export class HotmartSalesError extends Error { code: string; status?: number; detail?: string; parameter?: string; operation?: string; constructor(code: string, status?: number, detail?: string | null, parameter?: string | null, operation?: string) }
 export function createHotmartSalesClient(options: {
