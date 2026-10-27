@@ -15,11 +15,7 @@ export default function NoAccessPage() {
         description="Não encontramos uma matrícula ativa para esta conta."
       >
         <p className="text-sm leading-relaxed text-muted-foreground">
-          Entre com o mesmo e-mail usado na compra. Se não sabe qual foi, use{" "}
-          <Link href="/auth/encontrar-compra" className="font-medium text-foreground underline underline-offset-4">
-            Encontrar minha compra
-          </Link>{" "}
-          com o código da transação da Hotmart. Se a matrícula ainda não aparecer, a atendente do suporte pode conferir sua situação.
+          Entre com o mesmo e-mail usado na compra. Se a matrícula ainda não aparece, a atendente do suporte pode conferir sua situação.
         </p>
         <AccessSupport />
         <div className="flex flex-col gap-2">
