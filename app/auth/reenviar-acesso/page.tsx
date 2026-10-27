@@ -21,13 +21,7 @@ export default function ResendAccessPage() {
         description="Informe o e-mail usado na compra. O reenvio atende quem já tem matrícula ativa, mesmo que ainda não tenha concluído o primeiro acesso."
       >
         <ResendAccessForm />
-        <p className="text-sm leading-relaxed text-muted-foreground">
-          Não lembra com qual e-mail comprou, ou não recebeu nada?{" "}
-          <Link href="/auth/encontrar-compra" className="font-medium text-foreground underline underline-offset-4">
-            Encontre sua compra pelo código da Hotmart
-          </Link>
-          .
-        </p>
+        <p className="text-sm leading-relaxed text-muted-foreground">Esta opção não cria matrícula nem libera acesso a novos cursos.</p>
         <AccessSupport />
       </AuthCard>
     </AuthShell>

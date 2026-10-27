@@ -166,12 +166,7 @@ function LoginForm() {
             Tenho um código
           </Link>
         </p>
-        <p className="text-center text-sm text-muted-foreground">
-          Não sabe com qual e-mail comprou?{" "}
-          <Link href="/auth/encontrar-compra" className="font-medium text-foreground underline-offset-4 hover:underline">
-            Encontrar minha compra
-          </Link>
-        </p>
+
         <AccessSupport />
       </AuthCard>
     </AuthShell>
