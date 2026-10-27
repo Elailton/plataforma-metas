@@ -15,3 +15,4 @@ export function resolveConfirmRequest(input: {
 }): ResolveConfirmRequestResult
 export function normalizeAccessCode(value: unknown): string | null
 export const ACCESS_CODE_TYPES: readonly ("recovery" | "invite")[]
+export function buildAccessLink(siteUrl: string, tokenHash: string, type?: AllowedOtpType): string

@@ -41,6 +41,7 @@ import {
   enrollExistingStudent,
   setEnrollmentStatus,
   setCourseAccessBlock,
+  createStudentAccessLink,
 } from "@/lib/admin/actions/enrollments"
 
 export function CourseStudentsTable({
@@ -75,6 +76,35 @@ export function CourseStudentsTable({
     null,
   )
   const [reason, setReason] = useState("")
+  const [accessLink, setAccessLink] = useState<{
+    name: string
+    link: string
+  } | null>(null)
+
+  function handleAccessLink(student: AdminCourseStudent) {
+    startTransition(async () => {
+      try {
+        const result = await createStudentAccessLink(student.id, courseId)
+        setAccessLink({ name: student.fullName, link: result.link })
+      } catch (error) {
+        toast.error(
+          error instanceof Error
+            ? error.message
+            : "Não foi possível gerar o link de acesso.",
+        )
+      }
+    })
+  }
+
+  async function copyAccessLink() {
+    if (!accessLink) return
+    try {
+      await navigator.clipboard.writeText(accessLink.link)
+      toast.success("Link copiado. Cole na conversa com o aluno.")
+    } catch {
+      toast.error("Não foi possível copiar. Selecione o link e copie manualmente.")
+    }
+  }
 
   function handleEnrollment(event: FormEvent<HTMLFormElement>) {
     event.preventDefault()
@@ -365,6 +395,18 @@ export function CourseStudentsTable({
                     </select>
                   </TableCell>
                   <TableCell className="max-w-64 whitespace-normal text-right">
+                    {student.enrollmentStatus === "active" && (
+                      <Button
+                        size="sm"
+                        variant="outline"
+                        className="mb-2"
+                        disabled={pending}
+                        aria-label={`Gerar link de acesso de ${student.fullName}`}
+                        onClick={() => handleAccessLink(student)}
+                      >
+                        Copiar link de acesso
+                      </Button>
+                    )}{" "}
                     <Button
                       size="sm"
                       variant={student.accessBlock ? "outline" : "destructive"}
@@ -399,6 +441,43 @@ export function CourseStudentsTable({
           </TableBody>
         </Table>
       )}
+      <Dialog
+        open={Boolean(accessLink)}
+        onOpenChange={(open) => {
+          if (!open) setAccessLink(null)
+        }}
+      >
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Link de acesso</DialogTitle>
+            <DialogDescription>
+              {accessLink?.name}. Envie este link só para o próprio aluno (por
+              exemplo, no WhatsApp). Ao abrir, ele toca em &quot;Continuar&quot;,
+              cria a senha e entra. O link funciona uma única vez, expira em
+              algumas horas e substitui os links enviados antes por e-mail.
+            </DialogDescription>
+          </DialogHeader>
+          <Input
+            readOnly
+            value={accessLink?.link ?? ""}
+            aria-label="Link de acesso"
+            onFocus={(event) => event.currentTarget.select()}
+            className="text-xs"
+          />
+          <DialogFooter>
+            <Button
+              type="button"
+              variant="outline"
+              onClick={() => setAccessLink(null)}
+            >
+              Fechar
+            </Button>
+            <Button type="button" onClick={copyAccessLink}>
+              Copiar link
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
       <Dialog
         open={Boolean(blockTarget)}
         onOpenChange={(open) => {

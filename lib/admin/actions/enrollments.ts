@@ -6,6 +6,7 @@ import { effectiveAccessStatus, normalizeBlockReason, manualAccessMessage, block
 import { throwSafeDatabaseError } from "@/lib/security/safe-error"
 import { createAdminClient } from "@/lib/supabase/admin"
 import { inviteRedirectUrl } from "@/lib/auth/invite-url"
+import { buildAccessLink } from "@/lib/auth/confirm.mjs"
 
 const ENROLLMENT_STATUSES = ["active", "suspended", "revoked"] as const
 type EnrollmentStatus = (typeof ENROLLMENT_STATUSES)[number]
@@ -176,6 +177,49 @@ export async function setCourseAccessBlock(
   const effectiveStatus = effectiveAccessStatus(data)
   refreshAccessPages(courseId)
   return { effectiveStatus, message: blockAccessMessage(blocked, effectiveStatus) }
+}
+
+// Gera um link pessoal de uso único para o administrador enviar ao aluno (por
+// exemplo, pelo WhatsApp) quando o e-mail não chega ou o aluno não consegue usá-lo.
+// Nenhum e-mail é enviado e o link nunca é registrado em log.
+export async function createStudentAccessLink(enrollmentId: string, courseId: string) {
+  const { supabase } = await requireAdmin()
+  const { data: enrollment, error } = await supabase
+    .from("enrollments")
+    .select("user_id, status")
+    .eq("id", enrollmentId)
+    .eq("course_id", courseId)
+    .maybeSingle()
+  if (error || !enrollment) throw new Error("Matrícula não encontrada neste curso.")
+  if (enrollment.status !== "active") {
+    throw new Error("O link só pode ser gerado para alunos com acesso ativo neste curso.")
+  }
+
+  const admin = createAdminClient()
+  const { data: profile, error: profileError } = await admin
+    .from("profiles")
+    .select("role")
+    .eq("id", enrollment.user_id)
+    .maybeSingle()
+  if (profileError || profile?.role !== "student") {
+    throw new Error("O link de acesso só pode ser gerado para contas de aluno.")
+  }
+
+  const { data: userData, error: userError } = await admin.auth.admin.getUserById(enrollment.user_id)
+  const email = userData?.user?.email
+  if (userError || !email) {
+    throwSafeDatabaseError("admin.access_link.user_failed", userError, "Não foi possível localizar a conta do aluno.")
+  }
+
+  const { data: linkData, error: linkError } = await admin.auth.admin.generateLink({ type: "recovery", email: email! })
+  const tokenHash = linkData?.properties?.hashed_token
+  if (linkError || !tokenHash) {
+    throwSafeDatabaseError("admin.access_link.generate_failed", linkError, "Não foi possível gerar o link de acesso. Tente novamente em alguns minutos.")
+  }
+
+  const siteUrl = process.env.SITE_URL
+  if (!siteUrl) throw new Error("SITE_URL não está configurada.")
+  return { link: buildAccessLink(siteUrl, tokenHash!, "recovery") }
 }
 
 function refreshAccessPages(courseId: string) {

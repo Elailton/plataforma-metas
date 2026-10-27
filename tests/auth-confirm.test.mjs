@@ -117,3 +117,17 @@ test("código do e-mail aceita 6 a 10 dígitos, ignorando espaços e hífen", as
   // Os tipos tentados com código continuam restritos à lista fechada da confirmação.
   for (const type of ACCESS_CODE_TYPES) assert.ok(["invite", "recovery"].includes(type))
 })
+
+test("buildAccessLink aponta para /auth/confirm com tipo e destino fixos", async () => {
+  const { buildAccessLink, resolveConfirmRequest } = await import("../lib/auth/confirm.mjs")
+  const link = new URL(buildAccessLink("https://site.test", "abc", "recovery"))
+  const resolved = resolveConfirmRequest({
+    tokenHash: link.searchParams.get("token_hash"),
+    type: link.searchParams.get("type"),
+    next: link.searchParams.get("next"),
+  })
+  assert.equal(resolved.valid, true)
+  assert.equal(resolved.next, "/auth/primeiro-acesso")
+  assert.throws(() => buildAccessLink("https://site.test", " "), /ausente/)
+  assert.throws(() => buildAccessLink("https://site.test", "abc", "magiclink"), /inválido/)
+})
