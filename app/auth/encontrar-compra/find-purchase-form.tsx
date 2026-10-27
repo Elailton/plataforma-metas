@@ -5,8 +5,11 @@ import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { findPurchase, type FindPurchaseState } from "./actions"
+import { SUPPORT_WHATSAPP_URL } from "@/lib/support"
 
-const initialState: FindPurchaseState = { status: null, message: null }
+const initialState: FindPurchaseState = { status: null, message: null, code: null }
+
+const NEEDS_SUPPORT = new Set(["review", "error", "canceled", "course_only", "not_found"])
 
 export function FindPurchaseForm() {
   const [state, formAction, pending] = useActionState(findPurchase, initialState)
@@ -42,6 +45,16 @@ export function FindPurchaseForm() {
         >
           {state.message}
         </p>
+      ) : null}
+      {state.status && NEEDS_SUPPORT.has(state.status) && state.code ? (
+        <a
+          href={`${SUPPORT_WHATSAPP_URL}?text=${encodeURIComponent(`Olá! Preciso de ajuda com meu acesso ao SGA. Código da compra na Hotmart: ${state.code}`)}`}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="flex h-11 items-center justify-center rounded-lg border border-border px-4 text-sm font-semibold text-foreground hover:bg-secondary/60"
+        >
+          Enviar este código ao suporte no WhatsApp
+        </a>
       ) : null}
       <Button type="submit" className="h-11 w-full text-sm font-semibold" disabled={pending}>
         {pending ? "Consultando a Hotmart..." : "Encontrar minha compra"}

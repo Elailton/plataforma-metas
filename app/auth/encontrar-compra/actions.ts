@@ -10,6 +10,8 @@ import { logSafeServerError } from "@/lib/security/safe-error"
 export interface FindPurchaseState {
   status: ClaimStatus | "limited" | "error" | null
   message: string | null
+  /** Código normalizado, para o aluno mandar ao suporte quando precisar de conferência. */
+  code?: string | null
 }
 
 export async function findPurchase(_previous: FindPurchaseState, formData: FormData): Promise<FindPurchaseState> {
@@ -34,7 +36,7 @@ export async function findPurchase(_previous: FindPurchaseState, formData: FormD
   try {
     const result = await claimPurchase(code)
     await deps.updateOutcome(requestId, result.status === "granted" ? "sent" : "skipped")
-    return { status: result.status, message: result.message }
+    return { status: result.status, message: result.message, code }
   } catch (error) {
     logSafeServerError("auth.find_purchase.failed", error)
     await deps.updateOutcome(requestId, "failed")
@@ -42,7 +44,7 @@ export async function findPurchase(_previous: FindPurchaseState, formData: FormD
     // conferência humana; indisponibilidade da Hotmart pode ser tentada de novo.
     const conflict = error instanceof Error && error.name === "HotmartConflictError"
     return conflict
-      ? { status: "review", message: CLAIM_MESSAGES.review }
-      : { status: "error", message: CLAIM_MESSAGES.error }
+      ? { status: "review", message: CLAIM_MESSAGES.review, code }
+      : { status: "error", message: CLAIM_MESSAGES.error, code }
   }
 }
