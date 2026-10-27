@@ -7,6 +7,8 @@ import { createResendAccessDependencies } from "@/lib/auth/resend-access-reposit
 
 export interface ResendAccessState {
   message: string | null
+  /** O próprio e-mail digitado, devolvido para o aluno conferir erros de digitação. */
+  email?: string | null
 }
 
 export async function requestAccessResend(_previous: ResendAccessState, formData: FormData): Promise<ResendAccessState> {
@@ -21,5 +23,7 @@ export async function requestAccessResend(_previous: ResendAccessState, formData
   } catch (error) {
     console.error("auth.resend_access.failed", error instanceof Error ? error.message : "unknown")
   }
-  return { message: RESEND_GENERIC_MESSAGE }
+  const typed = formData.get("email")
+  const email = typeof typed === "string" ? typed.trim().toLowerCase().slice(0, 320) : null
+  return { message: RESEND_GENERIC_MESSAGE, email }
 }

@@ -17,6 +17,8 @@ import { Label } from "@/components/ui/label"
 // Apenas o sinal de credencial/existência é genérico — nomeá-lo confirmaria se
 // um e-mail está cadastrado. Erros que o usuário pode agir são passados adiante,
 // e qualquer falha inesperada é reportada como tal em vez de "senha incorreta".
+const INVALID_CREDENTIALS_MESSAGE = "E-mail ou senha inválidos."
+
 function loginErrorMessage(error: unknown): string {
   const { code, status } = (error ?? {}) as { code?: string; status?: number }
 
@@ -27,7 +29,7 @@ function loginErrorMessage(error: unknown): string {
     return "Muitas tentativas. Aguarde um momento e tente novamente."
   }
   if (code === "invalid_credentials") {
-    return "E-mail ou senha inválidos."
+    return INVALID_CREDENTIALS_MESSAGE
   }
   return "Algo deu errado. Tente novamente."
 }
@@ -115,7 +117,15 @@ function LoginForm() {
             />
           </div>
           <div className="grid gap-2">
-            <Label htmlFor="password">Senha</Label>
+            <div className="flex items-center justify-between gap-2">
+              <Label htmlFor="password">Senha</Label>
+              <Link
+                href="/auth/reenviar-acesso"
+                className="text-sm font-medium text-foreground underline-offset-4 hover:underline"
+              >
+                Esqueci minha senha
+              </Link>
+            </div>
             <Input
               id="password"
               type="password"
@@ -127,9 +137,20 @@ function LoginForm() {
             />
           </div>
           {error && (
-            <p role="alert" className="rounded-lg border border-destructive/30 bg-destructive/10 px-3 py-2 text-sm text-destructive">
-              {error}
-            </p>
+            <div role="alert" className="flex flex-col gap-1 rounded-lg border border-destructive/30 bg-destructive/10 px-3 py-2 text-sm text-destructive">
+              <p>{error}</p>
+              {error === INVALID_CREDENTIALS_MESSAGE ? (
+                <p className="text-muted-foreground">
+                  Não lembra a senha ou nunca criou uma?{" "}
+                  <Link
+                    href="/auth/reenviar-acesso"
+                    className="font-medium text-foreground underline underline-offset-4"
+                  >
+                    Receber um link para criar nova senha
+                  </Link>
+                </p>
+              ) : null}
+            </div>
           )}
           <Button type="submit" className="h-11 w-full text-sm font-semibold" disabled={isLoading}>
             {isLoading ? "Entrando..." : "Entrar"}
