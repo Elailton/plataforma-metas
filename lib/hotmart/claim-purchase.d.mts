@@ -1,4 +1,4 @@
-export type ClaimStatus = "invalid" | "not_found" | "not_sga" | "course_only" | "review" | "granted"
+export type ClaimStatus = "invalid" | "not_found" | "not_sga" | "course_only" | "review" | "granted" | "pending" | "canceled"
 export interface ClaimResult {
   status: ClaimStatus
   message: string
@@ -14,5 +14,11 @@ export declare function claimPurchaseByTransaction(
     repository: unknown
     hasActiveStudentAccess(email: string): Promise<boolean>
     sendAccessEmail(email: string): Promise<"sent" | "cooldown" | void>
+    local?: {
+      findByTransaction(code: string): Promise<{
+        entitlement: { status: "active" | "suspended" | "revoked"; email: string | null; role: string | null } | null
+        event: { productUcode: string | null; offerCode: string | null; latestType: string } | null
+      } | null>
+    }
   },
 ): Promise<ClaimResult>

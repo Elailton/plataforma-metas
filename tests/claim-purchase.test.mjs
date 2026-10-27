@@ -72,3 +72,55 @@ test("não encontrada, produto sem SGA, oferta desconhecida e conta admin não l
   assert.equal((await claimPurchaseByTransaction("HP0907585127", blocked.deps)).status, "review")
   assert.equal(blocked.calls.sent.length, 0)
 })
+
+function localDeps(records, { access = true, apiFails = false } = {}) {
+  const base = deps({ access })
+  base.deps.local = { async findByTransaction() { return records } }
+  if (apiFails) base.deps.sales = { async findPaidSaleByTransaction() { base.calls.api = true; throw new Error("hotmart 400") } }
+  else {
+    const original = base.deps.sales.findPaidSaleByTransaction
+    base.deps.sales = { async findPaidSaleByTransaction(code) { base.calls.api = true; return original(code) } }
+  }
+  return base
+}
+
+test("registro local: compra já ligada a uma conta envia o link para o e-mail dessa conta, sem API", async () => {
+  const { deps: d, calls } = localDeps({ entitlement: { status: "active", email: "outro.email@hotmail.com", role: "student" }, event: null })
+  const result = await claimPurchaseByTransaction("HP0907585127", d)
+  assert.equal(result.status, "granted")
+  assert.deepEqual(calls.sent, ["outro.email@hotmail.com"])
+  assert.match(result.message, /ou\*\*\*@hotmail\.com/)
+  assert.equal(calls.api, undefined)
+})
+
+test("registro local: pagamento pendente, cancelado e conta admin não enviam link", async () => {
+  for (const [status, expected] of [["suspended", "pending"], ["revoked", "canceled"]]) {
+    const { deps: d, calls } = localDeps({ entitlement: { status, email: "a@b.com", role: "student" }, event: null })
+    assert.equal((await claimPurchaseByTransaction("HP0907585127", d)).status, expected)
+    assert.equal(calls.sent.length, 0)
+  }
+  const admin = localDeps({ entitlement: { status: "active", email: "a@b.com", role: "admin" }, event: null })
+  assert.equal((await claimPurchaseByTransaction("HP0907585127", admin.deps)).status, "review")
+  assert.equal(admin.calls.sent.length, 0)
+  const blocked = localDeps({ entitlement: { status: "active", email: "a@b.com", role: "student" }, event: null }, { access: false })
+  assert.equal((await claimPurchaseByTransaction("HP0907585127", blocked.deps)).status, "review")
+})
+
+test("registro local: oferta só do curso explica sem API; evento de reembolso vira cancelada", async () => {
+  const courseOnly = localDeps({ entitlement: null, event: { productUcode: UCODE, offerCode: "semsga", latestType: "PURCHASE_COMPLETE" } })
+  assert.equal((await claimPurchaseByTransaction("HP0907585127", courseOnly.deps)).status, "course_only")
+  assert.equal(courseOnly.calls.api, undefined)
+  const refunded = localDeps({ entitlement: null, event: { productUcode: UCODE, offerCode: "comsga", latestType: "PURCHASE_REFUNDED" } })
+  assert.equal((await claimPurchaseByTransaction("HP0907585127", refunded.deps)).status, "canceled")
+})
+
+test("compra conhecida localmente sem e-mail: usa a API; se a API falhar, manda ao suporte em vez de erro", async () => {
+  const known = { entitlement: null, event: { productUcode: UCODE, offerCode: "comsga", latestType: "PURCHASE_APPROVED" } }
+  const ok = localDeps(known)
+  assert.equal((await claimPurchaseByTransaction("HP0907585127", ok.deps)).status, "granted")
+  assert.equal(ok.calls.api, true)
+  const failing = localDeps(known, { apiFails: true })
+  assert.equal((await claimPurchaseByTransaction("HP0907585127", failing.deps)).status, "review")
+  const unknown = localDeps(null, { apiFails: true })
+  await assert.rejects(claimPurchaseByTransaction("HP0907585127", unknown.deps))
+})
