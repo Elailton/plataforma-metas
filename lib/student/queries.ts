@@ -4,8 +4,8 @@ import { cache } from "react"
 import { cookies } from "next/headers"
 import { createClient } from "@/lib/supabase/server"
 import { getCurrentProfile, type CurrentProfile } from "@/lib/supabase/queries"
-import type { StudentCourse, StudentCourseSnapshot } from "@/lib/student/types"
-import { buildStudentSnapshot, type SnapshotGoalRow, type SnapshotSubjectRow } from "@/lib/student/snapshot.mjs"
+import type { StudentCourse, StudentCourseSnapshot, StudentMaterial } from "@/lib/student/types"
+import { buildStudentSnapshot, materialsFromRelations, type SnapshotGoalRow, type SnapshotSubjectRow } from "@/lib/student/snapshot.mjs"
 import { logSafeServerError } from "@/lib/security/safe-error"
 
 export const STUDENT_COURSE_COOKIE = "student_course_id"
@@ -39,8 +39,11 @@ export const getStudentContext = cache(async function getStudentContext(): Promi
   return { profile, courses, currentCourse }
 })
 
+// Sem materiais: a lista completa de metas roda em toda página do aluno e os
+// materiais (com RLS em cascata) eram a maior parte do custo. Os materiais são
+// carregados só na página da meta aberta, por getGoalItemMaterials.
 const GOAL_SELECT =
-  "id, course_id, title, description, due_date, created_at, goal_items(id, subject_id, topic_id, subtopic_id, instructions, suggested_questions, position, archived_at, goal_item_materials(position, materials(id, title, type, url)))"
+  "id, course_id, title, description, due_date, created_at, goal_items(id, subject_id, topic_id, subtopic_id, instructions, suggested_questions, position, archived_at)"
 
 const isMissingProgressRelation = (error: { code?: string; message?: string } | null) =>
   Boolean(error && (error.code === "PGRST205" || error.code === "42P01" || /does not exist|Could not find the table/i.test(error.message ?? "")))
@@ -102,3 +105,29 @@ export const getStudentCourseSnapshot = cache(async function getStudentCourseSna
     ...snapshot,
   }
 })
+
+/**
+ * Materiais dos itens de uma única meta (a que o aluno abriu). O RLS continua
+ * decidindo o que é visível. Devolve um mapa itemId -> materiais em ordem.
+ */
+export async function getGoalItemMaterials(itemIds: string[]): Promise<Map<string, StudentMaterial[]>> {
+  const result = new Map<string, StudentMaterial[]>()
+  if (itemIds.length === 0) return result
+  const supabase = await createClient()
+  const { data, error } = await supabase
+    .from("goal_item_materials")
+    .select("goal_item_id, position, materials(id, title, type, url)")
+    .in("goal_item_id", itemIds)
+  if (error) {
+    logSafeServerError("student.goal_materials.read_failed", error)
+    throw new Error("Não foi possível carregar os materiais da meta.")
+  }
+  const byItem = new Map<string, unknown[]>()
+  for (const row of data ?? []) {
+    const list = byItem.get(row.goal_item_id) ?? []
+    list.push(row)
+    byItem.set(row.goal_item_id, list)
+  }
+  for (const id of itemIds) result.set(id, materialsFromRelations(byItem.get(id) ?? []) as StudentMaterial[])
+  return result
+}

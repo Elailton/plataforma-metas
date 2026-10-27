@@ -249,3 +249,27 @@ test("importância do item vem do subtópico e, sem ela, do tópico; valores inv
   const { goals: out } = buildStudentSnapshot({ subjects: withImportance, goals: g, completedItemIds: [] })
   assert.deepEqual(out[0].items.map((entry) => entry.importance), ["high", "low", null, null])
 })
+
+test("materialsFromRelations ordena por posição e descarta material invisível", async () => {
+  const { materialsFromRelations } = await import("../lib/student/snapshot.mjs")
+  const list = materialsFromRelations([
+    { position: 2, materials: { id: "b", title: "B", type: "link", url: "https://b", extra: 1 } },
+    { position: 1, materials: { id: "a", title: "A", type: "apostila", url: "https://a" } },
+    { position: 3, materials: null },
+  ])
+  assert.deepEqual(list.map((m) => m.id), ["a", "b"])
+  assert.deepEqual(Object.keys(list[1]).sort(), ["id", "title", "type", "url"])
+  assert.deepEqual(materialsFromRelations(undefined), [])
+})
+
+test("snapshot sem goal_item_materials (lista enxuta) gera itens com materiais vazios", async () => {
+  const { buildStudentSnapshot } = await import("../lib/student/snapshot.mjs")
+  const snap = buildStudentSnapshot({
+    subjects: [],
+    goals: [{ id: "g", course_id: "c", title: "Meta 1", description: null, due_date: null, created_at: null,
+      goal_items: [{ id: "i", subject_id: "s", topic_id: null, instructions: null, suggested_questions: null, position: 1 }] }],
+    completedItemIds: [],
+  })
+  assert.deepEqual(snap.goals[0].items[0].materials, [])
+  assert.equal(snap.goals[0].totalItems, 1)
+})

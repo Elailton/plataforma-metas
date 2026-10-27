@@ -1,4 +1,4 @@
-import type { StudentGoal, StudentGoalSummary, StudentSubjectProgress } from "./types"
+import type { StudentMaterial, StudentGoal, StudentGoalSummary, StudentSubjectProgress } from "./types"
 
 export interface SnapshotTopicRow {
   id: string
@@ -29,7 +29,7 @@ export interface SnapshotItemRow {
   suggested_questions: number | null
   position: number
   archived_at?: string | null
-  goal_item_materials: { position: number; materials: SnapshotMaterialRow | null }[] | null
+  goal_item_materials?: { position: number; materials: SnapshotMaterialRow | null }[] | null
 }
 export interface SnapshotGoalRow {
   id: string
@@ -70,3 +70,6 @@ export function studentGoalWindow<T extends { isReleased: boolean; isDateRelease
   limit?: number,
   preview?: number,
 ): { next: T | null; upcoming: T[]; recent: T[]; earlier: T[]; visible: T[]; releasedCount: number }
+export function materialsFromRelations(
+  relations: readonly { position?: number | null; materials?: SnapshotMaterialRow | SnapshotMaterialRow[] | null }[] | null | undefined,
+): StudentMaterial[]
