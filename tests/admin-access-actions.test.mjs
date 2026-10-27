@@ -4,10 +4,11 @@ import { readFileSync } from "node:fs"
 import { runInNewContext } from "node:vm"
 import ts from "typescript"
 import * as feedback from "../lib/admin/access-feedback.mjs"
+import * as confirm from "../lib/auth/confirm.mjs"
 
 // Run the actual server-action implementation with mocked network/auth/cache
 // boundaries. SQL authorization is exercised separately against PostgreSQL.
-function actions({ status = "active", denied = false, orphaned = false } = {}) {
+function actions({ status = "active", denied = false, orphaned = false, profile = null } = {}) {
   const calls = []
   const refreshed = []
   let rpcCount = 0
@@ -15,6 +16,7 @@ function actions({ status = "active", denied = false, orphaned = false } = {}) {
     select() { return this },
     eq() { return this },
     async single() { return { data: { status }, error: null } },
+    async maybeSingle() { return { data: { user_id: "student-user", status }, error: null } },
   }
   const supabase = {
     async rpc(name, args) {
@@ -30,13 +32,18 @@ function actions({ status = "active", denied = false, orphaned = false } = {}) {
   const adminSelection = {
     select() { return this },
     eq() { return this },
-    async maybeSingle() { return { data: null, error: null } },
+    async maybeSingle() { return { data: profile, error: null } },
     async insert() { return { error: null } },
   }
   const admin = {
     auth: {
       admin: {
         async listUsers() { return { data: { users: [{ id: "auth-user", email: "orphan@test.invalid" }] }, error: null } },
+        async getUserById(id) { return { data: { user: { id, email: "aluno@test.invalid" } }, error: null } },
+        async generateLink(args) {
+          calls.push({ name: "generateLink", args })
+          return { data: { properties: { hashed_token: "hash-123" } }, error: null }
+        },
       },
       async resetPasswordForEmail() { return { data: {}, error: null } },
     },
@@ -57,8 +64,9 @@ function actions({ status = "active", denied = false, orphaned = false } = {}) {
     },
     "@/lib/supabase/admin": { createAdminClient: () => admin },
     "@/lib/auth/invite-url": { inviteRedirectUrl: () => "https://example.test/auth/confirm" },
+    "@/lib/auth/confirm.mjs": confirm,
   }
-  runInNewContext(js, { exports: module.exports, require: (name) => {
+  runInNewContext(js, { process: { env: { SITE_URL: "https://example.test" } }, exports: module.exports, require: (name) => {
     if (!(name in dependencies)) throw new Error("Unexpected import: " + name)
     return dependencies[name]
   } })
@@ -113,4 +121,24 @@ test("acesso manual repara perfil apagado sem duplicar a conta de autenticação
   assert.match(result.message, /cadastro reparado.*email.*reenviado/i)
   assert.equal(result.emailWarning, false)
   assert.equal(action.calls.filter(({ name }) => name === "admin_enroll_existing_student").length, 2)
+})
+
+test("link de acesso: gera link de recuperação pela plataforma sem enviar e-mail", async () => {
+  const action = actions({ profile: { role: "student" } })
+  const { link } = await action.createStudentAccessLink("enrollment", "course")
+  const url = new URL(link)
+  assert.equal(url.origin + url.pathname, "https://example.test/auth/confirm")
+  assert.equal(url.searchParams.get("token_hash"), "hash-123")
+  assert.equal(url.searchParams.get("type"), "recovery")
+  assert.equal(url.searchParams.get("next"), "/auth/primeiro-acesso")
+  const generated = action.calls.find(({ name }) => name === "generateLink")
+  assert.deepEqual(JSON.parse(JSON.stringify(generated.args)), { type: "recovery", email: "aluno@test.invalid" })
+})
+
+test("link de acesso: recusa matrícula inativa, conta não aluno e quem não é admin", async () => {
+  await assert.rejects(actions({ status: "suspended", profile: { role: "student" } }).createStudentAccessLink("e", "c"), /acesso ativo/)
+  const adminAccount = actions({ profile: { role: "admin" } })
+  await assert.rejects(adminAccount.createStudentAccessLink("e", "c"), /contas de aluno/)
+  assert.ok(!adminAccount.calls.some(({ name }) => name === "generateLink"))
+  await assert.rejects(actions({ denied: true }).createStudentAccessLink("e", "c"), /administradores/)
 })
