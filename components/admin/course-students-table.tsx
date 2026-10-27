@@ -60,9 +60,13 @@ export function CourseStudentsTable({
         students.filter(
           (s) =>
             groupFilter === "all" ||
-            (groupFilter === "none"
-              ? s.studyGroup == null
-              : s.studyGroup === Number(groupFilter)),
+            (groupFilter === "never"
+              ? s.neverSignedIn === true
+              : groupFilter === "noquestionnaire"
+                ? s.questionnaire == null && s.enrollmentStatus === "active"
+                : groupFilter === "none"
+                  ? s.studyGroup == null
+                  : s.studyGroup === Number(groupFilter)),
         ),
         query,
         (student) => [student.fullName, student.email],
@@ -237,6 +241,12 @@ export function CourseStudentsTable({
           <option value="none">
             Sem grupo ({students.filter((s) => s.studyGroup == null).length})
           </option>
+          <option value="never">
+            Nunca entrou ({students.filter((s) => s.neverSignedIn === true).length})
+          </option>
+          <option value="noquestionnaire">
+            Sem questionário ({students.filter((s) => s.questionnaire == null && s.enrollmentStatus === "active").length})
+          </option>
         </select>
       </div>
       {students.length === 0 ? (
@@ -285,9 +295,26 @@ export function CourseStudentsTable({
                           {student.avatarInitials}
                         </AvatarFallback>
                       </Avatar>
-                      <span className="font-medium text-foreground">
-                        {student.fullName}
-                      </span>
+                      <div className="flex flex-col gap-1">
+                        <span className="font-medium text-foreground">
+                          {student.fullName}
+                        </span>
+                        {student.enrollmentStatus === "active" &&
+                        (student.neverSignedIn || student.questionnaire == null) ? (
+                          <span className="flex flex-wrap gap-1">
+                            {student.neverSignedIn ? (
+                              <Badge variant="outline" className="border-amber-500/40 bg-amber-500/10 text-[11px] text-foreground">
+                                Nunca entrou
+                              </Badge>
+                            ) : null}
+                            {student.questionnaire == null ? (
+                              <Badge variant="outline" className="text-[11px]">
+                                Sem questionário
+                              </Badge>
+                            ) : null}
+                          </span>
+                        ) : null}
+                      </div>
                     </div>
                   </TableCell>
                   <TableCell className="max-w-80 whitespace-normal">

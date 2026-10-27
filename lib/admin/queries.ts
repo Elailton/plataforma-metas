@@ -1,4 +1,7 @@
 import { createClient } from "@/lib/supabase/server"
+import { createAdminClient } from "@/lib/supabase/admin"
+import { requireAdmin } from "@/lib/admin/auth"
+import { logSafeServerError } from "@/lib/security/safe-error"
 import type {
   AdminCourse,
   AdminGoal,
@@ -261,6 +264,34 @@ function mapGoalRow(goal: any): AdminGoal {
   }
 }
 
+/**
+ * Quais contas nunca concluíram um login (convite/acesso não usado). Só o
+ * administrador consulta; o dado vem do Auth com a chave de serviço e nunca
+ * vai ao navegador além do booleano. Falha na consulta não derruba a página.
+ */
+async function getNeverSignedInIds(userIds: string[]): Promise<Set<string> | null> {
+  if (userIds.length === 0) return new Set()
+  try {
+    await requireAdmin()
+    const wanted = new Set(userIds)
+    const never = new Set<string>()
+    const admin = createAdminClient()
+    const perPage = 1000
+    for (let page = 1; page <= 20; page += 1) {
+      const { data, error } = await admin.auth.admin.listUsers({ page, perPage })
+      if (error) throw error
+      for (const user of data.users) {
+        if (wanted.has(user.id) && !user.last_sign_in_at) never.add(user.id)
+      }
+      if (data.users.length < perPage) break
+    }
+    return never
+  } catch (error) {
+    logSafeServerError("admin.students.sign_in_status_failed", error)
+    return null
+  }
+}
+
 export async function listCourseStudents(
   courseId: string,
 ): Promise<AdminCourseStudent[]> {
@@ -296,6 +327,7 @@ export async function listCourseStudents(
       "Não foi possível consultar os acessos. Confira a migration de bloqueios administrativos.",
     )
   }
+  const neverSignedIn = await getNeverSignedInIds((enrollments ?? []).map((row: any) => row.user_id))
 
   return (enrollments ?? []).map((enrollment: any) => {
     const profile = Array.isArray(enrollment.profiles)
@@ -338,6 +370,7 @@ export async function listCourseStudents(
             blockedByName: actor?.full_name || "Administrador",
           }
         : null,
+      neverSignedIn: neverSignedIn ? neverSignedIn.has(enrollment.user_id) : null,
     }
   })
 }

@@ -34,24 +34,32 @@ export function ConfirmAccessButton({
   return (
     <div className="flex flex-col gap-4">
       {failed ? (
-        <div role="alert" className="flex flex-col gap-2 rounded-lg border border-destructive/30 bg-destructive/10 px-3 py-2 text-sm text-destructive">
-          <p>Este link expirou ou já foi usado.</p>
+        <div role="alert" className="flex flex-col gap-3 rounded-lg border border-destructive/30 bg-destructive/10 px-3 py-3 text-sm text-destructive">
+          <p>Este link expirou ou já foi usado. Isso acontece quando um link mais novo foi pedido depois, ou quando passou o prazo.</p>
+          <Link
+            href="/auth/reenviar-acesso"
+            className="flex h-10 items-center justify-center rounded-lg bg-primary px-4 text-sm font-semibold text-primary-foreground hover:bg-primary/90"
+          >
+            Receber um novo link
+          </Link>
           <p className="text-muted-foreground">
-            Digite o{" "}
+            Se já tem senha, é só{" "}
+            <Link href="/auth/login" className="font-medium text-foreground underline underline-offset-4">
+              entrar normalmente
+            </Link>
+            . Também dá para digitar o{" "}
             <Link href="/auth/codigo" className="font-medium text-foreground underline underline-offset-4">
-              código do mesmo e-mail
-            </Link>{" "}
-            ou{" "}
-            <Link href="/auth/reenviar-acesso" className="font-medium text-foreground underline underline-offset-4">
-              peça um novo acesso
+              código do e-mail mais recente
             </Link>
             .
           </p>
         </div>
       ) : null}
-      <Button type="button" onClick={confirm} className="h-11 w-full text-sm font-semibold" disabled={pending}>
-        {pending ? "Confirmando..." : "Continuar"}
-      </Button>
+      {failed ? null : (
+        <Button type="button" onClick={confirm} className="h-11 w-full text-sm font-semibold" disabled={pending}>
+          {pending ? "Confirmando..." : "Continuar"}
+        </Button>
+      )}
     </div>
   )
 }

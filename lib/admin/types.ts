@@ -141,4 +141,6 @@ export interface AdminCourseStudent extends AdminStudent {
     blockedAt: string
     blockedByName: string
   } | null
+  /** Conta nunca concluiu um login (null quando não foi possível consultar). */
+  neverSignedIn: boolean | null
 }
