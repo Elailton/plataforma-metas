@@ -122,10 +122,11 @@ export async function getGoalItemMaterials(itemIds: string[]): Promise<Map<strin
     logSafeServerError("student.goal_materials.read_failed", error)
     throw new Error("Não foi possível carregar os materiais da meta.")
   }
-  const byItem = new Map<string, unknown[]>()
+  type MaterialRelation = Parameters<typeof materialsFromRelations>[0] extends readonly (infer R)[] | null | undefined ? R : never
+  const byItem = new Map<string, MaterialRelation[]>()
   for (const row of data ?? []) {
     const list = byItem.get(row.goal_item_id) ?? []
-    list.push(row)
+    list.push(row as unknown as MaterialRelation)
     byItem.set(row.goal_item_id, list)
   }
   for (const id of itemIds) result.set(id, materialsFromRelations(byItem.get(id) ?? []) as StudentMaterial[])
