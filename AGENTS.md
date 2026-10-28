@@ -1,5 +1,29 @@
 # AGENTS.md
 
+> **Leia primeiro: o projeto está em produção, com alunos pagantes.**
+> Antes de qualquer tarefa, leia a memória do projeto em [`docs/ia/`](docs/ia/README.md):
+> regras invioláveis (`01-regras.md`), arquitetura e limites (`02`), dados pessoais (`03`),
+> cursos e ofertas (`04`), procedimentos (`05`), decisões (`06`), incidentes (`07`) e
+> pendências (`08`). Atualize essa memória no mesmo PR de qualquer mudança relevante.
+
+## Regras de ouro (resumo de `docs/ia/01-regras.md`)
+
+1. **Nada destrutivo no banco de produção.** Arquivar em vez de excluir; migrações
+   aditivas, com reversão, rodadas pelo usuário.
+2. **Nada de e-mail em massa.** Resend gratuito: 100 e-mails/dia e 3.000/mês.
+3. **Perguntar em qual grupo lançar** qualquer conteúdo ou função (1, 2, 3); lançar
+   primeiro no Grupo 3. **Nunca mostrar o grupo ao aluno.**
+4. **Nunca misturar cursos** e usar só questões reais de prova (inéditas só com
+   autorização, marcadas com `[[inedita]]`).
+5. **Perguntar antes de mesclar/publicar**; CI `validate` obrigatório; caminho de
+   reversão sempre definido.
+6. **Dados pessoais no mínimo**: nada de CPF, endereço, telefone ou payload em banco,
+   log ou repositório; resposta pública nunca revela se um e-mail tem conta ou compra.
+7. **Nunca digitar senhas** nem trocar senhas/contas protegidas (admin e conta de teste).
+8. Na dúvida, perguntar ao usuário.
+
+---
+
 ## Objetivo do produto
 
 Este repositório implementa uma plataforma reutilizável de mentoria e acompanhamento de metas para concursos públicos.
