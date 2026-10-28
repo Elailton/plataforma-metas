@@ -34,6 +34,22 @@ Pendente de confirmação: a primeira venda real de CFO, PMCE, PPCE e PRF pelas 
 "+" confirma que o checkout corresponde ao ucode cadastrado. Se chegar como "Produto sem
 mapeamento ativo", o produto é outro.
 
+## Links de compra vigentes (confirmados pelo usuário em 2026-10-28)
+
+Só estes 12 links são usados na venda; os links antigos foram descartados. As ofertas
+antigas (parceladas e "curso apenas") **continuam cadastradas**: compras já feitas, atrasos
+e reembolsos delas ainda chegam pelo webhook e precisam ser reconhecidos. Não remover.
+Formato: `https://pay.hotmart.com/<checkout>?off=<oferta>&checkoutMode=10`.
+
+| Curso | Alunos e ex-alunos | Novos alunos |
+|---|---|---|
+| PRF (`U91982297E`) | `acuq8iko` | `m50mentn` |
+| CFO PMCE (`Q71595867Y`) | `aeezrp0f` | `9fy3qydk` |
+| GMF (`C67379049F`) | `fx39ie5v` | `vnevmgwm` |
+| PPCE (`O66446852H`) | `y72wg47k` | `t1e0ol35` |
+| PMCE (`X25479334G`) | `qao1b38j` | `0irwm9tl` |
+| PMPE (`T70472489M`) | `t43w9ztx` | `4e4p713s` |
+
 ## Regras de negócio confirmadas pelo usuário
 
 - Ofertas "sem SGA"/"curso apenas"/"Turbo" **não** liberam o SGA (2026-10-27).
