@@ -23,6 +23,8 @@ export interface LegalDocument {
 export const LEGAL_UPDATED_AT = "28/10/2026"
 export const COMPANY_NAME = "Curso Professor Erick Lima Ltda"
 export const COMPANY_CNPJ = "52.992.972/0001-03"
+export const COMPANY_ADDRESS = "Av. Carneiro de Mendonça, 340, Demócrito Rocha, Fortaleza/CE, CEP 60440-164"
+export const COMPANY_EMAIL = "cursoprofericklima@gmail.com"
 
 export const PRIVACY: LegalDocument = {
   title: "Aviso de Privacidade",
@@ -35,7 +37,7 @@ export const PRIVACY: LegalDocument = {
       blocks: [
         {
           type: "p",
-          text: `O controlador dos dados é a ${COMPANY_NAME}, CNPJ ${COMPANY_CNPJ}, com sede em Fortaleza/CE. Para falar sobre seus dados, use o WhatsApp +55 (85) 99688-5832, o mesmo canal de suporte da plataforma.`,
+          text: `O controlador dos dados é a ${COMPANY_NAME}, CNPJ ${COMPANY_CNPJ}, com sede na ${COMPANY_ADDRESS}. Para falar sobre seus dados, escreva para ${COMPANY_EMAIL} ou use o WhatsApp +55 (85) 99688-5832, o mesmo canal de suporte da plataforma.`,
         },
       ],
     },
@@ -159,7 +161,7 @@ export const TERMS: LegalDocument = {
       blocks: [
         {
           type: "p",
-          text: `O SGA é um complemento do produto "Curso completo + SGA", da ${COMPANY_NAME}, CNPJ ${COMPANY_CNPJ}, com sede em Fortaleza/CE. Ele reúne orientações de estudo, metas, edital, acompanhamento de progresso e mini simulados. O SGA não é um curso preparatório por si só e não garante aprovação em concurso.`,
+          text: `O SGA é um complemento do produto "Curso completo + SGA", da ${COMPANY_NAME}, CNPJ ${COMPANY_CNPJ}, com sede na ${COMPANY_ADDRESS}. Ele reúne orientações de estudo, metas, edital, acompanhamento de progresso e mini simulados. O SGA não é um curso preparatório por si só e não garante aprovação em concurso.`,
         },
       ],
     },
@@ -246,7 +248,7 @@ export const TERMS: LegalDocument = {
     },
     {
       title: "11. Contato",
-      blocks: [{ type: "p", text: "Suporte e pedidos sobre dados pessoais: WhatsApp +55 (85) 99688-5832." }],
+      blocks: [{ type: "p", text: `Suporte e pedidos sobre dados pessoais: ${COMPANY_EMAIL} ou WhatsApp +55 (85) 99688-5832.` }],
     },
   ],
 }

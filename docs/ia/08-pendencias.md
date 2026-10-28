@@ -20,7 +20,9 @@ Ordem sugerida. Marcar com data quando concluir e mover a lição para `07` se h
 - ~~Aviso de privacidade e termos de uso~~ — publicados em `/privacidade` e `/termos`
   (2026-10-28), preenchidos com dados públicos do CNPJ. **Ainda exigem validação jurídica**:
   menores de idade, prazo de 5 anos, DPAs dos fornecedores (Res. CD/ANPD 19/2024), registros
-  de acesso por 6 meses, e-mail institucional/endereço (não encontrados em fonte pública).
+  de acesso por 6 meses. Endereço (Av. Carneiro de Mendonça, 340, Fortaleza/CE) e e-mail
+  (cursoprofericklima@gmail.com) informados pelo usuário em 2026-10-28. A política do site de
+  vendas só cita direitos europeus: o advogado deve alinhá-la à LGPD.
 - Plano de resposta a incidente (prazo de 3 dias úteis à ANPD), registro de operações de
   tratamento e rotina de anonimização após 5 anos.
 - Regras do banco para metas futuras: hoje um aluno consegue ler pela API itens e
