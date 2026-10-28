@@ -1,17 +1,18 @@
-<!-- Supabase › Authentication › Emails › Reset password. Assunto: Acesse o Sistema Guiado da Aprovação -->
+<!-- Supabase › Authentication › Emails › Reset password. Assunto: Seu acesso ao Sistema Guiado da Aprovação -->
+<!-- Usado pelo "Reenviar acesso", "Esqueci minha senha" e pelo link de acesso do admin. Não mudar o href. -->
 <div style="margin:0;padding:24px;background:#f4f4f5;font-family:Arial,Helvetica,sans-serif;color:#18181b">
   <div style="max-width:480px;margin:0 auto;background:#ffffff;border-radius:12px;padding:28px">
-    <h1 style="margin:0 0 12px;font-size:20px">Defina sua senha</h1>
-    <p style="margin:0 0 20px;font-size:15px;line-height:1.5">Recebemos um pedido de acesso ao Sistema Guiado da Aprovação. Use o botão ou o código abaixo para definir sua senha.</p>
+    <h1 style="margin:0 0 12px;font-size:20px">Seu acesso ao Sistema Guiado da Aprovação</h1>
+    <p style="margin:0 0 20px;font-size:15px;line-height:1.5">Este é o seu link para entrar no SGA e criar (ou alterar) sua senha. Toque no botão abaixo e, na página que abrir, em <strong>Continuar</strong>.</p>
     <p style="margin:0 0 24px">
       <a href="{{ .SiteURL }}/auth/confirm?token_hash={{ .TokenHash }}&type=recovery&next=/auth/primeiro-acesso"
-         style="display:inline-block;background:#18181b;color:#ffffff;text-decoration:none;font-weight:bold;padding:12px 22px;border-radius:8px">
-        Definir minha senha
+         style="display:inline-block;background:#18181b;color:#ffffff;text-decoration:none;font-weight:bold;font-size:16px;padding:14px 28px;border-radius:8px">
+        Acessar o SGA
       </a>
     </p>
     <p style="margin:0 0 8px;font-size:14px;line-height:1.5">Se o botão não funcionar, entre em
       <strong>{{ .SiteURL }}/auth/codigo</strong> e digite este código com o seu e-mail:</p>
     <p style="margin:0 0 24px;font-size:28px;font-weight:bold;letter-spacing:6px;font-family:'Courier New',monospace">{{ .Token }}</p>
-    <p style="margin:0;font-size:12px;color:#71717a;line-height:1.5">O link e o código valem uma única vez. Se você não pediu este acesso, ignore este e-mail.</p>
+    <p style="margin:0;font-size:12px;color:#71717a;line-height:1.5">O link e o código valem uma única vez. Se você pediu mais de um acesso, use sempre o e-mail mais recente. Se não pediu, ignore este e-mail.</p>
   </div>
 </div>
