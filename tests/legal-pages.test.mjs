@@ -9,6 +9,8 @@ test("textos legais estão preenchidos e não têm marcadores pendentes", () => 
   assert.doesNotMatch(content, /PREENCHER|TODO|XXX/)
   assert.match(content, /52\.992\.972\/0001-03/)
   assert.match(content, /Fortaleza\/CE/)
+  assert.match(content, /60440-164/)
+  assert.match(content, /cursoprofericklima@gmail\.com/)
   // Nunca mencionar grupos de estudo ao aluno.
   assert.doesNotMatch(content, /grupo\s*[123]|G[123]\b/i)
 })
