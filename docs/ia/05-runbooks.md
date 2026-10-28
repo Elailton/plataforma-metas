@@ -81,3 +81,27 @@ conectando pelo host `db.<ref>.supabase.co`, medir, **apagar o branch**.
 ## Qconcursos (Diagnóstico Semanal)
 Ver a skill `sga-plataforma`. Usar a sessão já logada no navegador; respeitar a cota de
 respostas do usuário; questões anuladas/desatualizadas ficam fora.
+
+## Importar materiais da Hotmart Club (aulas por curso)
+
+Feito em 28/10/2026 para o SGA - PMCE (624 materiais); o mesmo método vale para PRF, PPCE e CFO.
+Só adiciona linhas em `materials`; nunca apaga nem altera materiais existentes.
+
+1. **Fonte:** a área de membros do curso (`hotmart.com/pt-br/club/<slug>/products/<id>`), no navegador
+   já logado (nunca digitar senha). O HTML da página de trilhas só traz os links das trilhas; as aulas
+   aparecem ao expandir os módulos (`[data-test=module-list]`, botões `aria-expanded=false`; clicar um a um com
+   ~1,2 s de intervalo, a sessão pode expirar se for rápido demais). Cada aula é `a[href*="/content/<hash>"]`,
+   com título (`span[title]`), duração (`mm:ss`) e miniatura (aula em vídeo).
+2. **Escopo:** importar só disciplinas e Vade Mecum. Ficam de fora os bônus (Eventos, Madrugadão, Plano de
+   Ação, Upgrade Turbo, Cronograma, Simulados, Mini Simulados, Teoria em Questões, Matemática Básica, etc.),
+   "Comece por aqui", SGA e Edital Verticalizado. Perguntar ao usuário se houver dúvida de escopo.
+3. **Mapeamento:** cada módulo vai para a disciplina (`subjects.position`) do mesmo curso; módulo sem
+   disciplina correspondente fica com `subject_id` nulo (ex.: Vade Mecum, Legislação Extravagante no PMCE).
+4. **Formato gravado (igual ao PMPE/GMF):** `url` = `https://hotmart.com/pt-BR/club/<slug>/products/<id>/content/<hash>?track=<trilha>`
+   (sem `?track=` se o módulo não tem trilha própria); `description` = `Trilha: <nome> | Ordem: 001 | Duração: mm:ss`;
+   `type` = `apostila` (título com apostila/pdf), `videoaula` (tem duração/miniatura) ou `link` (o resto).
+5. **Gravação:** `execute_sql` com CTE (`values` por módulo + `$b$...$b$` com linhas `hash§tipo§duração§título§ordem`,
+   `string_to_array`), `insert ... where not exists (mesma url no curso)`: idempotente. Lotes de ~12 KB.
+   Conferir depois: total por disciplina e que nenhum outro curso mudou.
+6. Curso já publicado: o aluno passa a ver os materiais assim que gravados; avisar o usuário e perguntar o grupo
+   antes quando o conteúdo for novo para os alunos.
