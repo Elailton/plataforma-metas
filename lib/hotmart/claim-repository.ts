@@ -4,6 +4,7 @@ import { claimPurchaseByTransaction, type ClaimResult } from "@/lib/hotmart/clai
 import { createHotmartRepository } from "@/lib/hotmart/supabase-repository"
 import { createResendAccessDependencies } from "@/lib/auth/resend-access-repository"
 import { createAdminClient } from "@/lib/supabase/admin"
+import { logSafeServerError } from "@/lib/security/safe-error"
 
 // Só o token de acesso da Hotmart fica em memória; respostas de vendas nunca.
 const sales = createHotmartSalesClient({ credentials: () => ({
@@ -63,7 +64,8 @@ export async function claimPurchase(code: string): Promise<ClaimResult> {
   }
 
   return claimPurchaseByTransaction(code, {
-    local: { findByTransaction },
+    local: { findByTransaction, findProductMapping: findMapping },
+    onApiError: (error) => logSafeServerError("hotmart.claim.api_failed_known_purchase", error),
     sales,
     repository,
     hasActiveStudentAccess: (email) => access.hasActiveStudentAccess(email),

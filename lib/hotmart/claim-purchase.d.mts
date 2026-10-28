@@ -4,7 +4,7 @@ export interface ClaimResult {
   message: string
   maskedEmail?: string
 }
-export declare const CLAIM_MESSAGES: Readonly<Record<ClaimStatus | "limited" | "error", string>>
+export declare const CLAIM_MESSAGES: Readonly<Record<ClaimStatus | "limited" | "error" | "review_known", string>>
 export declare function normalizeTransactionCode(value: unknown): string | null
 export declare function maskEmail(email: string | null | undefined): string
 export declare function claimPurchaseByTransaction(
@@ -19,6 +19,8 @@ export declare function claimPurchaseByTransaction(
         entitlement: { status: "active" | "suspended" | "revoked"; email: string | null; role: string | null } | null
         event: { productUcode: string | null; offerCode: string | null; latestType: string } | null
       } | null>
+      findProductMapping?(productUcode: string): Promise<unknown>
     }
+    onApiError?(error: unknown): void
   },
 ): Promise<ClaimResult>
