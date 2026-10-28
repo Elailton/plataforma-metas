@@ -108,14 +108,14 @@ function inMemoryRepository({ adminEmails = [] } = {}) {
     async claimEvent(event) {
       const current = events.get(event.eventId)?.status
       if (current && current !== "failed") return { claimed: false, status: current }
-      events.set(event.eventId, { status: "processing", message: null })
+      events.set(event.eventId, { status: "processing", message: null, buyerEmail: event.storedBuyerEmail ?? null })
       return { claimed: true, status: "processing" }
     },
     async finishEvent(eventId, status, message, details) {
-      events.set(eventId, { status, message, offerCode: details?.offerCode ?? null })
+      events.set(eventId, { ...events.get(eventId), status, message, offerCode: details?.offerCode ?? null })
     },
     async failEvent(eventId, message, details) {
-      events.set(eventId, { status: "failed", message, offerCode: details?.offerCode ?? null })
+      events.set(eventId, { ...events.get(eventId), status: "failed", message, offerCode: details?.offerCode ?? null })
     },
     async findProductMapping(productUcode) {
       return mappings.get(productUcode) ?? null
@@ -138,6 +138,16 @@ function inMemoryRepository({ adminEmails = [] } = {}) {
     },
     async findEntitlement(transaction) {
       return entitlements.get(transaction) ?? null
+    },
+    async createEntitlementIfAbsent(input) {
+      const current = entitlements.get(input.transaction)
+      if (current) {
+        return {
+          applied: false, entitlementStatus: current.status,
+          enrollmentStatus: enrollments.get(`${current.userId}:${current.courseId}`) ?? null,
+        }
+      }
+      return this.applyEntitlementEvent(input)
     },
     async applyEntitlementEvent(input) {
       const current = entitlements.get(input.transaction)
@@ -722,4 +732,133 @@ test("oferta: mapeamento sem política restrita mantém o comportamento anterior
   const result = await approve(repository, { id: "legacy", transaction: "HP-legacy", offerCode: "qualquer" })
   assert.equal(result.outcome, "processed")
   assert.equal(repository.state.enrollments.get(`${result.userId}:course-one`), "active")
+})
+
+// ---------------------------------------------------------------------------
+// Fase B: e-mail do comprador guardado no evento e "Compra concluída".
+
+const TEST_UCODE = "fb056612-bcc6-4217-9e6d-2a5d1110ac2f"
+
+function complete(repository, options = {}) {
+  return processHotmartEvent(payload({
+    id: options.id ?? `complete-${options.transaction ?? "one"}`, ...options, event: "PURCHASE_COMPLETE",
+  }), repository)
+}
+
+test("B1. webhook guarda o e-mail normalizado de compras, inclusive ignoradas por oferta ou produto", async () => {
+  const repository = inMemoryRepository()
+  await approve(repository, { id: "e-sga", transaction: "HP-a", email: " Aluno@Email.COM ", ...SGA })
+  await approve(repository, { id: "e-only", transaction: "HP-b", email: "x@email.com", ...COURSE_ONLY })
+  await approve(repository, { id: "e-unmapped", transaction: "HP-c", email: "y@email.com", productUcode: "sem-cadastro" })
+  await refund(repository, { id: "e-refund", transaction: "HP-d", email: "z@email.com" })
+  assert.equal(repository.state.events.get("e-sga").buyerEmail, "aluno@email.com")
+  assert.equal(repository.state.events.get("e-only").buyerEmail, "x@email.com")
+  assert.equal(repository.state.events.get("e-unmapped").buyerEmail, "y@email.com")
+  assert.equal(repository.state.events.get("e-refund").buyerEmail, "z@email.com")
+  assert.equal(repository.state.events.get("e-only").status, "ignored")
+})
+
+test("B2. envio de teste da Hotmart continua ignorado e sem e-mail", async () => {
+  const repository = inMemoryRepository()
+  repository.state.mappings.set(TEST_UCODE, { courseId: "course-one", active: true, offerPolicy: "authorized_offers", offers: [] })
+  for (const event of ["PURCHASE_APPROVED", "PURCHASE_COMPLETE"]) {
+    const result = await processHotmartEvent(payload({ id: `t-${event}`, event, productUcode: TEST_UCODE, offerCode: "test" }), repository)
+    assert.equal(result.outcome, "ignored")
+    assert.equal(repository.state.events.get(`t-${event}`).buyerEmail, null)
+  }
+  const parsed = parseHotmartEvent(payload({ id: "t2", offerCode: "test" }))
+  assert.equal(parsed.isTest, true)
+  assert.equal(parsed.storedBuyerEmail, null)
+  assert.equal(repository.state.invitations, 0)
+  assert.equal(repository.state.entitlements.size, 0)
+})
+
+test("B3. eventos que não são de compra não guardam e-mail", () => {
+  const parsed = parseHotmartEvent(payload({ id: "sub", event: "SUBSCRIPTION_CANCELLATION" }))
+  assert.equal(parsed.storedBuyerEmail, null)
+})
+
+test("B4. compra concluída cria acesso quando a aprovação foi ignorada antes do cadastro da oferta", async () => {
+  const repository = inMemoryRepository()
+  const sga = repository.state.mappings.get("product-sga")
+  const registered = sga.offers
+  sga.offers = []
+  const early = await approve(repository, { id: "early", transaction: "HP-late", ...SGA })
+  assert.equal(early.outcome, "ignored")
+  sga.offers = registered
+  const result = await complete(repository, { id: "done", transaction: "HP-late", creationDate: BASE_TIME + 5000, ...SGA })
+  assert.equal(result.outcome, "processed")
+  assert.equal(repository.state.entitlements.get("HP-late").status, "active")
+  assert.equal(repository.state.enrollments.get(`${result.userId}:course-sga`), "active")
+  assert.equal(repository.state.invitations, 1)
+  // Reentrega do mesmo evento não duplica nada.
+  assert.equal((await complete(repository, { id: "done", transaction: "HP-late", ...SGA })).outcome, "duplicate")
+  assert.equal(repository.state.invitations, 1)
+})
+
+test("B5. compra concluída nunca altera direito existente (ativo, suspenso ou revogado)", async () => {
+  for (const event of ["PURCHASE_APPROVED", "PURCHASE_DELAYED", "PURCHASE_REFUNDED", "PURCHASE_CANCELED"]) {
+    const repository = inMemoryRepository()
+    await approve(repository, { id: "a", transaction: "HP-x", ...SGA })
+    if (event !== "PURCHASE_APPROVED") {
+      await processHotmartEvent(payload({ id: "n", event, transaction: "HP-x", creationDate: BASE_TIME + 1000, ...SGA }), repository)
+    }
+    const before = { ...repository.state.entitlements.get("HP-x") }
+    const enrollmentsBefore = [...repository.state.enrollments.entries()]
+    const result = await complete(repository, { id: "c", transaction: "HP-x", creationDate: BASE_TIME + 9000, ...SGA })
+    assert.equal(result.outcome, "ignored", event)
+    assert.equal(repository.state.events.get("c").message, "Compra concluída: a transação já tem direito registrado.")
+    assert.deepEqual(repository.state.entitlements.get("HP-x"), before, event)
+    assert.deepEqual([...repository.state.enrollments.entries()], enrollmentsBefore, event)
+    assert.equal(repository.state.invitations, 1)
+  }
+})
+
+test("B6. compra concluída com negativo anterior à conta (watermark sem aluno) não libera", async () => {
+  const repository = inMemoryRepository()
+  await processHotmartEvent(payload({ id: "d", event: "PURCHASE_DELAYED", transaction: "HP-p", ...SGA }), repository)
+  const result = await complete(repository, { id: "c", transaction: "HP-p", creationDate: BASE_TIME + 9000, ...SGA })
+  assert.equal(result.outcome, "ignored")
+  assert.equal(repository.state.invitations, 0)
+  assert.equal(repository.state.entitlements.get("HP-p").status, "suspended")
+})
+
+test("B7. compra concluída de oferta curso apenas, desconhecida ou produto sem cadastro não libera", async () => {
+  const repository = inMemoryRepository()
+  assert.equal((await complete(repository, { id: "c1", transaction: "HP-1", ...COURSE_ONLY })).outcome, "ignored")
+  assert.equal((await complete(repository, { id: "c2", transaction: "HP-2", productUcode: "product-sga", offerCode: "zzz" })).outcome, "ignored")
+  assert.equal((await complete(repository, { id: "c3", transaction: "HP-3", productUcode: "sem-cadastro" })).outcome, "ignored")
+  repository.state.mappings.set("inactive", { courseId: "course-one", active: false })
+  assert.equal((await complete(repository, { id: "c4", transaction: "HP-4", productUcode: "inactive" })).outcome, "ignored")
+  assert.equal(repository.state.invitations, 0)
+  assert.equal(repository.state.entitlements.size, 0)
+  assert.equal(repository.state.events.get("c1").buyerEmail, "student@email.com")
+})
+
+test("B8. compra concluída nunca matricula administrador", async () => {
+  const repository = inMemoryRepository({ adminEmails: ["admin@email.com"] })
+  await assert.rejects(complete(repository, { id: "c", transaction: "HP-adm", email: "admin@email.com", ...SGA }), HotmartConflictError)
+  assert.equal(repository.state.entitlements.size, 0)
+  assert.equal(repository.state.enrollments.size, 0)
+  assert.equal(repository.state.events.get("c").status, "failed")
+})
+
+test("B9. corrida: direito criado entre a leitura e a gravação não é sobrescrito", async () => {
+  const repository = inMemoryRepository()
+  const invite = repository.inviteStudent
+  repository.inviteStudent = async (input) => {
+    await processHotmartEvent(payload({ id: "race-d", event: "PURCHASE_DELAYED", transaction: "HP-r", creationDate: BASE_TIME + 1, ...SGA }), repository)
+    return invite(input)
+  }
+  const result = await complete(repository, { id: "race-c", transaction: "HP-r", creationDate: BASE_TIME + 9000, ...SGA })
+  assert.equal(result.outcome, "ignored")
+  assert.equal(repository.state.entitlements.get("HP-r").status, "suspended")
+})
+
+test("B10. compra concluída sem campos obrigatórios é ignorada, não rejeitada", async () => {
+  const repository = inMemoryRepository()
+  const body = payload({ id: "c-min", event: "PURCHASE_COMPLETE" })
+  delete body.data.purchase.transaction
+  assert.equal((await processHotmartEvent(body, repository)).outcome, "ignored")
+  assert.equal(repository.state.invitations, 0)
 })

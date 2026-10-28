@@ -29,8 +29,10 @@
 6. `/auth/encontrar-compra` (código HP… da Hotmart): existe, **sem links nas telas**
    (decisão de 2026-10-27). Usa primeiro os registros do webhook; API só se faltar e-mail.
 
-Eventos ignorados (produto/oferta sem cadastro) **não guardam o e-mail do comprador**
-hoje: não dá para reprocessar depois. Ver `08-pendencias.md`.
+Desde a migração `20261028000100` (Fase B), todo evento de compra real guarda o e-mail
+normalizado do comprador (inclusive os ignorados por produto/oferta sem cadastro), para
+reprocessar depois. "Compra concluída" (`PURCHASE_COMPLETE`) cria acesso só quando a
+transação não tem nenhum direito. Eventos anteriores à migração não têm e-mail.
 
 ## Área do aluno
 

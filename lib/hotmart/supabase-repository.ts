@@ -3,6 +3,8 @@ import "server-only"
 import { createAdminClient } from "@/lib/supabase/admin"
 import { throwSafeDatabaseError } from "@/lib/security/safe-error"
 import type {
+  EntitlementEventInput,
+  EntitlementEventResult,
   EventProcessingStatus,
   HotmartRepository,
   ParsedHotmartEvent,
@@ -35,14 +37,20 @@ export function createHotmartRepository({ sendInvitation = true } = {}): Hotmart
 
   return {
     async claimEvent(event: ParsedHotmartEvent) {
-      const { data, error } = await supabase
-        .rpc("claim_hotmart_webhook_event", {
-          requested_event_id: event.eventId,
-          requested_event_type: event.eventType,
-          requested_transaction: event.transaction,
-          requested_product_ucode: event.productUcode,
-        })
+      const baseArgs = {
+        requested_event_id: event.eventId,
+        requested_event_type: event.eventType,
+        requested_transaction: event.transaction,
+        requested_product_ucode: event.productUcode,
+      }
+      let { data, error } = await supabase
+        .rpc("claim_hotmart_webhook_event", { ...baseArgs, requested_buyer_email: event.storedBuyerEmail })
         .single()
+      // Antes da migração 20261028000100 (ou após revertê-la) só existe a versão de 4
+      // argumentos: o webhook continua funcionando, apenas sem guardar o e-mail.
+      if (error?.code === "PGRST202") {
+        ;({ data, error } = await supabase.rpc("claim_hotmart_webhook_event", baseArgs).single())
+      }
 
       throwDatabaseError(error)
 
@@ -209,7 +217,18 @@ export function createHotmartRepository({ sendInvitation = true } = {}): Hotmart
       } : null
     },
 
-    async applyEntitlementEvent({
+    async createEntitlementIfAbsent(input) {
+      return entitlementRpc("create_hotmart_entitlement_if_absent", input)
+    },
+
+    async applyEntitlementEvent(input) {
+      return entitlementRpc("apply_hotmart_entitlement_event", input)
+    },
+  }
+
+  async function entitlementRpc(
+    name: "apply_hotmart_entitlement_event" | "create_hotmart_entitlement_if_absent",
+    {
       transaction,
       userId,
       courseId,
@@ -220,9 +239,10 @@ export function createHotmartRepository({ sendInvitation = true } = {}): Hotmart
       eventId,
       eventCreationDate,
       offerCode,
-    }) {
+    }: EntitlementEventInput,
+  ): Promise<EntitlementEventResult> {
       const { data, error } = await supabase
-        .rpc("apply_hotmart_entitlement_event", {
+        .rpc(name, {
           requested_transaction: transaction,
           requested_user_id: userId,
           requested_course_id: courseId,
@@ -262,6 +282,5 @@ export function createHotmartRepository({ sendInvitation = true } = {}): Hotmart
         entitlementStatus: result.entitlement_status,
         enrollmentStatus: result.enrollment_status,
       }
-    },
   }
 }

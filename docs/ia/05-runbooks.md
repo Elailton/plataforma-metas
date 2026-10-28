@@ -42,7 +42,9 @@ Preferir antes descobrir por que a compra não liberou (oferta? e-mail diferente
 2. Cadastrar em `hotmart_offer_rules` cada oferta com `grants_access` true/false e um
    rótulo claro. Confirmar com o usuário quais liberam (gerar os links de checkout para
    ele conferir).
-3. Compras recebidas antes do cadastro **não são reprocessáveis** hoje (sem e-mail).
+3. Compras recebidas antes do cadastro: as anteriores a 28/10/2026 não têm e-mail (não
+   reprocessáveis); as posteriores guardam o e-mail e podem ser reprocessadas. Se a
+   "Compra concluída" chegar depois do cadastro, o acesso é criado automaticamente.
 4. Atualizar `04-cursos-e-ofertas.md`.
 
 ### Teste de webhook

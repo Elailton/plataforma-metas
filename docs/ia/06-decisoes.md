@@ -21,7 +21,8 @@ Formato: data — decisão — motivo — status. Não apagar: marcar "substitu�
 | 2026-10-27 | Ofertas "GMF sem SGA", "curso apenas" e "Turbo" não liberam o SGA | Regra comercial confirmada | Vigente |
 | 2026-10-27 | "Encontrar minha compra" fica no ar **sem links** nas telas | Usuário quer testar antes; API de vendas recusando | Vigente |
 | 2026-10-28 | Resend continua no plano gratuito (100/dia) | Volume previsto cabe; upgrade não é possível | Vigente |
-| 2026-10-28 | Guardar o e-mail do comprador nos eventos da Hotmart (só e-mail, 90 dias se não virar acesso) | Permitir reprocessar compras que chegaram antes do cadastro | **Aprovada, não implementada** |
+| 2026-10-28 | Guardar o e-mail do comprador nos eventos da Hotmart (só e-mail, 90 dias se não virar acesso) | Permitir reprocessar compras que chegaram antes do cadastro | Vigente (Fase B, migração 20261028000100) |
 | 2026-10-28 | "Reenviar acesso" só com e-mail (Parte 2) adiado | Pouco ganho frente à complexidade e ao orçamento de e-mail | Adiada |
 | 2026-10-28 | E-mail de recuperação com assunto "Seu acesso ao Sistema Guiado da Aprovação" e botão "Acessar o SGA"; convite no mesmo padrão | "Redefina sua senha" confundia quem nunca criou senha | Vigente |
+| 2026-10-28 | "Compra concluída" cria acesso só sem direito anterior; limpeza do e-mail pelo pg_cron | Recuperar aprovações perdidas sem tocar em parcelado em atraso/reembolso | Vigente |
 | 2026-10-28 | Criar esta memória (`docs/ia/`) e `CLAUDE.md` | Projeto em produção precisa de regras consultáveis por IAs | Vigente |
