@@ -27,6 +27,13 @@ e reenviar o acesso. O histórico fica em `course_questionnaire_submissions`.
 Apagar as linhas de `student_goal_item_completions` daquele aluno nos itens daquele
 curso. É destrutivo: confirmar com o usuário, contar antes, registrar em `07`.
 
+### Reprocessar compras pendentes (admin)
+Admin → curso → Configurações → "Reprocessar compras pendentes" → **Ver prévia** →
+conferir (reembolsadas/atrasadas nunca liberam; "possível conta duplicada" fica fora e
+deve ser conferida à mão) → marcar a confirmação → **Liberar**. Máximo de 20 por dia
+(todos os cursos), curso em rascunho bloqueia. Reprocessar de novo não duplica (id de
+evento `reprocess:<transação>`). Quem já tem conta recebe o curso sem e-mail.
+
 ### Liberar acesso manual
 Admin → curso → Alunos → "Conceder acesso manual" (nome é obrigatório para conta nova).
 Preferir antes descobrir por que a compra não liberou (oferta? e-mail diferente?).

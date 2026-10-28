@@ -7,9 +7,7 @@ Ordem sugerida. Marcar com data quando concluir e mover a lição para `07` se h
    Supabase e versionados em `supabase/templates/`).
 2. ~~Guardar o e-mail do comprador~~ e 3. ~~"Compra concluída" cria acesso~~ —
    **concluído em 2026-10-28** (migração `20261028000100` aplicada; Fase B).
-4. **Botão "Reprocessar compras pendentes"** no admin: prévia (último estado da
-   transação, sem e-mail, possíveis contas duplicadas, curso em rascunho), confirmação,
-   lotes dentro do orçamento do Resend (≤ 20/dia).
+4. ~~Botão "Reprocessar compras pendentes"~~ — **concluído em 2026-10-28** (Fase C).
 5. Revisar credenciais da API de vendas da Hotmart (400 em todas as consultas).
 6. Decidir se "Encontrar minha compra" volta às telas (hoje só por URL).
 7. Parte 2 ("Reenviar acesso" só com e-mail): adiada; reavaliar após 1–4.
