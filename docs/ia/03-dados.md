@@ -12,7 +12,7 @@ O modelo completo (matrícula, direitos, bloqueios, metas, mini simulados) está
 | `enrollments` | Matrícula por curso, `status`, `study_group`, `mirror_group`, `questionnaire` (jsonb) | respostas do questionário (rotina, horas, experiência — sem dado sensível de saúde) |
 | `course_questionnaire_submissions` | Histórico de respostas | idem |
 | `hotmart_entitlements` | Direito por transação (`transaction`, status, oferta) ligado a `user_id` | indireto |
-| `hotmart_webhook_events` | Evento recebido: id, tipo, transação, ucode, oferta, status | **não guarda e-mail nem payload** (regra atual) |
+| `hotmart_webhook_events` | Evento recebido: id, tipo, transação, ucode, oferta, status, `buyer_email` | **só o e-mail normalizado** de compras reais (desde 28/10/2026); nunca nome/payload. Retenção 90 dias se a transação não gerou direito |
 | `manual_course_grants` | Concessões manuais | indireto |
 | `course_access_blocks` | Bloqueios com motivo (privado do admin) | motivo pode citar pessoa: evitar |
 | `student_goal_item_completions` | Progresso por item | — |
@@ -28,6 +28,9 @@ O modelo completo (matrícula, direitos, bloqueios, metas, mini simulados) está
   acesso ou payload.
 - Supabase e Vercel ficam nos EUA (transferência internacional): precisa constar no
   aviso de privacidade (ainda não existe — ver `08-pendencias.md`).
+- `buyer_email` dos eventos Hotmart: finalidade única de entregar o acesso comprado;
+  limpeza diária pelo pg_cron (`hotmart-buyer-email-retention`, 06:17 UTC). Pedido do
+  titular: `update hotmart_webhook_events set buyer_email = null where buyer_email = '<e-mail>'`.
 - Pedido de exclusão do titular: tratar caso a caso com o usuário; nunca apagar
   progresso/histórico de outros.
 

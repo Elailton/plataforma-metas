@@ -163,7 +163,10 @@ Eventos e efeitos sobre o direito comercial (a matrícula é reconciliada separa
 - `PURCHASE_REFUNDED` -> entitlement `revoked`;
 - `PURCHASE_CHARGEBACK` -> entitlement `revoked`;
 - `PURCHASE_CANCELED` -> entitlement `revoked`;
-- `PURCHASE_EXPIRED` -> entitlement `revoked`.
+- `PURCHASE_EXPIRED` -> entitlement `revoked`;
+- `PURCHASE_COMPLETE` -> cria entitlement `active` **somente** se a oferta libera, o curso
+  está mapeado e a transação não tem nenhum direito registrado (verificação atômica em
+  `create_hotmart_entitlement_if_absent`). Nunca altera um direito existente.
 
 Uma nova aprovação reativa o direito comercial, mas nunca remove um bloqueio administrativo. Reembolso, cancelamento ou chargeback nunca apagam usuário, perfil, matrícula ou histórico de progresso.
 
@@ -180,6 +183,14 @@ Cada evento Hotmart possui um `id` único e deve ser registrado em `hotmart_webh
 Não processe novamente eventos concluídos ou ignorados. Eventos com falha podem ser tentados novamente. Eventos presos em processamento devem possuir uma estratégia de recuperação segura.
 
 Nunca registre payload completo, tokens, documentos, endereços ou outros dados pessoais desnecessários.
+
+Exceção única (aprovada em 28/10/2026): `hotmart_webhook_events.buyer_email` guarda o
+e-mail normalizado do comprador de eventos `PURCHASE_*` reais (nunca o envio de teste da
+Hotmart). Finalidade: entregar o acesso comprado (reprocessar compras que chegaram antes
+do cadastro do produto/oferta). Leitura só por `service_role` e administrador (RLS).
+Retenção: o pg_cron anula o e-mail após 90 dias quando a transação não gerou direito
+(`purge_stale_hotmart_buyer_emails`); a linha nunca é apagada. Exclusão a pedido do
+titular: anular `buyer_email` daquele endereço. Nenhum outro dado do comprador é guardado.
 
 ## Segredos e clientes Supabase
 

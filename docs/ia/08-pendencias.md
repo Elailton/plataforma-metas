@@ -5,10 +5,8 @@ Ordem sugerida. Marcar com data quando concluir e mover a lição para `07` se h
 ## Acesso e compras
 1. ~~Texto do e-mail de acesso~~ — **concluído em 2026-10-28** (templates aplicados no
    Supabase e versionados em `supabase/templates/`).
-2. **Guardar o e-mail do comprador** nos eventos da Hotmart (aprovado em 2026-10-28):
-   só e-mail, leitura servidor/admin, limpeza em 90 dias quando não virar acesso.
-3. **"Compra concluída" cria acesso** só quando a transação não tem nenhum direito
-   (nunca altera direito existente).
+2. ~~Guardar o e-mail do comprador~~ e 3. ~~"Compra concluída" cria acesso~~ —
+   **concluído em 2026-10-28** (migração `20261028000100` aplicada; Fase B).
 4. **Botão "Reprocessar compras pendentes"** no admin: prévia (último estado da
    transação, sem e-mail, possíveis contas duplicadas, curso em rascunho), confirmação,
    lotes dentro do orçamento do Resend (≤ 20/dia).

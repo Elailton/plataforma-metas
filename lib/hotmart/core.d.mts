@@ -11,6 +11,9 @@ export interface ParsedHotmartEvent {
   productId: string | null
   buyerUcode: string | null
   buyerEmail: string | null
+  /** E-mail guardado no evento: só compras reais (PURCHASE_*), nunca o envio de teste. */
+  storedBuyerEmail: string | null
+  isTest: boolean
   buyerName: string | null
   avatarInitials: string
   eventCreationDate: string | null
@@ -62,6 +65,8 @@ export interface HotmartRepository {
     eventCreationDate: string
     offerCode?: string | null
   } | null>
+  /** Cria o direito só se a transação não tiver nenhum (atômico); nunca altera um existente. */
+  createEntitlementIfAbsent(input: EntitlementEventInput): Promise<EntitlementEventResult>
   applyEntitlementEvent(input: {
     transaction: string
     userId: string | null
@@ -79,6 +84,28 @@ export interface HotmartRepository {
     enrollmentStatus: EnrollmentStatus | null
   }>
 }
+
+export interface EntitlementEventInput {
+  transaction: string
+  userId: string | null
+  courseId: string
+  productUcode: string
+  productId: string | null
+  buyerUcode: string | null
+  status: EnrollmentStatus
+  eventId: string
+  eventCreationDate: string
+  offerCode?: string | null
+}
+
+export interface EntitlementEventResult {
+  applied: boolean
+  entitlementStatus: EnrollmentStatus
+  enrollmentStatus: EnrollmentStatus | null
+}
+
+export const HOTMART_TEST_PRODUCT_UCODE: string
+export const COMPLETE_IGNORED_MESSAGES: Readonly<{ noEffect: string; known: string }>
 
 export class HotmartPayloadError extends Error {}
 export class HotmartConflictError extends Error {}
