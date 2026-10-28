@@ -14,6 +14,7 @@ import { CourseStudentsTable } from "@/components/admin/course-students-table"
 import { CourseMaterialsPanel } from "@/components/admin/course-materials-panel"
 import { CourseFormDialog } from "@/components/admin/course-form-dialog"
 import { HotmartIntegrationPanel } from "@/components/admin/hotmart-integration-panel"
+import { HotmartReprocessPanel } from "@/components/admin/hotmart-reprocess-panel"
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card"
 import { StatCard } from "@/components/stat-card"
 import { SearchInput } from "@/components/search-input"
@@ -236,6 +237,7 @@ export function CourseDetailTabs({
           events={hotmartEvents}
           webhookUrl={hotmartWebhookUrl}
         />
+        <HotmartReprocessPanel courseId={course.id} />
       </TabsContent>
     </Tabs>
   )

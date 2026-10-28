@@ -25,4 +25,5 @@ Formato: data — decisão — motivo — status. Não apagar: marcar "substitu�
 | 2026-10-28 | "Reenviar acesso" só com e-mail (Parte 2) adiado | Pouco ganho frente à complexidade e ao orçamento de e-mail | Adiada |
 | 2026-10-28 | E-mail de recuperação com assunto "Seu acesso ao Sistema Guiado da Aprovação" e botão "Acessar o SGA"; convite no mesmo padrão | "Redefina sua senha" confundia quem nunca criou senha | Vigente |
 | 2026-10-28 | "Compra concluída" cria acesso só sem direito anterior; limpeza do e-mail pelo pg_cron | Recuperar aprovações perdidas sem tocar em parcelado em atraso/reembolso | Vigente |
+| 2026-10-28 | Reprocessar compras pendentes: prévia + confirmação, ≤ 20/dia, rascunho bloqueia, e-mail parecido fica fora | Orçamento do Resend e evitar conta duplicada; não guardamos nome, então a comparação é por e-mail | Vigente |
 | 2026-10-28 | Criar esta memória (`docs/ia/`) e `CLAUDE.md` | Projeto em produção precisa de regras consultáveis por IAs | Vigente |
