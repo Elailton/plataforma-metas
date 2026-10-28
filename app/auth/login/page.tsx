@@ -1,6 +1,7 @@
 "use client"
 
 import { AccessSupport } from "@/components/auth/access-support"
+import { LegalLinks } from "@/components/legal/legal-links"
 
 import { AuthShell, AuthCard } from "@/components/auth-shell"
 
@@ -168,6 +169,7 @@ function LoginForm() {
         </p>
 
         <AccessSupport />
+        <LegalLinks className="text-center text-xs text-muted-foreground" />
       </AuthCard>
     </AuthShell>
   )

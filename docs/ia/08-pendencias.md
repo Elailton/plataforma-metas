@@ -17,8 +17,12 @@ Ordem sugerida. Marcar com data quando concluir e mover a lição para `07` se h
 - Confirmar na primeira venda de cada um que o ucode está certo.
 
 ## Segurança, LGPD e operação
-- Aviso de privacidade (dados coletados, finalidade, fornecedores nos EUA, contato do
-  titular) — exige validação jurídica.
+- ~~Aviso de privacidade e termos de uso~~ — publicados em `/privacidade` e `/termos`
+  (2026-10-28), preenchidos com dados públicos do CNPJ. **Ainda exigem validação jurídica**:
+  menores de idade, prazo de 5 anos, DPAs dos fornecedores (Res. CD/ANPD 19/2024), registros
+  de acesso por 6 meses, e-mail institucional/endereço (não encontrados em fonte pública).
+- Plano de resposta a incidente (prazo de 3 dias úteis à ANPD), registro de operações de
+  tratamento e rotina de anonimização após 5 anos.
 - Regras do banco para metas futuras: hoje um aluno consegue ler pela API itens e
   materiais de metas ainda não liberadas do próprio curso/grupo (a tela esconde).
 - Converter variáveis sensíveis da Vercel (service role, JWT secret, URLs do Postgres)
