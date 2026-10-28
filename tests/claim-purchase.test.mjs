@@ -124,3 +124,23 @@ test("compra conhecida localmente sem e-mail: usa a API; se a API falhar, manda 
   const unknown = localDeps(null, { apiFails: true })
   await assert.rejects(claimPurchaseByTransaction("HP0907585127", unknown.deps))
 })
+
+test("curso não publicado: oferta 'curso apenas' ainda é explicada (cadastro bruto), sem API", async () => {
+  const records = { entitlement: null, event: { productUcode: UCODE, offerCode: "semsga", latestType: "PURCHASE_APPROVED" } }
+  const t = localDeps(records)
+  t.deps.repository.findProductMapping = async () => null // filtro de curso publicado
+  t.deps.local.findProductMapping = async () => mapping
+  assert.equal((await claimPurchaseByTransaction("HP0907585127", t.deps)).status, "course_only")
+  assert.equal(t.calls.api, undefined)
+})
+
+test("compra com SGA conhecida, API indisponível: mensagem específica e erro registrado", async () => {
+  const known = { entitlement: null, event: { productUcode: UCODE, offerCode: "comsga", latestType: "PURCHASE_COMPLETE" } }
+  const t = localDeps(known, { apiFails: true })
+  let logged = false
+  t.deps.onApiError = () => { logged = true }
+  const result = await claimPurchaseByTransaction("HP0907585127", t.deps)
+  assert.equal(result.status, "review")
+  assert.match(result.message, /com o SGA/)
+  assert.equal(logged, true)
+})
