@@ -1,7 +1,8 @@
 import { InstallApp } from "@/components/student/install-app"
 import { studySummary } from "@/lib/groups/questionnaire.mjs"
 import { redirect } from "next/navigation"
-import { LogOut, Mail, GraduationCap, ChevronRight, Pencil, LifeBuoy } from "lucide-react"
+import Link from "next/link"
+import { LogOut, Mail, GraduationCap, ChevronRight, Pencil, LifeBuoy, ShieldCheck } from "lucide-react"
 import { Avatar, AvatarFallback } from "@/components/ui/avatar"
 import { Separator } from "@/components/ui/separator"
 import { PageContainer, PageHeading } from "@/components/student/page-container"
@@ -119,6 +120,15 @@ export default async function AccountPage() {
             <span className="flex-1">Ajuda e suporte</span>
             <ChevronRight className="size-4 text-muted-foreground" aria-hidden="true" />
           </a>
+          <Separator />
+          <Link
+            href="/privacidade"
+            className="flex min-h-12 items-center gap-3 px-4 py-3.5 text-left text-sm font-medium text-foreground transition-colors hover:bg-secondary/50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-ring"
+          >
+            <ShieldCheck className="size-4 text-muted-foreground" aria-hidden="true" />
+            <span className="flex-1">Privacidade e termos de uso</span>
+            <ChevronRight className="size-4 text-muted-foreground" aria-hidden="true" />
+          </Link>
         </nav>
       </section>
 

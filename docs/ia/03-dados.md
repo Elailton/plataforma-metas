@@ -19,6 +19,12 @@ O modelo completo (matrícula, direitos, bloqueios, metas, mini simulados) está
 | `mini_quiz_attempts` / `_answers` | Tentativas e respostas | — |
 | `access_resend_requests` | Pedidos de reenvio: hashes HMAC de e-mail/IP, outcome | só hash, **retenção 30 dias** |
 
+## Aviso de privacidade e termos
+
+Textos em `lib/legal/content.ts` (páginas `/privacidade` e `/termos`, públicas; links no login e
+em Conta). **Qualquer mudança em dados tratados, fornecedores, prazos ou bases legais exige
+atualizar o aviso no mesmo PR.**
+
 ## Regras de dados pessoais
 
 - Mínimo necessário. Proibido gravar CPF, endereço, telefone, dados de pagamento ou
