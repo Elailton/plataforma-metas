@@ -10,7 +10,7 @@ Sempre: confirmar o aluno pelo e-mail no banco, agir só no caso pedido, registr
    `recovery_sent_at`) e `enrollments` (ativa? questionário?).
 2. Conferir a entrega no Resend (Emails → filtrar pelo destinatário): "Delivered" quase
    sempre significa que chegou e a pessoa não reconheceu (spam, Promoções, Lixo
-   eletrônico no Hotmail, assunto "Redefina sua senha").
+   eletrônico no Hotmail). Assunto do reenvio: "Seu acesso ao Sistema Guiado da Aprovação".
 3. Já entrou alguma vez → orientar "Esqueci minha senha" no login.
 4. Nunca entrou / pessoa com dificuldade → admin: Cursos → curso → Alunos →
    **"Copiar link de acesso"** e enviar pelo WhatsApp (uso único; cada link novo
