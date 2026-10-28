@@ -8,6 +8,10 @@ This repository is linked to a [v0](https://v0.app) project. You can continue de
 
 [Continue working on v0 →](https://v0.app/chat/projects/prj_eYmjORDWd3Q5Biu0yATnZuuGfZOV)
 
+## Para IAs e novos colaboradores
+
+Leia o [`AGENTS.md`](AGENTS.md) e a memória do projeto em [`docs/ia/`](docs/ia/README.md) antes de qualquer mudança: a plataforma está em produção.
+
 ## Getting Started
 
 First, run the development server:
