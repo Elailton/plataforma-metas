@@ -3,8 +3,8 @@
 Ordem sugerida. Marcar com data quando concluir e mover a lição para `07` se houver.
 
 ## Acesso e compras
-1. **Texto do e-mail de acesso** (Supabase → Auth → Templates): assunto "Seu acesso ao
-   Sistema Guiado da Aprovação", botão "Acessar o SGA", sem mexer no link. Sem código.
+1. ~~Texto do e-mail de acesso~~ — **concluído em 2026-10-28** (templates aplicados no
+   Supabase e versionados em `supabase/templates/`).
 2. **Guardar o e-mail do comprador** nos eventos da Hotmart (aprovado em 2026-10-28):
    só e-mail, leitura servidor/admin, limpeza em 90 dias quando não virar acesso.
 3. **"Compra concluída" cria acesso** só quando a transação não tem nenhum direito
