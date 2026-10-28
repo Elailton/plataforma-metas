@@ -36,6 +36,9 @@ Preferir antes descobrir por que a compra não liberou (oferta? e-mail diferente
 ### Cadastrar produto/ofertas de um curso
 1. Ucode vem do payload real do webhook (`data.product.ucode`), nunca do código do
    checkout. Mapear em `hotmart_product_mappings` com `offer_policy='authorized_offers'`.
+   **Oferta em dúvida (não cadastrada ou sem rótulo): sempre gerar o link
+   `https://pay.hotmart.com/<checkout>?off=<oferta>` e enviar ao usuário para ele conferir
+   antes de cadastrar** (pedido do usuário em 2026-10-28).
 2. Cadastrar em `hotmart_offer_rules` cada oferta com `grants_access` true/false e um
    rótulo claro. Confirmar com o usuário quais liberam (gerar os links de checkout para
    ele conferir).
