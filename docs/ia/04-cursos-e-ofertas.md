@@ -25,7 +25,7 @@ rascunho já criam matrícula: o aluno vê "Acesso não liberado" até a publica
 |---|---|---|---|
 | PMPE | `T70472489M` | `af36e37a-d94f-4bdc-a761-0f05faf09173` | `t43w9ztx`+ (alunos/ex), `4e4p713s`+ (novos), `dfr303px`+ (alunos/ex parcelado), `r87yyfbz`+ (novos parcelado); `qkpqg5ea`− curso apenas, `hr5ag98v`− e `jgqsearh`− Turbo |
 | GMF | `C67379049F` | `0bd11502-fe5c-42aa-a2f4-d3d55ad51866` (vendas) e `fb056612-…` (ucode fixo dos testes da Hotmart) | `fx39ie5v`+ (alunos/ex), `vnevmgwm`+ (novos), `rhp2q094`+ (alunos/ex parcelado), `henwjt9b`+ (novos parcelado); `mu2s6m03`−, `suob1gh7`−, `cyejuxok`− "GMF sem SGA" |
-| CFO PMCE | `Q71595867Y` | `6dd1ffce-8162-4160-a166-437eee2b518c` | `aeezrp0f`+, `9fy3qydk`+, `na0gapv3`+, `n5f6525d`+; `9d5as0qw`− |
+| CFO PMCE | `Q71595867Y` | `6dd1ffce-8162-4160-a166-437eee2b518c` | `aeezrp0f`+, `9fy3qydk`+, `na0gapv3`+, `n5f6525d`+; `9d5as0qw`−, `sufpthel`− (sem SGA, confirmado 28/10) |
 | PMCE | `X25479334G` | `71cc3eba-ab2f-4a47-a973-2972175615e7` | `qao1b38j`+, `0irwm9tl`+, `00kggstw`+, `h4a2n6je`+; `1imnzz5x`−, `kftyjfqc`− |
 | PPCE | `O66446852H` | `1e4ad940-5886-42f0-813f-133384cd6693` | `y72wg47k`+, `t1e0ol35`+, `1pitc078`+, `bbz5otbm`+; `ou6u9p9r`− Turbo |
 | PRF | `U91982297E` | `3d8e7813-847d-4140-a1aa-d5fdfe0532bd` | `acuq8iko`+, `m50mentn`+, `fi4b2za6`+, `zxrkgal3`+; `2gf1w761`− Turbo |
