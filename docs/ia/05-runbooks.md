@@ -81,3 +81,24 @@ conectando pelo host `db.<ref>.supabase.co`, medir, **apagar o branch**.
 ## Qconcursos (Diagnóstico Semanal)
 Ver a skill `sga-plataforma`. Usar a sessão já logada no navegador; respeitar a cota de
 respostas do usuário; questões anuladas/desatualizadas ficam fora.
+
+## Replanejar metas futuras (regras de `09-regras-metas.md`)
+
+Usado em 29/10/2026 nas metas não liberadas de PMPE e GMF (Grupos 1 e 2).
+
+1. Exportar por SQL, por curso e grupo: metas futuras (`due_date` > hoje em
+   America/Fortaleza), itens ativos, edital com importância, materiais (aulas com
+   duração, cadernos do Qconcursos, apostila, Vade Mecum, tutorial do caderno de erros).
+2. Planejar fora do banco (script Python): uma trilha por disciplina, séries de aula
+   inteiras (dividir só acima de ~90 min no G1 / ~150 min no G2, em metas seguidas e
+   sozinha na disciplina), questões logo após cada assunto, lei seca e leitura a partir
+   da Meta 08, revisões espaçadas, RLM com caderno, orçamento diário por grupo.
+3. Gravar em lotes de ~15 KB, um comando com CTEs: arquivar (`archived_at`) os itens
+   ativos das metas futuras, exceto os fixos (Atualidades, Mini simulado, Redação), que
+   mantêm o ID e só mudam `position`; inserir os itens novos e os materiais; atualizar o
+   título. Conferir `esperados = resolvidos = itens` em cada lote.
+4. Resolver os textos ({AULAS}, {NOTA}, {BLOCO}, {TT}) por SQL a partir dos materiais
+   vinculados e da anotação dirigida do item antigo do mesmo assunto.
+5. Verificar: toda meta futura com questões, toda questão com caderno do Qconcursos,
+   RLM sempre com caderno, nenhum `{` sobrando, nenhum item fixo arquivado.
+6. Reversão: reativar os itens arquivados no horário da gravação e arquivar os novos.
