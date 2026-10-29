@@ -47,3 +47,16 @@ muda). O gerador e o passo a passo estão em `05-runbooks.md`.
 - Atualidades, mini simulados e redação seguem o calendário próprio.
 - Correção de meta futura: itens antigos são **arquivados** (nunca apagados); itens fixos
   (Atualidades, mini simulado, redação) mantêm o ID.
+
+## 5. Diagnóstico Semanal (regra do usuário, 29/10/2026)
+- Um diagnóstico a cada 7 metas, **por grupo**: Meta 07 → Metas 01 a 07; Meta 14 → Metas 08 a 14;
+  Meta 21 → Metas 15 a 21; e assim por diante.
+- **Liberação = data da meta que fecha o bloco** daquele grupo (só vê quem já tem a meta liberada).
+- **Tamanho = metade da prova real**, e cada disciplina com metade das questões dela na prova
+  (arredondando para fechar o total). PMPE: prova 60 → 30 (5 por disciplina).
+  GMF: prova 80 → 40 (Português 5, RLM 4, Informática 4, Atualidades 3, Fortaleza 4;
+  Dir. Administrativo 5, Constitucional/DH 5, Penal/Processo Penal 5, Legislação 5).
+- Questões só dos **cadernos do Qconcursos usados nas metas do bloco** (o que o grupo estudou).
+  Disciplina sem conteúdo no bloco: usar assuntos já estudados em blocos anteriores.
+- Lançar **primeiro só no Grupo 3** para o usuário conferir as questões; depois liberar no G1/G2.
+  **Perguntar sempre, para cada curso, em qual grupo lançar.**
