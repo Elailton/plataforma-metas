@@ -16,6 +16,7 @@ Leia nesta ordem antes de qualquer tarefa:
 | [06-decisoes.md](06-decisoes.md) | Registro de decisões com data e motivo |
 | [07-incidentes-e-licoes.md](07-incidentes-e-licoes.md) | O que deu errado, causa e o que mudou |
 | [08-pendencias.md](08-pendencias.md) | Trabalho em aberto e próximos passos combinados |
+| [09-regras-metas.md](09-regras-metas.md) | Regras de montagem das metas (séries de aula, questões, lei seca, RLM) |
 
 ## Como manter esta memória
 

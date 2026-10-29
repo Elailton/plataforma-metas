@@ -233,6 +233,9 @@ Ao criar ou alterar políticas:
 
 ## Metas e progresso
 
+Regras de montagem (séries de aula inteiras, questões em toda meta, RLM com caderno,
+lei seca a partir da Meta 08): `docs/ia/09-regras-metas.md`.
+
 Uma meta possui vários itens.
 
 Cada item pode possuir:
