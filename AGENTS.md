@@ -290,6 +290,9 @@ na plataforma, orientados por `courseId` (nada específico de um concurso).
   `mini_quiz_attempt_answers`.
 - A correção acontece só no banco (`submit_mini_quiz`). O gabarito nunca vai ao navegador
   antes do envio; a revisão vem de `mini_quiz_attempt_review` para a própria tentativa.
+- Diagnóstico Semanal: um por grupo a cada 7 metas (Meta 07 → 01 a 07, Meta 14 → 08 a 14...), liberado na data da
+  meta que fecha o bloco, com metade das questões da prova real (metade por disciplina), só de cadernos usados nas
+  metas do bloco; lançar primeiro no Grupo 3 e perguntar o grupo para cada curso (`docs/ia/09-regras-metas.md`).
 - Diagnóstico Semanal (simulado sem disciplina própria, pedido em 21 de outubro de 2026): tentativa
   única (`MINI_QUIZ_ALREADY_DONE`), só pode ser enviado depois de iniciado (`MINI_QUIZ_NOT_STARTED`).
   `start_mini_quiz` registra o início e `submit_mini_quiz` grava `duration_seconds` (cronômetro).
