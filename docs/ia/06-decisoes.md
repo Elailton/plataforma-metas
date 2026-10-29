@@ -28,3 +28,9 @@ Formato: data — decisão — motivo — status. Não apagar: marcar "substitu�
 | 2026-10-28 | Reprocessar compras pendentes: prévia + confirmação, ≤ 20/dia, rascunho bloqueia, e-mail parecido fica fora | Orçamento do Resend e evitar conta duplicada; não guardamos nome, então a comparação é por e-mail | Vigente |
 | 2026-10-28 | Publicar Aviso de Privacidade (`/privacidade`) e Termos de Uso (`/termos`); controlador Curso Professor Erick Lima Ltda (CNPJ 52.992.972/0001-03); canal do titular = WhatsApp do suporte; guarda de 5 anos; resposta em 15 dias | Conformidade com a LGPD; textos em `lib/legal/content.ts` | Vigente (aguarda revisão jurídica) |
 | 2026-10-28 | Criar esta memória (`docs/ia/`) e `CLAUDE.md` | Projeto em produção precisa de regras consultáveis por IAs | Vigente |
+
+## 2026-10-29 — Merge sem pedir autorização
+O usuário disse: "não precisa da minha autorização, pode fazer". Mudanças de código podem
+ser mescladas (rebase) assim que o CI `validate` passar, informando depois o que entrou.
+Continua valendo: nada destrutivo no banco, migrações rodadas pelo usuário e perguntar o
+grupo antes de lançar conteúdo.
