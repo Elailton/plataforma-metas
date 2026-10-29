@@ -2,7 +2,7 @@
 
 import { useMemo, useState } from "react"
 import Link from "next/link"
-import { Eye, ListChecks, Plus, BookOpen, FileText, Users } from "lucide-react"
+import { Eye, ListChecks, Plus, BookOpen, FileText } from "lucide-react"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { Button } from "@/components/ui/button"
 import { AdminGoalRow } from "@/components/admin/admin-goal-row"
@@ -16,7 +16,7 @@ import { CourseFormDialog } from "@/components/admin/course-form-dialog"
 import { HotmartIntegrationPanel } from "@/components/admin/hotmart-integration-panel"
 import { HotmartReprocessPanel } from "@/components/admin/hotmart-reprocess-panel"
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card"
-import { StatCard } from "@/components/stat-card"
+import { CourseOverview } from "@/components/admin/course-overview"
 import { SearchInput } from "@/components/search-input"
 import { filterBySearch } from "@/lib/search.mjs"
 import { Empty, EmptyHeader, EmptyTitle, EmptyDescription, EmptyMedia } from "@/components/ui/empty"
@@ -41,6 +41,8 @@ interface CourseDetailTabsProps {
   hotmartEvents: HotmartEventSummary[]
   hotmartWebhookUrl: string | null
   groupSettings: AdminGroupSettings[]
+  /** Data de hoje (AAAA-MM-DD) no fuso da aplicação, calculada no servidor. */
+  today: string
 }
 
 export function CourseDetailTabs({
@@ -53,11 +55,8 @@ export function CourseDetailTabs({
   hotmartEvents,
   hotmartWebhookUrl,
   groupSettings,
+  today,
 }: CourseDetailTabsProps) {
-  const totalTopics = edital.reduce(
-    (acc, group) => acc + group.topics.length,
-    0,
-  )
   const [goalQuery, setGoalQuery] = useState("")
   const filteredGoals = useMemo(() => {
     const subjectNames = new Map(edital.map((group) => [group.subject.id, group.subject.name]))
@@ -92,21 +91,14 @@ export function CourseDetailTabs({
       </div>
 
       <TabsContent value="overview" className="flex flex-col gap-4">
-        <div className="grid grid-cols-1 gap-3 sm:grid-cols-3 md:gap-4">
-          <StatCard
-            label="Alunos ativos"
-            value={students.filter((student) => student.enrollmentStatus === "active").length}
-            suffix={`de ${students.length}`}
-            icon={Users}
-          />
-          <StatCard
-            label="Metas publicadas"
-            value={goals.filter((g) => g.status === "published").length}
-            suffix={`de ${goals.length}`}
-            icon={ListChecks}
-          />
-          <StatCard label="Tópicos no edital" value={totalTopics} suffix={`em ${edital.length} disciplinas`} icon={BookOpen} />
-        </div>
+        <CourseOverview
+          courseId={course.id}
+          goals={goals}
+          students={students}
+          materials={materials}
+          edital={edital}
+          today={today}
+        />
       </TabsContent>
 
       <TabsContent value="goals" className="flex flex-col gap-4">

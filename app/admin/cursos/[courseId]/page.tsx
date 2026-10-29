@@ -13,6 +13,7 @@ import {
   listMaterials,
   listCourseGroupSettings,
 } from "@/lib/admin/queries"
+import { currentDateInApplicationTimeZone } from "@/lib/goals/release.mjs"
 
 export default async function AdminCourseDetailPage({
   params,
@@ -57,6 +58,7 @@ export default async function AdminCourseDetailPage({
         hotmartEvents={hotmartEvents}
         hotmartWebhookUrl={hotmartWebhookUrl}
         groupSettings={groupSettings}
+        today={currentDateInApplicationTimeZone()}
       />
     </>
   )
