@@ -2,6 +2,10 @@
 
 Ordem sugerida. Marcar com data quando concluir e mover a lição para `07` se houver.
 
+## Metas dos SGA novos (PRF, PMCE, CFO, PPCE)
+- Metas 01–05 publicadas (29/10). Restante (~100 metas por curso) aguardando o usuário dizer
+  **"executar metas"**: plano completo em `metas-novas/PLANO.md`.
+
 ## Acesso e compras
 1. ~~Texto do e-mail de acesso~~ — **concluído em 2026-10-28** (templates aplicados no
    Supabase e versionados em `supabase/templates/`).
