@@ -6,15 +6,17 @@ Ordem sugerida. Marcar com data quando concluir e mover a lição para `07` se h
 - Metas 01–05 publicadas (29/10). Restante (~100 metas por curso) aguardando o usuário dizer
   **"executar metas"**: plano completo em `metas-novas/PLANO.md`.
 
-## Provas anteriores e preparação direcionada (planejamento de 2026-10-30, nada executado)
-Pedido do usuário. Só executar com autorização, perguntando o grupo (Grupo 3 primeiro) e o
-curso a cada lançamento. As provas estão nas pastas GMF, PRF, PMCE, CFO - PMCE, PMPE e PPCE
+## Provas anteriores e preparação direcionada (planejamento de 2026-10-30, regras INATIVAS)
+**Gatilho:** nada desta seção vale nem é executado até o usuário dizer **"executar provas
+anteriores"** (como "executar metas"). Sem o gatilho, só registrar e conversar.
+Pedido do usuário. Ao acionar, perguntar o grupo (Grupo 3 primeiro) e o curso a cada
+lançamento. As provas estão nas pastas GMF, PRF, PMCE, CFO - PMCE, PMPE e PPCE
 do computador do usuário (Downloads). Tudo por `courseId`, só questões reais, sem misturar cursos.
 
 Provas conferidas nos PDFs dos gabaritos definitivos e na web (banca, data, total de
 questões, anuladas pela banca; anulações judiciais individuais não entram):
 
-| Curso | Prova | Aplicação | Questões | Anuladas |
+| Curso | Prova | Aplicação | Questões | Anuladas (excluídas por completo) |
 |---|---|---|---|---|
 | PMPE | Soldado, AOCP, tipo 1 | 28/01/2024 | 60 | nenhuma |
 | GMF | Guarda Municipal, IDECAN, tipo A | 18/06/2023 | 80 | 29, 46, 76 |
@@ -36,7 +38,8 @@ Requisitos (R1–R7):
    origem, disciplina, tópico, banca, ano e bloco) para o simulado geral, que fica para depois.
    Nada é apagado; gabarito fora do alcance do aluno (RLS).
 3. **R3** Metas de reta final: tipo próprio, criadas à mão, apresentação visual diferente.
-4. **R4** Card "caiu na última prova" nos tópicos do edital cobrados (anuladas não contam).
+4. **R4** Card "caiu na última prova" nos tópicos do edital cobrados (anuladas nem existem
+   no banco, então não geram card).
 5. **R5** Tempo estimado das metas: hoje existe **só como texto** na descrição ("Meta de ~3h":
    365 de 366 metas do GMF e 158 de 170 do PMPE). Preservar; coluna nova só se um painel exigir.
 6. **R6** Trilha prioritária (selo "prioridade" marcado pelo mentor; o sistema só sugere
@@ -49,11 +52,21 @@ Requisitos (R1–R7):
 Ordem: banco e extração (R2) → mapeamento por tópico → card (R4) → diagnósticos com R1 →
 trilha e painel (R6) → reta final (R3). R7 é independente (só metas novas).
 
-Decisões em aberto: as 5 questões contam dentro do total do diagnóstico ou são extras? Os 8
-diagnósticos já publicados recebem as 5 questões? Quando a reta final libera (data, conclusão
-ou direto para quem compra tarde) e onde aparece (seção em Minhas Metas ou aba nova)? Assunto
-cuja única questão foi anulada ganha o card (proposta: não)? Cadernos publicados: auditar ou
-só metas novas?
+Decidido pelo usuário em 2026-10-30:
+- **Escopo do R1:** as questões da prova anterior entram primeiro **só nos diagnósticos recém-criados**:
+  PMPE Metas 15–21 e GMF Metas 01–07 (versões G1 e G2 de cada). Os demais diagnósticos
+  publicados não mudam. Depois, a prova anterior ganha uma **aba separada** (formato a definir
+  quando o usuário pedir).
+- **Anuladas:** questão anulada não entra em nada. Não é extraída, não vai ao banco, a
+  diagnóstico, a card nem a contagem. Os números anulados ficam só como lista de auditoria.
+- **Auditar** (só relatório, sem alterar nada): (a) conferir que nenhuma anulada existe no
+  banco nem nos diagnósticos (inclusive se alguma questão já publicada vem de uma dessas
+  provas); (b) listar os cadernos já publicados que poderiam usar o filtro policial (R7);
+  troca de caderno em meta publicada só com aprovação.
+
+Ainda em aberto: as 5 questões contam dentro do total do diagnóstico ou são extras? Quando a
+reta final libera (data, conclusão ou direto para quem compra tarde) e onde aparece (seção em
+Minhas Metas ou aba nova)?
 
 ## Acesso e compras
 1. ~~Texto do e-mail de acesso~~ — **concluído em 2026-10-28** (templates aplicados no
