@@ -8,7 +8,8 @@ import { createClient } from "@/lib/supabase/client"
 import { ACCESS_CODE_TYPES, DEFAULT_NEXT_PATH, normalizeAccessCode } from "@/lib/auth/confirm.mjs"
 import { normalizeResendEmail } from "@/lib/auth/resend-access.mjs"
 
-const INVALID_MESSAGE = "Código inválido ou expirado. Use o código do e-mail mais recente (cada novo pedido cancela os anteriores) ou peça um novo acesso."
+const INVALID_MESSAGE =
+  "Código inválido ou expirado. Cada código vale uma única vez e cada novo pedido cancela os anteriores: use o do e-mail mais recente ou peça um novo acesso. Se você já criou sua senha, entre com e-mail e senha."
 
 export function AccessCodeForm() {
   const [email, setEmail] = useState("")
