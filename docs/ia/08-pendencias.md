@@ -69,8 +69,12 @@ diagnóstico, não são extras. Apenas **substituem** questões atuais: o total 
 disciplina não mudam. A questão trocada é da mesma disciplina e, sempre que possível, do mesmo
 assunto; a removida é arquivada, nunca apagada.
 
-Ainda em aberto: quando a reta final libera (data, conclusão ou direto para quem compra
-tarde) e onde aparece (seção em Minhas Metas ou aba nova)?
+Também decidido (2026-10-30): a **reta final (R3) é só do PMPE** e libera **quando faltarem
+30 dias para a prova** (regra por data). Quem compra depois desse ponto já a encontra liberada,
+sem ter de concluir as metas regulares. A data da prova do PMPE ainda não foi definida; quando
+sair, ela vira o parâmetro da liberação. Outros cursos não têm reta final até nova ordem.
+
+Ainda em aberto: onde a reta final aparece (seção em Minhas Metas ou aba nova)?
 
 ## Acesso e compras
 1. ~~Texto do e-mail de acesso~~ — **concluído em 2026-10-28** (templates aplicados no
