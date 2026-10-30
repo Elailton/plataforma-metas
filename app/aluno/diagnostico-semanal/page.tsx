@@ -22,7 +22,7 @@ export default async function WeeklyDiagnosticsPage() {
     <PageContainer>
       <PageHeading
         title="Diagnóstico Semanal"
-        description="Um diagnóstico por semana, sobre as metas estudadas. Feito uma única vez, com cronômetro e ranking."
+        description="Um diagnóstico a cada 7 metas, sobre o que você estudou. Ele aparece quando você conclui a última meta do bloco (Meta 07, 14, 21...). Feito uma única vez, com cronômetro e ranking."
         actions={
           <Link href="/aluno/relatorio" className={buttonVariants({ variant: "outline" })}>
             <FileText data-icon="inline-start" />
@@ -33,7 +33,7 @@ export default async function WeeklyDiagnosticsPage() {
 
       {groups.length === 0 ? (
         <div className="rounded-xl border border-dashed border-border bg-card p-6 text-center text-sm text-muted-foreground">
-          Nenhum diagnóstico semanal liberado ainda.
+          Nenhum diagnóstico semanal liberado ainda. Conclua a última meta do bloco (Meta 07, 14, 21...) para liberar o próximo.
         </div>
       ) : (
         <div className="flex flex-col gap-8">
