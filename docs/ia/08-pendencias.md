@@ -64,9 +64,13 @@ Decidido pelo usuário em 2026-10-30:
   provas); (b) listar os cadernos já publicados que poderiam usar o filtro policial (R7);
   troca de caderno em meta publicada só com aprovação.
 
-Ainda em aberto: as 5 questões contam dentro do total do diagnóstico ou são extras? Quando a
-reta final libera (data, conclusão ou direto para quem compra tarde) e onde aparece (seção em
-Minhas Metas ou aba nova)?
+Também decidido (2026-10-30): as 5 questões da prova anterior **contam dentro do total** do
+diagnóstico, não são extras. Apenas **substituem** questões atuais: o total e a metade por
+disciplina não mudam. A questão trocada é da mesma disciplina e, sempre que possível, do mesmo
+assunto; a removida é arquivada, nunca apagada.
+
+Ainda em aberto: quando a reta final libera (data, conclusão ou direto para quem compra
+tarde) e onde aparece (seção em Minhas Metas ou aba nova)?
 
 ## Acesso e compras
 1. ~~Texto do e-mail de acesso~~ — **concluído em 2026-10-28** (templates aplicados no
