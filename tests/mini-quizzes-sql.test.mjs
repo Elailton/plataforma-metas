@@ -429,3 +429,58 @@ test("grupo 3 (teste): vê o grupo espelhado e o que é só de teste; fica fora 
     await db.close()
   }
 })
+
+test("diagnóstico semanal só aparece depois que o aluno conclui a meta que fecha o bloco", async () => {
+  const db = await setup()
+  try {
+    await applyMigration(db, "20261021000100_mini_quiz_weekly_groups.sql")
+    await applyMigration(db, "20261021000200_mini_quiz_timer_ranking.sql")
+    await applyMigration(db, "20261022000100_test_group_and_group_settings.sql")
+    await applyMigration(db, "20261030000100_mini_quiz_unlock_goal.sql")
+    const GOAL_G1 = id(140) // meta do G1 no cenário: item 150 concluído pelo aluno do G1, item 151 arquivado
+    const GOAL_G2 = id(141) // meta do G2: item 152 concluído pelo aluno do G2
+    const ITEM_G1 = id(150)
+    const W = { g1: id(950), g2: id(951), free: id(952) }
+    const alts = JSON.stringify(["A", "B"].map((key) => ({ key, text: key })))
+    await db.exec(`
+      insert into public.mini_quizzes (id, course_id, subject_id, title, status, target_groups, release_date, week_number, unlock_goal_id) values
+        ('${W.g1}', '${COURSE_A}', null, 'Bloco G1', 'published', array[1]::smallint[], current_date - 1, 1, '${GOAL_G1}'),
+        ('${W.g2}', '${COURSE_A}', null, 'Bloco G2', 'published', array[2]::smallint[], current_date - 1, 1, '${GOAL_G2}'),
+        ('${W.free}', '${COURSE_A}', null, 'Sem meta', 'published', array[1]::smallint[], current_date - 1, 2, null);
+      insert into public.mini_quiz_questions (id, quiz_id, position, statement, alternatives, subject_id) values
+        ('${id(960)}', '${W.g1}', 0, 'Q', '${alts}', '${SUBJECT_A}'),
+        ('${id(961)}', '${W.g2}', 0, 'Q', '${alts}', '${SUBJECT_A}'),
+        ('${id(962)}', '${W.free}', 0, 'Q', '${alts}', '${SUBJECT_A}');
+      insert into public.mini_quiz_answer_keys (question_id, correct_key) values ('${id(960)}', 'A'), ('${id(961)}', 'A'), ('${id(962)}', 'A');
+    `)
+    const weekly = async (user) =>
+      (await asStudent(db, user, "select id from public.mini_quizzes where subject_id is null order by id")).rows.map((row) => row.id)
+
+    // Meta concluída (item arquivado não conta): diagnóstico visível.
+    assert.deepEqual(await weekly(USERS.groupOne), [W.g1, W.free])
+    assert.deepEqual(await weekly(USERS.groupTwo), [W.g2])
+
+    // Desmarcando o item, a meta deixa de estar concluída: some e não pode ser iniciado.
+    await db.query("delete from public.student_goal_item_completions where user_id = $1 and goal_item_id = $2", [USERS.groupOne, ITEM_G1])
+    assert.deepEqual(await weekly(USERS.groupOne), [W.free])
+    await assert.rejects(
+      asStudent(db, USERS.groupOne, "select public.start_mini_quiz($1, false)", [W.g1]),
+      /MINI_QUIZ_NOT_AVAILABLE/,
+    )
+    const hiddenQuestions = await asStudent(db, USERS.groupOne, "select id from public.mini_quiz_questions where quiz_id = $1", [W.g1])
+    assert.equal(hiddenQuestions.rows.length, 0)
+
+    // Concluindo de novo, libera; depois de iniciado, desmarcar não bloqueia o envio.
+    await db.query("insert into public.student_goal_item_completions (user_id, goal_item_id) values ($1, $2)", [USERS.groupOne, ITEM_G1])
+    await asStudent(db, USERS.groupOne, "select public.start_mini_quiz($1, false)", [W.g1])
+    await db.query("delete from public.student_goal_item_completions where user_id = $1 and goal_item_id = $2", [USERS.groupOne, ITEM_G1])
+    const result = await submit(db, USERS.groupOne, W.g1, { [id(960)]: "A" })
+    assert.equal(result.correct, 1)
+    assert.deepEqual(await weekly(USERS.groupOne), [W.g1, W.free])
+
+    // Administrador vê todos.
+    assert.equal((await weekly(USERS.admin)).length, 3)
+  } finally {
+    await db.close()
+  }
+})

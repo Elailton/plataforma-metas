@@ -51,7 +51,14 @@ muda). O gerador e o passo a passo estão em `05-runbooks.md`.
 ## 5. Diagnóstico Semanal (regra do usuário, 29/10/2026)
 - Um diagnóstico a cada 7 metas, **por grupo**: Meta 07 → Metas 01 a 07; Meta 14 → Metas 08 a 14;
   Meta 21 → Metas 15 a 21; e assim por diante.
-- **Liberação = data da meta que fecha o bloco** daquele grupo (só vê quem já tem a meta liberada).
+- **Liberação = conclusão da meta que fecha o bloco** (regra de 30/10/2026): o aluno só vê o
+  diagnóstico das Metas 01 a 07 depois de concluir a Meta 07 (todos os itens não arquivados);
+  08 a 14 → Meta 14; 15 a 21 → Meta 21. Gravar em `mini_quizzes.unlock_goal_id` a meta que fecha
+  o bloco **daquele grupo** (versão G1 → meta do G1; o G3 usa a meta do grupo espelhado).
+  `release_date` = data dessa meta (piso: as duas condições valem). Quem já iniciou ou enviou
+  continua com acesso mesmo se desmarcar um item.
+- Ao revisar: questões que dão margem a recurso ou fora do assunto do bloco viram **inéditas**
+  (`[[inedita]]`) do mesmo assunto, com resposta verificável na lei ou na gramática.
 - **Tamanho = metade da prova real**, e cada disciplina com metade das questões dela na prova
   (arredondando para fechar o total). PMPE: prova 60 → 30 (5 por disciplina).
   GMF: prova 80 → 40 (Português 5, RLM 4, Informática 4, Atualidades 3, Fortaleza 4;

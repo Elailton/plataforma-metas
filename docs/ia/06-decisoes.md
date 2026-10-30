@@ -34,3 +34,7 @@ O usuário disse: "não precisa da minha autorização, pode fazer". Mudanças d
 ser mescladas (rebase) assim que o CI `validate` passar, informando depois o que entrou.
 Continua valendo: nada destrutivo no banco, migrações rodadas pelo usuário e perguntar o
 grupo antes de lançar conteúdo.
+
+- 30/10/2026 — Diagnóstico Semanal passa a ser liberado pela **conclusão** da meta que fecha o
+  bloco (Meta 07, 14, 21...), não só pela data. Coluna `mini_quizzes.unlock_goal_id` + função
+  `mini_quiz_unlocked` (RLS e `start/submit`). Migração `20261030000100_mini_quiz_unlock_goal.sql`.
