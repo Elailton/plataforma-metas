@@ -121,6 +121,20 @@ Sem decisões em aberto. Falta só o gatilho do usuário.
   de acesso por 6 meses. Endereço (Av. Carneiro de Mendonça, 340, Fortaleza/CE) e e-mail
   (cursoprofericklima@gmail.com) informados pelo usuário em 2026-10-28. A política do site de
   vendas só cita direitos europeus: o advogado deve alinhá-la à LGPD.
+- Revisão de 2026-10-30 (aviso atualizado: Vercel Web Analytics e conteúdo real do
+  questionário; links legais também na tela de código e no primeiro acesso; o Analytics
+  passou a cortar parâmetros e `#` das URLs, porque o link `/auth/confirm?token_hash=…` ia
+  inteiro para a Vercel). **Levar ao advogado:**
+  1. Perguntas do questionário sobre cansaço, concentração e preparação física: são dado de
+     saúde (dado sensível, art. 11)? Se forem, a base "execução de contrato" não serve.
+  2. O aviso afirma adendos/cláusulas "firmados com cada fornecedor" (Supabase, Vercel,
+     Resend): confirmar que existem antes de manter a frase.
+  3. Hotmart descrita como prestadora "em nosso nome": no pagamento ela age por conta própria.
+  4. Prazos de 5 anos e 6 meses (registros de acesso): confirmar.
+  5. Aceite expresso dos Termos (caixa marcada com registro de data e versão) ou só links
+     visíveis? Hoje os Termos dizem "ao acessar, você concorda", sem registro.
+  6. O aviso promete avisar na plataforma quando mudar de forma relevante: decidir se a
+     atualização de 30/10 exige aviso aos alunos (aviso da tela inicial é por grupo).
 - Plano de resposta a incidente (prazo de 3 dias úteis à ANPD), registro de operações de
   tratamento e rotina de anonimização após 5 anos.
 - Regras do banco para metas futuras: hoje um aluno consegue ler pela API itens e

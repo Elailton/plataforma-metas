@@ -2,6 +2,7 @@
 
 import { useEffect, useMemo, useRef, useState } from "react";
 import { BrandLogo } from "@/components/brand-logo";
+import { LegalLinks } from "@/components/legal/legal-links";
 import { useRouter } from "next/navigation";
 import { AlertTriangle, ArrowRight, Check, ChevronLeft, LockKeyhole } from "lucide-react";
 import { submitFirstAccessQuestionnaire } from "@/lib/groups/student-actions";
@@ -560,6 +561,7 @@ export function FirstAccessForm({
       </section>
       <footer className={styles.footer}>
         Sistema Guiado da Aprovação · Cada etapa conta.
+        <LegalLinks />
       </footer>
     </main>
   );

@@ -9,7 +9,7 @@ O modelo completo (matrícula, direitos, bloqueios, metas, mini simulados) está
 |---|---|---|
 | `auth.users` | Contas (Supabase Auth) | e-mail, último login, IP em logs do Auth |
 | `profiles` | Nome, iniciais, papel (`student`/`admin`) | nome |
-| `enrollments` | Matrícula por curso, `status`, `study_group`, `mirror_group`, `questionnaire` (jsonb) | respostas do questionário (rotina, horas, experiência — sem dado sensível de saúde) |
+| `enrollments` | Matrícula por curso, `status`, `study_group`, `mirror_group`, `questionnaire` (jsonb) | respostas do questionário: horas, rotina (trabalho, escalas, filhos/familiares), experiência e desempenho, hábitos e dificuldades de estudo (cansaço, concentração), preparação física. **Se cansaço/concentração/preparação física são dado de saúde está com o advogado** (`08`) |
 | `course_questionnaire_submissions` | Histórico de respostas | idem |
 | `hotmart_entitlements` | Direito por transação (`transaction`, status, oferta) ligado a `user_id` | indireto |
 | `hotmart_webhook_events` | Evento recebido: id, tipo, transação, ucode, oferta, status, `buyer_email` | **só o e-mail normalizado** de compras reais (desde 28/10/2026); nunca nome/payload. Retenção 90 dias se a transação não gerou direito |
@@ -21,8 +21,10 @@ O modelo completo (matrícula, direitos, bloqueios, metas, mini simulados) está
 
 ## Aviso de privacidade e termos
 
-Textos em `lib/legal/content.ts` (páginas `/privacidade` e `/termos`, públicas; links no login e
-em Conta). **Qualquer mudança em dados tratados, fornecedores, prazos ou bases legais exige
+Textos em `lib/legal/content.ts` (páginas `/privacidade` e `/termos`, públicas; links no login,
+na tela de código, no primeiro acesso e em Conta). O Vercel Web Analytics está ativo em
+produção (`components/safe-analytics.tsx`) e corta parâmetros e `#` das URLs antes do envio:
+nunca enviar e-mail, token ou ID pessoal em URL ou evento. **Qualquer mudança em dados tratados, fornecedores, prazos ou bases legais exige
 atualizar o aviso no mesmo PR.**
 
 ## Regras de dados pessoais
@@ -33,7 +35,8 @@ atualizar o aviso no mesmo PR.**
 - Logs (`console.*`, `logSafeServerError`) não podem conter e-mail, token, link de
   acesso ou payload.
 - Supabase e Vercel ficam nos EUA (transferência internacional): precisa constar no
-  aviso de privacidade (ainda não existe — ver `08-pendencias.md`).
+  aviso de privacidade (consta na seção 4; contratos com os fornecedores a confirmar — ver
+  `08-pendencias.md`).
 - `buyer_email` dos eventos Hotmart: finalidade única de entregar o acesso comprado;
   limpeza diária pelo pg_cron (`hotmart-buyer-email-retention`, 06:17 UTC). Pedido do
   titular: `update hotmart_webhook_events set buyer_email = null where buyer_email = '<e-mail>'`.
