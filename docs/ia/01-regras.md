@@ -44,6 +44,11 @@ Regras técnicas de código (matrículas, RLS, webhook, segredos) estão no `AGE
 15. **Só questões reais de prova** no Diagnóstico Semanal, com fonte. Questão inédita
     só quando o usuário autorizar, marcada com a linha `[[inedita]]` (selo "Inédita").
 16. Explicações são próprias (não copiar comentários de professores do Qconcursos).
+16a. **Diagnóstico Semanal só libera após a CONCLUSÃO da meta que fecha o bloco**
+    (Metas 01–07 → concluir a Meta 07; 08–14 → Meta 14; 15–21 → Meta 21...). Todo
+    diagnóstico novo nasce com `unlock_goal_id` = a meta que fecha o bloco **do grupo
+    daquela versão** e `release_date` = data dessa meta. Questões só de assuntos estudados
+    no bloco; questão contestável ou fora do assunto vira inédita (com autorização).
 17. Não alterar regras comerciais, ofertas, conteúdo pedagógico ou progresso sem
     necessidade demonstrada e pedido do usuário.
 
