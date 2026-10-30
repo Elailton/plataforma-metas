@@ -74,7 +74,11 @@ Também decidido (2026-10-30): a **reta final (R3) é só do PMPE** e libera **q
 sem ter de concluir as metas regulares. A data da prova do PMPE ainda não foi definida; quando
 sair, ela vira o parâmetro da liberação. Outros cursos não têm reta final até nova ordem.
 
-Ainda em aberto: onde a reta final aparece (seção em Minhas Metas ou aba nova)?
+Também decidido (2026-10-30): a reta final aparece numa **aba nova** no menu do aluno (só
+PMPE, só depois da liberação). Na implementação, tratá-la como função de
+`course_group_settings` (ligar/desligar por grupo) e nunca mostrar o grupo ao aluno.
+
+Sem decisões em aberto. Faltam só a data da prova do PMPE e o gatilho do usuário.
 
 ## Acesso e compras
 1. ~~Texto do e-mail de acesso~~ — **concluído em 2026-10-28** (templates aplicados no
