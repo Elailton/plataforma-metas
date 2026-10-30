@@ -9,6 +9,7 @@ import { cn } from "@/lib/utils"
 import { studentNavItems } from "./student-nav-items"
 import { signOut } from "@/lib/supabase/actions"
 import { CourseSwitcher } from "@/components/student/course-switcher"
+import { TurboUpgradeCard } from "@/components/student/turbo-upgrade"
 import type { StudentCourse } from "@/lib/student/types"
 
 export function SideNav({
@@ -58,6 +59,10 @@ export function SideNav({
           })}
         </ul>
       </nav>
+
+      <div className="px-3 pb-3">
+        <TurboUpgradeCard />
+      </div>
 
       <form action={signOut} className="border-t border-sidebar-border p-3">
         <button
