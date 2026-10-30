@@ -3,6 +3,7 @@ import { KeyRound } from "lucide-react"
 import { AuthCard, AuthShell } from "@/components/auth-shell"
 import { AccessCodeForm } from "@/components/auth/access-code-form"
 import { AccessSupport } from "@/components/auth/access-support"
+import { LegalLinks } from "@/components/legal/legal-links"
 
 export const metadata = { title: "Entrar com código" }
 
@@ -17,6 +18,7 @@ export default function AccessCodePage() {
           <Link href="/auth/login" className="underline-offset-4 hover:text-foreground hover:underline">
             Voltar ao login
           </Link>
+          <LegalLinks />
         </span>
       }
     >

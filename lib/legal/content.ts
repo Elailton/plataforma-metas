@@ -20,7 +20,7 @@ export interface LegalDocument {
   sections: LegalSection[]
 }
 
-export const LEGAL_UPDATED_AT = "28/10/2026"
+export const LEGAL_UPDATED_AT = "30/10/2026"
 export const COMPANY_NAME = "Curso Professor Erick Lima Ltda"
 export const COMPANY_CNPJ = "52.992.972/0001-03"
 export const COMPANY_ADDRESS = "Av. Carneiro de Mendonça, 340, Demócrito Rocha, Fortaleza/CE, CEP 60440-164"
@@ -50,11 +50,12 @@ export const PRIVACY: LegalDocument = {
           rows: [
             ["E-mail e nome informados na compra", "Criar sua conta, liberar o acesso comprado e enviar o link de acesso", "Execução de contrato (art. 7º, V)"],
             ["E-mail da compra guardado junto ao aviso da Hotmart", "Entregar o acesso quando a compra chega antes do cadastro do produto ou da oferta", "Execução de contrato (art. 7º, V)"],
-            ["Respostas do questionário do curso (rotina, horas de estudo, experiência)", "Organizar suas metas de estudo", "Execução de contrato (art. 7º, V)"],
+            ["Respostas do questionário do curso: horas disponíveis e rotina (trabalho, escalas, cuidados com filhos ou familiares), experiência e desempenho em provas e questões, hábitos e dificuldades de estudo (como cansaço ou concentração) e preparação física para o teste físico", "Organizar suas metas de estudo e definir qual versão das metas do curso você segue", "Execução de contrato (art. 7º, V)"],
             ["Metas e itens concluídos, edital estudado", "Mostrar seu progresso", "Execução de contrato (art. 7º, V)"],
             ["Tentativas e respostas dos mini simulados e do Diagnóstico Semanal", "Corrigir, gerar o relatório de erros e acompanhar sua evolução", "Execução de contrato (art. 7º, V)"],
             ["Nome curto no ranking", "Mostrar sua posição, somente se você escolher aparecer", "Consentimento (art. 7º, I)"],
             ["Registros de acesso (data, hora e IP)", "Segurança e cumprimento de obrigação legal", "Obrigação legal (art. 7º, II) e legítimo interesse (art. 7º, IX)"],
+            ["Estatísticas de uso sem identificação (página visitada sem parâmetros, data, país e região, tipo de dispositivo, sistema e navegador)", "Medir o uso da plataforma e corrigir problemas", "Legítimo interesse (art. 7º, IX)"],
           ],
         },
         {
@@ -72,7 +73,7 @@ export const PRIVACY: LegalDocument = {
           items: [
             "Hotmart: processa a venda e o pagamento e nos informa a compra.",
             "Supabase: banco de dados e login.",
-            "Vercel: hospedagem da plataforma.",
+            "Vercel: hospedagem da plataforma e estatísticas de uso (Vercel Web Analytics).",
             "Resend: envio dos e-mails de acesso.",
           ],
         },
@@ -134,7 +135,7 @@ export const PRIVACY: LegalDocument = {
       blocks: [
         {
           type: "p",
-          text: "Usamos apenas cookies essenciais de sessão para mantê-lo conectado. Não usamos cookies de publicidade nem de análise de terceiros.",
+          text: "Usamos apenas cookies essenciais de sessão para mantê-lo conectado. Não usamos cookies de publicidade nem de análise. Para medir o uso da plataforma, usamos o Vercel Web Analytics, que não usa cookies: ele registra a página visitada (sem parâmetros do endereço), data, país e região, tipo de dispositivo, sistema e navegador, só em estatísticas agregadas, e descarta o identificador da visita em 24 horas.",
         },
       ],
     },
