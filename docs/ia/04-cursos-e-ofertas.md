@@ -3,6 +3,17 @@
 **O banco é a fonte de verdade** (`courses`, `hotmart_product_mappings`,
 `hotmart_offer_rules`). Confira antes de agir; atualize este retrato quando mudar.
 
+## Prazo do SGA e data da prova (informado pelo usuário em 2026-10-30)
+
+- O SGA é vendido junto com o curso na Hotmart e o acesso vale **1 ano** (não "até a data da
+  prova"). O sistema não guarda data de fim: o fim depende do evento `PURCHASE_EXPIRED` da
+  Hotmart (revoga o direito). Conferir na Hotmart se o produto/oferta tem esse prazo.
+- **PMPE:** edital de 30/09/2026 (AOCP, 1.250 vagas de soldado); prova objetiva **prevista
+  para 21/02/2027** (data provável, pode mudar). Fontes: Concursos no Brasil e Diário de
+  Pernambuco, conferidas em 2026-10-30.
+- O site de vendas ainda diz "Acesso ao SGA válido até a data da prova do concurso": o
+  usuário precisa corrigir para 1 ano (fora do repositório).
+
 ## Cursos
 
 | Curso | id | Status | Observação |

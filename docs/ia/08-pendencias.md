@@ -78,7 +78,27 @@ Também decidido (2026-10-30): a reta final aparece numa **aba nova** no menu do
 PMPE, só depois da liberação). Na implementação, tratá-la como função de
 `course_group_settings` (ligar/desligar por grupo) e nunca mostrar o grupo ao aluno.
 
-Sem decisões em aberto. Faltam só a data da prova do PMPE e o gatilho do usuário.
+Data da prova do PMPE conhecida (2026-10-30): **21/02/2027** (prevista, AOCP). Com a regra
+de 30 dias, a reta final do PMPE abriria em **22/01/2027**. Se a AOCP mudar a data, a
+liberação acompanha. Acesso do SGA: 1 ano (ver `04`).
+
+Sem decisões em aberto. Falta só o gatilho do usuário.
+
+## Contador da prova na tela inicial (pedido do usuário em 2026-10-30, não construído)
+- Na tela inicial do aluno, o curso mostra **quanto tempo falta para a prova** (só o PMPE,
+  que é o único curso com data por enquanto).
+- Orientado por `courseId`, sem regra específica do PMPE: campo de data da prova no curso
+  (migração aditiva, com reversão), editável pelo administrador nas configurações do curso;
+  o contador só aparece para curso com data preenchida e some depois da prova. Esse mesmo
+  campo é o parâmetro da liberação da reta final (30 dias antes).
+- Mostrar "prevista" enquanto a banca não confirmar. Nunca mostrar o grupo ao aluno.
+- Antes de lançar, perguntar o grupo (Grupo 3 primeiro) e conferir com a conta de teste.
+
+## Site de vendas (fora do repositório, ação do usuário)
+- Trocar "Acesso ao SGA válido até a data da prova" por **1 ano**.
+- Revisar promessas que a plataforma não cumpre hoje: "metas personalizadas conforme sua
+  rotina" (hoje são 2 grupos), "diagnóstico mensal"/"simulados mensais"/"5 simulados com
+  ranking" (hoje é o Diagnóstico Semanal). Levar ao advogado junto com os textos legais.
 
 ## Acesso e compras
 1. ~~Texto do e-mail de acesso~~ — **concluído em 2026-10-28** (templates aplicados no
