@@ -38,3 +38,8 @@ grupo antes de lançar conteúdo.
 - 30/10/2026 — Diagnóstico Semanal passa a ser liberado pela **conclusão** da meta que fecha o
   bloco (Meta 07, 14, 21...), não só pela data. Coluna `mini_quizzes.unlock_goal_id` + função
   `mini_quiz_unlocked` (RLS e `start/submit`). Migração `20261030000100_mini_quiz_unlock_goal.sql`.
+
+- 03/11/2026 — Provas anteriores: por ora **só** integrar aos Diagnósticos Semanais e ao simulado
+  geral. Reta final (R3) e trilha prioritária/painel (R6) ficam fora até nova ordem. Primeiro o
+  armazenamento (banco de questões, migração `20261103000100_question_bank.sql`); depois o usuário
+  cria os novos diagnósticos e as questões do banco são usadas neles.
