@@ -1,0 +1,72 @@
+procorg|Processo organizacional|15486828|200|todas as bancas e áreas
+planest|Planejamento estratégico|15486829|200|todas as bancas e áreas
+relhum|Relações humanas no trabalho|15486830|85|área policial, todas as bancas
+gproc|Gestão de processos|15486832|200|todas as bancas e áreas
+etica|Ética no serviço público|15486834|87|área policial, todas as bancas
+orgadm|Organização administrativa|15486835|200|área policial, todas as bancas
+delega|Delegação, agências e serviços públicos|15486836|80|área policial, todas as bancas
+contr|Contratos administrativos|15486839|39|banca IDECAN
+lai|Lei de Acesso à Informação|15486840|49|área policial, todas as bancas
+lgpd|LGPD|15486843|73|todas as bancas e áreas
+classes|Classes de palavras|15486845|200|área policial, todas as bancas
+verbo|Verbos: tempos, modos e flexão|15486846|200|área policial, todas as bancas
+pron|Pronomes e colocação|15486849|200|área policial, todas as bancas
+sint|Sintaxe: termos e orações|15486850|200|área policial, todas as bancas
+pont|Pontuação|15486852|200|área policial, todas as bancas
+reg|Regência|15486853|179|área policial, todas as bancas
+crase|Crase|15486854|168|área policial, todas as bancas
+conc|Concordância|15486855|200|área policial, todas as bancas
+queSe|Funções do QUE e do SE|15486856|89|área policial, todas as bancas
+coesao|Coesão e coerência|15486858|200|área policial, todas as bancas
+reesc|Reescrita de frases|15486861|200|área policial, todas as bancas
+interp2|Tipologia, gêneros e variação|15486862|126|área policial, todas as bancas
+estrut|Estrutura e formação de palavras|15486864|67|área policial, todas as bancas
+probl|Problemas lógicos e matemáticos|15486867|200|área policial, todas as bancas
+geom|Geometria básica|15486869|200|todas as bancas e áreas
+win|Sistemas operacionais|15486871|200|área policial, todas as bancas
+writer|Editor de textos (Writer)|15486872|200|área policial, todas as bancas
+calc|Planilhas (Calc)|15486873|200|área policial, todas as bancas
+impress|Apresentações (Impress)|15486875|55|área policial, todas as bancas
+inet|Internet, intranet, nuvem e redes|15486876|200|área policial, todas as bancas
+naveg|Navegadores|15486877|171|área policial, todas as bancas
+seg|Segurança da informação|15486880|200|área policial, todas as bancas
+ext|Extensões de arquivos|15486883|40|área policial, todas as bancas
+hard|Hardware|15486885|173|área policial, todas as bancas
+lece|Legislação do Estado do Ceará|15486886|42|área policial, todas as bancas
+lep|Lei de Execução Penal|15486888|112|área policial, todas as bancas
+cnpcp|Execução penal: políticas e resoluções|15486889|112|área policial, todas as bancas
+susp|SUSP (Lei 13.675/2018)|15486893|200|todas as bancas e áreas
+atos|Atos administrativos|15486894|200|área policial, todas as bancas
+poderes|Poderes administrativos|15486895|200|área policial, todas as bancas
+ctrl|Controle da administração|15486896|89|área policial, todas as bancas
+respciv|Responsabilidade civil do Estado|15486898|158|área policial, todas as bancas
+licit|Licitações|15486900|91|área policial, todas as bancas
+remed|Remédios constitucionais|15486901|200|área policial, todas as bancas
+orgest|Organização do Estado|15486903|200|área policial, todas as bancas
+admpub|Administração pública na CF|15486904|142|área policial, todas as bancas
+fesj|Funções essenciais à justiça|15486906|67|área policial, todas as bancas
+segpub|Segurança pública na CF|15486909|186|área policial, todas as bancas
+ordsoc|Ordem social|15486913|139|área policial, todas as bancas
+dhconc|Direitos humanos: conceito e fundamentos|15486917|91|área policial, todas as bancas
+pndh|PNDH|15486920|200|todas as bancas e áreas
+dudh|Declaração Universal|15486921|79|área policial, todas as bancas
+mandela|Regras de Mandela|15486922|73|todas as bancas e áreas
+cadh|Convenção Americana|15486923|83|área policial, todas as bancas
+bangk|Regras de Bangkok|15486924|26|todas as bancas e áreas
+dpcrime|Teoria do crime|15486925|200|área policial, todas as bancas
+dpconc|Concurso de pessoas|15486927|130|área policial, todas as bancas
+dppes|Crimes contra a pessoa|15486928|200|área policial, todas as bancas
+dppat|Crimes contra o patrimônio|15486929|200|área policial, todas as bancas
+dpfe|Crimes contra a fé pública|15486931|83|área policial, todas as bancas
+dpadm|Crimes contra a administração pública|15486932|200|área policial, todas as bancas
+dpsex|Crimes contra a dignidade sexual|15486933|92|área policial, todas as bancas
+dppaz|Crimes contra a paz pública|15486934|59|todas as bancas e áreas
+dpinc|Crimes contra a incolumidade pública|15486938|160|todas as bancas e áreas
+antic|Lei Anticorrupção|15486942|200|todas as bancas e áreas
+abuso|Abuso de autoridade|15486943|70|área policial, todas as bancas
+desarm|Estatuto do Desarmamento|15486946|84|área policial, todas as bancas
+drogas|Lei de Drogas|15486947|163|área policial, todas as bancas
+tort|Lei de Tortura|15486948|67|área policial, todas as bancas
+hed|Crimes hediondos|15486949|54|área policial, todas as bancas
+orgcrim|Organizações criminosas|15486950|74|área policial, todas as bancas
+improb|Improbidade administrativa|15486951|126|área policial, todas as bancas

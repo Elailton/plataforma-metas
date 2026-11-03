@@ -1,10 +1,16 @@
-# 08 — Pendências (atualizado em 2026-10-30)
+# 08 — Pendências (atualizado em 2026-11-03)
 
 Ordem sugerida. Marcar com data quando concluir e mover a lição para `07` se houver.
 
-## Metas dos SGA novos (PRF, PMCE, CFO, PPCE)
-- Metas 01–05 publicadas (29/10). Restante (~100 metas por curso) aguardando o usuário dizer
-  **"executar metas"**: plano completo em `metas-novas/PLANO.md`.
+## Metas dos SGA novos (PRF, PMCE, CFO, PPCE) — PENDENTE
+- Feito: Metas 01–05 (29/10) e **Metas 06–50 (03/11)** nos 4 cursos, G1 e G2.
+- **Falta terminar o resto das metas: Metas 51 até o fim da trilha (~100) em cada curso**,
+  G1 e G2, quando o usuário disser de novo **"executar metas"**
+  (`plan_new.py <curso> 100` + `emit_new.py <curso>` + `resolve.sql.tpl`; ver `metas-novas/PLANO.md`).
+  Antes, conferir se faltam cadernos do Qconcursos (filtro de atuação policial).
+- Conferir cadernos pequenos: `bangk` (26 questões), `atamb` (30), `dpmpena` (31), `contr` PPCE (39).
+- PRF G1: a discursiva de sábado diz ~60 min, mas aula + redação passam disso (ajustar ao
+  completar as metas).
 
 ## Provas anteriores e preparação direcionada (planejamento de 2026-10-30, regras INATIVAS)
 **Gatilho:** nada desta seção vale nem é executado até o usuário dizer **"executar provas
@@ -110,11 +116,13 @@ Sem decisões em aberto. Falta só o gatilho do usuário.
 6. Decidir se "Encontrar minha compra" volta às telas (hoje só por URL).
 7. Parte 2 ("Reenviar acesso" só com e-mail): adiada; reavaliar após 1–4.
 
-## Lançamento dos cursos novos (PRF, PMCE, PPCE, CFO PMCE)
-- Metas, Meta 0 e publicação. **Perguntar o grupo antes de lançar.**
-- Confirmar na primeira venda de cada um que o ucode está certo.
+## Cursos novos (PRF, PMCE, PPCE, CFO PMCE)
+- **Concluído:** os quatro estão publicados e funcionando (conferido em 2026-11-03).
+- Metas deles seguem sendo ampliadas; **perguntar o grupo antes de lançar** qualquer conteúdo novo.
 
 ## Segurança, LGPD e operação
+- **Revisão jurídica: fora de pauta por decisão do usuário (2026-11-03).** Os itens "levar ao
+  advogado" abaixo ficam apenas como registro; não cobrar.
 - ~~Aviso de privacidade e termos de uso~~ — publicados em `/privacidade` e `/termos`
   (2026-10-28), preenchidos com dados públicos do CNPJ. **Ainda exigem validação jurídica**:
   menores de idade, prazo de 5 anos, DPAs dos fornecedores (Res. CD/ANPD 19/2024), registros

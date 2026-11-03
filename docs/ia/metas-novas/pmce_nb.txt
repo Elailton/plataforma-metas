@@ -1,0 +1,55 @@
+classes|Classes de palavras|15486491|200|área policial, todas as bancas
+verbo|Verbos: tempos, modos e flexão|15486494|200|área policial, todas as bancas
+pron|Pronomes e colocação|15486495|200|área policial, todas as bancas
+sint|Sintaxe: termos e orações|15486496|200|área policial, todas as bancas
+pont|Pontuação|15486500|200|área policial, todas as bancas
+reg|Regência|15486501|179|área policial, todas as bancas
+crase|Crase|15486503|168|área policial, todas as bancas
+conc|Concordância|15486504|200|área policial, todas as bancas
+queSe|Funções do QUE e do SE|15486505|89|área policial, todas as bancas
+coesao|Coesão e coerência|15486507|200|área policial, todas as bancas
+reesc|Reescrita de frases|15486508|200|área policial, todas as bancas
+interp2|Tipologia, linguagem e figuras|15486511|200|área policial, todas as bancas
+probl|Problemas lógicos e matemáticos|15486513|200|área policial, todas as bancas
+geom|Geometria básica|15486515|200|todas as bancas e áreas
+atual|Mundo contemporâneo|15486516|200|área policial, todas as bancas
+atamb|Meio ambiente e sociedade|15486518|30|área policial, todas as bancas
+atcien|Ciência e inovação|15486520|200|todas as bancas e áreas
+orgform|Organizações formais e estrutura|15486521|200|todas as bancas e áreas
+relhum|Relações humanas no trabalho|15486523|85|área policial, todas as bancas
+gproc|Gestão de processos|15486525|200|todas as bancas e áreas
+etica|Ética e cidadania|15486526|87|área policial, todas as bancas
+orgadm|Organização administrativa|15486527|200|área policial, todas as bancas
+princadm|Princípios da administração|15486528|52|área policial, todas as bancas
+delega|Delegação, agências e consórcios|15486529|67|área policial, todas as bancas
+contr|Contratos administrativos|15486530|200|todas as bancas e áreas
+improb|Improbidade administrativa|15486531|126|área policial, todas as bancas
+orgest|Organização do Estado|15486532|200|área policial, todas as bancas
+legis|Poder Legislativo|15486535|197|área policial, todas as bancas
+exec|Poder Executivo|15486538|91|área policial, todas as bancas
+judic|Poder Judiciário|15486539|96|área policial, todas as bancas
+fesj|Funções essenciais à justiça|15486540|67|área policial, todas as bancas
+segpub|Forças Armadas e segurança pública|15486541|186|área policial, todas as bancas
+dhconc|Direitos humanos: conceito e fundamentos|15486543|91|área policial, todas as bancas
+dhcf|Direitos humanos no ordenamento nacional|15486545|85|área policial, todas as bancas
+pndh|PNDH|15486547|200|todas as bancas e áreas
+racis|Racismo e Estatuto da Igualdade Racial|15486549|51|área policial, todas as bancas
+dhgr|Grupos vulneráveis e direitos|15486550|102|área policial, todas as bancas
+pcd|Pessoa com deficiência|15486552|170|todas as bancas e áreas
+desarm|Estatuto do Desarmamento|15486553|84|área policial, todas as bancas
+penha|Lei Maria da Penha|15486555|138|área policial, todas as bancas
+tort|Lei de Tortura|15486556|67|área policial, todas as bancas
+dpmcrime|Crime militar: teoria do crime|15486558|77|todas as bancas e áreas
+dpmconc|Concurso de agentes|15486579|130|área policial, todas as bancas
+dpmpena|Penas (CPM)|15486561|31|todas as bancas e áreas
+dpmext|Extinção da punibilidade|15486580|121|área policial, todas as bancas
+dpmesp|Crimes militares em espécie|15486565|105|todas as bancas e áreas
+ppint|Processo penal: fundamentos e princípios|15486566|143|área policial, todas as bancas
+ppapl|Lei processual no tempo e espaço|15486569|31|área policial, todas as bancas
+inq|Inquérito policial|15486570|200|área policial, todas as bancas
+acao|Ação penal|15486571|200|área policial, todas as bancas
+prisao|Prisão e liberdade provisória|15486572|200|área policial, todas as bancas
+resp|Crimes de funcionários públicos (proc.)|15486573|83|todas as bancas e áreas
+hc|Habeas corpus|15486575|51|área policial, todas as bancas
+crim|Criminologia|15486576|200|área policial, todas as bancas
+segp|Segurança pública|15486577|107|área policial, todas as bancas
