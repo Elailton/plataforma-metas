@@ -313,6 +313,20 @@ na plataforma, orientados por `courseId` (nada específico de um concurso).
 - Acesso do aluno segue `active_course_ids()`; o administrador salva por
   `admin_save_mini_quiz`, com IDs estáveis e versão `updated_at`.
 
+## Banco de questões (provas anteriores)
+
+Pedido do usuário em 3 de novembro de 2026: guardar por curso as questões das provas anteriores e
+as dos diagnósticos para montar novos Diagnósticos Semanais e, depois, o simulado geral.
+
+- Tabelas: `question_bank_sources` (prova: banca, ano, órgão, cargo, caderno, anuladas só como
+  lista de auditoria), `question_bank_items` (origem `prova_anterior` ou `diagnostico`, número na
+  prova, disciplina, tópico, enunciado, alternativas, `archived_at`) e `question_bank_answer_keys`.
+- Só o administrador lê e grava (RLS); ninguém apaga (sem DELETE, arquivar). O aluno só vê a cópia
+  colocada num diagnóstico (`mini_quiz_questions.bank_item_id` aponta a origem, para não repetir).
+- Questão anulada pela banca nunca entra (o banco recusa). Curso, disciplina e tópico não se misturam.
+- Ao usar uma questão num diagnóstico, escrever o comentário no formato do diagnóstico e citar a
+  fonte (banca, ano, órgão, cargo).
+
 ## Escopo atual
 
 O escopo atualmente autorizado inclui:
@@ -329,6 +343,7 @@ O escopo atualmente autorizado inclui:
 - seleção independente entre vários cursos ativos;
 - matrícula manual administrativa de contas de aluno existentes durante o beta.
 - Mini Simulados (solicitados pelo usuário em 13 de outubro de 2026), descritos na seção "Mini Simulados".
+- Banco de questões das provas anteriores (pedido em 3 de novembro de 2026), descrito acima.
 
 Fora de escopo até solicitação explícita:
 

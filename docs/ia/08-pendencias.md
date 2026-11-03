@@ -7,6 +7,16 @@ Ordem sugerida. Marcar com data quando concluir e mover a lição para `07` se h
   **"executar metas"**: plano completo em `metas-novas/PLANO.md`.
 
 ## Provas anteriores e preparação direcionada (planejamento de 2026-10-30, regras INATIVAS)
+**Atualização 2026-11-03 (pedido do usuário):** fazer agora só a integração das provas anteriores
+aos Diagnósticos Semanais e ao simulado geral; **reta final (R3) e trilha prioritária (R6) fora**.
+- Passo 1 (feito no PR do banco de questões): R2 — tabelas `question_bank_*` e carga das 8 provas
+  (534 questões válidas, anuladas fora, gabarito definitivo, disciplina e tópico do edital de cada
+  curso; figuras em `mini_quiz_images`). Arquivos de carga rodados pelo usuário no SQL Editor;
+  scripts de extração em `docs/ia/banco-questoes/`.
+- Passo 2 (aguardando o usuário criar os novos diagnósticos): usar as questões do banco neles,
+  com comentário próprio e fonte; perguntar o grupo; sem repetir questão (`bank_item_id`).
+- Comentários (explicações) das questões de prova ainda não escritos: escrever ao usar.
+
 **Gatilho:** nada desta seção vale nem é executado até o usuário dizer **"executar provas
 anteriores"** (como "executar metas"). Sem o gatilho, só registrar e conversar.
 Pedido do usuário. Ao acionar, perguntar o grupo (Grupo 3 primeiro) e o curso a cada
