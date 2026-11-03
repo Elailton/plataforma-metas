@@ -1,4 +1,4 @@
-# 04 — Cursos, produtos e ofertas Hotmart (retrato de 2026-10-28)
+# 04 — Cursos, produtos e ofertas Hotmart (retrato de 2026-11-03)
 
 **O banco é a fonte de verdade** (`courses`, `hotmart_product_mappings`,
 `hotmart_offer_rules`). Confira antes de agir; atualize este retrato quando mudar.
@@ -18,15 +18,15 @@
 
 | Curso | id | Status | Observação |
 |---|---|---|---|
-| SGA - PMPE | `fec9bb24-aaab-41ce-a98b-a039c3905ee2` | publicado | ~88 alunos ativos, 163 metas publicadas |
-| SGA - GMF | `3f595180-4648-4f76-94e7-eb2ef88572bd` | publicado | ~72 alunos ativos, 204 metas publicadas |
-| SGA - PRF | `a845c350-baad-4711-a1e4-1ef1fc6f832c` | rascunho | edital pronto; metas pendentes |
-| SGA - PMCE (soldado) | `6305aafa-3263-46c9-b1b7-1001c01b5994` | rascunho | edital pronto; metas pendentes |
-| SGA - PPCE | `4b4f4900-a0a3-4ebd-8507-511c16eb9029` | rascunho | edital pronto; metas pendentes |
-| SGA - CFO PMCE | `c09903b0-651f-43a8-9c43-5f8fe7f6cb17` | rascunho | edital pronto; metas pendentes |
+| SGA - PMPE | `fec9bb24-aaab-41ce-a98b-a039c3905ee2` | publicado | 100 alunos ativos, 163 metas publicadas, 6 diagnósticos publicados |
+| SGA - GMF | `3f595180-4648-4f76-94e7-eb2ef88572bd` | publicado | 136 alunos ativos, 204 metas publicadas, 2 diagnósticos publicados |
+| SGA - PRF | `a845c350-baad-4711-a1e4-1ef1fc6f832c` | publicado | 9 alunos ativos; já em funcionamento (informado pelo usuário em 2026-11-03) |
+| SGA - PMCE (soldado) | `6305aafa-3263-46c9-b1b7-1001c01b5994` | publicado | 17 alunos ativos; já em funcionamento (informado pelo usuário em 2026-11-03) |
+| SGA - PPCE | `4b4f4900-a0a3-4ebd-8507-511c16eb9029` | publicado | 17 alunos ativos; já em funcionamento (informado pelo usuário em 2026-11-03) |
+| SGA - CFO PMCE | `c09903b0-651f-43a8-9c43-5f8fe7f6cb17` | publicado | 28 alunos ativos; já em funcionamento (informado pelo usuário em 2026-11-03) |
 
-Cursos novos têm a "Meta 0 — Comece por aqui" em rascunho. Compras com SGA de cursos em
-rascunho já criam matrícula: o aluno vê "Acesso não liberado" até a publicação.
+Os seis cursos estão publicados. Se um curso novo nascer em rascunho, compras com SGA já criam
+matrícula e o aluno vê "Acesso não liberado" até a publicação.
 
 ## Produtos (ucode) e ofertas
 

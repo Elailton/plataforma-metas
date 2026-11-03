@@ -110,11 +110,13 @@ Sem decisões em aberto. Falta só o gatilho do usuário.
 6. Decidir se "Encontrar minha compra" volta às telas (hoje só por URL).
 7. Parte 2 ("Reenviar acesso" só com e-mail): adiada; reavaliar após 1–4.
 
-## Lançamento dos cursos novos (PRF, PMCE, PPCE, CFO PMCE)
-- Metas, Meta 0 e publicação. **Perguntar o grupo antes de lançar.**
-- Confirmar na primeira venda de cada um que o ucode está certo.
+## Cursos novos (PRF, PMCE, PPCE, CFO PMCE)
+- **Concluído:** os quatro estão publicados e funcionando (conferido em 2026-11-03).
+- Metas deles seguem sendo ampliadas; **perguntar o grupo antes de lançar** qualquer conteúdo novo.
 
 ## Segurança, LGPD e operação
+- **Revisão jurídica: fora de pauta por decisão do usuário (2026-11-03).** Os itens "levar ao
+  advogado" abaixo ficam apenas como registro; não cobrar.
 - ~~Aviso de privacidade e termos de uso~~ — publicados em `/privacidade` e `/termos`
   (2026-10-28), preenchidos com dados públicos do CNPJ. **Ainda exigem validação jurídica**:
   menores de idade, prazo de 5 anos, DPAs dos fornecedores (Res. CD/ANPD 19/2024), registros
