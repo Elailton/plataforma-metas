@@ -1,12 +1,16 @@
-# 08 — Pendências (atualizado em 2026-10-30)
+# 08 — Pendências (atualizado em 2026-11-03)
 
 Ordem sugerida. Marcar com data quando concluir e mover a lição para `07` se houver.
 
-## Metas dos SGA novos (PRF, PMCE, CFO, PPCE)
-- Metas 01–05 publicadas (29/10); **Metas 06–50 publicadas em 03/11** nos 4 cursos, G1 e G2.
-- Falta: Metas 51 a ~100, quando o usuário disser de novo **"executar metas"**
-  (`plan_new.py <curso> 100` + `emit_new.py <curso>`; ver `metas-novas/PLANO.md`).
-- Cadernos pequenos a conferir: `bangk` (26 questões), `atamb` (30), `dpmpena` (31), `contr` PPCE (39).
+## Metas dos SGA novos (PRF, PMCE, CFO, PPCE) — PENDENTE
+- Feito: Metas 01–05 (29/10) e **Metas 06–50 (03/11)** nos 4 cursos, G1 e G2.
+- **Falta terminar o resto das metas: Metas 51 até o fim da trilha (~100) em cada curso**,
+  G1 e G2, quando o usuário disser de novo **"executar metas"**
+  (`plan_new.py <curso> 100` + `emit_new.py <curso>` + `resolve.sql.tpl`; ver `metas-novas/PLANO.md`).
+  Antes, conferir se faltam cadernos do Qconcursos (filtro de atuação policial).
+- Conferir cadernos pequenos: `bangk` (26 questões), `atamb` (30), `dpmpena` (31), `contr` PPCE (39).
+- PRF G1: a discursiva de sábado diz ~60 min, mas aula + redação passam disso (ajustar ao
+  completar as metas).
 
 ## Provas anteriores e preparação direcionada (planejamento de 2026-10-30, regras INATIVAS)
 **Gatilho:** nada desta seção vale nem é executado até o usuário dizer **"executar provas
