@@ -3,8 +3,10 @@
 Ordem sugerida. Marcar com data quando concluir e mover a lição para `07` se houver.
 
 ## Metas dos SGA novos (PRF, PMCE, CFO, PPCE)
-- Metas 01–05 publicadas (29/10). Restante (~100 metas por curso) aguardando o usuário dizer
-  **"executar metas"**: plano completo em `metas-novas/PLANO.md`.
+- Metas 01–05 publicadas (29/10); **Metas 06–50 publicadas em 03/11** nos 4 cursos, G1 e G2.
+- Falta: Metas 51 a ~100, quando o usuário disser de novo **"executar metas"**
+  (`plan_new.py <curso> 100` + `emit_new.py <curso>`; ver `metas-novas/PLANO.md`).
+- Cadernos pequenos a conferir: `bangk` (26 questões), `atamb` (30), `dpmpena` (31), `contr` PPCE (39).
 
 ## Provas anteriores e preparação direcionada (planejamento de 2026-10-30, regras INATIVAS)
 **Gatilho:** nada desta seção vale nem é executado até o usuário dizer **"executar provas

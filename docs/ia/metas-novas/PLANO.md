@@ -24,6 +24,22 @@ gravar todas as metas. Regras de montagem: `../09-regras-metas.md`.
 - **CFO PMCE:** sem Atualidades nas metas enquanto o edital não abrir (História do Ceará segue).
 - PPCE: trilhas de LEP e Legislação Específica entram normalmente.
 
+## Executado em 03/11/2026 ("executar metas", primeira parte)
+- **Metas 06 a 50 publicadas** nos 4 cursos, G1 `{1}` e G2 `{2}` (o G3 vê pelo espelho).
+  Gerador: `plan_new.py <curso> <ultima_meta>` (dados em `<curso>.py` e `<curso>_t.txt`) e
+  `emit_new.py <curso>` (lotes SQL; a meta é criada só se ainda não existir "Meta NN –" no grupo,
+  então rodar de novo não duplica). Depois de gravar, resolver `{AULAS}`/`{TT}`/`{NOTA}`/`{BLOCO}`
+  com `resolve.sql.tpl`.
+- Cadernos novos no Qconcursos (PMCE 55, CFO 66, PPCE 72), cadastrados como material `link`
+  com `Chave:`; lista em `<curso>_nb.txt`. Filtro (pedido do usuário em 03/11): 1º banca + área
+  de atuação **Policial** (`administrative_level_ids=6`) se ≥ 40 questões; senão área policial
+  de todas as bancas se ≥ 30; senão só a banca se ≥ 30; senão todas as bancas.
+- PRF ganhou discursiva aos sábados (trilha do Volney + redação); domingo tem revisão semanal do
+  caderno de erros; RLM a cada ≤ 3 dias; lei seca e leitura só da Meta 08 em diante.
+- **Falta (próximo "executar metas"):** Metas 51 a ~100. Basta `plan_new.py <curso> 100` e
+  `emit_new.py <curso>`: o gerador recalcula do zero e as metas 06–50 já gravadas são puladas
+  (mesmo planejamento determinístico). Conferir antes se algum caderno novo é necessário.
+
 ## Já feito (29/10/2026)
 - **Metas 01 a 05 publicadas** nos 4 cursos (G1 e G2), montadas por `first5.py` +
   `first5.tpl`. O plano completo começa na **Meta 06 (07/11)** e continua de onde
