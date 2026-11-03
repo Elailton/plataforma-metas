@@ -17,6 +17,13 @@ gravar todas as metas. Regras de montagem: `../09-regras-metas.md`.
 - Bancas dos cadernos: PRF **CEBRASPE** (id Qconcursos 2); PMCE e CFO **UECE-CEV/FUNECE**
   (167 e 1311); PPCE **IDECAN** (207). Menos de 40 questões da banca → todas as bancas.
 
+## Decisões do usuário (03/11/2026)
+- **PMCE:** a disciplina "Noções de Direito Penal e Processual Penal" é só Processo Penal
+  (erro de nome da banca). Os 9 tópicos do edital cadastrado já são todos de processo penal;
+  não há lacuna de Direito Penal.
+- **CFO PMCE:** sem Atualidades nas metas enquanto o edital não abrir (História do Ceará segue).
+- PPCE: trilhas de LEP e Legislação Específica entram normalmente.
+
 ## Já feito (29/10/2026)
 - **Metas 01 a 05 publicadas** nos 4 cursos (G1 e G2), montadas por `first5.py` +
   `first5.tpl`. O plano completo começa na **Meta 06 (07/11)** e continua de onde
@@ -39,8 +46,7 @@ gravar todas as metas. Regras de montagem: `../09-regras-metas.md`.
    `V` (aulas das trilhas escolhidas: `ordem,segundos,base-da-série` — SQL em
    `materials.description`, `Trilha: X | Ordem: NNN | Duração: mm:ss`), `MAP`
    (faixa de aulas → tópico [→ caderno]), `CAD`, `LAW`, `APOST` e o edital `*_t.txt`.
-   Lacunas conhecidas: PMCE sem trilha de Direito Penal (estudar por questões);
-   CFO sem aulas de Atualidades; PPCE com trilhas de LEP e Legislação Específica (Max/Erick).
+   Ver decisões de 03/11 (PMCE só Processo Penal; CFO sem Atualidades).
 2. **Cadernos restantes** de PMCE/CFO/PPCE no Qconcursos (navegador logado, aba do
    Qconcursos): rotina `mk/runAll` — `Thor.Notebook.create({}, {data:{product:'concursos',
    source_project:1, questions_limit:200, populated:true, notebook:{name, filter}}})`,
