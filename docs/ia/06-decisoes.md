@@ -43,3 +43,8 @@ grupo antes de lançar conteúdo.
   recolhe/expande o texto-base; marcador opcional `[[/texto]]` no fim do texto
   (`lib/mini-quizzes/statement.mjs`, `components/mini-quizzes/question-statement.tsx`). Retirado dos
   enunciados o resto de prova "Texto para as questões X a Y".
+
+- 05/11/2026 — Texto associado compacto (pedido do usuário): parágrafos sem linha em branco entre eles,
+  com recuo de primeira linha (~3 espaços); linhas quebradas da prova são unidas e a numeração de linhas
+  removida na exibição (`lib/mini-quizzes/passage.mjs`). O banco não muda. Referências "(linhas X a Y)"
+  retiradas dos comandos dos diagnósticos, que já citam o trecho.

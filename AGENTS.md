@@ -300,6 +300,9 @@ na plataforma, orientados por `courseId` (nada específico de um concurso).
   Mini simulados por disciplina mantêm o intervalo de 7 dias para refazer.
 - Durante a prova o texto não pode ser copiado nem selecionado (só clicar nas alternativas).
 - Questão com texto-base começa com a linha `**Texto associado**`; o aluno recolhe e expande o texto (`lib/mini-quizzes/statement.mjs`).
+  O texto é exibido compacto (`lib/mini-quizzes/passage.mjs`): linhas quebradas da prova viram parágrafos com recuo
+  de primeira linha, a numeração de linhas sai, e rótulo ("Texto I"), título, versos e fonte são separados. Não citar
+  "(linhas X a Y)" no comando; citar o trecho.
   O fim do texto é a linha `[[/texto]]` (opcional); sem ela, o texto vai até a última linha de fonte
   ("Disponível em", "Fonte:", http) ou, sem fonte, até o último parágrafo. Não deixar "Texto para as questões X a Y".
 - Questões de prova trazem a fonte no comentário. Questão inédita (elaborada pela equipe, a pedido do
