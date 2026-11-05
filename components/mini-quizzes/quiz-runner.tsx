@@ -20,6 +20,7 @@ import type { QuizQuestion } from "@/lib/mini-quizzes/queries"
 import { cn } from "@/lib/utils"
 import { formatDateTime } from "./format"
 import { RichText } from "./rich-text"
+import { QuestionStatement } from "./question-statement"
 import { elapsedSeconds, formatClock } from "@/lib/mini-quizzes/core.mjs"
 
 /** Resolução com cronômetro (início registrado pelo banco). As respostas só saem do navegador no envio. */
@@ -91,7 +92,7 @@ export function QuizRunner({ quizId, questions, startedAt }: { quizId: string; q
             <fieldset className="min-w-0">
               <legend className="mb-3 flex w-full min-w-0 gap-2 text-sm leading-relaxed text-foreground">
                 <span className="shrink-0 font-semibold tabular-nums text-primary">{String(index + 1).padStart(2, "0")}.</span>
-                <RichText text={question.statement} className="min-w-0 flex-1" />
+                <QuestionStatement statement={question.statement} className="min-w-0 flex-1" />
               </legend>
               <div className="flex flex-col gap-2">
                 {question.alternatives.map((alternative) => {

@@ -38,3 +38,8 @@ grupo antes de lançar conteúdo.
 - 30/10/2026 — Diagnóstico Semanal passa a ser liberado pela **conclusão** da meta que fecha o
   bloco (Meta 07, 14, 21...), não só pela data. Coluna `mini_quizzes.unlock_goal_id` + função
   `mini_quiz_unlocked` (RLS e `start/submit`). Migração `20261030000100_mini_quiz_unlock_goal.sql`.
+
+- 05/11/2026 — Texto associado recolhível em todas as questões (pedido do usuário): o aluno
+  recolhe/expande o texto-base; marcador opcional `[[/texto]]` no fim do texto
+  (`lib/mini-quizzes/statement.mjs`, `components/mini-quizzes/question-statement.tsx`). Retirado dos
+  enunciados o resto de prova "Texto para as questões X a Y".

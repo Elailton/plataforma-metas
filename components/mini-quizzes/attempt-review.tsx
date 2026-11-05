@@ -2,6 +2,7 @@ import { CheckCircle2, CircleMinus, XCircle } from "lucide-react"
 import { cn } from "@/lib/utils"
 import type { ReviewedQuestion } from "@/lib/mini-quizzes/queries"
 import { RichText } from "./rich-text"
+import { QuestionStatement } from "./question-statement"
 
 /** Correção comentada de uma tentativa enviada. */
 export function AttemptReview({ questions }: { questions: ReviewedQuestion[] }) {
@@ -13,7 +14,7 @@ export function AttemptReview({ questions }: { questions: ReviewedQuestion[] }) 
           <li key={question.id} id={`q-${question.id}`} className="scroll-mt-20 rounded-xl border border-border bg-card p-4 md:p-5">
             <div className="mb-3 flex items-start gap-2 text-sm leading-relaxed text-foreground">
               <span className="shrink-0 font-semibold tabular-nums text-primary">{String(index + 1).padStart(2, "0")}.</span>
-              <RichText text={question.statement} className="min-w-0 flex-1" />
+              <QuestionStatement statement={question.statement} className="min-w-0 flex-1" />
               {status === "correct" ? (
                 <CheckCircle2 className="size-5 shrink-0 text-success" aria-label="Acertou" />
               ) : status === "wrong" ? (
