@@ -8,6 +8,7 @@ import { Button } from "@/components/ui/button"
 import { StatCard } from "@/components/stat-card"
 import { cn } from "@/lib/utils"
 import { RichText } from "@/components/mini-quizzes/rich-text"
+import { QuestionStatement } from "@/components/mini-quizzes/question-statement"
 import { AttemptReview } from "@/components/mini-quizzes/attempt-review"
 import { formatClock, formatDuration, percentage } from "@/lib/mini-quizzes/core.mjs"
 import type { AlternativeKey } from "@/lib/mini-quizzes/core.mjs"
@@ -203,7 +204,7 @@ export function WeeklyDiagnosticPreview({ questions }: { questions: PreviewQuest
             <p className="mb-1 text-[11px] font-medium uppercase tracking-wide text-muted-foreground">{question.subjectName}</p>
             <div className="mb-3 flex gap-2 text-sm leading-relaxed text-foreground">
               <span className="shrink-0 font-semibold tabular-nums text-primary">{String(index + 1).padStart(2, "0")}.</span>
-              <RichText text={question.statement} className="min-w-0 flex-1" />
+              <QuestionStatement statement={question.statement} className="min-w-0 flex-1" />
             </div>
             <div className="flex flex-col gap-2">
               {question.alternatives.map((alternative) => {
