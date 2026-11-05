@@ -2,6 +2,7 @@
 
 import { useState } from "react"
 import { ChevronDown, ChevronUp, FileText } from "lucide-react"
+import { formatPassage } from "@/lib/mini-quizzes/passage.mjs"
 import { splitStatement } from "@/lib/mini-quizzes/statement.mjs"
 import { cn } from "@/lib/utils"
 import { RichText } from "./rich-text"
@@ -31,9 +32,32 @@ export function QuestionStatement({ statement, className }: { statement: string;
             {open ? <ChevronUp className="size-4" aria-hidden="true" /> : <ChevronDown className="size-4" aria-hidden="true" />}
           </span>
         </button>
-        {open ? <RichText text={passage} className="border-t border-border px-3 py-3 leading-relaxed" /> : null}
+        {open ? <Passage text={passage} /> : null}
       </span>
       <RichText text={body} />
+    </span>
+  )
+}
+
+/** Texto-base compacto: parágrafos com recuo de primeira linha, sem linhas em branco entre eles. */
+function Passage({ text }: { text: string }) {
+  return (
+    <span className="block border-t border-border px-3 py-3 text-justify leading-normal [hyphens:auto]" lang="pt-BR">
+      {formatPassage(text).map((part, index) => {
+        if (part.kind === "label") {
+          return (
+            <span key={index} className="mb-1 block text-xs font-semibold uppercase tracking-wide text-muted-foreground">
+              {part.text}
+            </span>
+          )
+        }
+        if (part.kind === "title") return <RichText key={index} text={part.text} className="mb-1 text-left font-semibold" />
+        if (part.kind === "verse") return <RichText key={index} text={part.text} className="my-1 text-left" />
+        if (part.kind === "source") {
+          return <RichText key={index} text={part.text} className="mt-2 text-left text-xs text-muted-foreground" />
+        }
+        return <RichText key={index} text={part.text} className="[text-indent:1.5em]" />
+      })}
     </span>
   )
 }
