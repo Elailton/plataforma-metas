@@ -27,3 +27,8 @@ test("números no começo da frase não são confundidos com numeração de linh
   const parts = formatPassage("20 anos depois, a cidade mudou muito e ninguém reconhecia as ruas.\n\nOutro parágrafo do texto.")
   assert.equal(parts[0].text.startsWith("20 anos"), true)
 })
+
+test("referência com In: (obra coletiva) é tratada como fonte", () => {
+  const parts = formatPassage("Texto corrido do parágrafo, com várias palavras para formar o corpo.\n\nC. Mauch. Considerações sobre a história da polícia. In: MÉTIS:")
+  assert.deepEqual(parts.map((part) => part.kind), ["paragraph", "source"])
+})
