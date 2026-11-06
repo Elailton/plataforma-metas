@@ -30,6 +30,9 @@
   meta que libera (Meta 30, 60, 90...), sem repetir questões dos diagnósticos; `time_limit_minutes = 240`
   (4 horas, reservando 1 hora da prova real para a redação); um por grupo; lançar primeiro só no
   Grupo 3. As questões ainda não foram montadas (pedido do usuário: só guardar a estrutura).
+  Rascunhos já criados, sem questões e invisíveis ao aluno (`status = draft`), liberados pela Meta 30
+  de cada grupo: G1 `b54942ff-9d55-451c-8b20-c58cce924986` (público só Grupo 3 por enquanto) e
+  G2 `ae94d866-dfcf-4b16-885a-16b140495631`.
 - O site de vendas ainda diz "Acesso ao SGA válido até a data da prova do concurso": o
   usuário precisa corrigir para 1 ano (fora do repositório).
 
