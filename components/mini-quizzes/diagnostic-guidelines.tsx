@@ -1,9 +1,24 @@
 import { BookOpenCheck } from "lucide-react"
 
 /** Orientações do Diagnóstico Semanal, mostradas antes de iniciar e depois de concluir. */
-export function DiagnosticGuidelines({ questionCount, weekly }: { questionCount: number; weekly: boolean }) {
+export function DiagnosticGuidelines({
+  questionCount,
+  weekly,
+  monthly = false,
+  timeLimitMinutes = null,
+}: {
+  questionCount: number
+  weekly: boolean
+  monthly?: boolean
+  timeLimitMinutes?: number | null
+}) {
   const items = [
-    `São ${questionCount} questões de concursos anteriores sobre o que você estudou nas metas da semana.`,
+    monthly
+      ? `São ${questionCount} questões de todas as disciplinas do edital, no formato da prova.`
+      : `São ${questionCount} questões de concursos anteriores sobre o que você estudou nas metas da semana.`,
+    ...(monthly && timeLimitMinutes
+      ? [`Reserve ${formatMinutes(timeLimitMinutes)} sem interrupções, o tempo da prova real. Faça de uma vez, como no dia da prova.`]
+      : []),
     "O cronômetro começa quando você clica em Iniciar e só para quando você envia as respostas.",
     weekly
       ? "É uma tentativa única: depois de enviar, não dá para refazer. Confira tudo antes de enviar."
@@ -30,4 +45,13 @@ export function DiagnosticGuidelines({ questionCount, weekly }: { questionCount:
       </ol>
     </section>
   )
+}
+
+/** 240 → "4 horas"; 90 → "1h30". */
+export function formatMinutes(minutes: number) {
+  const hours = Math.floor(minutes / 60)
+  const rest = minutes % 60
+  if (hours === 0) return `${rest} minutos`
+  if (rest === 0) return hours === 1 ? "1 hora" : `${hours} horas`
+  return `${hours}h${String(rest).padStart(2, "0")}`
 }

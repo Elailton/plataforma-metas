@@ -12,7 +12,7 @@ export const studentNavItems = [
     label: "Simulados",
     shortLabel: "Simulados",
     icon: ClipboardCheck,
-    matches: ["/aluno/diagnostico-semanal", "/aluno/relatorio"],
+    matches: ["/aluno/diagnostico-semanal", "/aluno/simulado-mensal", "/aluno/relatorio"],
   },
   { href: "/aluno/progresso", label: "Progresso", shortLabel: "Progresso", icon: LineChart, matches: [] as string[] },
   { href: "/aluno/conta", label: "Conta", shortLabel: "Conta", icon: CircleUser, matches: [] as string[] },

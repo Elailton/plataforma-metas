@@ -15,11 +15,14 @@ export function QuizStart({
   questionCount,
   firstAttempt,
   rankingEnabled = true,
+  noun = "diagnóstico",
 }: {
   quizId: string
   questionCount: number
   firstAttempt: boolean
   rankingEnabled?: boolean
+  /** Como chamar a prova nos textos: "diagnóstico" ou "simulado". */
+  noun?: "diagnóstico" | "simulado"
 }) {
   const router = useRouter()
   const askRanking = firstAttempt && rankingEnabled
@@ -52,7 +55,7 @@ export function QuizStart({
         <div className="min-w-0 text-sm">
           <p className="font-semibold text-foreground">Antes de começar</p>
           <p className="mt-1 leading-relaxed text-muted-foreground">
-            São {questionCount} questões. O cronômetro começa quando você clicar em <strong className="text-foreground">Iniciar diagnóstico</strong> e
+            São {questionCount} questões. O cronômetro começa quando você clicar em <strong className="text-foreground">Iniciar {noun}</strong> e
             só para quando você conferir suas respostas e enviar. Durante a prova não é possível copiar o texto das questões.
           </p>
         </div>
@@ -62,7 +65,7 @@ export function QuizStart({
         <fieldset className="flex min-w-0 flex-col gap-2">
           <legend className="mb-2 flex items-center gap-2 text-sm font-semibold text-foreground">
             <Trophy className="size-4 text-primary" aria-hidden="true" />
-            Deseja aparecer no ranking deste diagnóstico?
+            Deseja aparecer no ranking deste {noun}?
           </legend>
           {[
             { value: true, title: "Sim, quero aparecer", hint: "Seu primeiro nome e a inicial do sobrenome aparecem com acertos e tempo." },
@@ -102,7 +105,7 @@ export function QuizStart({
       <div>
         <Button onClick={start} disabled={pending || ranking === null}>
           <Play data-icon="inline-start" />
-          {pending ? "Iniciando..." : "Iniciar diagnóstico"}
+          {pending ? "Iniciando..." : `Iniciar ${noun}`}
         </Button>
       </div>
     </div>

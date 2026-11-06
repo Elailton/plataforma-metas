@@ -29,9 +29,19 @@ export default async function AdminMiniQuizzesPage({ searchParams }: { searchPar
   }
   const [subjects, quizzes] = await Promise.all([getCourseSubjects(course.id), listAdminMiniQuizzes(course.id)])
   const orderedSubjects = [...subjects].sort((a, b) => (a.position ?? 0) - (b.position ?? 0))
-  const weekly = quizzes
+  const general = quizzes
     .filter((quiz) => !quiz.subjectId)
     .sort((a, b) => (a.weekNumber ?? 0) - (b.weekNumber ?? 0) || (a.targetGroups[0] ?? 0) - (b.targetGroups[0] ?? 0))
+  const sections = [
+    { id: "adm-semanais", title: "Diagnóstico Semanal", list: general.filter((quiz) => quiz.kind !== "mensal") },
+    {
+      id: "adm-mensais",
+      title: "Simulado Mensal",
+      list: general
+        .filter((quiz) => quiz.kind === "mensal")
+        .sort((a, b) => String(a.releaseDate ?? "").localeCompare(String(b.releaseDate ?? ""))),
+    },
+  ].filter((section) => section.list.length > 0)
 
   return (
     <>
@@ -76,14 +86,14 @@ export default async function AdminMiniQuizzesPage({ searchParams }: { searchPar
       ) : null}
 
       <div className="flex flex-col gap-8">
-        {weekly.length > 0 ? (
-          <section aria-labelledby="adm-semanais">
+        {sections.map(({ id, title, list }) => (
+          <section key={id} aria-labelledby={id}>
             <SectionHeader
-              title={<span id="adm-semanais">Diagnóstico Semanal</span>}
-              description={`${weekly.filter((quiz) => quiz.status === "published").length} publicados · abra um para fazer a prévia e publicar. Cada grupo vê só o seu, a partir da data de liberação`}
+              title={<span id={id}>{title}</span>}
+              description={`${list.filter((quiz) => quiz.status === "published").length} publicados · abra um para fazer a prévia e publicar. Cada grupo vê só o seu, a partir da data de liberação`}
             />
             <ul className="flex flex-col divide-y divide-border overflow-hidden rounded-xl border border-border bg-card">
-              {weekly.map((quiz) => (
+              {list.map((quiz) => (
                 <li key={quiz.id}>
                   <Link href={`/admin/mini-simulados/${quiz.id}?curso=${course.id}`} className="flex items-center gap-3 px-4 py-3 hover:bg-muted/40">
                   <span className="min-w-0 flex-1">
@@ -101,7 +111,7 @@ export default async function AdminMiniQuizzesPage({ searchParams }: { searchPar
               ))}
             </ul>
           </section>
-        ) : null}
+        ))}
         {orderedSubjects.map((subject) => {
           const list = quizzes.filter((quiz) => quiz.subjectId === subject.id)
           return (

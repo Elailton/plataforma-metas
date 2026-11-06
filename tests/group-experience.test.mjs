@@ -14,10 +14,16 @@ test("configuração por grupo: grupo efetivo, abas escondidas e rótulos do adm
   assert.equal(audienceLabel([2, 3]), "Grupo 2 + teste")
 })
 
-test("aba Simulados: some só com diagnóstico e relatório desligados; seções seguem o grupo", async () => {
+test("aba Simulados: some só com semanal, mensal e relatório desligados; seções seguem o grupo", async () => {
   const { hiddenHrefs: hide, simuladosSections } = await import("../lib/groups/experience.mjs")
   assert.equal(hide(["relatorio"]).includes("/aluno/simulados"), false)
-  assert.equal(hide(["relatorio", "diagnostico_semanal"]).includes("/aluno/simulados"), true)
-  assert.deepEqual(simuladosSections([]).map((s) => s.href), ["/aluno/diagnostico-semanal", "/aluno/relatorio"])
-  assert.deepEqual(simuladosSections(["diagnostico_semanal"]).map((s) => s.href), ["/aluno/relatorio"])
+  assert.equal(hide(["relatorio", "diagnostico_semanal"]).includes("/aluno/simulados"), false)
+  assert.equal(hide(["relatorio", "diagnostico_semanal", "simulado_mensal"]).includes("/aluno/simulados"), true)
+  assert.deepEqual(simuladosSections([]).map((s) => s.href), [
+    "/aluno/diagnostico-semanal",
+    "/aluno/simulado-mensal",
+    "/aluno/relatorio",
+  ])
+  assert.deepEqual(simuladosSections(["diagnostico_semanal", "simulado_mensal"]).map((s) => s.href), ["/aluno/relatorio"])
+  assert.deepEqual(normalizeDisabledFeatures(["simulado_mensal"]), ["simulado_mensal"])
 })
