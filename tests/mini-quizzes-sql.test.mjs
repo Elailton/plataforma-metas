@@ -494,6 +494,7 @@ test("próximos simulados: aluno vê só título e condição dos fechados do se
     await applyMigration(db, "20261030000100_mini_quiz_unlock_goal.sql")
     await applyMigration(db, "20261106000100_simulado_mensal.sql")
     await applyMigration(db, "20261106000200_upcoming_quizzes.sql")
+    await applyMigration(db, "20261106000300_upcoming_quizzes_fast.sql")
     const GOAL_07 = id(140) // meta do G1, concluída pelo aluno do G1
     const GOAL_14 = id(7140)
     const W = { block7: id(950), geralNow: id(951), geralNext: id(952), geralDraft: id(953) }
@@ -526,6 +527,12 @@ test("próximos simulados: aluno vê só título e condição dos fechados do se
     assert.deepEqual((await upcoming(USERS.groupTwo)).map((row) => row.quiz_id), [W.geralNext])
     assert.equal((await upcoming(USERS.otherCourse)).length, 0)
     assert.equal((await upcoming(USERS.blocked)).length, 0)
+    // Consulta leve do menu: existe simulado geral para o grupo?
+    const hasGeneral = async (user) =>
+      (await asStudent(db, user, "select public.student_has_general_quiz($1) as v", [COURSE_A])).rows[0].v
+    assert.equal(await hasGeneral(USERS.groupOne), true)
+    assert.equal(await hasGeneral(USERS.otherCourse), false)
+    assert.equal(await hasGeneral(USERS.blocked), false)
     // As questões do próximo continuam fechadas.
     const hidden = await asStudent(db, USERS.groupOne, "select id from public.mini_quiz_questions where quiz_id = $1", [W.geralNext])
     assert.equal(hidden.rows.length, 0)
