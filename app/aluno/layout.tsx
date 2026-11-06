@@ -29,7 +29,7 @@ export default async function StudentLayout({
   const experience = await getStudentExperience()
   // "Simulados" abre direto a primeira seção liberada, sem passar pelo redirecionamento de /aluno/simulados.
   const [firstSimulados] = simuladosSections(experience.disabled)
-  const hrefOverrides = firstSimulados ? { [SIMULADOS_HREF]: firstSimulados.href } : {}
+  const hrefOverrides: Record<string, string> = firstSimulados ? { [SIMULADOS_HREF]: firstSimulados.href } : {}
 
   return (
     <InstallAppProvider>
