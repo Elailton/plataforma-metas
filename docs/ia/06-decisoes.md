@@ -48,3 +48,7 @@ grupo antes de lançar conteúdo.
   com recuo de primeira linha (~3 espaços); linhas quebradas da prova são unidas e a numeração de linhas
   removida na exibição (`lib/mini-quizzes/passage.mjs`). O banco não muda. Referências "(linhas X a Y)"
   retiradas dos comandos dos diagnósticos, que já citam o trecho.
+
+- 06/11/2026 — Aba "Simulados" no menu do aluno (pedido do usuário): substitui as abas "Diagnóstico
+  Semanal" e "Relatório", que viram abas internas, mantendo o visual atual (o protótipo com visual novo
+  foi recusado). Libera espaço no menu do celular para o Simulado Mensal, que entrará como seção da aba.

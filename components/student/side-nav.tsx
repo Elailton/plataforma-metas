@@ -6,7 +6,7 @@ import Link from "next/link"
 import { usePathname } from "next/navigation"
 import { LogOut } from "lucide-react"
 import { cn } from "@/lib/utils"
-import { studentNavItems } from "./student-nav-items"
+import { isNavItemActive, studentNavItems } from "./student-nav-items"
 import { signOut } from "@/lib/supabase/actions"
 import { CourseSwitcher } from "@/components/student/course-switcher"
 import { TurboUpgradeCard } from "@/components/student/turbo-upgrade"
@@ -37,7 +37,7 @@ export function SideNav({
       <nav aria-label="Navegação principal" className="flex-1 px-3">
         <ul className="flex flex-col gap-0.5">
           {studentNavItems.filter((item) => !hiddenHrefs.includes(item.href)).map((item) => {
-            const isActive = item.href === "/aluno" ? pathname === "/aluno" : pathname.startsWith(item.href)
+            const isActive = isNavItemActive(item, pathname)
             const Icon = item.icon
             return (
               <li key={item.href}>

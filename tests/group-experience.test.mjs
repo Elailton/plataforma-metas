@@ -13,3 +13,11 @@ test("configuração por grupo: grupo efetivo, abas escondidas e rótulos do adm
   assert.equal(audienceLabel([1, 2]), "Grupos 1 e 2")
   assert.equal(audienceLabel([2, 3]), "Grupo 2 + teste")
 })
+
+test("aba Simulados: some só com diagnóstico e relatório desligados; seções seguem o grupo", async () => {
+  const { hiddenHrefs: hide, simuladosSections } = await import("../lib/groups/experience.mjs")
+  assert.equal(hide(["relatorio"]).includes("/aluno/simulados"), false)
+  assert.equal(hide(["relatorio", "diagnostico_semanal"]).includes("/aluno/simulados"), true)
+  assert.deepEqual(simuladosSections([]).map((s) => s.href), ["/aluno/diagnostico-semanal", "/aluno/relatorio"])
+  assert.deepEqual(simuladosSections(["diagnostico_semanal"]).map((s) => s.href), ["/aluno/relatorio"])
+})

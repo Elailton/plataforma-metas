@@ -1,5 +1,6 @@
 import { redirect } from "next/navigation"
 import { PageContainer, PageHeading } from "@/components/student/page-container"
+import { SimuladosTabs } from "@/components/student/simulados-tabs"
 import { SectionHeader } from "@/components/page-header"
 import { DiagnosisView } from "@/components/mini-quizzes/diagnosis-view"
 import { ErrorReport } from "@/components/mini-quizzes/error-report"
@@ -25,6 +26,7 @@ export default async function StudentReportPage({ searchParams }: { searchParams
         title="Relatório"
         description="O resultado dos seus diagnósticos semanais e os erros organizados por disciplina e assunto, para revisar."
       />
+      <SimuladosTabs current="/aluno/relatorio" />
       <div className="flex flex-col gap-10">
         <section aria-labelledby="seus-erros">
           <SectionHeader
