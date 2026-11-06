@@ -5,7 +5,14 @@ import { usePathname } from "next/navigation"
 import { cn } from "@/lib/utils"
 import { isNavItemActive, studentNavItems } from "./student-nav-items"
 
-export function BottomNav({ hiddenHrefs = [] }: { hiddenHrefs?: string[] }) {
+export function BottomNav({
+  hiddenHrefs = [],
+  hrefOverrides = {},
+}: {
+  hiddenHrefs?: string[]
+  /** Destino real de um item (ex.: "Simulados" abre direto a primeira seção liberada). */
+  hrefOverrides?: Record<string, string>
+}) {
   const pathname = usePathname()
 
   return (
@@ -20,7 +27,7 @@ export function BottomNav({ hiddenHrefs = [] }: { hiddenHrefs?: string[] }) {
           return (
             <li key={item.href} className="min-w-0 flex-1">
               <Link
-                href={item.href}
+                href={hrefOverrides[item.href] ?? item.href}
                 aria-current={isActive ? "page" : undefined}
                 className={cn(
                   "relative flex min-h-14 flex-col items-center justify-center gap-1 text-[10px] font-medium transition-colors sm:text-[11px]",
