@@ -6,6 +6,7 @@ import { BottomNav } from "@/components/student/bottom-nav"
 import { MobileTopbar } from "@/components/student/mobile-topbar"
 import { getStudentContext } from "@/lib/student/queries"
 import { getStudentExperience } from "@/lib/student/experience"
+import { SIMULADOS_HREF, simuladosSections } from "@/lib/groups/experience.mjs"
 
 export default async function StudentLayout({
   children,
@@ -26,11 +27,14 @@ export default async function StudentLayout({
   )
     redirect("/auth/primeiro-acesso")
   const experience = await getStudentExperience()
+  // "Simulados" abre direto a primeira seção liberada, sem passar pelo redirecionamento de /aluno/simulados.
+  const [firstSimulados] = simuladosSections(experience.disabled)
+  const hrefOverrides = firstSimulados ? { [SIMULADOS_HREF]: firstSimulados.href } : {}
 
   return (
     <InstallAppProvider>
       <div className="flex min-h-screen bg-background">
-        <SideNav courses={context.courses} currentCourse={context.currentCourse} hiddenHrefs={experience.hiddenHrefs} />
+        <SideNav courses={context.courses} currentCourse={context.currentCourse} hiddenHrefs={experience.hiddenHrefs} hrefOverrides={hrefOverrides} />
         <div className="flex min-h-screen min-w-0 flex-1 flex-col">
           <MobileTopbar
             courses={context.courses}
@@ -39,7 +43,7 @@ export default async function StudentLayout({
           />
           {/* Respiro no fim de toda tela: o último item nunca fica atrás da barra inferior do celular. */}
           <main className="flex-1 pb-[calc(10rem+env(safe-area-inset-bottom))] md:pb-24">{children}</main>
-          <BottomNav hiddenHrefs={experience.hiddenHrefs} />
+          <BottomNav hiddenHrefs={experience.hiddenHrefs} hrefOverrides={hrefOverrides} />
         </div>
       </div>
     </InstallAppProvider>

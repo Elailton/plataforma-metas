@@ -16,10 +16,13 @@ export function SideNav({
   courses,
   currentCourse,
   hiddenHrefs = [],
+  hrefOverrides = {},
 }: {
   courses: StudentCourse[]
   currentCourse: StudentCourse
   hiddenHrefs?: string[]
+  /** Destino real de um item (ex.: "Simulados" abre direto a primeira seção liberada). */
+  hrefOverrides?: Record<string, string>
 }) {
   const pathname = usePathname()
 
@@ -42,7 +45,7 @@ export function SideNav({
             return (
               <li key={item.href}>
                 <Link
-                  href={item.href}
+                  href={hrefOverrides[item.href] ?? item.href}
                   aria-current={isActive ? "page" : undefined}
                   className={cn(
                     "relative flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium transition-colors",
