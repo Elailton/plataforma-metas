@@ -317,7 +317,7 @@ na plataforma, orientados por `courseId` (nada específico de um concurso).
   própria, então segue no banco as regras do diagnóstico semanal: tentativa única, cronômetro, ranking,
   grupos e data de liberação) e `time_limit_minutes` (tempo da prova real, só informativo). Lista em
   `/aluno/simulado-mensal`; a prova e a correção reutilizam as páginas do diagnóstico, que conferem a
-  função do grupo pelo tipo. A seção aparece para o Grupo 3 sempre e para os demais só quando houver
+  função do grupo pelo tipo. Um por grupo a cada 30 metas (liberado ao concluir a Meta 30, 60, 90..., por `unlock_goal_id`), no formato da prova real do curso, só com questões de prova sobre o que foi estudado até a meta. A seção aparece para o Grupo 3 sempre e para os demais só quando houver
   simulado mensal liberado para o grupo. As rotas antigas `/aluno/mini-simulados` redirecionam.
 - O administrador faz a prévia do diagnóstico como aluno (nada é gravado) e publica pela própria tela.
 - O diagnóstico mensal usa a primeira tentativa de cada mini simulado no mês (fuso de

@@ -31,7 +31,7 @@ export default async function MonthlySimuladoPage() {
     <PageContainer>
       <PageHeading
         title="Simulado Mensal"
-        description="Um simulado geral por mês, com todas as disciplinas do edital no formato da prova. Feito uma única vez, com cronômetro e ranking."
+        description="Um simulado geral a cada 30 metas, com todas as disciplinas no formato da prova. Ele aparece quando você conclui a Meta 30, 60, 90... Feito uma única vez, com cronômetro e ranking."
       />
       <SimuladosTabs current="/aluno/simulado-mensal" />
 
@@ -40,7 +40,7 @@ export default async function MonthlySimuladoPage() {
           <section aria-labelledby="simulado-do-mes" className="flex flex-col gap-4 rounded-xl border border-primary/40 bg-card p-4 md:p-6">
             <div>
               <p id="simulado-do-mes" className="text-xs font-semibold uppercase tracking-wide text-primary">
-                Simulado do mês
+                Simulado liberado
               </p>
               <h2 className="mt-1 text-lg font-semibold text-foreground">{current.title}</h2>
               {current.description ? <p className="mt-1 text-sm text-muted-foreground">{current.description}</p> : null}
@@ -79,7 +79,7 @@ export default async function MonthlySimuladoPage() {
           </section>
         ) : quizzes.length === 0 ? (
           <div className="rounded-xl border border-dashed border-border bg-card p-6 text-center text-sm text-muted-foreground">
-            Nenhum simulado mensal liberado ainda. Quando o simulado do mês for liberado, ele aparece aqui.
+            Nenhum simulado mensal liberado ainda. Conclua a Meta 30 (depois a 60, 90...) para liberar o próximo.
           </div>
         ) : null}
 
