@@ -7,3 +7,7 @@ export function settingsGroupFor(groupsEnabled: boolean, studyGroup: number | nu
 export function hiddenHrefs(disabled: readonly string[] | null | undefined): string[]
 export function groupLabel(group: number | null | undefined, mirror?: number | null): string
 export function audienceLabel(groups: readonly number[] | null | undefined): string
+export const SIMULADOS_HREF: "/aluno/simulados"
+export function simuladosSections(
+  disabled: readonly string[] | null | undefined,
+): Array<{ key: "diagnostico_semanal" | "relatorio"; label: string; href: string }>

@@ -3,7 +3,7 @@
 import Link from "next/link"
 import { usePathname } from "next/navigation"
 import { cn } from "@/lib/utils"
-import { studentNavItems } from "./student-nav-items"
+import { isNavItemActive, studentNavItems } from "./student-nav-items"
 
 export function BottomNav({ hiddenHrefs = [] }: { hiddenHrefs?: string[] }) {
   const pathname = usePathname()
@@ -15,7 +15,7 @@ export function BottomNav({ hiddenHrefs = [] }: { hiddenHrefs?: string[] }) {
     >
       <ul className="mx-auto flex max-w-lg items-stretch justify-between px-1 pb-[env(safe-area-inset-bottom)]">
         {studentNavItems.filter((item) => !hiddenHrefs.includes(item.href)).map((item) => {
-          const isActive = item.href === "/aluno" ? pathname === "/aluno" : pathname.startsWith(item.href)
+          const isActive = isNavItemActive(item, pathname)
           const Icon = item.icon
           return (
             <li key={item.href} className="min-w-0 flex-1">

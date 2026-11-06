@@ -1,9 +1,9 @@
 import Link from "next/link"
 import { redirect } from "next/navigation"
-import { CheckCircle2, ChevronRight, FileText, PlayCircle } from "lucide-react"
+import { CheckCircle2, ChevronRight, PlayCircle } from "lucide-react"
 import { PageContainer, PageHeading } from "@/components/student/page-container"
+import { SimuladosTabs } from "@/components/student/simulados-tabs"
 import { SectionHeader } from "@/components/page-header"
-import { buttonVariants } from "@/components/ui/button"
 import { scoreTone } from "@/components/mini-quizzes/format"
 import { cn } from "@/lib/utils"
 import { getStudentContext } from "@/lib/student/queries"
@@ -23,13 +23,8 @@ export default async function WeeklyDiagnosticsPage() {
       <PageHeading
         title="Diagnóstico Semanal"
         description="Um diagnóstico a cada 7 metas, sobre o que você estudou. Ele aparece quando você conclui a última meta do bloco (Meta 07, 14, 21...). Feito uma única vez, com cronômetro e ranking."
-        actions={
-          <Link href="/aluno/relatorio" className={buttonVariants({ variant: "outline" })}>
-            <FileText data-icon="inline-start" />
-            Relatório
-          </Link>
-        }
       />
+      <SimuladosTabs current="/aluno/diagnostico-semanal" />
 
       {groups.length === 0 ? (
         <div className="rounded-xl border border-dashed border-border bg-card p-6 text-center text-sm text-muted-foreground">
