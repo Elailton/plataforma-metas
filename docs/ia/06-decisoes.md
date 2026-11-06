@@ -52,3 +52,4 @@ grupo antes de lançar conteúdo.
 - 06/11/2026 — Aba "Simulados" no menu do aluno (pedido do usuário): substitui as abas "Diagnóstico
   Semanal" e "Relatório", que viram abas internas, mantendo o visual atual (o protótipo com visual novo
   foi recusado). Libera espaço no menu do celular para o Simulado Mensal, que entrará como seção da aba.
+- 06/11/2026 — "Caderno de erros" vira tela própria (`/aluno/relatorio/caderno-de-erros`), acessada por um botão em destaque no topo do Relatório; o Relatório fica com o desempenho por disciplina e assunto.
