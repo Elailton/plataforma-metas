@@ -109,3 +109,23 @@ export function isUuid(value: unknown): value is string
 export function elapsedSeconds(startedAt: string | Date, now?: Date): number
 export function formatClock(seconds: number): string
 export function formatDuration(seconds: number | null | undefined): string
+
+export interface UpcomingQuiz {
+  quiz_id: string | null
+  kind: "semanal" | "mensal"
+  title: string
+  release_date: string | null
+  block_end: number | null
+  unlock_goal_id: string | null
+  unlock_goal_title: string | null
+  unlock_done: boolean
+}
+export function pendingQuizWindow<T extends Pick<UpcomingQuiz, "block_end" | "release_date" | "title">>(input: {
+  openNotDone?: number
+  upcoming?: T[]
+  limit?: number
+}): T[]
+export function upcomingReason(
+  item: Pick<UpcomingQuiz, "release_date" | "unlock_goal_id" | "unlock_done" | "block_end" | "unlock_goal_title">,
+  todayKey: string,
+): { type: "date" | "goal" | "soon"; label: string }

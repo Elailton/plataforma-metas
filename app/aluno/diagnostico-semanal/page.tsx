@@ -8,8 +8,9 @@ import { scoreTone } from "@/components/mini-quizzes/format"
 import { cn } from "@/lib/utils"
 import { getStudentContext } from "@/lib/student/queries"
 import { requireStudentFeature } from "@/lib/student/experience"
-import { getStudentQuizOverview } from "@/lib/mini-quizzes/queries"
-import { groupQuizzesBySubject } from "@/lib/mini-quizzes/core.mjs"
+import { getStudentQuizOverview, getUpcomingQuizzes } from "@/lib/mini-quizzes/queries"
+import { UpcomingQuizzes } from "@/components/mini-quizzes/upcoming-quizzes"
+import { WEEKLY_GROUP_ID, groupQuizzesBySubject, pendingQuizWindow } from "@/lib/mini-quizzes/core.mjs"
 
 export const dynamic = "force-dynamic"
 
@@ -17,8 +18,13 @@ export default async function WeeklyDiagnosticsPage() {
   await requireStudentFeature("diagnostico_semanal")
   const context = await getStudentContext()
   if (!context) redirect("/auth/sem-acesso")
-  const overview = await getStudentQuizOverview(context.currentCourse.id, context.profile.id)
+  const [overview, upcoming] = await Promise.all([
+    getStudentQuizOverview(context.currentCourse.id, context.profile.id),
+    getUpcomingQuizzes(context.currentCourse.id),
+  ])
   const groups = groupQuizzesBySubject(overview)
+  const openNotDone = groups.find((group) => group.id === WEEKLY_GROUP_ID)?.quizzes.filter((quiz) => quiz.attemptCount === 0).length ?? 0
+  const locked = pendingQuizWindow({ openNotDone, upcoming: upcoming.filter((item) => item.kind === "semanal") })
 
   return (
     <PageContainer>
@@ -28,7 +34,7 @@ export default async function WeeklyDiagnosticsPage() {
       />
       <SimuladosTabs current="/aluno/diagnostico-semanal" />
 
-      {groups.length === 0 ? (
+      {groups.length === 0 && locked.length === 0 ? (
         <div className="rounded-xl border border-dashed border-border bg-card p-6 text-center text-sm text-muted-foreground">
           Nenhum diagnóstico semanal liberado ainda. Conclua a última meta do bloco (Meta 07, 14, 21...) para liberar o próximo.
         </div>
@@ -76,6 +82,15 @@ export default async function WeeklyDiagnosticsPage() {
               </section>
             )
           })}
+          {locked.length > 0 ? (
+            <section aria-labelledby="proximos-diagnosticos">
+              <SectionHeader
+                title={<span id="proximos-diagnosticos">Próximos diagnósticos</span>}
+                description="Abrem quando você conclui a última meta do bloco."
+              />
+              <UpcomingQuizzes items={locked} />
+            </section>
+          ) : null}
         </div>
       )}
     </PageContainer>

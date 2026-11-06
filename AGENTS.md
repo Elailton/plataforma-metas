@@ -312,13 +312,21 @@ na plataforma, orientados por `courseId` (nada específico de um concurso).
 - Área do aluno: aba "Simulados" (`/aluno/simulados`, pedida em 06/11/2026) reúne, em abas internas,
   "Diagnóstico Semanal" (`/aluno/diagnostico-semanal`) e "Relatório" (`/aluno/relatorio`, desempenho por
   disciplina e assunto, com o botão "Caderno de erros" no topo levando a `/aluno/relatorio/caderno-de-erros`); cada seção segue o liga/desliga do grupo e a aba some só com todas desligadas.
-  Abas internas: "Semanal", "Mensal" e "Relatório".
-- Simulado Mensal (simulado geral, pedido em 06/11/2026): `mini_quizzes.kind = 'mensal'` (sem disciplina
-  própria, então segue no banco as regras do diagnóstico semanal: tentativa única, cronômetro, ranking,
-  grupos e data de liberação) e `time_limit_minutes` (tempo da prova real, só informativo). Lista em
-  `/aluno/simulado-mensal`; a prova e a correção reutilizam as páginas do diagnóstico, que conferem a
-  função do grupo pelo tipo. Um por grupo a cada 30 metas (liberado ao concluir a Meta 30, 60, 90..., por `unlock_goal_id`), no formato da prova real do curso, só com questões de prova sobre o que foi estudado até a meta. A seção aparece para o Grupo 3 sempre e para os demais só quando houver
-  simulado mensal liberado para o grupo. As rotas antigas `/aluno/mini-simulados` redirecionam.
+  Abas internas: "Semanal", "Geral" e "Relatório".
+- Simulado Geral (pedido em 06/11/2026; no banco `mini_quizzes.kind = 'mensal'` e a função de grupo
+  `simulado_mensal`, nomes internos mantidos): todas as disciplinas no formato da prova real do curso,
+  **liberado por data, sem relação com as metas** (`release_date`, `unlock_goal_id` nulo), a cada
+  **14 dias com edital aberto** e **30 dias com edital fechado** — sempre perguntar ao usuário se o
+  edital está aberto ou fechado ao gerar um simulado. `time_limit_minutes` (tempo da prova, informativo).
+  Sem disciplina própria, segue no banco as regras do diagnóstico (tentativa única, cronômetro, ranking,
+  grupos). Lista em `/aluno/simulado-geral`; prova e correção reutilizam as páginas do diagnóstico, que
+  conferem a função do grupo pelo tipo. A seção aparece para o Grupo 3 sempre e para os demais quando
+  houver simulado geral publicado para o grupo (aberto ou ainda fechado).
+- Próximos fechados (06/11/2026): `student_upcoming_quizzes` devolve só título e condição dos
+  diagnósticos e simulados gerais ainda fechados (e dos blocos de 7 metas ainda sem diagnóstico). O aluno
+  vê no máximo **2 pendentes por tipo** (abertos não feitos + fechados; `pendingQuizWindow`). Ao lançar um
+  simulado geral, **deixar sempre o da próxima data já publicado e fechado** (mesmo sem questões), para
+  instigar o aluno; preencher as questões antes da data. As rotas antigas `/aluno/mini-simulados` redirecionam.
 - O administrador faz a prévia do diagnóstico como aluno (nada é gravado) e publica pela própria tela.
 - O diagnóstico mensal usa a primeira tentativa de cada mini simulado no mês (fuso de
   Brasília, `is_first_of_month`). Refazer fica no histórico e não altera o mês.

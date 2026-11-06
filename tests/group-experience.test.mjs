@@ -21,7 +21,7 @@ test("aba Simulados: some só com semanal, mensal e relatório desligados; seç�
   assert.equal(hide(["relatorio", "diagnostico_semanal", "simulado_mensal"]).includes("/aluno/simulados"), true)
   assert.deepEqual(simuladosSections([]).map((s) => s.href), [
     "/aluno/diagnostico-semanal",
-    "/aluno/simulado-mensal",
+    "/aluno/simulado-geral",
     "/aluno/relatorio",
   ])
   assert.deepEqual(simuladosSections(["diagnostico_semanal", "simulado_mensal"]).map((s) => s.href), ["/aluno/relatorio"])

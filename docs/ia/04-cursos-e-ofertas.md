@@ -25,14 +25,13 @@
   Aprovação: mínimo de 30% em cada bloco, nenhuma disciplina zerada e 30% no total. Redação
   dissertativo-argumentativa (40 pontos, 15–20 linhas). Objetiva + redação em **5 horas**, turno da
   manhã, em 21/02/2027 (Anexo I). Depois: exames médicos, TAF e avaliação psicológica.
-- **Simulado Mensal da PMPE (decidido em 2026-11-06):** a mesma estrutura da objetiva (60 questões,
-  10 por disciplina, na ordem da tabela), só questões reais da AOCP sobre o que foi estudado até a
-  meta que libera (Meta 30, 60, 90...), sem repetir questões dos diagnósticos; `time_limit_minutes = 240`
-  (4 horas, reservando 1 hora da prova real para a redação); um por grupo; lançar primeiro só no
-  Grupo 3. As questões ainda não foram montadas (pedido do usuário: só guardar a estrutura).
-  Rascunhos já criados, sem questões e invisíveis ao aluno (`status = draft`), liberados pela Meta 30
-  de cada grupo: G1 `b54942ff-9d55-451c-8b20-c58cce924986` (público só Grupo 3 por enquanto) e
-  G2 `ae94d866-dfcf-4b16-885a-16b140495631`.
+- **Simulado Geral da PMPE (decidido em 2026-11-06):** a mesma estrutura da objetiva (60 questões,
+  10 por disciplina, na ordem da tabela), só questões reais da AOCP, sem repetir as dos diagnósticos;
+  `time_limit_minutes = 240` (4 horas, reservando 1 hora da prova real para a redação). Edital
+  **aberto**, então **a cada 14 dias**: o 1º libera em **08/11/2026** e o 2º em **22/11/2026**
+  (publicado e fechado, para o aluno ver a próxima data). Não depende das metas. Os demais cursos
+  (edital fechado, a cada 30 dias) ficam sem simulado geral por enquanto, sem previsão.
+  Cadastro: 1º `b54942ff-9d55-451c-8b20-c58cce924986`, 2º `ae94d866-dfcf-4b16-885a-16b140495631`.
 - O site de vendas ainda diz "Acesso ao SGA válido até a data da prova do concurso": o
   usuário precisa corrigir para 1 ano (fora do repositório).
 

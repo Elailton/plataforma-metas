@@ -14,7 +14,7 @@ export function DiagnosticGuidelines({
 }) {
   const items = [
     monthly
-      ? `São ${questionCount} questões de concursos anteriores, de todas as disciplinas, no formato da prova, sobre o que você estudou até aqui nas metas.`
+      ? `São ${questionCount} questões de concursos anteriores, de todas as disciplinas do edital, no formato da prova.`
       : `São ${questionCount} questões de concursos anteriores sobre o que você estudou nas metas da semana.`,
     ...(monthly && timeLimitMinutes
       ? [`Reserve ${formatMinutes(timeLimitMinutes)} sem interrupções, o tempo da prova real. Faça de uma vez, como no dia da prova.`]

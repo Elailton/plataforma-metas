@@ -10,30 +10,36 @@ import { scoreTone } from "@/components/mini-quizzes/format"
 import { cn } from "@/lib/utils"
 import { getStudentContext } from "@/lib/student/queries"
 import { requireStudentFeature } from "@/lib/student/experience"
-import { getStudentQuizOverview } from "@/lib/mini-quizzes/queries"
-import { groupQuizzesBySubject } from "@/lib/mini-quizzes/core.mjs"
+import { getStudentQuizOverview, getUpcomingQuizzes } from "@/lib/mini-quizzes/queries"
+import { UpcomingQuizzes } from "@/components/mini-quizzes/upcoming-quizzes"
+import { groupQuizzesBySubject, pendingQuizWindow } from "@/lib/mini-quizzes/core.mjs"
 
 export const dynamic = "force-dynamic"
 
-/** Simulado Mensal: simulado geral, com todas as disciplinas do edital no formato da prova. */
-export default async function MonthlySimuladoPage() {
+/** Simulado Geral: todas as disciplinas do edital no formato da prova, liberado por data (não depende das metas). */
+export default async function GeneralSimuladoPage() {
   await requireStudentFeature("simulado_mensal")
   const context = await getStudentContext()
   if (!context) redirect("/auth/sem-acesso")
-  const overview = await getStudentQuizOverview(context.currentCourse.id, context.profile.id, "mensal")
+  const [overview, upcoming] = await Promise.all([
+    getStudentQuizOverview(context.currentCourse.id, context.profile.id, "mensal"),
+    getUpcomingQuizzes(context.currentCourse.id),
+  ])
   const limits = new Map(overview.quizzes.map((quiz) => [quiz.id, (quiz.time_limit_minutes as number | null) ?? null]))
   // Mais recente primeiro.
   const quizzes = groupQuizzesBySubject(overview).flatMap((group) => group.quizzes).reverse()
   const current = quizzes.find((quiz) => quiz.attemptCount === 0) ?? null
   const others = quizzes.filter((quiz) => quiz !== current)
+  const openNotDone = quizzes.filter((quiz) => quiz.attemptCount === 0).length
+  const locked = pendingQuizWindow({ openNotDone, upcoming: upcoming.filter((item) => item.kind === "mensal") })
 
   return (
     <PageContainer>
       <PageHeading
-        title="Simulado Mensal"
-        description="Um simulado geral a cada 30 metas, com todas as disciplinas no formato da prova. Ele aparece quando você conclui a Meta 30, 60, 90... Feito uma única vez, com cronômetro e ranking."
+        title="Simulado Geral"
+        description="Simulados com todas as disciplinas do edital, no formato da prova, liberados em datas definidas. Cada um é feito uma única vez, com cronômetro e ranking."
       />
-      <SimuladosTabs current="/aluno/simulado-mensal" />
+      <SimuladosTabs current="/aluno/simulado-geral" />
 
       <div className="flex flex-col gap-8">
         {current ? (
@@ -71,27 +77,34 @@ export default async function MonthlySimuladoPage() {
               </div>
             </dl>
             <div>
-              <Link href={`/aluno/simulado-mensal/${current.id}`} className={buttonVariants()}>
+              <Link href={`/aluno/simulado-geral/${current.id}`} className={buttonVariants()}>
                 <PlayCircle data-icon="inline-start" />
                 Abrir simulado
               </Link>
             </div>
           </section>
-        ) : quizzes.length === 0 ? (
+        ) : quizzes.length === 0 && locked.length === 0 ? (
           <div className="rounded-xl border border-dashed border-border bg-card p-6 text-center text-sm text-muted-foreground">
-            Nenhum simulado mensal liberado ainda. Conclua a Meta 30 (depois a 60, 90...) para liberar o próximo.
+            Nenhum simulado geral liberado ainda. Quando houver, ele aparece aqui com a data de liberação.
           </div>
+        ) : null}
+
+        {locked.length > 0 ? (
+          <section aria-labelledby="proximos-simulados">
+            <SectionHeader title={<span id="proximos-simulados">Próximos simulados</span>} />
+            <UpcomingQuizzes items={locked} />
+          </section>
         ) : null}
 
         {others.length > 0 ? (
           <section aria-labelledby="meses-anteriores">
-            <SectionHeader title={<span id="meses-anteriores">{current ? "Meses anteriores" : "Simulados feitos"}</span>} />
+            <SectionHeader title={<span id="meses-anteriores">{current ? "Anteriores" : "Simulados feitos"}</span>} />
             <ul className="flex flex-col divide-y divide-border overflow-hidden rounded-xl border border-border bg-card">
               {others.map((quiz) => {
                 const finished = quiz.attemptCount > 0
                 return (
                   <li key={quiz.id}>
-                    <Link href={`/aluno/simulado-mensal/${quiz.id}`} className="flex items-center gap-3 px-4 py-3.5 transition-colors hover:bg-muted/40">
+                    <Link href={`/aluno/simulado-geral/${quiz.id}`} className="flex items-center gap-3 px-4 py-3.5 transition-colors hover:bg-muted/40">
                       <span
                         className={cn(
                           "flex size-9 shrink-0 items-center justify-center rounded-lg",

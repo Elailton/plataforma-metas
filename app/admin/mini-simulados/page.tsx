@@ -36,7 +36,7 @@ export default async function AdminMiniQuizzesPage({ searchParams }: { searchPar
     { id: "adm-semanais", title: "Diagnóstico Semanal", list: general.filter((quiz) => quiz.kind !== "mensal") },
     {
       id: "adm-mensais",
-      title: "Simulado Mensal",
+      title: "Simulado Geral",
       list: general
         .filter((quiz) => quiz.kind === "mensal")
         .sort((a, b) => String(a.releaseDate ?? "").localeCompare(String(b.releaseDate ?? ""))),

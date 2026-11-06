@@ -484,3 +484,52 @@ test("diagnóstico semanal só aparece depois que o aluno conclui a meta que fec
     await db.close()
   }
 })
+
+test("próximos simulados: aluno vê só título e condição dos fechados do seu grupo, sem as questões", async () => {
+  const db = await setup()
+  try {
+    await applyMigration(db, "20261021000100_mini_quiz_weekly_groups.sql")
+    await applyMigration(db, "20261021000200_mini_quiz_timer_ranking.sql")
+    await applyMigration(db, "20261022000100_test_group_and_group_settings.sql")
+    await applyMigration(db, "20261030000100_mini_quiz_unlock_goal.sql")
+    await applyMigration(db, "20261106000100_simulado_mensal.sql")
+    await applyMigration(db, "20261106000200_upcoming_quizzes.sql")
+    const GOAL_07 = id(140) // meta do G1, concluída pelo aluno do G1
+    const GOAL_14 = id(145)
+    const W = { block7: id(950), geralNow: id(951), geralNext: id(952), geralDraft: id(953) }
+    const alts = JSON.stringify(["A", "B"].map((key) => ({ key, text: key })))
+    await db.exec(`
+      update public.goals set title = 'Meta 07 – Português' where id = '${GOAL_07}';
+      insert into public.goals (id, course_id, status, title, target_groups) values
+        ('${GOAL_14}', '${COURSE_A}', 'published', 'Meta 14 – Informática', array[1]::smallint[]);
+      insert into public.goal_items (id, goal_id, subject_id) values ('${id(155)}', '${GOAL_14}', '${SUBJECT_A}');
+      insert into public.mini_quizzes (id, course_id, subject_id, title, status, target_groups, release_date, unlock_goal_id, kind) values
+        ('${W.block7}', '${COURSE_A}', null, 'Bloco 1', 'published', array[1]::smallint[], current_date - 1, '${GOAL_07}', 'semanal'),
+        ('${W.geralNow}', '${COURSE_A}', null, 'Geral 1', 'published', array[1,2]::smallint[], current_date - 1, null, 'mensal'),
+        ('${W.geralNext}', '${COURSE_A}', null, 'Geral 2', 'published', array[1,2]::smallint[], current_date + 14, null, 'mensal'),
+        ('${W.geralDraft}', '${COURSE_A}', null, 'Geral rascunho', 'draft', array[1,2]::smallint[], current_date + 28, null, 'mensal');
+      insert into public.mini_quiz_questions (id, quiz_id, position, statement, alternatives, subject_id) values
+        ('${id(960)}', '${W.geralNext}', 0, 'Q', '${alts}', '${SUBJECT_A}');
+    `)
+    const upcoming = async (user) =>
+      (await asStudent(db, user, "select * from public.student_upcoming_quizzes($1) order by kind, block_end, release_date", [COURSE_A])).rows
+
+    const g1 = await upcoming(USERS.groupOne)
+    assert.deepEqual(
+      g1.map((row) => [row.quiz_id, row.kind, row.title, row.block_end, row.unlock_done]),
+      [
+        [W.geralNext, "mensal", "Geral 2", null, true],
+        [null, "semanal", "Diagnóstico Semanal – Metas 08 a 14", 14, false],
+      ],
+    )
+    // O G2 vê o próximo geral, mas não as metas nem os blocos do G1; outro curso e bloqueado não veem nada.
+    assert.deepEqual((await upcoming(USERS.groupTwo)).map((row) => row.quiz_id), [W.geralNext])
+    assert.equal((await upcoming(USERS.otherCourse)).length, 0)
+    assert.equal((await upcoming(USERS.blocked)).length, 0)
+    // As questões do próximo continuam fechadas.
+    const hidden = await asStudent(db, USERS.groupOne, "select id from public.mini_quiz_questions where quiz_id = $1", [W.geralNext])
+    assert.equal(hidden.rows.length, 0)
+  } finally {
+    await db.close()
+  }
+})
