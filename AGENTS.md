@@ -273,7 +273,7 @@ As contas existentes de um administrador e de um aluno de teste são dados prote
 - `target_groups` de metas e diagnósticos aceita 1, 2 e 3. A visibilidade é decidida
   no banco (`student_goal_scopes`, `student_group_allowed`).
 - `course_group_settings`: por curso e grupo, abas/funções desligadas
-  (`metas`, `edital`, `diagnostico_semanal`, `relatorio`, `ranking`, `progresso`) e aviso
+  (`metas`, `edital`, `diagnostico_semanal`, `simulado_mensal`, `relatorio`, `ranking`, `progresso`) e aviso
   da tela inicial. Aba desligada some do menu e a rota volta para `/aluno`.
 - Fluxo de lançamento: lançar primeiro só no Grupo 3, o administrador confere com a
   conta de teste e depois libera nos Grupos 1 e 2. **Antes de lançar qualquer conteúdo
@@ -311,8 +311,14 @@ na plataforma, orientados por `courseId` (nada específico de um concurso).
   (`mini_quiz_ranking`, nome curto). Fica dentro de cada diagnóstico e num card da tela inicial.
 - Área do aluno: aba "Simulados" (`/aluno/simulados`, pedida em 06/11/2026) reúne, em abas internas,
   "Diagnóstico Semanal" (`/aluno/diagnostico-semanal`) e "Relatório" (`/aluno/relatorio`, desempenho por
-  disciplina e assunto, com o botão "Caderno de erros" no topo levando a `/aluno/relatorio/caderno-de-erros`); cada seção segue o liga/desliga do grupo e a aba some só com as duas desligadas.
-  O Simulado Mensal entrará como nova seção dessa aba. As rotas antigas `/aluno/mini-simulados` redirecionam.
+  disciplina e assunto, com o botão "Caderno de erros" no topo levando a `/aluno/relatorio/caderno-de-erros`); cada seção segue o liga/desliga do grupo e a aba some só com todas desligadas.
+  Abas internas: "Semanal", "Mensal" e "Relatório".
+- Simulado Mensal (simulado geral, pedido em 06/11/2026): `mini_quizzes.kind = 'mensal'` (sem disciplina
+  própria, então segue no banco as regras do diagnóstico semanal: tentativa única, cronômetro, ranking,
+  grupos e data de liberação) e `time_limit_minutes` (tempo da prova real, só informativo). Lista em
+  `/aluno/simulado-mensal`; a prova e a correção reutilizam as páginas do diagnóstico, que conferem a
+  função do grupo pelo tipo. A seção aparece para o Grupo 3 sempre e para os demais só quando houver
+  simulado mensal liberado para o grupo. As rotas antigas `/aluno/mini-simulados` redirecionam.
 - O administrador faz a prévia do diagnóstico como aluno (nada é gravado) e publica pela própria tela.
 - O diagnóstico mensal usa a primeira tentativa de cada mini simulado no mês (fuso de
   Brasília, `is_first_of_month`). Refazer fica no histórico e não altera o mês.

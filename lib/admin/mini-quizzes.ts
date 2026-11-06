@@ -12,6 +12,8 @@ export interface AdminMiniQuizSummary {
   courseId: string
   /** null = simulado com várias disciplinas (semanal). */
   subjectId: string | null
+  /** "mensal" = Simulado Mensal (simulado geral); "semanal" nos demais. */
+  kind: "semanal" | "mensal"
   targetGroups: number[]
   releaseDate: string | null
   weekNumber: number | null
@@ -60,7 +62,7 @@ export async function listAdminMiniQuizzes(courseId: string): Promise<AdminMiniQ
   const [quizzes, attempts] = await Promise.all([
     supabase
       .from("mini_quizzes")
-      .select("id, course_id, subject_id, title, status, position, updated_at, target_groups, release_date, week_number, mini_quiz_questions(id, archived_at)")
+      .select("id, course_id, subject_id, kind, title, status, position, updated_at, target_groups, release_date, week_number, mini_quiz_questions(id, archived_at)")
       .eq("course_id", courseId)
       .order("position")
       .order("title"),
@@ -74,6 +76,7 @@ export async function listAdminMiniQuizzes(courseId: string): Promise<AdminMiniQ
     id: quiz.id,
     courseId: quiz.course_id,
     subjectId: quiz.subject_id,
+    kind: quiz.kind === "mensal" ? "mensal" : "semanal",
     targetGroups: (quiz.target_groups ?? [1, 2]) as number[],
     releaseDate: quiz.release_date ?? null,
     weekNumber: quiz.week_number ?? null,

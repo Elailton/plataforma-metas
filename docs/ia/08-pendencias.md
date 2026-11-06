@@ -35,7 +35,7 @@ Requisitos (R1–R7):
    assuntos cobrados nela e estudados no bloco; selo "Prova anterior" (banca, ano, cargo);
    o aluno vê o desempenho nelas; nunca anuladas; sem repetir questão entre diagnósticos.
 2. **R2** Banco de questões por curso (provas anteriores e questões dos diagnósticos, com
-   origem, disciplina, tópico, banca, ano e bloco) para o simulado geral, que fica para depois.
+   origem, disciplina, tópico, banca, ano e bloco) para o simulado geral. A janela "Mensal" existe desde 06/11/2026; falta definir formato, tempo e dia de liberação e montar o primeiro (PMPE).
    Nada é apagado; gabarito fora do alcance do aluno (RLS).
 3. **R3** Metas de reta final: tipo próprio, criadas à mão, apresentação visual diferente.
 4. **R4** Card "caiu na última prova" nos tópicos do edital cobrados (anuladas nem existem

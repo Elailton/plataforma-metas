@@ -1,8 +1,9 @@
 import type React from "react"
-import { requireStudentFeature } from "@/lib/student/experience"
 
-/** Aba que o administrador pode desligar por grupo. */
-export default async function FeatureLayout({ children }: { children: React.ReactNode }) {
-  await requireStudentFeature("diagnostico_semanal")
+/**
+ * As páginas do simulado e da correção servem ao Diagnóstico Semanal e ao Simulado Mensal:
+ * cada página confere a função do grupo pelo tipo do simulado (`requireStudentFeature`).
+ */
+export default function QuizLayout({ children }: { children: React.ReactNode }) {
   return <>{children}</>
 }

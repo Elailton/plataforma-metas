@@ -6,6 +6,7 @@ import { createClient } from "@/lib/supabase/server"
 import { logSafeServerError } from "@/lib/security/safe-error"
 import { getStudentContext } from "@/lib/student/queries"
 import {
+  TEST_GROUP,
   hiddenHrefs,
   normalizeDisabledFeatures,
   settingsGroupFor,
@@ -44,6 +45,18 @@ export const getStudentExperience = cache(async function getStudentExperience():
     return EMPTY
   }
   const disabled = normalizeDisabledFeatures(data?.disabled_features ?? [])
+  // Simulado Mensal: o Grupo 3 (teste) sempre vê a seção; os demais só depois que um
+  // simulado mensal for liberado para o grupo (a RLS aplica grupo e data).
+  if (!disabled.includes("simulado_mensal") && enrollment?.studyGroup !== TEST_GROUP) {
+    const monthly = await supabase
+      .from("mini_quizzes")
+      .select("id", { count: "exact", head: true })
+      .eq("course_id", context.currentCourse.id)
+      .eq("status", "published")
+      .eq("kind", "mensal")
+    if (monthly.error) logSafeServerError("student.monthly_check_failed", monthly.error)
+    if (monthly.error || !monthly.count) disabled.push("simulado_mensal")
+  }
   const off = new Set<string>(disabled)
   return {
     disabled,

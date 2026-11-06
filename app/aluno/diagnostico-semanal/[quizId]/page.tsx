@@ -8,10 +8,10 @@ import { buttonVariants } from "@/components/ui/button"
 import { QuizRunner } from "@/components/mini-quizzes/quiz-runner"
 import { QuizStart } from "@/components/mini-quizzes/quiz-start"
 import { RankingCard } from "@/components/mini-quizzes/ranking-card"
-import { DiagnosticGuidelines } from "@/components/mini-quizzes/diagnostic-guidelines"
+import { DiagnosticGuidelines, formatMinutes } from "@/components/mini-quizzes/diagnostic-guidelines"
 import { barTone, formatDateTime } from "@/components/mini-quizzes/format"
 import { getStudentContext } from "@/lib/student/queries"
-import { getStudentExperience } from "@/lib/student/experience"
+import { getStudentExperience, requireStudentFeature } from "@/lib/student/experience"
 import { getAttemptSubjectBreakdown, getQuizRanking, getStudentQuiz } from "@/lib/mini-quizzes/queries"
 import { canAttempt, formatDuration, nextAvailableAt, percentage } from "@/lib/mini-quizzes/core.mjs"
 
@@ -23,6 +23,9 @@ export default async function WeeklyDiagnosticPage({ params }: { params: Promise
   if (!context) redirect("/auth/sem-acesso")
   const data = await getStudentQuiz(quizId, context.profile.id)
   if (!data || data.quiz.courseId !== context.currentCourse.id) notFound()
+  const monthly = data.quiz.kind === "mensal"
+  await requireStudentFeature(monthly ? "simulado_mensal" : "diagnostico_semanal")
+  const listHref = monthly ? "/aluno/simulado-mensal" : "/aluno/diagnostico-semanal"
 
   const first = data.attempts[0] ?? null
   const last = data.attempts[data.attempts.length - 1] ?? null
@@ -34,9 +37,9 @@ export default async function WeeklyDiagnosticPage({ params }: { params: Promise
     <PageHeader
       title={data.quiz.title}
       eyebrow={data.quiz.subjectName}
-      description={`${data.questions.length} questões · com cronômetro${data.quiz.isWeekly ? " · tentativa única" : ""}`}
-      backHref="/aluno/diagnostico-semanal"
-      backLabel="Diagnóstico Semanal"
+      description={`${data.questions.length} questões${monthly && data.quiz.timeLimitMinutes ? ` · ${formatMinutes(data.quiz.timeLimitMinutes)} de prova` : ""} · com cronômetro${data.quiz.isWeekly ? " · tentativa única" : ""}`}
+      backHref={listHref}
+      backLabel={monthly ? "Simulado Mensal" : "Diagnóstico Semanal"}
     />
   )
 
@@ -64,7 +67,7 @@ export default async function WeeklyDiagnosticPage({ params }: { params: Promise
         {first ? (
           <section aria-labelledby="meu-diagnostico">
             <SectionHeader
-              title={<span id="meu-diagnostico">Seu diagnóstico</span>}
+              title={<span id="meu-diagnostico">{monthly ? "Seu simulado" : "Seu diagnóstico"}</span>}
               description={`Enviado em ${formatDateTime(first.submitted_at)}`}
             />
             <div className="mb-4 grid grid-cols-2 gap-3 md:grid-cols-4">
@@ -110,9 +113,9 @@ export default async function WeeklyDiagnosticPage({ params }: { params: Promise
 
         {available ? (
           data.questions.length === 0 ? (
-            <p className="text-sm text-muted-foreground">Este diagnóstico ainda não tem questões.</p>
+            <p className="text-sm text-muted-foreground">{monthly ? "Este simulado" : "Este diagnóstico"} ainda não tem questões.</p>
           ) : (
-            <QuizStart quizId={data.quiz.id} questionCount={data.questions.length} firstAttempt={data.attempts.length === 0} rankingEnabled={rankingOn} />
+            <QuizStart quizId={data.quiz.id} questionCount={data.questions.length} firstAttempt={data.attempts.length === 0} rankingEnabled={rankingOn} noun={monthly ? "simulado" : "diagnóstico"} />
           )
         ) : !data.quiz.isWeekly && last ? (
           <div className="rounded-xl border border-border bg-card p-6 text-center">
@@ -125,7 +128,12 @@ export default async function WeeklyDiagnosticPage({ params }: { params: Promise
 
         {rankingOn ? <RankingCard rows={ranking} title="Ranking" /> : null}
 
-        <DiagnosticGuidelines questionCount={data.questions.length} weekly={data.quiz.isWeekly} />
+        <DiagnosticGuidelines
+          questionCount={data.questions.length}
+          weekly={data.quiz.isWeekly}
+          monthly={monthly}
+          timeLimitMinutes={data.quiz.timeLimitMinutes}
+        />
       </div>
     </PageContainer>
   )

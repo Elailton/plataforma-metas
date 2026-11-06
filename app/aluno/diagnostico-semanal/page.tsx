@@ -7,12 +7,14 @@ import { SectionHeader } from "@/components/page-header"
 import { scoreTone } from "@/components/mini-quizzes/format"
 import { cn } from "@/lib/utils"
 import { getStudentContext } from "@/lib/student/queries"
+import { requireStudentFeature } from "@/lib/student/experience"
 import { getStudentQuizOverview } from "@/lib/mini-quizzes/queries"
 import { groupQuizzesBySubject } from "@/lib/mini-quizzes/core.mjs"
 
 export const dynamic = "force-dynamic"
 
 export default async function WeeklyDiagnosticsPage() {
+  await requireStudentFeature("diagnostico_semanal")
   const context = await getStudentContext()
   if (!context) redirect("/auth/sem-acesso")
   const overview = await getStudentQuizOverview(context.currentCourse.id, context.profile.id)

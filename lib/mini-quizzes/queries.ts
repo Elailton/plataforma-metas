@@ -57,14 +57,17 @@ export const getCourseSubjects = cache(async function getCourseSubjects(courseId
 })
 
 /** Mini simulados publicados do curso (a RLS garante acesso efetivo), contagem de questões e tentativas do usuário. */
-export async function getStudentQuizOverview(courseId: string, userId: string) {
+export type QuizKind = "semanal" | "mensal"
+
+export async function getStudentQuizOverview(courseId: string, userId: string, kind: QuizKind = "semanal") {
   const supabase = await createClient()
   const [quizzesResult, attemptsResult, subjects] = await Promise.all([
     supabase
       .from("mini_quizzes")
-      .select("id, subject_id, title, description, position, week_number, release_date, mini_quiz_questions(id, archived_at)")
+      .select("id, subject_id, title, description, position, week_number, release_date, time_limit_minutes, mini_quiz_questions(id, archived_at)")
       .eq("course_id", courseId)
-      .eq("status", "published"),
+      .eq("status", "published")
+      .eq("kind", kind),
     supabase.from("mini_quiz_attempts").select(ATTEMPT_COLUMNS).eq("course_id", courseId).eq("user_id", userId),
     getCourseSubjects(courseId),
   ])
@@ -90,7 +93,7 @@ export async function getStudentQuiz(quizId: string, userId: string) {
   const [quizResult, questionsResult, attemptsResult, startResult] = await Promise.all([
     supabase
       .from("mini_quizzes")
-      .select("id, course_id, subject_id, title, description, status, week_number, subjects(name)")
+      .select("id, course_id, subject_id, title, description, status, week_number, kind, time_limit_minutes, subjects(name)")
       .eq("id", quizId)
       .eq("status", "published")
       .maybeSingle(),
@@ -125,8 +128,10 @@ export async function getStudentQuiz(quizId: string, userId: string) {
       courseId: quizResult.data.course_id,
       title: quizResult.data.title,
       description: quizResult.data.description,
-      subjectName: quizLabel(subject, quizResult.data.week_number),
+      subjectName: quizResult.data.kind === "mensal" ? "Simulado Mensal" : quizLabel(subject, quizResult.data.week_number),
       isWeekly: !quizResult.data.subject_id,
+      kind: (quizResult.data.kind === "mensal" ? "mensal" : "semanal") as QuizKind,
+      timeLimitMinutes: (quizResult.data.time_limit_minutes as number | null) ?? null,
     },
     questions: (questionsResult.data ?? []) as QuizQuestion[],
     attempts: (attemptsResult.data ?? []) as QuizAttemptRow[],
@@ -166,6 +171,7 @@ export async function getLatestWeeklyRanking(courseId: string, limit = 5) {
     .eq("course_id", courseId)
     .eq("status", "published")
     .is("subject_id", null)
+    .eq("kind", "semanal")
     .order("release_date", { ascending: false, nullsFirst: false })
     .order("week_number", { ascending: false, nullsFirst: false })
     .limit(1)
@@ -191,7 +197,7 @@ export async function getAttemptReview(attemptId: string) {
   const supabase = await createClient()
   const { data: attempt, error } = await supabase
     .from("mini_quiz_attempts")
-    .select(`${ATTEMPT_COLUMNS}, user_id, course_id, mini_quizzes(title, week_number, subject_id, subjects(name))`)
+    .select(`${ATTEMPT_COLUMNS}, user_id, course_id, mini_quizzes(title, week_number, subject_id, kind, subjects(name))`)
     .eq("id", attemptId)
     .maybeSingle()
   if (error) fail("mini_quiz.attempt_read_failed", error, "Não foi possível carregar a tentativa.")
@@ -236,8 +242,12 @@ export async function getAttemptReview(attemptId: string) {
   return {
     attempt: attempt as unknown as QuizAttemptRow & { user_id: string; course_id: string; answered_count: number },
     quizTitle: (quiz as { title?: string } | null)?.title ?? "Mini simulado",
-    subjectName: quizLabel(subject, (quiz as { week_number?: number | null } | null)?.week_number),
+    subjectName:
+      (quiz as { kind?: string } | null)?.kind === "mensal"
+        ? "Simulado Mensal"
+        : quizLabel(subject, (quiz as { week_number?: number | null } | null)?.week_number),
     isWeekly: !(quiz as { subject_id?: string | null } | null)?.subject_id,
+    kind: ((quiz as { kind?: string } | null)?.kind === "mensal" ? "mensal" : "semanal") as QuizKind,
     questions,
   }
 }

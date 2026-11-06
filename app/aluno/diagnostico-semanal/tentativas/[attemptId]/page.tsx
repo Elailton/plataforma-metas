@@ -10,7 +10,7 @@ import { RankingCard } from "@/components/mini-quizzes/ranking-card"
 import { formatDateTime } from "@/components/mini-quizzes/format"
 import { getStudentContext } from "@/lib/student/queries"
 import { getAttemptReview, getQuizRanking } from "@/lib/mini-quizzes/queries"
-import { getStudentExperience } from "@/lib/student/experience"
+import { getStudentExperience, requireStudentFeature } from "@/lib/student/experience"
 import { formatDuration, nextAvailableAt, percentage } from "@/lib/mini-quizzes/core.mjs"
 
 export const dynamic = "force-dynamic"
@@ -21,6 +21,8 @@ export default async function MiniQuizAttemptPage({ params }: { params: Promise<
   if (!context) redirect("/auth/sem-acesso")
   const review = await getAttemptReview(attemptId)
   if (!review || review.attempt.user_id !== context.profile.id) notFound()
+  const monthly = review.kind === "mensal"
+  await requireStudentFeature(monthly ? "simulado_mensal" : "diagnostico_semanal")
 
   const { attempt } = review
   const score = percentage(attempt.correct_count, attempt.total_count)
@@ -34,8 +36,8 @@ export default async function MiniQuizAttemptPage({ params }: { params: Promise<
         title={review.quizTitle}
         eyebrow={`${review.subjectName} · correção comentada`}
         description={`Enviado em ${formatDateTime(attempt.submitted_at)}${!review.isWeekly && next && next.getTime() > Date.now() ? ` · refazer a partir de ${formatDateTime(next.toISOString())}` : ""}`}
-        backHref={`/aluno/diagnostico-semanal/${attempt.quiz_id}`}
-        backLabel="Diagnóstico Semanal"
+        backHref={`/aluno/${monthly ? "simulado-mensal" : "diagnostico-semanal"}/${attempt.quiz_id}`}
+        backLabel={monthly ? "Simulado Mensal" : "Diagnóstico Semanal"}
         actions={
           <Link href="/aluno/relatorio" className={buttonVariants({ variant: "outline" })}>
             <BarChart3 data-icon="inline-start" />

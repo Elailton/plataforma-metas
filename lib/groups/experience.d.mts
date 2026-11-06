@@ -1,5 +1,5 @@
 export const TEST_GROUP: 3
-export type GroupFeatureKey = "metas" | "edital" | "diagnostico_semanal" | "relatorio" | "ranking" | "progresso"
+export type GroupFeatureKey = "metas" | "edital" | "diagnostico_semanal" | "simulado_mensal" | "relatorio" | "ranking" | "progresso"
 export const GROUP_FEATURES: ReadonlyArray<{ key: GroupFeatureKey; label: string; href: string | null }>
 export function isFeatureKey(value: unknown): value is GroupFeatureKey
 export function normalizeDisabledFeatures(values: unknown): GroupFeatureKey[]
@@ -10,4 +10,4 @@ export function audienceLabel(groups: readonly number[] | null | undefined): str
 export const SIMULADOS_HREF: "/aluno/simulados"
 export function simuladosSections(
   disabled: readonly string[] | null | undefined,
-): Array<{ key: "diagnostico_semanal" | "relatorio"; label: string; href: string }>
+): Array<{ key: "diagnostico_semanal" | "simulado_mensal" | "relatorio"; label: string; href: string }>
