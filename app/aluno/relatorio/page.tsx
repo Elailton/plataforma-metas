@@ -1,9 +1,10 @@
+import Link from "next/link"
 import { redirect } from "next/navigation"
+import { BookMarked, ChevronRight } from "lucide-react"
 import { PageContainer, PageHeading } from "@/components/student/page-container"
 import { SimuladosTabs } from "@/components/student/simulados-tabs"
 import { SectionHeader } from "@/components/page-header"
 import { DiagnosisView } from "@/components/mini-quizzes/diagnosis-view"
-import { ErrorReport } from "@/components/mini-quizzes/error-report"
 import { getStudentContext } from "@/lib/student/queries"
 import { getDiagnosisData, getErrorReport } from "@/lib/mini-quizzes/queries"
 import { buildDiagnosis, isValidMonthKey } from "@/lib/mini-quizzes/core.mjs"
@@ -19,32 +20,43 @@ export default async function StudentReportPage({ searchParams }: { searchParams
     getErrorReport(context.currentCourse.id, context.profile.id),
   ])
   const diagnosis = buildDiagnosis({ ...data, month: isValidMonthKey(mes) ? mes : null })
+  const errorCount = errors.length
 
   return (
     <PageContainer>
       <PageHeading
         title="Relatório"
-        description="O resultado dos seus diagnósticos semanais e os erros organizados por disciplina e assunto, para revisar."
+        description="O resultado dos seus diagnósticos semanais por disciplina e assunto."
       />
       <SimuladosTabs current="/aluno/relatorio" />
-      <div className="flex flex-col gap-10">
-        <section aria-labelledby="seus-erros">
-          <SectionHeader
-            title={<span id="seus-erros">Seus erros para revisar</span>}
-            description="Disciplinas com mais erros aparecem primeiro. Abra o comentário de cada questão."
-          />
-          <ErrorReport items={errors} subjects={data.subjects} />
-        </section>
-        <section aria-labelledby="desempenho">
-          <SectionHeader title={<span id="desempenho">Desempenho por disciplina e assunto</span>} />
-          <DiagnosisView
-            diagnosis={diagnosis}
-            history={data.attempts}
-            monthHref={(month) => `/aluno/relatorio?mes=${month}`}
-            attemptHref={(id) => `/aluno/diagnostico-semanal/tentativas/${id}`}
-          />
-        </section>
-      </div>
+
+      <Link
+        href="/aluno/relatorio/caderno-de-erros"
+        className="mb-8 flex items-center gap-4 rounded-xl border border-primary/40 bg-primary/10 p-4 transition-colors hover:bg-primary/15"
+      >
+        <span className="flex size-11 shrink-0 items-center justify-center rounded-lg bg-primary text-primary-foreground" aria-hidden="true">
+          <BookMarked className="size-5" />
+        </span>
+        <span className="min-w-0 flex-1">
+          <span className="block text-base font-semibold text-foreground">Caderno de erros</span>
+          <span className="block text-sm text-muted-foreground">
+            {errorCount === 0
+              ? "Nenhum erro para revisar ainda."
+              : `${errorCount} ${errorCount === 1 ? "questão errada" : "questões erradas"} para revisar, com o comentário de cada uma.`}
+          </span>
+        </span>
+        <ChevronRight className="size-5 shrink-0 text-muted-foreground" aria-hidden="true" />
+      </Link>
+
+      <section aria-labelledby="desempenho">
+        <SectionHeader title={<span id="desempenho">Desempenho por disciplina e assunto</span>} />
+        <DiagnosisView
+          diagnosis={diagnosis}
+          history={data.attempts}
+          monthHref={(month) => `/aluno/relatorio?mes=${month}`}
+          attemptHref={(id) => `/aluno/diagnostico-semanal/tentativas/${id}`}
+        />
+      </section>
     </PageContainer>
   )
 }

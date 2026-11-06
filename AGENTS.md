@@ -310,8 +310,8 @@ na plataforma, orientados por `courseId` (nada específico de um concurso).
 - Ranking: o aluno escolhe ao iniciar se quer aparecer; ordem por acertos e, no empate, menor tempo
   (`mini_quiz_ranking`, nome curto). Fica dentro de cada diagnóstico e num card da tela inicial.
 - Área do aluno: aba "Simulados" (`/aluno/simulados`, pedida em 06/11/2026) reúne, em abas internas,
-  "Diagnóstico Semanal" (`/aluno/diagnostico-semanal`) e "Relatório" (`/aluno/relatorio`, erros por
-  disciplina e assunto); cada seção segue o liga/desliga do grupo e a aba some só com as duas desligadas.
+  "Diagnóstico Semanal" (`/aluno/diagnostico-semanal`) e "Relatório" (`/aluno/relatorio`, desempenho por
+  disciplina e assunto, com o botão "Caderno de erros" no topo levando a `/aluno/relatorio/caderno-de-erros`); cada seção segue o liga/desliga do grupo e a aba some só com as duas desligadas.
   O Simulado Mensal entrará como nova seção dessa aba. As rotas antigas `/aluno/mini-simulados` redirecionam.
 - O administrador faz a prévia do diagnóstico como aluno (nada é gravado) e publica pela própria tela.
 - O diagnóstico mensal usa a primeira tentativa de cada mini simulado no mês (fuso de
