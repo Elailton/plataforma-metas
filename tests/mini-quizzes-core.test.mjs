@@ -163,3 +163,21 @@ test("cronômetro: tempo decorrido e formatos", async () => {
   assert.equal(formatDuration(2530), "42 min 10 s")
   assert.equal(formatDuration(3900), "1 h 05 min")
 })
+
+test("próximos simulados: no máximo 2 pendentes por tipo e o motivo do bloqueio", async () => {
+  const { pendingQuizWindow, upcomingReason } = await import("../lib/mini-quizzes/core.mjs")
+  const blocks = [21, 7, 14].map((n) => ({ title: `Bloco ${n}`, block_end: n, release_date: null }))
+  // Meta 01: nenhum aberto, vê os 2 próximos fechados (07 e 14).
+  assert.deepEqual(pendingQuizWindow({ openNotDone: 0, upcoming: blocks }).map((b) => b.block_end), [7, 14])
+  // Meta 07 concluída: o bloco 07 abriu (e não foi feito), então só 1 fechado.
+  assert.deepEqual(pendingQuizWindow({ openNotDone: 1, upcoming: blocks.filter((b) => b.block_end !== 7) }).map((b) => b.block_end), [14])
+  assert.deepEqual(pendingQuizWindow({ openNotDone: 2, upcoming: blocks }), [])
+  const dates = [{ title: "B", block_end: null, release_date: "2026-12-06" }, { title: "A", block_end: null, release_date: "2026-11-22" }]
+  assert.deepEqual(pendingQuizWindow({ upcoming: dates }).map((d) => d.release_date), ["2026-11-22", "2026-12-06"])
+
+  const today = "2026-11-08"
+  assert.deepEqual(upcomingReason({ release_date: "2026-11-22", unlock_goal_id: null, unlock_done: true }, today), { type: "date", label: "Libera em 22/11" })
+  assert.equal(upcomingReason({ release_date: null, unlock_goal_id: "g", unlock_done: false, block_end: 14 }, today).label, "Conclua a Meta 14")
+  assert.equal(upcomingReason({ release_date: null, unlock_goal_id: "g", unlock_done: false, unlock_goal_title: "Meta 07 – X" }, today).label, "Conclua a Meta 07")
+  assert.equal(upcomingReason({ release_date: null, unlock_goal_id: "g", unlock_done: true, block_end: 14 }, today).label, "Em breve")
+})

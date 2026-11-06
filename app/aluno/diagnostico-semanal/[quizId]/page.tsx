@@ -25,7 +25,7 @@ export default async function WeeklyDiagnosticPage({ params }: { params: Promise
   if (!data || data.quiz.courseId !== context.currentCourse.id) notFound()
   const monthly = data.quiz.kind === "mensal"
   await requireStudentFeature(monthly ? "simulado_mensal" : "diagnostico_semanal")
-  const listHref = monthly ? "/aluno/simulado-mensal" : "/aluno/diagnostico-semanal"
+  const listHref = monthly ? "/aluno/simulado-geral" : "/aluno/diagnostico-semanal"
 
   const first = data.attempts[0] ?? null
   const last = data.attempts[data.attempts.length - 1] ?? null
@@ -39,7 +39,7 @@ export default async function WeeklyDiagnosticPage({ params }: { params: Promise
       eyebrow={data.quiz.subjectName}
       description={`${data.questions.length} questões${monthly && data.quiz.timeLimitMinutes ? ` · ${formatMinutes(data.quiz.timeLimitMinutes)} de prova` : ""} · com cronômetro${data.quiz.isWeekly ? " · tentativa única" : ""}`}
       backHref={listHref}
-      backLabel={monthly ? "Simulado Mensal" : "Diagnóstico Semanal"}
+      backLabel={monthly ? "Simulado Geral" : "Diagnóstico Semanal"}
     />
   )
 

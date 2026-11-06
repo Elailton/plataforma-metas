@@ -35,7 +35,7 @@ Requisitos (R1–R7):
    assuntos cobrados nela e estudados no bloco; selo "Prova anterior" (banca, ano, cargo);
    o aluno vê o desempenho nelas; nunca anuladas; sem repetir questão entre diagnósticos.
 2. **R2** Banco de questões por curso (provas anteriores e questões dos diagnósticos, com
-   origem, disciplina, tópico, banca, ano e bloco) para o simulado geral. A janela "Mensal" existe desde 06/11/2026; formato da PMPE definido (60 questões, 4h, a cada 30 metas; ver `04-cursos-e-ofertas.md`). Falta montar as questões do primeiro (Meta 30, G1 e G2) quando o usuário pedir.
+   origem, disciplina, tópico, banca, ano e bloco) para o simulado geral. A janela "Geral" existe desde 06/11/2026 (ver `04-cursos-e-ofertas.md`).
    Nada é apagado; gabarito fora do alcance do aluno (RLS).
 3. **R3** Metas de reta final: tipo próprio, criadas à mão, apresentação visual diferente.
 4. **R4** Card "caiu na última prova" nos tópicos do edital cobrados (anuladas nem existem
@@ -145,3 +145,14 @@ Sem decisões em aberto. Falta só o gatilho do usuário.
 - Firewall/limites de taxa na Vercel para `/auth/*`.
 - Conferir backups/PITR do Supabase.
 - Teste de carga repetível se o volume superar muito o previsto.
+
+## Simulado Geral (regras do usuário, 2026-11-06)
+- Não tem relação com as metas: liberado por data.
+- **Edital aberto: a cada 14 dias. Edital fechado: a cada 30 dias.** Ao gerar qualquer simulado,
+  **sempre perguntar ao usuário se o edital do curso está aberto ou fechado.**
+- Sempre deixar publicado e fechado o simulado da **próxima data** (mesmo sem questões), para
+  instigar o aluno; o aluno vê no máximo 2 pendentes (o mesmo vale para o Diagnóstico Semanal, que
+  continua liberado pela meta).
+- PMPE (edital aberto): 1º em 08/11/2026, 2º em 22/11/2026. **Pendente: montar as 60 questões
+  do 1º antes de 08/11 e do 2º antes de 22/11**, e publicar o 3º (06/12) fechado quando o 2º abrir.
+- Demais cursos (edital fechado): sem simulado geral por enquanto, sem previsão.

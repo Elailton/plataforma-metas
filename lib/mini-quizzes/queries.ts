@@ -3,7 +3,7 @@ import "server-only"
 import { cache } from "react"
 import { createClient } from "@/lib/supabase/server"
 import { logSafeServerError } from "@/lib/security/safe-error"
-import type { AlternativeKey, QuizAttemptRow } from "@/lib/mini-quizzes/core.mjs"
+import type { AlternativeKey, QuizAttemptRow, UpcomingQuiz } from "@/lib/mini-quizzes/core.mjs"
 import { isUuid } from "@/lib/mini-quizzes/core.mjs"
 
 export interface QuizAlternative {
@@ -128,7 +128,7 @@ export async function getStudentQuiz(quizId: string, userId: string) {
       courseId: quizResult.data.course_id,
       title: quizResult.data.title,
       description: quizResult.data.description,
-      subjectName: quizResult.data.kind === "mensal" ? "Simulado Mensal" : quizLabel(subject, quizResult.data.week_number),
+      subjectName: quizResult.data.kind === "mensal" ? "Simulado Geral" : quizLabel(subject, quizResult.data.week_number),
       isWeekly: !quizResult.data.subject_id,
       kind: (quizResult.data.kind === "mensal" ? "mensal" : "semanal") as QuizKind,
       timeLimitMinutes: (quizResult.data.time_limit_minutes as number | null) ?? null,
@@ -244,7 +244,7 @@ export async function getAttemptReview(attemptId: string) {
     quizTitle: (quiz as { title?: string } | null)?.title ?? "Mini simulado",
     subjectName:
       (quiz as { kind?: string } | null)?.kind === "mensal"
-        ? "Simulado Mensal"
+        ? "Simulado Geral"
         : quizLabel(subject, (quiz as { week_number?: number | null } | null)?.week_number),
     isWeekly: !(quiz as { subject_id?: string | null } | null)?.subject_id,
     kind: ((quiz as { kind?: string } | null)?.kind === "mensal" ? "mensal" : "semanal") as QuizKind,
@@ -385,4 +385,15 @@ function statementExcerpt(rawStatement: string) {
     .replace(/\s+/g, " ")
     .trim()
   return stem.length > 180 ? `${stem.slice(0, 177)}…` : stem
+}
+
+/** Próximos diagnósticos e simulados gerais ainda fechados (só título e condição). Falha vira lista vazia. */
+export async function getUpcomingQuizzes(courseId: string): Promise<UpcomingQuiz[]> {
+  const supabase = await createClient()
+  const { data, error } = await supabase.rpc("student_upcoming_quizzes", { p_course_id: courseId })
+  if (error) {
+    logSafeServerError("mini_quiz.upcoming_failed", error)
+    return []
+  }
+  return (data ?? []) as UpcomingQuiz[]
 }

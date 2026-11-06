@@ -12,7 +12,7 @@ export interface AdminMiniQuizSummary {
   courseId: string
   /** null = simulado com várias disciplinas (semanal). */
   subjectId: string | null
-  /** "mensal" = Simulado Mensal (simulado geral); "semanal" nos demais. */
+  /** "mensal" = Simulado Geral (simulado geral); "semanal" nos demais. */
   kind: "semanal" | "mensal"
   targetGroups: number[]
   releaseDate: string | null

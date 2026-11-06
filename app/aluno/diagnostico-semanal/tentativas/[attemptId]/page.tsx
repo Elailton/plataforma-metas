@@ -36,8 +36,8 @@ export default async function MiniQuizAttemptPage({ params }: { params: Promise<
         title={review.quizTitle}
         eyebrow={`${review.subjectName} · correção comentada`}
         description={`Enviado em ${formatDateTime(attempt.submitted_at)}${!review.isWeekly && next && next.getTime() > Date.now() ? ` · refazer a partir de ${formatDateTime(next.toISOString())}` : ""}`}
-        backHref={`/aluno/${monthly ? "simulado-mensal" : "diagnostico-semanal"}/${attempt.quiz_id}`}
-        backLabel={monthly ? "Simulado Mensal" : "Diagnóstico Semanal"}
+        backHref={`/aluno/${monthly ? "simulado-geral" : "diagnostico-semanal"}/${attempt.quiz_id}`}
+        backLabel={monthly ? "Simulado Geral" : "Diagnóstico Semanal"}
         actions={
           <Link href="/aluno/relatorio" className={buttonVariants({ variant: "outline" })}>
             <BarChart3 data-icon="inline-start" />
