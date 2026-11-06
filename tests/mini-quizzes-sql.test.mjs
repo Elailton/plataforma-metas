@@ -495,14 +495,14 @@ test("próximos simulados: aluno vê só título e condição dos fechados do se
     await applyMigration(db, "20261106000100_simulado_mensal.sql")
     await applyMigration(db, "20261106000200_upcoming_quizzes.sql")
     const GOAL_07 = id(140) // meta do G1, concluída pelo aluno do G1
-    const GOAL_14 = id(145)
+    const GOAL_14 = id(7140)
     const W = { block7: id(950), geralNow: id(951), geralNext: id(952), geralDraft: id(953) }
     const alts = JSON.stringify(["A", "B"].map((key) => ({ key, text: key })))
     await db.exec(`
       update public.goals set title = 'Meta 07 – Português' where id = '${GOAL_07}';
       insert into public.goals (id, course_id, status, title, target_groups) values
         ('${GOAL_14}', '${COURSE_A}', 'published', 'Meta 14 – Informática', array[1]::smallint[]);
-      insert into public.goal_items (id, goal_id, subject_id) values ('${id(155)}', '${GOAL_14}', '${SUBJECT_A}');
+      insert into public.goal_items (id, goal_id, subject_id) values ('${id(7150)}', '${GOAL_14}', '${SUBJECT_A}');
       insert into public.mini_quizzes (id, course_id, subject_id, title, status, target_groups, release_date, unlock_goal_id, kind) values
         ('${W.block7}', '${COURSE_A}', null, 'Bloco 1', 'published', array[1]::smallint[], current_date - 1, '${GOAL_07}', 'semanal'),
         ('${W.geralNow}', '${COURSE_A}', null, 'Geral 1', 'published', array[1,2]::smallint[], current_date - 1, null, 'mensal'),
