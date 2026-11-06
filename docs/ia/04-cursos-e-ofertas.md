@@ -11,6 +11,25 @@
 - **PMPE:** edital de 30/09/2026 (AOCP, 1.250 vagas de soldado); prova objetiva **prevista
   para 21/02/2027** (data provável, pode mudar). Fontes: Concursos no Brasil e Diário de
   Pernambuco, conferidas em 2026-10-30.
+- **Estrutura da prova PMPE (Soldado, cargo 201, Edital de Abertura 001/2026, DOE-PE extra de
+  29/09/2026, Instituto AOCP; conferida no PDF enviado pelo usuário em 2026-11-06):** prova objetiva
+  com 60 questões de 5 alternativas (A–E), 1 ponto cada, só uma correta, em 3 blocos:
+  | Bloco | Disciplina | Questões |
+  |---|---|---|
+  | I | Língua Portuguesa | 10 |
+  | I | História de Pernambuco | 10 |
+  | II | Raciocínio Lógico | 10 |
+  | II | Informática | 10 |
+  | III | Direito Constitucional | 10 |
+  | III | Direitos Humanos e Legislação Extravagante | 10 |
+  Aprovação: mínimo de 30% em cada bloco, nenhuma disciplina zerada e 30% no total. Redação
+  dissertativo-argumentativa (40 pontos, 15–20 linhas). Objetiva + redação em **5 horas**, turno da
+  manhã, em 21/02/2027 (Anexo I). Depois: exames médicos, TAF e avaliação psicológica.
+- **Simulado Mensal da PMPE (decidido em 2026-11-06):** a mesma estrutura da objetiva (60 questões,
+  10 por disciplina, na ordem da tabela), só questões reais da AOCP sobre o que foi estudado até a
+  meta que libera (Meta 30, 60, 90...), sem repetir questões dos diagnósticos; `time_limit_minutes = 240`
+  (4 horas, reservando 1 hora da prova real para a redação); um por grupo; lançar primeiro só no
+  Grupo 3. As questões ainda não foram montadas (pedido do usuário: só guardar a estrutura).
 - O site de vendas ainda diz "Acesso ao SGA válido até a data da prova do concurso": o
   usuário precisa corrigir para 1 ano (fora do repositório).
 
