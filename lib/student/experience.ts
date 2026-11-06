@@ -48,18 +48,12 @@ export const getStudentExperience = cache(async function getStudentExperience():
   // Simulado Geral: o Grupo 3 (teste) sempre vê a seção; os demais só quando houver um simulado
   // geral publicado para o grupo, aberto ou ainda fechado (a RLS e a RPC aplicam grupo e data).
   if (!disabled.includes("simulado_mensal") && enrollment?.studyGroup !== TEST_GROUP) {
-    const [open, upcoming] = await Promise.all([
-      supabase
-        .from("mini_quizzes")
-        .select("id", { count: "exact", head: true })
-        .eq("course_id", context.currentCourse.id)
-        .eq("status", "published")
-        .eq("kind", "mensal"),
-      supabase.rpc("student_upcoming_quizzes", { p_course_id: context.currentCourse.id }),
-    ])
-    if (open.error) logSafeServerError("student.general_quiz_check_failed", open.error)
-    const hasUpcoming = !upcoming.error && ((upcoming.data ?? []) as Array<{ kind: string }>).some((row) => row.kind === "mensal")
-    if (!open.count && !hasUpcoming) disabled.push("simulado_mensal")
+    // Consulta leve (roda em toda página): só diz se existe simulado geral para o grupo.
+    const { data: hasGeneral, error: generalError } = await supabase.rpc("student_has_general_quiz", {
+      p_course_id: context.currentCourse.id,
+    })
+    if (generalError) logSafeServerError("student.general_quiz_check_failed", generalError)
+    if (generalError || !hasGeneral) disabled.push("simulado_mensal")
   }
   const off = new Set<string>(disabled)
   return {
