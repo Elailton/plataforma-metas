@@ -7,6 +7,7 @@ import { useRouter } from "next/navigation";
 import { AlertTriangle, ArrowRight, Check, ChevronLeft, LockKeyhole } from "lucide-react";
 import { submitFirstAccessQuestionnaire } from "@/lib/groups/student-actions";
 import { createClient } from "@/lib/supabase/client";
+import { SUPPORT_PHONE_LABEL, SUPPORT_WHATSAPP_URL } from "@/lib/support";
 import { passwordErrorMessage } from "@/lib/auth/password-error.mjs";
 import { WEAK_PASSWORD_HINT, weakPasswordReason } from "@/lib/auth/password-strength.mjs";
 import {
@@ -382,8 +383,12 @@ export function FirstAccessForm({
                 mudar suas respostas.
               </p>
               <LockedAnswersNotice title="Depois de confirmar, suas respostas não poderão ser editadas">
-                Elas influenciam diretamente nas suas metas. Se depois você
-                precisar alterar alguma resposta, suas metas serão reiniciadas.
+                Elas influenciam diretamente nas suas metas. Se precisar
+                alterar alguma resposta, fale com o suporte no WhatsApp{" "}
+                <a href={SUPPORT_WHATSAPP_URL} target="_blank" rel="noopener noreferrer">
+                  {SUPPORT_PHONE_LABEL}
+                </a>
+                : suas metas serão reiniciadas.
               </LockedAnswersNotice>
               <div className={styles.review}>
                 {steps.map((s, i) => (
@@ -444,7 +449,8 @@ export function FirstAccessForm({
                       diretamente nas suas metas.
                     </p>
                     <p>
-                      Se no futuro você precisar mudar alguma resposta,{" "}
+                      Se precisar alterar alguma resposta, fale com o suporte
+                      no WhatsApp {SUPPORT_PHONE_LABEL}:{" "}
                       <strong>suas metas serão reiniciadas</strong> e o plano
                       recomeça do início.
                     </p>
