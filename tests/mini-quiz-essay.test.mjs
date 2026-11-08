@@ -5,6 +5,8 @@ import {
   essayImagePath,
   essayReviewDeadline,
   essayStatusLabel,
+  parseEssayPrompt,
+  ESSAY_MAX_BODY,
   parseEssayScores,
   remainingSeconds,
 } from "../lib/mini-quizzes/essay.mjs"
@@ -39,4 +41,18 @@ test("prova: cronômetro regressivo pelo tempo real", () => {
 test("redação: foto fica na pasta do aluno e da tentativa", () => {
   assert.equal(essayImagePath("u1", "a1", 0, "x", "image/png"), "u1/a1/1-x.png")
   assert.equal(essayImagePath("u1", "a1", 2, "y", "image/jpeg"), "u1/a1/3-y.jpg")
+})
+
+test("redação: folha para baixar vem do marcador e sai do texto exibido", () => {
+  const parsed = parseEssayPrompt("[[folha:/folhas-redacao/pmpe-simulado-geral-01.pdf]]\n\n**PROPOSTA**\nTexto")
+  assert.equal(parsed.sheetUrl, "/folhas-redacao/pmpe-simulado-geral-01.pdf")
+  assert.equal(parsed.text, "**PROPOSTA**\nTexto")
+  assert.equal(parseEssayPrompt("Sem folha").sheetUrl, null)
+  // Só arquivos da pasta pública de folhas, sem endereços externos.
+  assert.equal(parseEssayPrompt("[[folha:https://x.com/a.pdf]]").sheetUrl, null)
+  assert.equal(parseEssayPrompt("[[folha:/folhas-redacao/../x.pdf]]").sheetUrl, null)
+})
+
+test("redação: texto aceita cerca de 100 linhas", () => {
+  assert.ok(ESSAY_MAX_BODY >= 10000)
 })

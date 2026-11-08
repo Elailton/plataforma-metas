@@ -118,6 +118,11 @@ Linhas (mín. – máx.); campo **"Título"** (sempre há título, nunca "se hou
 "Atenção: anulação"; **sem nome/CPF/assinatura** (identificação zera a redação); 4 quadrados pretos nos
 cantos para o aluno conferir que a folha inteira saiu na foto.
 
+Folha de um simulado com redação: gerar com `--tema "<tema proposto>"` (o tema sai impresso na folha),
+salvar em `public/folhas-redacao/<curso>-<simulado>.pdf` e pôr no início de `mini_quizzes.essay_prompt` a
+linha `[[folha:/folhas-redacao/<curso>-<simulado>.pdf]]` (o aluno vê o botão "Baixar folha de redação").
+Ex.: PMPE Simulado Geral 01 → `public/folhas-redacao/pmpe-simulado-geral-01.pdf`.
+
 Para um curso novo: conferir no edital o número de linhas da discursiva e gerar com
 `--curso <SIGLA> --simulado "<título>" --linhas <máx> --min <mín> --max <máx>`; conferir a imagem antes
 de enviar. Sem limites no edital (ou edital fechado), usar o modelo base.

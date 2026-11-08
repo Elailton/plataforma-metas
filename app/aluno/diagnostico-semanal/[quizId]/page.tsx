@@ -15,6 +15,8 @@ import { getStudentExperience, requireStudentFeature } from "@/lib/student/exper
 import { getAttemptSubjectBreakdown, getQuizRanking, getStudentQuiz } from "@/lib/mini-quizzes/queries"
 import { canAttempt, formatDuration, nextAvailableAt, percentage } from "@/lib/mini-quizzes/core.mjs"
 import { getAttemptEssay, getQuizEssayPrompt } from "@/lib/mini-quizzes/essays"
+import { parseEssayPrompt } from "@/lib/mini-quizzes/essay.mjs"
+import { EssayPrep } from "@/components/mini-quizzes/essay-prep"
 
 export const dynamic = "force-dynamic"
 
@@ -34,6 +36,7 @@ export default async function WeeklyDiagnosticPage({ params }: { params: Promise
   const available = data.quiz.isWeekly ? !last : canAttempt(last?.submitted_at)
   const started = available ? data.openStart : null
   const essayPrompt = monthly ? await getQuizEssayPrompt(data.quiz.id) : null
+  const essaySheetUrl = essayPrompt ? parseEssayPrompt(essayPrompt).sheetUrl : null
 
   const header = (
     <PageHeader
@@ -130,7 +133,17 @@ export default async function WeeklyDiagnosticPage({ params }: { params: Promise
           data.questions.length === 0 ? (
             <p className="text-sm text-muted-foreground">{monthly ? "Este simulado" : "Este diagnóstico"} ainda não tem questões.</p>
           ) : (
-            <QuizStart quizId={data.quiz.id} questionCount={data.questions.length} firstAttempt={data.attempts.length === 0} rankingEnabled={rankingOn} noun={monthly ? "simulado" : "diagnóstico"} />
+            <>
+              {essayPrompt ? <EssayPrep sheetUrl={essaySheetUrl} /> : null}
+              <QuizStart
+                quizId={data.quiz.id}
+                questionCount={data.questions.length}
+                firstAttempt={data.attempts.length === 0}
+                rankingEnabled={rankingOn}
+                noun={monthly ? "simulado" : "diagnóstico"}
+                essay={essayPrompt ? { sheetUrl: essaySheetUrl } : null}
+              />
+            </>
           )
         ) : !data.quiz.isWeekly && last ? (
           <div className="rounded-xl border border-border bg-card p-6 text-center">

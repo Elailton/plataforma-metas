@@ -23,6 +23,7 @@ ap.add_argument("--simulado", default="")
 ap.add_argument("--linhas", type=int, default=30)
 ap.add_argument("--min", type=int, default=0)
 ap.add_argument("--max", type=int, default=0)
+ap.add_argument("--tema", default="", help="Tema proposto, impresso no topo da folha")
 a = ap.parse_args()
 e = html.escape
 
@@ -46,6 +47,8 @@ limit_rule = (
     else "Respeite as margens e o número de linhas exigido; o que passar do limite não é avaliado."
 )
 
+tema_box = f'<div class="tema"><span>Tema</span><p>{e(a.tema)}</p></div>' if a.tema else ""
+
 doc = f"""<!doctype html><html lang="pt-BR"><head><meta charset="utf-8"><title>Folha de Redação SGA</title>
 <style>
 @page {{ size: A4; margin: 0; }}
@@ -66,6 +69,9 @@ h1 {{ font-size: 17pt; font-weight: 700; letter-spacing: 1.5pt; }}
 .box h2 {{ font-size: 7.2pt; text-transform: uppercase; letter-spacing: .4pt; margin-bottom: .8mm; }}
 .box ol {{ padding-left: 3.6mm; }}
 .alert h2 {{ color: #111; }}
+.tema {{ margin-top: 3mm; border: .3mm solid #111; padding: 1.6mm 2.5mm; }}
+.tema span {{ font-size: 6.6pt; font-weight: 700; text-transform: uppercase; color: #444; display: block; }}
+.tema p {{ font-size: 9.5pt; font-weight: 700; line-height: 1.3; margin-top: .6mm; }}
 .title {{ margin-top: 3mm; display: flex; align-items: center; gap: 2mm; border: .3mm solid #111; padding: 0 2mm; height: 8mm; }}
 .title span {{ font-size: 6.6pt; font-weight: 700; text-transform: uppercase; color: #444; white-space: nowrap; }}
 .lines {{ margin-top: 2.5mm; border: .5mm solid #111; flex: 1; display: flex; flex-direction: column; }}
@@ -100,7 +106,7 @@ footer {{ display: flex; justify-content: space-between; font-size: 6.6pt; color
     <li>Letra ilegível ou foto embaçada, escura ou cortada <b>anula a redação</b>, sem recurso.</li>
   </ol></div>
 </div>
-<div class="title"><span>Título</span></div>
+{tema_box}<div class="title"><span>Título</span></div>
 <div class="lines">
 {rows}
 </div>

@@ -2,9 +2,19 @@
 
 import { useState } from "react"
 import { useRouter } from "next/navigation"
-import { Play, Timer, Trophy } from "lucide-react"
+import { AlertTriangle, Camera, Download, Play, Timer, Trophy } from "lucide-react"
 import { toast } from "sonner"
-import { Button } from "@/components/ui/button"
+import { Button, buttonVariants } from "@/components/ui/button"
+import { Checkbox } from "@/components/ui/checkbox"
+import {
+  AlertDialog,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/components/ui/alert-dialog"
 import { cn } from "@/lib/utils"
 import { startMiniQuiz } from "@/lib/mini-quizzes/actions"
 import { formatDateTime } from "./format"
@@ -16,6 +26,7 @@ export function QuizStart({
   firstAttempt,
   rankingEnabled = true,
   noun = "diagnóstico",
+  essay = null,
 }: {
   quizId: string
   questionCount: number
@@ -23,14 +34,28 @@ export function QuizStart({
   rankingEnabled?: boolean
   /** Como chamar a prova nos textos: "diagnóstico" ou "simulado". */
   noun?: "diagnóstico" | "simulado"
+  /** Simulado com redação: 2 avisos antes de iniciar (folha impressa; foto e anulação). */
+  essay?: { sheetUrl: string | null } | null
 }) {
   const router = useRouter()
   const askRanking = firstAttempt && rankingEnabled
   const [ranking, setRanking] = useState<boolean | null>(askRanking ? null : false)
   const [pending, setPending] = useState(false)
+  const [warning, setWarning] = useState<0 | 1 | 2>(0)
+  const [okSheet, setOkSheet] = useState(false)
+  const [okPhoto, setOkPhoto] = useState(false)
+
+  function requestStart() {
+    if (ranking === null) return
+    if (!essay) return void start()
+    setOkSheet(false)
+    setOkPhoto(false)
+    setWarning(1)
+  }
 
   async function start() {
     if (ranking === null) return
+    setWarning(0)
     setPending(true)
     try {
       const result = await startMiniQuiz(quizId, ranking)
@@ -103,11 +128,92 @@ export function QuizStart({
       )}
 
       <div>
-        <Button onClick={start} disabled={pending || ranking === null}>
+        <Button onClick={requestStart} disabled={pending || ranking === null}>
           <Play data-icon="inline-start" />
           {pending ? "Iniciando..." : `Iniciar ${noun}`}
         </Button>
       </div>
+
+      {essay ? (
+        <>
+          <AlertDialog open={warning === 1} onOpenChange={(open) => (!open ? setWarning(0) : null)}>
+            <AlertDialogContent className="border-2 border-destructive">
+              <AlertDialogHeader>
+                <AlertDialogTitle className="flex items-center gap-2 text-destructive">
+                  <Timer className="size-5" aria-hidden="true" />
+                  AVISO 1 de 2: O CRONÔMETRO NÃO PARA
+                </AlertDialogTitle>
+                <AlertDialogDescription render={<div />} className="flex flex-col gap-3 text-foreground">
+                  <div className="flex gap-3 rounded-lg border-2 border-destructive bg-destructive/10 p-3 text-sm leading-relaxed">
+                    <AlertTriangle className="mt-0.5 size-5 shrink-0 text-destructive" aria-hidden="true" />
+                    <div className="flex flex-col gap-1.5">
+                      <p>
+                        Este simulado reproduz a sua prova: questões e redação no mesmo tempo. Depois de iniciar,{" "}
+                        <strong>o cronômetro não pode ser pausado</strong>.
+                      </p>
+                      <p>
+                        Se vai fazer a redação, <strong>baixe e imprima a folha de redação agora</strong> e separe caneta azul ou preta.
+                      </p>
+                    </div>
+                  </div>
+                  {essay.sheetUrl ? (
+                    <a href={essay.sheetUrl} download className={buttonVariants({ variant: "outline" })}>
+                      <Download data-icon="inline-start" />
+                      Baixar folha de redação (PDF)
+                    </a>
+                  ) : null}
+                  <label className="flex items-start gap-2 text-sm">
+                    <Checkbox checked={okSheet} onCheckedChange={(value) => setOkSheet(Boolean(value))} className="mt-0.5" />
+                    <span>Estou pronto: folha impressa (ou não vou fazer a redação) e tempo reservado.</span>
+                  </label>
+                </AlertDialogDescription>
+              </AlertDialogHeader>
+              <AlertDialogFooter>
+                <AlertDialogCancel>Ainda não</AlertDialogCancel>
+                <Button className="bg-destructive text-white hover:bg-destructive/90" disabled={!okSheet} onClick={() => setWarning(2)}>
+                  Continuar
+                </Button>
+              </AlertDialogFooter>
+            </AlertDialogContent>
+          </AlertDialog>
+
+          <AlertDialog open={warning === 2} onOpenChange={(open) => (!open ? setWarning(0) : null)}>
+            <AlertDialogContent className="border-2 border-destructive">
+              <AlertDialogHeader>
+                <AlertDialogTitle className="flex items-center gap-2 text-destructive">
+                  <Camera className="size-5" aria-hidden="true" />
+                  AVISO 2 de 2: FOTO DA REDAÇÃO
+                </AlertDialogTitle>
+                <AlertDialogDescription render={<div />} className="flex flex-col gap-3 text-foreground">
+                  <div className="flex gap-3 rounded-lg border-2 border-destructive bg-destructive/10 p-3 text-sm leading-relaxed">
+                    <AlertTriangle className="mt-0.5 size-5 shrink-0 text-destructive" aria-hidden="true" />
+                    <div className="flex flex-col gap-1.5">
+                      <p>
+                        A foto deve mostrar a <strong>folha inteira, 100% legível</strong>, com os 4 quadrados pretos dos cantos. Letra ilegível ou foto
+                        embaçada, escura ou cortada leva à <strong>ANULAÇÃO, sem recurso</strong>.
+                      </p>
+                      <p>
+                        Não se identifique na folha. O texto digitado no campo da plataforma tem <strong>correção aproximada</strong> e pode ser impreciso.
+                      </p>
+                    </div>
+                  </div>
+                  <label className="flex items-start gap-2 text-sm">
+                    <Checkbox checked={okPhoto} onCheckedChange={(value) => setOkPhoto(Boolean(value))} className="mt-0.5" />
+                    <span>Li e entendi as regras da redação.</span>
+                  </label>
+                </AlertDialogDescription>
+              </AlertDialogHeader>
+              <AlertDialogFooter>
+                <AlertDialogCancel>Voltar</AlertDialogCancel>
+                <Button className="bg-destructive text-white hover:bg-destructive/90" disabled={!okPhoto || pending} onClick={start}>
+                  <Play data-icon="inline-start" />
+                  Iniciar {noun}
+                </Button>
+              </AlertDialogFooter>
+            </AlertDialogContent>
+          </AlertDialog>
+        </>
+      ) : null}
     </div>
   )
 }

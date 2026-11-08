@@ -11,8 +11,8 @@ export type EssayActionResult = { ok: true; submittedAt?: string } | { ok: false
 
 const MESSAGES: Record<string, string> = {
   ESSAY_ALREADY_SENT: "Você já enviou a redação deste simulado.",
-  ESSAY_EMPTY: "Anexe a foto da folha ou cole o texto da redação.",
-  ESSAY_TOO_LONG: "O texto colado está grande demais.",
+  ESSAY_EMPTY: "Anexe a foto da folha ou digite o texto da redação.",
+  ESSAY_TOO_LONG: "O texto ficou grande demais para enviar. Confira se colou algo além da redação.",
   ESSAY_TOO_MANY_IMAGES: `Envie no máximo ${ESSAY_MAX_IMAGES} fotos.`,
   ESSAY_IMAGE_INVALID: "Não foi possível conferir as fotos enviadas. Tente novamente.",
   ESSAY_NOT_ALLOWED: "Não é possível enviar redação para este simulado.",
