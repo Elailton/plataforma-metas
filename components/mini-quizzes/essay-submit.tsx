@@ -76,7 +76,7 @@ export function EssaySubmit({ attemptId, userId }: { attemptId: string; userId: 
 
   function openWarnings() {
     if (files.length === 0 && !body.trim()) {
-      toast.error("Anexe a foto da folha ou cole o texto da redação.")
+      toast.error("Anexe a foto da folha ou digite o texto da redação.")
       return
     }
     setOkLegible(false)
@@ -123,8 +123,10 @@ export function EssaySubmit({ attemptId, userId }: { attemptId: string; userId: 
     <div className="flex flex-col gap-4 rounded-xl border border-border bg-card p-4 md:p-5">
       <div>
         <p className="text-sm font-semibold text-foreground">Enviar redação (opcional)</p>
-        <p className="text-xs text-muted-foreground">
-          Anexe até {ESSAY_MAX_IMAGES} fotos da folha e/ou cole o texto. Se não fez a redação, não precisa enviar nada: suas questões já foram corrigidas.
+        <p className="text-xs leading-relaxed text-muted-foreground">
+          Suas questões já foram corrigidas. Com a redação, você pode: <strong className="text-foreground">não enviar nada</strong>; enviar{" "}
+          <strong className="text-foreground">só a foto</strong> da folha (até {ESSAY_MAX_IMAGES}); enviar <strong className="text-foreground">só o texto</strong>{" "}
+          digitado no campo abaixo; ou enviar <strong className="text-foreground">os dois</strong>.
         </p>
       </div>
 
@@ -178,19 +180,21 @@ export function EssaySubmit({ attemptId, userId }: { attemptId: string; userId: 
 
       <div className="flex flex-col gap-1.5">
         <label htmlFor={`redacao-${attemptId}`} className="text-sm font-medium text-foreground">
-          Ou cole o texto da redação
+          Texto da redação (digitado)
         </label>
+        <p className="rounded-lg bg-muted/60 px-3 py-2 text-xs leading-relaxed text-muted-foreground">
+          <strong className="text-foreground">Atenção:</strong> a correção feita só pelo texto digitado é <strong className="text-foreground">aproximada</strong>.
+          Não dá para avaliar letra, margens e número de linhas da folha, então o resultado pode ser impreciso. Para a correção mais fiel,
+          envie também a foto da folha.
+        </p>
         <Textarea
           id={`redacao-${attemptId}`}
           value={body}
           onChange={(event) => setBody(event.target.value.slice(0, ESSAY_MAX_BODY))}
-          rows={8}
-          placeholder="Cole aqui o texto, exatamente como escreveu na folha."
+          rows={10}
+          placeholder="Digite ou cole aqui a sua redação, exatamente como escreveu na folha."
           disabled={pending}
         />
-        <span className="text-right text-xs tabular-nums text-muted-foreground">
-          {body.length}/{ESSAY_MAX_BODY}
-        </span>
       </div>
 
       <Button onClick={openWarnings} disabled={pending || (files.length === 0 && !body.trim())}>

@@ -335,6 +335,12 @@ na plataforma, orientados por `courseId` (nada específico de um concurso).
   administrador registra 4 notas de 0 a 10 ou a anulação (`admin_grade_mini_quiz_essay`, tela
   `/admin/mini-simulados/redacoes`) e o resultado aparece no Relatório. Com `time_limit_minutes`, o
   cronômetro da prova é regressivo (tempo real da prova; não envia sozinho ao zerar).
+  Antes de iniciar (pedido em 08/11/2026): quadro "Redação: prepare-se ANTES de iniciar" com a folha para
+  baixar e orientações (cronômetro não pausa; 4 formas: não fazer, só foto, só texto, os dois; foto da
+  folha inteira com os 4 quadrados; texto digitado = correção aproximada, pode ser imprecisa) e 2 avisos
+  ao clicar em Iniciar. A folha (PDF com o tema impresso) fica em `public/folhas-redacao/` e é indicada
+  na proposta pela linha `[[folha:/folhas-redacao/<arquivo>.pdf]]` (não aparece ao aluno). Texto
+  digitado sem limite visível; limite interno de 12.000 caracteres (~100 linhas), sem contador.
 - O administrador faz a prévia do diagnóstico como aluno (nada é gravado) e publica pela própria tela.
 - O diagnóstico mensal usa a primeira tentativa de cada mini simulado no mês (fuso de
   Brasília, `is_first_of_month`). Refazer fica no histórico e não altera o mês.

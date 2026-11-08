@@ -21,6 +21,11 @@ export function EssayResult({ essay, title, className }: { essay: EssayRow; titl
         {sent ? ` · ${sent}` : ""}
       </p>
 
+      {images === 0 && essay.body ? (
+        <p className="mb-3 rounded-lg bg-muted/60 px-3 py-2 text-xs leading-relaxed text-muted-foreground">
+          Enviada só pelo texto digitado: a correção é aproximada (sem avaliar letra, margens e número de linhas) e pode ser imprecisa.
+        </p>
+      ) : null}
       {essay.status === "pending" ? (
         <p className="flex items-start gap-2 text-sm text-foreground">
           <Clock className="mt-0.5 size-4 shrink-0 text-primary" aria-hidden="true" />
