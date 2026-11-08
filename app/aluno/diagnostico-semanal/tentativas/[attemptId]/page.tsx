@@ -12,6 +12,10 @@ import { getStudentContext } from "@/lib/student/queries"
 import { getAttemptReview, getQuizRanking } from "@/lib/mini-quizzes/queries"
 import { getStudentExperience, requireStudentFeature } from "@/lib/student/experience"
 import { formatDuration, nextAvailableAt, percentage } from "@/lib/mini-quizzes/core.mjs"
+import { getAttemptEssay, getQuizEssayPrompt } from "@/lib/mini-quizzes/essays"
+import { EssayPrompt } from "@/components/mini-quizzes/essay-prompt"
+import { EssayResult } from "@/components/mini-quizzes/essay-result"
+import { EssaySubmit } from "@/components/mini-quizzes/essay-submit"
 
 export const dynamic = "force-dynamic"
 
@@ -29,6 +33,8 @@ export default async function MiniQuizAttemptPage({ params }: { params: Promise<
   const next = nextAvailableAt(attempt.submitted_at)
   const rankingOn = (await getStudentExperience()).isEnabled("ranking")
   const ranking = rankingOn ? await getQuizRanking(attempt.quiz_id) : []
+  const essayPrompt = monthly ? await getQuizEssayPrompt(attempt.quiz_id) : null
+  const essay = essayPrompt ? await getAttemptEssay(attempt.id) : null
 
   return (
     <PageContainer>
@@ -56,6 +62,18 @@ export default async function MiniQuizAttemptPage({ params }: { params: Promise<
           Esta tentativa fica no histórico, mas não altera o diagnóstico do mês: ele usa a primeira tentativa de cada diagnóstico no mês.
         </p>
       )}
+      {essayPrompt ? (
+        <section id="redacao" aria-label="Redação" className="mb-6 flex scroll-mt-20 flex-col gap-4">
+          {essay ? (
+            <EssayResult essay={essay} title="Sua redação" />
+          ) : (
+            <>
+              <EssayPrompt prompt={essayPrompt} afterSubmit />
+              <EssaySubmit attemptId={attempt.id} userId={context.profile.id} />
+            </>
+          )}
+        </section>
+      ) : null}
       {rankingOn ? <RankingCard rows={ranking} title="Ranking" className="mb-6" /> : null}
       <AttemptReview questions={review.questions} />
     </PageContainer>

@@ -27,11 +27,20 @@
   manhã, em 21/02/2027 (Anexo I). Depois: exames médicos, TAF e avaliação psicológica.
 - **Simulado Geral da PMPE (decidido em 2026-11-06):** a mesma estrutura da objetiva (60 questões,
   10 por disciplina, na ordem da tabela), só questões reais da AOCP, sem repetir as dos diagnósticos;
-  `time_limit_minutes = 240` (4 horas, reservando 1 hora da prova real para a redação). Edital
+  `time_limit_minutes = 300` (5 horas, o tempo real da prova, com a redação opcional dentro do tempo;
+  era 240 até 08/11/2026). Edital
   **aberto**, então **a cada 14 dias**: o 1º libera em **08/11/2026** e o 2º em **22/11/2026**
   (publicado e fechado, para o aluno ver a próxima data). Não depende das metas. Os demais cursos
   (edital fechado, a cada 30 dias) ficam sem simulado geral por enquanto, sem previsão.
-  Cadastro: 1º `b54942ff-9d55-451c-8b20-c58cce924986`, 2º `ae94d866-dfcf-4b16-885a-16b140495631`.
+  Cadastro: 1º `7ae50acd-2053-40ab-a6f7-d123535617c5` (60 questões enviadas pelo usuário, sem banca
+  informada; redação sobre IA em `docs/ia/redacao-simulado-geral-01-pmpe.md`; o antigo 1º vazio
+  `b54942ff-…` foi arquivado), 2º `ae94d866-dfcf-4b16-885a-16b140495631`.
+- **Redação (edital PMPE/AOCP):** dissertativo-argumentativa, 15–20 linhas, 40 pontos em 4 critérios de
+  10 (tema/informatividade/argumentação; coesão e coerência; estrutura e paragrafação; norma-padrão,
+  inclusive legibilidade), mínimo 12. Zera: fuga ao tema ou ao tipo textual, desorganização grave ou
+  ofensa, lápis/cor de tinta errada, branco/ilegível/fora da folha definitiva, identificação. Só é
+  corrigida a de quem passa na objetiva dentro do corte (soldado: 4.866º na ampla). Fonte: resumo do
+  edital em voceconcursado.com.br, conferido em 08/11/2026.
 - O site de vendas ainda diz "Acesso ao SGA válido até a data da prova do concurso": o
   usuário precisa corrigir para 1 ano (fora do repositório).
 

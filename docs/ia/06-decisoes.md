@@ -55,3 +55,11 @@ grupo antes de lançar conteúdo.
 - 06/11/2026 — "Caderno de erros" vira tela própria (`/aluno/relatorio/caderno-de-erros`), acessada por um botão em destaque no topo do Relatório; o Relatório fica com o desempenho por disciplina e assunto.
 - 06/11/2026 — Seção "Mensal" (Simulado Mensal, simulado geral) na aba Simulados: tipo `kind` em `mini_quizzes` em vez de tabela nova, para reaproveitar tentativa única, cronômetro, ranking, grupos e relatório. Visível ao Grupo 3 sempre e aos alunos só depois de um simulado mensal liberado para o grupo (lançamento primeiro no Grupo 3). Migração `20261106000100_simulado_mensal.sql`, rodada pelo usuário.
 - 06/11/2026 — Simulado Mensal virou **Simulado Geral**: liberado por data (14 dias com edital aberto, 30 com edital fechado), sem relação com as metas. O aluno vê os próximos fechados (no máximo 2 pendentes por tipo) por `student_upcoming_quizzes` (migração `20261106000200`), sem acesso às questões.
+
+## 2026-11-08 — Redação opcional no Simulado Geral
+
+- Pedido do usuário: o simulado geral fica na aba Simulados (fora das metas), com aviso na tela inicial;
+  cronômetro com o tempo real da prova (PMPE: 5 h); redação opcional com tema de atualidade (IA), envio por
+  foto e/ou texto colado, dois avisos de urgência antes do envio, correção em até 7 dias e resultado no
+  Relatório. A correção é feita pela equipe fora da plataforma e lançada em `/admin/mini-simulados/redacoes`.
+- O cronômetro regressivo não envia a prova sozinho ao zerar (evita perder respostas); mostra "Tempo esgotado".

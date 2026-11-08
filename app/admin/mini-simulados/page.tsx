@@ -1,5 +1,5 @@
 import Link from "next/link"
-import { BarChart3, ChevronRight, Plus } from "lucide-react"
+import { BarChart3, ChevronRight, PenLine, Plus } from "lucide-react"
 import { PageHeader, SectionHeader } from "@/components/page-header"
 import { Badge } from "@/components/ui/badge"
 import { buttonVariants } from "@/components/ui/button"
@@ -58,6 +58,10 @@ export default async function AdminMiniQuizzesPage({ searchParams }: { searchPar
             <Link href={`/admin/mini-simulados/diagnostico?curso=${course.id}`} className={buttonVariants({ variant: "outline" })}>
               <BarChart3 data-icon="inline-start" />
               Diagnóstico dos alunos
+            </Link>
+            <Link href={`/admin/mini-simulados/redacoes?curso=${course.id}`} className={buttonVariants({ variant: "outline" })}>
+              <PenLine data-icon="inline-start" />
+              Redações
             </Link>
             <Link href={`/admin/mini-simulados/novo?curso=${course.id}`} className={buttonVariants()}>
               <Plus data-icon="inline-start" />

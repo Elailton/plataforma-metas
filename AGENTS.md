@@ -327,6 +327,14 @@ na plataforma, orientados por `courseId` (nada específico de um concurso).
   vê no máximo **2 pendentes por tipo** (abertos não feitos + fechados; `pendingQuizWindow`). Ao lançar um
   simulado geral, **deixar sempre o da próxima data já publicado e fechado** (mesmo sem questões), para
   instigar o aluno; preencher as questões antes da data. As rotas antigas `/aluno/mini-simulados` redirecionam.
+- Redação do Simulado Geral (pedida em 08/11/2026): opcional. `mini_quizzes.essay_prompt` traz a proposta
+  (no fim da prova e na página do resultado). Depois de enviar as questões, o aluno anexa até 3 fotos da
+  folha (bucket privado `mini-quiz-essays`, pasta `<aluno>/<tentativa>/`) e/ou cola o texto, após 2 avisos
+  (legibilidade → anulação sem recurso; conteúdo fora da redação → banimento). Uma redação por tentativa
+  (`submit_mini_quiz_essay`), em `mini_quiz_essays`. Correção fora da plataforma, prazo de **7 dias**; o
+  administrador registra 4 notas de 0 a 10 ou a anulação (`admin_grade_mini_quiz_essay`, tela
+  `/admin/mini-simulados/redacoes`) e o resultado aparece no Relatório. Com `time_limit_minutes`, o
+  cronômetro da prova é regressivo (tempo real da prova; não envia sozinho ao zerar).
 - O administrador faz a prévia do diagnóstico como aluno (nada é gravado) e publica pela própria tela.
 - O diagnóstico mensal usa a primeira tentativa de cada mini simulado no mês (fuso de
   Brasília, `is_first_of_month`). Refazer fica no histórico e não altera o mês.

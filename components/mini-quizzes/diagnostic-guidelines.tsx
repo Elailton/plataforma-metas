@@ -6,20 +6,29 @@ export function DiagnosticGuidelines({
   weekly,
   monthly = false,
   timeLimitMinutes = null,
+  hasEssay = false,
 }: {
   questionCount: number
   weekly: boolean
   monthly?: boolean
   timeLimitMinutes?: number | null
+  hasEssay?: boolean
 }) {
   const items = [
     monthly
       ? `São ${questionCount} questões de concursos anteriores, de todas as disciplinas do edital, no formato da prova.`
       : `São ${questionCount} questões de concursos anteriores sobre o que você estudou nas metas da semana.`,
     ...(monthly && timeLimitMinutes
-      ? [`Reserve ${formatMinutes(timeLimitMinutes)} sem interrupções, o tempo da prova real. Faça de uma vez, como no dia da prova.`]
+      ? [
+          `Reserve ${formatMinutes(timeLimitMinutes)} sem interrupções, o tempo da prova real${hasEssay ? " (questões + redação)" : ""}. Faça de uma vez, como no dia da prova.`,
+          "O cronômetro é regressivo: começa quando você clica em Iniciar, mostra o tempo que falta e só para quando você envia as respostas.",
+        ]
+      : ["O cronômetro começa quando você clica em Iniciar e só para quando você envia as respostas."]),
+    ...(hasEssay
+      ? [
+          "A redação é opcional. O tema está no fim da prova: escreva à mão, numa folha, dentro do tempo. Depois de enviar as questões, anexe a foto da folha (100% legível) ou cole o texto. A correção sai em até 7 dias, no Relatório.",
+        ]
       : []),
-    "O cronômetro começa quando você clica em Iniciar e só para quando você envia as respostas.",
     weekly
       ? "É uma tentativa única: depois de enviar, não dá para refazer. Confira tudo antes de enviar."
       : "Depois de enviar, você poderá refazer após 7 dias.",
