@@ -45,15 +45,15 @@ export function EssayPrep({ sheetUrl }: { sheetUrl: string | null }) {
         <li className="flex gap-2.5">
           <FileText className="mt-0.5 size-4 shrink-0 text-primary" aria-hidden="true" />
           <span>
-            <strong>A redação é opcional.</strong> Depois de enviar as questões, você pode: não fazer a redação; enviar só a foto da folha; enviar só o
-            texto digitado no campo da plataforma; ou enviar os dois.
+            <strong>A redação é opcional e faz parte do tempo da prova.</strong> No fim da prova, você pode: não fazer a redação; anexar só a foto da
+            folha; só digitar o texto; ou os dois. Ela é enviada <strong>junto com as respostas</strong>: depois do envio, não é possível mandar a redação.
           </span>
         </li>
         <li className="flex gap-2.5">
           <Camera className="mt-0.5 size-4 shrink-0 text-primary" aria-hidden="true" />
           <span>
             <strong>Foto da folha:</strong> fotografe de cima, com a folha reta, em lugar bem iluminado, sem sombra e sem flash. Os 4 quadrados pretos dos
-            cantos devem aparecer: é assim que você confere que a folha inteira saiu. Confira se a foto está nítida antes de enviar.{" "}
+            cantos devem aparecer: é assim que você confere que a folha inteira saiu. Tire a foto e anexe antes de enviar as respostas, ainda dentro do tempo.{" "}
             <strong className="text-destructive">Letra ilegível ou foto embaçada, escura ou cortada leva à ANULAÇÃO, sem recurso.</strong>
           </span>
         </li>

@@ -26,7 +26,7 @@ export function DiagnosticGuidelines({
       : ["O cronômetro começa quando você clica em Iniciar e só para quando você envia as respostas."]),
     ...(hasEssay
       ? [
-          "A redação é opcional. O tema está no fim da prova: escreva à mão, numa folha, dentro do tempo. Depois de enviar as questões, anexe a foto da folha (100% legível) ou cole o texto. A correção sai em até 7 dias, no Relatório.",
+          "A redação é opcional e faz parte do tempo da prova. O tema aparece no fim da prova: escreva na folha e/ou digite no campo da plataforma e envie junto com as respostas (depois do envio, não é possível mandar a redação). A correção sai em até 7 dias, no Relatório.",
         ]
       : []),
     weekly

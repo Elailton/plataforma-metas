@@ -16,6 +16,7 @@ const MESSAGES: Record<string, string> = {
   ESSAY_TOO_MANY_IMAGES: `Envie no máximo ${ESSAY_MAX_IMAGES} fotos.`,
   ESSAY_IMAGE_INVALID: "Não foi possível conferir as fotos enviadas. Tente novamente.",
   ESSAY_NOT_ALLOWED: "Não é possível enviar redação para este simulado.",
+  ESSAY_TOO_LATE: "O prazo para enviar a redação terminou: ela só pode ser enviada junto com as respostas.",
 }
 
 /** Envia a redação (fotos já no bucket + texto colado). Regras e dono da tentativa: decididos na RPC. */
