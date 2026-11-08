@@ -100,7 +100,7 @@ footer {{ display: flex; justify-content: space-between; font-size: 6.6pt; color
     <li>Letra ilegível ou foto embaçada, escura ou cortada <b>anula a redação</b>, sem recurso.</li>
   </ol></div>
 </div>
-<div class="title"><span>Título (se houver)</span></div>
+<div class="title"><span>Título</span></div>
 <div class="lines">
 {rows}
 </div>
