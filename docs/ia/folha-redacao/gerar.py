@@ -38,7 +38,7 @@ def row(i):
 
 
 rows = "\n".join(row(i) for i in range(1, a.linhas + 1))
-sub = "Versão definitiva · Simulado Geral" + (f" · {e(a.curso)}" if a.curso else "")
+sub = "Sistema Guiado da Aprovação · Simulado Geral" + (f" · {e(a.curso)}" if a.curso else "")
 limits = f"{a.min} – {a.max}" if a.min and a.max else ""
 limit_rule = (
     f"Escreva de <b>{a.min} a {a.max} linhas</b>: menos que o mínimo ou além do máximo perde pontos, e o que passar da linha {a.max} não é avaliado."
@@ -54,22 +54,19 @@ body {{ font-family: "DejaVu Sans", Arial, sans-serif; color: #111; width: 210mm
 .sheet {{ position: absolute; inset: 14mm 15mm 14mm 15mm; display: flex; flex-direction: column; }}
 .mark {{ position: absolute; width: 7mm; height: 7mm; background: #111; }}
 .tl {{ top: 5mm; left: 5mm; }} .tr {{ top: 5mm; right: 5mm; }} .bl {{ bottom: 5mm; left: 5mm; }} .br {{ bottom: 5mm; right: 5mm; }}
-header {{ display: flex; justify-content: space-between; align-items: flex-end; border-bottom: 1.2mm solid #F5C400; padding-bottom: 2.5mm; }}
-h1 {{ font-size: 21pt; font-weight: 800; letter-spacing: .3pt; }}
-.sub {{ font-size: 7.6pt; font-weight: 700; color: #6b5600; text-transform: uppercase; letter-spacing: .5pt; margin-top: 1mm; }}
-.brand {{ text-align: right; }}
-.brand b {{ display: inline-block; background: #111; color: #F5C400; font-size: 15pt; font-weight: 900; padding: 1mm 3mm; border-radius: 1.5mm; letter-spacing: 1pt; }}
-.brand div {{ font-size: 7pt; color: #444; margin-top: 1mm; }}
+header {{ text-align: center; border-bottom: .5mm solid #111; padding-bottom: 2mm; }}
+h1 {{ font-size: 17pt; font-weight: 700; letter-spacing: 1.5pt; }}
+.sub {{ font-size: 7.4pt; font-weight: 400; color: #333; text-transform: uppercase; letter-spacing: .8pt; margin-top: 1mm; }}
 .meta {{ display: grid; grid-template-columns: 1.6fr 1fr .9fr; gap: 3mm; margin-top: 3mm; }}
-.field {{ border: .35mm solid #111; border-radius: 1mm; padding: 1mm 2mm; height: 10mm; }}
+.field {{ border: .3mm solid #111; padding: 1mm 2mm; height: 10mm; }}
 .field span {{ font-size: 6.6pt; font-weight: 700; text-transform: uppercase; color: #444; display: block; }}
 .field em {{ font-style: normal; font-size: 9pt; font-weight: 700; }}
 .info {{ display: grid; grid-template-columns: 1fr 1fr; gap: 3mm; margin-top: 3mm; }}
-.box {{ border: .35mm solid #111; border-left: 1.6mm solid #F5C400; border-radius: 1mm; padding: 1.8mm 2.5mm; font-size: 6.9pt; line-height: 1.38; }}
+.box {{ border: .3mm solid #111; padding: 1.8mm 2.5mm; font-size: 6.9pt; line-height: 1.38; }}
 .box h2 {{ font-size: 7.2pt; text-transform: uppercase; letter-spacing: .4pt; margin-bottom: .8mm; }}
 .box ol {{ padding-left: 3.6mm; }}
-.alert {{ border-left-color: #c62828; }} .alert h2 {{ color: #c62828; }}
-.title {{ margin-top: 3mm; display: flex; align-items: center; gap: 2mm; border: .35mm solid #111; border-radius: 1mm; padding: 0 2mm; height: 8mm; }}
+.alert h2 {{ color: #111; }}
+.title {{ margin-top: 3mm; display: flex; align-items: center; gap: 2mm; border: .3mm solid #111; padding: 0 2mm; height: 8mm; }}
 .title span {{ font-size: 6.6pt; font-weight: 700; text-transform: uppercase; color: #444; white-space: nowrap; }}
 .lines {{ margin-top: 2.5mm; border: .5mm solid #111; flex: 1; display: flex; flex-direction: column; }}
 .row {{ flex: 1; display: flex; border-bottom: .2mm solid #9a9a9a; }}
@@ -77,15 +74,13 @@ h1 {{ font-size: 21pt; font-weight: 800; letter-spacing: .3pt; }}
 .row.limit {{ border-bottom: .5mm solid #111; }}
 .n {{ width: 8mm; border-right: .5mm solid #111; font-size: 7.5pt; font-weight: 700; display: flex; align-items: center; justify-content: center; }}
 .l {{ flex: 1; position: relative; }}
-.tag {{ position: absolute; right: 1.5mm; bottom: .6mm; font-size: 5.8pt; font-weight: 700; text-transform: uppercase; color: #6b5600; background: #FFF4C2; padding: .2mm 1mm; border-radius: .6mm; }}
-.tag.max {{ color: #fff; background: #c62828; }}
+.tag {{ position: absolute; right: 1.5mm; bottom: .6mm; font-size: 5.8pt; font-weight: 700; text-transform: uppercase; color: #333; }}
 footer {{ display: flex; justify-content: space-between; font-size: 6.6pt; color: #444; margin-top: 2mm; }}
 </style></head><body>
 <i class="mark tl"></i><i class="mark tr"></i><i class="mark bl"></i><i class="mark br"></i>
 <div class="sheet">
 <header>
-  <div><h1>FOLHA DE REDAÇÃO</h1><div class="sub">{sub}</div></div>
-  <div class="brand"><b>SGA</b><div>Sistema Guiado da Aprovação · Prof. Erick Lima</div></div>
+  <h1>FOLHA DE REDAÇÃO</h1><div class="sub">{sub}</div>
 </header>
 <div class="meta">
   <div class="field"><span>Simulado</span><em>{e(a.simulado)}</em></div>
@@ -109,7 +104,7 @@ footer {{ display: flex; justify-content: space-between; font-size: 6.6pt; color
 <div class="lines">
 {rows}
 </div>
-<footer><span>Envie a foto pela plataforma, na página do resultado do simulado.</span><span>SGA · Folha de Redação</span></footer>
+<footer><span>Envie a foto pela plataforma, na página do resultado do simulado.</span><span>SGA · Prof. Erick Lima</span></footer>
 </div></body></html>"""
 open(a.saida, "w", encoding="utf-8").write(doc)
 print(a.saida)
