@@ -1,10 +1,17 @@
-import { Camera, Download, FileText, PenLine, Timer } from "lucide-react"
+import { Camera, Download, FileText, PenLine, Sparkles, Timer } from "lucide-react"
 import { buttonVariants } from "@/components/ui/button"
 
 /** Antes de iniciar o simulado com redação: folha para baixar e orientações importantes. */
 export function EssayPrep({ sheetUrl }: { sheetUrl: string | null }) {
   return (
     <section aria-labelledby="redacao-preparo" className="flex flex-col gap-4 rounded-xl border-2 border-primary bg-card p-4 md:p-6">
+      <p className="flex gap-2 rounded-lg bg-primary/10 px-3 py-2 text-xs leading-relaxed text-foreground">
+        <Sparkles className="mt-0.5 size-4 shrink-0 text-primary" aria-hidden="true" />
+        <span>
+          <strong>Novidade em teste:</strong> estamos sempre melhorando o seu SGA e, neste simulado, vamos testar a correção de redações. Por ser
+          um teste, ainda não está definido se todos os simulados terão redação nem se a correção vai continuar sempre deste jeito.
+        </span>
+      </p>
       <div className="flex items-start gap-3">
         <span className="flex size-9 shrink-0 items-center justify-center rounded-lg bg-primary text-primary-foreground" aria-hidden="true">
           <PenLine className="size-4.5" />
