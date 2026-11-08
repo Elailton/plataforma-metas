@@ -22,9 +22,26 @@ import { formatDateTime } from "./format"
 import { RichText } from "./rich-text"
 import { QuestionStatement } from "./question-statement"
 import { elapsedSeconds, formatClock } from "@/lib/mini-quizzes/core.mjs"
+import { remainingSeconds } from "@/lib/mini-quizzes/essay.mjs"
+import { EssayPrompt } from "./essay-prompt"
 
-/** Resolução com cronômetro (início registrado pelo banco). As respostas só saem do navegador no envio. */
-export function QuizRunner({ quizId, questions, startedAt }: { quizId: string; questions: QuizQuestion[]; startedAt: string | null }) {
+/**
+ * Resolução com cronômetro (início registrado pelo banco). As respostas só saem do navegador no envio.
+ * Com tempo de prova definido (simulado geral), o cronômetro é regressivo, como na prova real.
+ */
+export function QuizRunner({
+  quizId,
+  questions,
+  startedAt,
+  timeLimitMinutes = null,
+  essayPrompt = null,
+}: {
+  quizId: string
+  questions: QuizQuestion[]
+  startedAt: string | null
+  timeLimitMinutes?: number | null
+  essayPrompt?: string | null
+}) {
   const router = useRouter()
   const [answers, setAnswers] = useState<Record<string, string>>({})
   const [pending, setPending] = useState(false)
@@ -33,6 +50,8 @@ export function QuizRunner({ quizId, questions, startedAt }: { quizId: string; q
   const answered = useMemo(() => questions.filter((question) => answers[question.id]).length, [answers, questions])
   const unanswered = questions.length - answered
   const [elapsed, setElapsed] = useState(() => (startedAt ? elapsedSeconds(startedAt) : 0))
+  const remaining = remainingSeconds(timeLimitMinutes, elapsed)
+  const timeOver = remaining !== null && remaining <= 0
 
   useEffect(() => {
     if (!startedAt || submitted) return
@@ -132,9 +151,19 @@ export function QuizRunner({ quizId, questions, startedAt }: { quizId: string; q
         ))}
       </ol>
 
+      {essayPrompt ? <EssayPrompt prompt={essayPrompt} /> : null}
+
       <div className="sticky bottom-[calc(4.5rem+env(safe-area-inset-bottom))] z-10 flex items-center justify-between gap-3 rounded-xl border border-border bg-card/95 p-3 shadow-sm backdrop-blur md:bottom-4">
         <span className="flex min-w-0 flex-wrap items-center gap-x-3 gap-y-0.5 text-sm text-muted-foreground tabular-nums">
-          {startedAt ? (
+          {startedAt && remaining !== null ? (
+            <span
+              className={cn("inline-flex items-center gap-1.5 font-semibold", timeOver ? "text-destructive" : "text-foreground")}
+              aria-label={timeOver ? "Tempo de prova esgotado" : `Tempo restante ${formatClock(remaining)}`}
+            >
+              <Timer className={cn("size-4", timeOver ? "text-destructive" : "text-primary")} aria-hidden="true" />
+              <span role="timer">{timeOver ? `Tempo esgotado +${formatClock(-remaining)}` : `Restam ${formatClock(remaining)}`}</span>
+            </span>
+          ) : startedAt ? (
             <span className="inline-flex items-center gap-1.5 font-semibold text-foreground" aria-label={`Tempo de prova ${formatClock(elapsed)}`}>
               <Timer className="size-4 text-primary" aria-hidden="true" />
               <span role="timer">{formatClock(elapsed)}</span>

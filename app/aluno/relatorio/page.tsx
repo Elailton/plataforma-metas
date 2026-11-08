@@ -8,6 +8,8 @@ import { DiagnosisView } from "@/components/mini-quizzes/diagnosis-view"
 import { getStudentContext } from "@/lib/student/queries"
 import { getDiagnosisData, getErrorReport } from "@/lib/mini-quizzes/queries"
 import { buildDiagnosis, isValidMonthKey } from "@/lib/mini-quizzes/core.mjs"
+import { getStudentEssays } from "@/lib/mini-quizzes/essays"
+import { EssayResult } from "@/components/mini-quizzes/essay-result"
 
 export const dynamic = "force-dynamic"
 
@@ -15,9 +17,10 @@ export default async function StudentReportPage({ searchParams }: { searchParams
   const { mes } = await searchParams
   const context = await getStudentContext()
   if (!context) redirect("/auth/sem-acesso")
-  const [data, errors] = await Promise.all([
+  const [data, errors, essays] = await Promise.all([
     getDiagnosisData(context.currentCourse.id, context.profile.id),
     getErrorReport(context.currentCourse.id, context.profile.id),
+    getStudentEssays(context.currentCourse.id, context.profile.id),
   ])
   const diagnosis = buildDiagnosis({ ...data, month: isValidMonthKey(mes) ? mes : null })
   const errorCount = errors.length
@@ -47,6 +50,20 @@ export default async function StudentReportPage({ searchParams }: { searchParams
         </span>
         <ChevronRight className="size-5 shrink-0 text-muted-foreground" aria-hidden="true" />
       </Link>
+
+      {essays.length > 0 ? (
+        <section aria-labelledby="redacoes" className="mb-8">
+          <SectionHeader
+            title={<span id="redacoes">Redação</span>}
+            description="Resultado das redações enviadas nos simulados gerais (4 critérios de até 10 pontos; mínimo de 12 na prova)."
+          />
+          <div className="flex flex-col gap-3">
+            {essays.map((essay) => (
+              <EssayResult key={essay.id} essay={essay} title={essay.quizTitle} />
+            ))}
+          </div>
+        </section>
+      ) : null}
 
       <section aria-labelledby="desempenho">
         <SectionHeader title={<span id="desempenho">Desempenho por disciplina e assunto</span>} />

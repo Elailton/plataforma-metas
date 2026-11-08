@@ -1,6 +1,6 @@
 import Link from "next/link"
 import { notFound, redirect } from "next/navigation"
-import { Clock, FileText, ListChecks } from "lucide-react"
+import { Clock, FileText, ListChecks, PenLine } from "lucide-react"
 import { PageContainer } from "@/components/student/page-container"
 import { PageHeader, SectionHeader } from "@/components/page-header"
 import { StatCard } from "@/components/stat-card"
@@ -14,6 +14,7 @@ import { getStudentContext } from "@/lib/student/queries"
 import { getStudentExperience, requireStudentFeature } from "@/lib/student/experience"
 import { getAttemptSubjectBreakdown, getQuizRanking, getStudentQuiz } from "@/lib/mini-quizzes/queries"
 import { canAttempt, formatDuration, nextAvailableAt, percentage } from "@/lib/mini-quizzes/core.mjs"
+import { getAttemptEssay, getQuizEssayPrompt } from "@/lib/mini-quizzes/essays"
 
 export const dynamic = "force-dynamic"
 
@@ -32,6 +33,7 @@ export default async function WeeklyDiagnosticPage({ params }: { params: Promise
   // Diagnóstico semanal: tentativa única. Mini simulado por disciplina: refazer após 7 dias.
   const available = data.quiz.isWeekly ? !last : canAttempt(last?.submitted_at)
   const started = available ? data.openStart : null
+  const essayPrompt = monthly ? await getQuizEssayPrompt(data.quiz.id) : null
 
   const header = (
     <PageHeader
@@ -48,15 +50,22 @@ export default async function WeeklyDiagnosticPage({ params }: { params: Promise
     return (
       <PageContainer>
         {header}
-        <QuizRunner quizId={data.quiz.id} questions={data.questions} startedAt={started.started_at} />
+        <QuizRunner
+          quizId={data.quiz.id}
+          questions={data.questions}
+          startedAt={started.started_at}
+          timeLimitMinutes={monthly ? data.quiz.timeLimitMinutes : null}
+          essayPrompt={essayPrompt}
+        />
       </PageContainer>
     )
   }
 
   const rankingOn = (await getStudentExperience()).isEnabled("ranking")
-  const [ranking, breakdown] = await Promise.all([
+  const [ranking, breakdown, essay] = await Promise.all([
     rankingOn ? getQuizRanking(data.quiz.id) : Promise.resolve([]),
     first ? getAttemptSubjectBreakdown(first.id, data.quiz.courseId) : Promise.resolve([]),
+    first && essayPrompt ? getAttemptEssay(first.id) : Promise.resolve(null),
   ])
   const myRank = ranking.find((row) => row.is_me)
 
@@ -103,6 +112,12 @@ export default async function WeeklyDiagnosticPage({ params }: { params: Promise
                 <ListChecks data-icon="inline-start" />
                 Ver correção comentada
               </Link>
+              {essayPrompt ? (
+                <Link href={`/aluno/diagnostico-semanal/tentativas/${first.id}#redacao`} className={buttonVariants({ variant: "outline" })}>
+                  <PenLine data-icon="inline-start" />
+                  {essay ? "Ver redação" : "Enviar redação (opcional)"}
+                </Link>
+              ) : null}
               <Link href="/aluno/relatorio" className={buttonVariants({ variant: "outline" })}>
                 <FileText data-icon="inline-start" />
                 Ver relatório de erros
@@ -133,6 +148,7 @@ export default async function WeeklyDiagnosticPage({ params }: { params: Promise
           weekly={data.quiz.isWeekly}
           monthly={monthly}
           timeLimitMinutes={data.quiz.timeLimitMinutes}
+          hasEssay={Boolean(essayPrompt)}
         />
       </div>
     </PageContainer>
