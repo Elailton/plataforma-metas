@@ -118,8 +118,8 @@ Linhas (mín. – máx.); campo **"Título"** (sempre há título, nunca "se hou
 "Atenção: anulação"; **sem nome/CPF/assinatura** (identificação zera a redação); 4 quadrados pretos nos
 cantos para o aluno conferir que a folha inteira saiu na foto.
 
-Folha de um simulado com redação: gerar com `--tema "<tema proposto>"` (o tema sai impresso na folha),
-salvar em `public/folhas-redacao/<curso>-<simulado>.pdf` e pôr no início de `mini_quizzes.essay_prompt` a
+Folha de um simulado com redação: gerar **sem** `--tema` (o tema só é visto depois de iniciar o cronômetro;
+decisão do usuário em 08/11/2026), salvar em `public/folhas-redacao/<curso>-<simulado>.pdf` e pôr no início de `mini_quizzes.essay_prompt` a
 linha `[[folha:/folhas-redacao/<curso>-<simulado>.pdf]]` (o aluno vê o botão "Baixar folha de redação").
 Ex.: PMPE Simulado Geral 01 → `public/folhas-redacao/pmpe-simulado-geral-01.pdf`.
 

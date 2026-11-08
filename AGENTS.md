@@ -338,9 +338,11 @@ na plataforma, orientados por `courseId` (nada específico de um concurso).
   Antes de iniciar (pedido em 08/11/2026): quadro "Redação: prepare-se ANTES de iniciar" com a folha para
   baixar e orientações (cronômetro não pausa; 4 formas: não fazer, só foto, só texto, os dois; foto da
   folha inteira com os 4 quadrados; texto digitado = correção aproximada, pode ser imprecisa) e 2 avisos
-  ao clicar em Iniciar. A folha (PDF com o tema impresso) fica em `public/folhas-redacao/` e é indicada
+  ao clicar em Iniciar. A folha (PDF **sem o tema**: o tema só aparece depois de iniciar o cronômetro) fica em `public/folhas-redacao/` e é indicada
   na proposta pela linha `[[folha:/folhas-redacao/<arquivo>.pdf]]` (não aparece ao aluno). Texto
-  digitado sem limite visível; limite interno de 12.000 caracteres (~100 linhas), sem contador.
+  digitado sem limite visível; limite interno de 12.000 caracteres (~100 linhas), sem contador. Durante a prova,
+  abaixo do tema, há o campo "Digite a sua redação aqui" (rascunho só no navegador, `essayDraftKey`), que
+  chega preenchido na página do resultado para enviar com ou sem a foto.
 - O administrador faz a prévia do diagnóstico como aluno (nada é gravado) e publica pela própria tela.
 - O diagnóstico mensal usa a primeira tentativa de cada mini simulado no mês (fuso de
   Brasília, `is_first_of_month`). Refazer fica no histórico e não altera o mês.

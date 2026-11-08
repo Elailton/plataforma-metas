@@ -32,7 +32,7 @@ export function EssayPrep({ sheetUrl }: { sheetUrl: string | null }) {
           <Timer className="mt-0.5 size-4 shrink-0 text-primary" aria-hidden="true" />
           <span>
             <strong>Antes de iniciar:</strong> imprima a folha, separe caneta de tinta azul ou preta e reserve o tempo total da prova sem
-            interrupções. O tema aparece na folha e no fim da prova.
+            interrupções. O tema só aparece depois de iniciar, no fim da prova, como no dia da prova.
           </span>
         </li>
         <li className="flex gap-2.5">
@@ -53,7 +53,8 @@ export function EssayPrep({ sheetUrl }: { sheetUrl: string | null }) {
         <li className="flex gap-2.5">
           <PenLine className="mt-0.5 size-4 shrink-0 text-primary" aria-hidden="true" />
           <span>
-            <strong>Campo de texto:</strong> você também pode digitar a redação na plataforma. A correção feita só pelo texto digitado é{" "}
+            <strong>Campo de texto:</strong> no fim da prova, logo abaixo do tema, há um campo para digitar a redação, no lugar da folha ou junto com ela.
+            A correção feita só pelo texto digitado é{" "}
             <strong>aproximada</strong>: não dá para avaliar letra, margens e número de linhas da folha, então o resultado pode ser impreciso.
           </span>
         </li>

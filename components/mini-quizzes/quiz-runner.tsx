@@ -24,6 +24,7 @@ import { QuestionStatement } from "./question-statement"
 import { elapsedSeconds, formatClock } from "@/lib/mini-quizzes/core.mjs"
 import { remainingSeconds } from "@/lib/mini-quizzes/essay.mjs"
 import { EssayPrompt } from "./essay-prompt"
+import { EssayDraft } from "./essay-draft"
 
 /**
  * Resolução com cronômetro (início registrado pelo banco). As respostas só saem do navegador no envio.
@@ -91,8 +92,13 @@ export function QuizRunner({
   // Durante a prova o texto não pode ser copiado nem selecionado: só clicar nas alternativas.
   useEffect(() => {
     if (submitted) return
-    const block = (event: Event) => event.preventDefault()
+    // O campo da redação continua livre para digitar, selecionar e colar.
+    const inEditable = (event: Event) => (event.target as Element | null)?.closest?.("textarea") != null
+    const block = (event: Event) => {
+      if (!inEditable(event)) event.preventDefault()
+    }
     const keys = (event: KeyboardEvent) => {
+      if (inEditable(event)) return
       if ((event.ctrlKey || event.metaKey) && ["c", "x", "a", "p", "s", "u"].includes(event.key.toLowerCase())) event.preventDefault()
     }
     for (const type of ["copy", "cut", "contextmenu", "dragstart", "selectstart"]) document.addEventListener(type, block)
@@ -104,7 +110,9 @@ export function QuizRunner({
   }, [submitted])
 
   return (
-    <div className="flex select-none flex-col gap-5 [-webkit-touch-callout:none]" onCopy={(event) => event.preventDefault()}>
+    <div className="flex select-none flex-col gap-5 [-webkit-touch-callout:none]" onCopy={(event) => {
+        if (!(event.target as Element | null)?.closest?.("textarea")) event.preventDefault()
+      }}>
       <ol className="flex flex-col gap-5">
         {questions.map((question, index) => (
           <li key={question.id} className="rounded-xl border border-border bg-card p-4 md:p-5">
@@ -151,7 +159,12 @@ export function QuizRunner({
         ))}
       </ol>
 
-      {essayPrompt ? <EssayPrompt prompt={essayPrompt} /> : null}
+      {essayPrompt ? (
+        <>
+          <EssayPrompt prompt={essayPrompt} />
+          <EssayDraft quizId={quizId} />
+        </>
+      ) : null}
 
       <div className="sticky bottom-[calc(4.5rem+env(safe-area-inset-bottom))] z-10 flex items-center justify-between gap-3 rounded-xl border border-border bg-card/95 p-3 shadow-sm backdrop-blur md:bottom-4">
         <span className="flex min-w-0 flex-wrap items-center gap-x-3 gap-y-0.5 text-sm text-muted-foreground tabular-nums">

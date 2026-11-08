@@ -16,7 +16,7 @@ export function EssayPrompt({ prompt, className, afterSubmit = false }: { prompt
         </h2>
       </div>
       <p className="mb-4 rounded-lg bg-muted/60 px-3 py-2 text-xs leading-relaxed text-muted-foreground">
-        A redação não é corrigida aqui na prova: escreva à mão, numa folha, dentro do tempo da prova.
+        A redação não é corrigida na hora: escreva à mão na folha de redação e/ou digite no campo abaixo, dentro do tempo da prova.
         {afterSubmit
           ? " Abaixo, envie a foto da folha, o texto digitado ou os dois. A correção sai em até 7 dias, no Relatório."
           : " Depois de enviar as respostas, você poderá enviar a foto da folha, o texto digitado ou os dois. A correção sai em até 7 dias, no Relatório. Quem não quiser fazer a redação envia só as questões."}

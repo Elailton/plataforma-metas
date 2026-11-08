@@ -25,3 +25,4 @@ export function remainingSeconds(limitMinutes: number | null | undefined, elapse
 export function parseEssayScores(values: unknown): number[] | null
 export function essayImagePath(userId: string, attemptId: string, index: number, id: string, mime: string): string
 export function parseEssayPrompt(prompt: string | null | undefined): { text: string; sheetUrl: string | null }
+export function essayDraftKey(quizId: string): string
