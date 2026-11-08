@@ -20,3 +20,15 @@ Formato: data — o que aconteceu — causa — o que mudou / lição.
 | 2026-10-28 | "Encontrar minha compra" mandava ao suporte uma compra "curso apenas" de curso em rascunho | Filtro de curso publicado aplicado também à explicação | Corrigido (PR #81) |
 | 2026-11-06 | Aluno do GMF pediu para mudar respostas do questionário (não achava onde) | Não existe tela para isso; o aviso não dizia como pedir | Com autorização do usuário: questionário reaberto, 4 conclusões de itens apagadas (metas reiniciadas), acesso reenviado por e-mail; aviso do questionário passou a indicar o WhatsApp do suporte |
 | 2026-11-06 | Plataforma toda lenta logo após publicar a aba Simulados | `student_upcoming_quizzes` (~1,3 s) chamada no layout de toda página, recalculando o escopo do aluno por meta | Menu passou a usar `student_has_general_quiz` (leve); a lista de próximos ficou só nas telas Semanal/Geral e foi otimizada (migração `20261106000300`). Lição: nada pesado no layout; medir com `pg_stat_statements` antes de publicar RPC nova |
+
+## 2026-11-08 — Redação do Simulado Geral recusada (erro 42809)
+
+- **O que houve:** no primeiro teste real (conta de teste), a foto subiu e as respostas foram enviadas,
+  mas a redação não foi gravada: `submit_mini_quiz_essay` usava `= any (public.active_course_ids())` e,
+  em produção, `active_course_ids()` devolve `setof uuid` (linhas), não array → `42809 op ANY/ALL (array)
+  requires array on right side`. Nenhum aluno afetado (só a conta de teste tinha feito o simulado).
+- **Causa da falha no teste:** o banco descartável usava um *stub* de `active_course_ids()` que devolvia
+  `uuid[]`, diferente da produção.
+- **Correção:** migração `20261108000400_redacao_corrige_cursos_ativos.sql` (`in (select public.active_course_ids())`).
+- **Lição:** nos testes SQL, copiar a assinatura real das funções auxiliares (`pg_get_function_result`)
+  em vez de inventar o stub; para `active_course_ids()`, usar sempre `in (select ...)`.
