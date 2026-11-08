@@ -18,7 +18,7 @@ import {
 } from "@/components/ui/alert-dialog"
 import { createClient } from "@/lib/supabase/client"
 import { submitMiniQuizEssay } from "@/lib/mini-quizzes/essay-actions"
-import { ESSAY_MAX_BODY, ESSAY_MAX_IMAGE_BYTES, ESSAY_MAX_IMAGES, essayImagePath } from "@/lib/mini-quizzes/essay.mjs"
+import { ESSAY_MAX_BODY, ESSAY_MAX_IMAGE_BYTES, ESSAY_MAX_IMAGES, essayDraftKey, essayImagePath } from "@/lib/mini-quizzes/essay.mjs"
 
 const BUCKET = "mini-quiz-essays"
 const MAX_SIDE = 2600
@@ -50,7 +50,7 @@ function Warning({ icon: Icon, children }: { icon: typeof AlertTriangle; childre
 }
 
 /** Envio opcional da redação: foto(s) da folha e/ou texto colado, com dois avisos antes de enviar. */
-export function EssaySubmit({ attemptId, userId }: { attemptId: string; userId: string }) {
+export function EssaySubmit({ attemptId, userId, quizId }: { attemptId: string; userId: string; quizId: string }) {
   const router = useRouter()
   const [files, setFiles] = useState<File[]>([])
   const [previews, setPreviews] = useState<string[]>([])
@@ -59,6 +59,20 @@ export function EssaySubmit({ attemptId, userId }: { attemptId: string; userId: 
   const [okLegible, setOkLegible] = useState(false)
   const [okContent, setOkContent] = useState(false)
   const [pending, setPending] = useState(false)
+  const [fromDraft, setFromDraft] = useState(false)
+
+  // Texto digitado durante a prova (rascunho no navegador) já vem preenchido.
+  useEffect(() => {
+    try {
+      const draft = window.localStorage.getItem(essayDraftKey(quizId))
+      if (draft && draft.trim()) {
+        setBody(draft.slice(0, ESSAY_MAX_BODY))
+        setFromDraft(true)
+      }
+    } catch {
+      // Sem acesso ao armazenamento do navegador: o aluno digita ou cola aqui.
+    }
+  }, [quizId])
 
   useEffect(() => {
     const urls = files.map((file) => URL.createObjectURL(file))
@@ -109,6 +123,11 @@ export function EssaySubmit({ attemptId, userId }: { attemptId: string; userId: 
       if (!result.ok) {
         toast.error(result.error)
         return
+      }
+      try {
+        window.localStorage.removeItem(essayDraftKey(quizId))
+      } catch {
+        // ignora
       }
       toast.success("Redação enviada! A correção sai em até 7 dias.")
       router.refresh()
@@ -179,9 +198,12 @@ export function EssaySubmit({ attemptId, userId }: { attemptId: string; userId: 
       </div>
 
       <div className="flex flex-col gap-1.5">
-        <label htmlFor={`redacao-${attemptId}`} className="text-sm font-medium text-foreground">
-          Texto da redação (digitado)
+        <label htmlFor={`redacao-${attemptId}`} className="text-sm font-semibold text-foreground">
+          Digite a sua redação aqui (opcional)
         </label>
+        {fromDraft ? (
+          <p className="text-xs text-primary">Este é o texto que você digitou durante a prova. Confira antes de enviar.</p>
+        ) : null}
         <p className="rounded-lg bg-muted/60 px-3 py-2 text-xs leading-relaxed text-muted-foreground">
           <strong className="text-foreground">Atenção:</strong> a correção feita só pelo texto digitado é <strong className="text-foreground">aproximada</strong>.
           Não dá para avaliar letra, margens e número de linhas da folha, então o resultado pode ser impreciso. Para a correção mais fiel,

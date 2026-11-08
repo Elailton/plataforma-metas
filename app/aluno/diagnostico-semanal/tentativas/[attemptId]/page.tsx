@@ -69,7 +69,7 @@ export default async function MiniQuizAttemptPage({ params }: { params: Promise<
           ) : (
             <>
               <EssayPrompt prompt={essayPrompt} afterSubmit />
-              <EssaySubmit attemptId={attempt.id} userId={context.profile.id} />
+              <EssaySubmit attemptId={attempt.id} userId={context.profile.id} quizId={attempt.quiz_id} />
             </>
           )}
         </section>
