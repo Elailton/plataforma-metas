@@ -327,22 +327,21 @@ na plataforma, orientados por `courseId` (nada específico de um concurso).
   vê no máximo **2 pendentes por tipo** (abertos não feitos + fechados; `pendingQuizWindow`). Ao lançar um
   simulado geral, **deixar sempre o da próxima data já publicado e fechado** (mesmo sem questões), para
   instigar o aluno; preencher as questões antes da data. As rotas antigas `/aluno/mini-simulados` redirecionam.
-- Redação do Simulado Geral (pedida em 08/11/2026): opcional. `mini_quizzes.essay_prompt` traz a proposta
-  (no fim da prova e na página do resultado). Depois de enviar as questões, o aluno anexa até 3 fotos da
-  folha (bucket privado `mini-quiz-essays`, pasta `<aluno>/<tentativa>/`) e/ou cola o texto, após 2 avisos
-  (legibilidade → anulação sem recurso; conteúdo fora da redação → banimento). Uma redação por tentativa
-  (`submit_mini_quiz_essay`), em `mini_quiz_essays`. Correção fora da plataforma, prazo de **7 dias**; o
-  administrador registra 4 notas de 0 a 10 ou a anulação (`admin_grade_mini_quiz_essay`, tela
-  `/admin/mini-simulados/redacoes`) e o resultado aparece no Relatório. Com `time_limit_minutes`, o
-  cronômetro da prova é regressivo (tempo real da prova; não envia sozinho ao zerar).
-  Antes de iniciar (pedido em 08/11/2026): quadro "Redação: prepare-se ANTES de iniciar" com a folha para
-  baixar e orientações (cronômetro não pausa; 4 formas: não fazer, só foto, só texto, os dois; foto da
-  folha inteira com os 4 quadrados; texto digitado = correção aproximada, pode ser imprecisa) e 2 avisos
-  ao clicar em Iniciar. A folha (PDF **sem o tema**: o tema só aparece depois de iniciar o cronômetro) fica em `public/folhas-redacao/` e é indicada
-  na proposta pela linha `[[folha:/folhas-redacao/<arquivo>.pdf]]` (não aparece ao aluno). Texto
-  digitado sem limite visível; limite interno de 12.000 caracteres (~100 linhas), sem contador. Durante a prova,
-  abaixo do tema, há o campo "Digite a sua redação aqui" (rascunho só no navegador, `essayDraftKey`), que
-  chega preenchido na página do resultado para enviar com ou sem a foto.
+- Redação do Simulado Geral (pedida em 08/11/2026): opcional e **feita no tempo da prova**.
+  `mini_quizzes.essay_prompt` traz a proposta, mostrada só depois de iniciar (fim da prova). Abaixo dela,
+  o aluno anexa até 3 fotos da folha e/ou digita o texto (rascunho do texto só no navegador,
+  `essayDraftKey`); tudo vai **junto com as respostas** no botão Enviar: as fotos sobem antes (bucket
+  privado `mini-quiz-essays`, pasta `<aluno>/<simulado>/`), depois `submit_mini_quiz` e em seguida
+  `submit_mini_quiz_essay`, que só aceita até 15 minutos após o envio das respostas (`ESSAY_TOO_LATE`).
+  **Não existe envio posterior.** Sem redação, o aluno confirma "Enviar sem redação?". Com redação, 2
+  avisos (legibilidade → anulação sem recurso; conteúdo fora da redação → banimento). Uma redação por
+  tentativa, em `mini_quiz_essays`; texto sem limite visível (interno 12.000 caracteres, ~100 linhas).
+  Correção fora da plataforma, prazo de **7 dias**; o administrador lança 4 notas de 0 a 10 ou a anulação
+  (`admin_grade_mini_quiz_essay`, tela `/admin/mini-simulados/redacoes`) e o resultado aparece no Relatório.
+  Com `time_limit_minutes`, o cronômetro é regressivo (tempo real da prova; não envia sozinho ao zerar).
+  Antes de iniciar: quadro "Redação: prepare-se ANTES de iniciar" (aviso "Novidade em teste", folha para
+  baixar, orientações) e 2 avisos ao clicar em Iniciar. A folha (PDF **sem o tema**) fica em
+  `public/folhas-redacao/` e é indicada na proposta pela linha `[[folha:/folhas-redacao/<arquivo>.pdf]]`.
 - O administrador faz a prévia do diagnóstico como aluno (nada é gravado) e publica pela própria tela.
 - O diagnóstico mensal usa a primeira tentativa de cada mini simulado no mês (fuso de
   Brasília, `is_first_of_month`). Refazer fica no histórico e não altera o mês.

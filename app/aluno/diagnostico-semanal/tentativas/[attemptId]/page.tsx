@@ -13,9 +13,7 @@ import { getAttemptReview, getQuizRanking } from "@/lib/mini-quizzes/queries"
 import { getStudentExperience, requireStudentFeature } from "@/lib/student/experience"
 import { formatDuration, nextAvailableAt, percentage } from "@/lib/mini-quizzes/core.mjs"
 import { getAttemptEssay, getQuizEssayPrompt } from "@/lib/mini-quizzes/essays"
-import { EssayPrompt } from "@/components/mini-quizzes/essay-prompt"
 import { EssayResult } from "@/components/mini-quizzes/essay-result"
-import { EssaySubmit } from "@/components/mini-quizzes/essay-submit"
 
 export const dynamic = "force-dynamic"
 
@@ -67,10 +65,9 @@ export default async function MiniQuizAttemptPage({ params }: { params: Promise<
           {essay ? (
             <EssayResult essay={essay} title="Sua redação" />
           ) : (
-            <>
-              <EssayPrompt prompt={essayPrompt} afterSubmit />
-              <EssaySubmit attemptId={attempt.id} userId={context.profile.id} quizId={attempt.quiz_id} />
-            </>
+            <p className="rounded-xl border border-border bg-card p-4 text-sm text-muted-foreground">
+              Você não enviou redação neste simulado. A redação só pode ser enviada junto com as respostas, dentro do tempo da prova.
+            </p>
           )}
         </section>
       ) : null}

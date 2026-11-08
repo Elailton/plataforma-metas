@@ -59,6 +59,7 @@ export default async function WeeklyDiagnosticPage({ params }: { params: Promise
           startedAt={started.started_at}
           timeLimitMinutes={monthly ? data.quiz.timeLimitMinutes : null}
           essayPrompt={essayPrompt}
+          userId={context.profile.id}
         />
       </PageContainer>
     )
@@ -115,10 +116,10 @@ export default async function WeeklyDiagnosticPage({ params }: { params: Promise
                 <ListChecks data-icon="inline-start" />
                 Ver correção comentada
               </Link>
-              {essayPrompt ? (
+              {essay ? (
                 <Link href={`/aluno/diagnostico-semanal/tentativas/${first.id}#redacao`} className={buttonVariants({ variant: "outline" })}>
                   <PenLine data-icon="inline-start" />
-                  {essay ? "Ver redação" : "Enviar redação (opcional)"}
+                  Ver redação
                 </Link>
               ) : null}
               <Link href="/aluno/relatorio" className={buttonVariants({ variant: "outline" })}>

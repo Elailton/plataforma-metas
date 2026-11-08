@@ -152,7 +152,8 @@ export function QuizStart({
                         <strong>o cronômetro não pode ser pausado</strong>.
                       </p>
                       <p>
-                        Se vai fazer a redação, <strong>baixe e imprima a folha de redação agora</strong> e separe caneta azul ou preta.
+                        Se vai fazer a redação, <strong>baixe e imprima a folha de redação agora</strong> e separe caneta azul ou preta. A redação
+                        é enviada junto com as respostas, dentro do tempo: depois do envio, não é possível mandá-la.
                       </p>
                     </div>
                   </div>
