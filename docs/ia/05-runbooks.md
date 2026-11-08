@@ -110,6 +110,6 @@ Modelo aprovado pelo usuário em 08/11/2026, guardado em `docs/ia/folha-redacao/
 `Folha-de-Redacao-SGA-PMPE.pdf` (20 linhas, mínimo 15 e máximo 20 marcados, "Simulado Geral 01").
 Para outro curso ou simulado, gerar com `docs/ia/folha-redacao/gerar.py` (`--curso`, `--simulado`,
 `--linhas`, `--min`, `--max`; o comando do PDF está no topo do script) e conferir a imagem antes de enviar.
-Regras fixas: A4 em 1 página, preto e amarelo SGA, **sem nome/CPF/assinatura** (identificação zera a
+Regras fixas: A4 em 1 página, visual sóbrio de folha de prova (cabeçalho centralizado "FOLHA DE REDAÇÃO", sem selo SGA no canto e sem "versão definitiva", só preto), **sem nome/CPF/assinatura** (identificação zera a
 redação), quadro de anulação (folha inteira na foto, legível, sem recurso) e 4 quadrados pretos nos
 cantos para o aluno conferir que a folha inteira saiu na foto. Linhas e limites seguem o edital do curso.
