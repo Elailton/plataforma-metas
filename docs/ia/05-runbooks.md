@@ -106,10 +106,23 @@ Usado em 29/10/2026 nas metas não liberadas de PMPE e GMF (Grupos 1 e 2).
 ## Folha de Redação SGA (impressão)
 
 Modelo aprovado pelo usuário em 08/11/2026, guardado em `docs/ia/folha-redacao/`:
-`Folha-de-Redacao-SGA.pdf` (genérica, 30 linhas, campos em branco) e
-`Folha-de-Redacao-SGA-PMPE.pdf` (20 linhas, mínimo 15 e máximo 20 marcados, "Simulado Geral 01").
-Para outro curso ou simulado, gerar com `docs/ia/folha-redacao/gerar.py` (`--curso`, `--simulado`,
-`--linhas`, `--min`, `--max`; o comando do PDF está no topo do script) e conferir a imagem antes de enviar.
-Regras fixas: A4 em 1 página, visual sóbrio de folha de prova (cabeçalho centralizado "FOLHA DE REDAÇÃO", sem selo SGA no canto e sem "versão definitiva", só preto), **sem nome/CPF/assinatura** (identificação zera a
-redação), quadro de anulação (folha inteira na foto, legível, sem recurso) e 4 quadrados pretos nos
-cantos para o aluno conferir que a folha inteira saiu na foto. Linhas e limites seguem o edital do curso.
+
+- `Folha-de-Redacao-SGA-BASE.pdf`: **modelo base** para qualquer curso (30 linhas, campos em branco).
+- `Folha-de-Redacao-SGA-PMPE.pdf`: PMPE (20 linhas; mínimo 15 e máximo 20 marcados; "Simulado Geral 01").
+- `gerar.py`: gera a folha de outro curso ou simulado (o comando do PDF está no topo do script).
+
+Visual fixo (pedido do usuário): A4 em 1 página, sóbrio, de folha de prova, só preto; cabeçalho
+centralizado "FOLHA DE REDAÇÃO" com "Sistema Guiado da Aprovação · Simulado Geral · <curso>" abaixo;
+**sem** "versão definitiva" e **sem** selo SGA no canto (SGA só no rodapé); campos Simulado, Data e
+Linhas (mín. – máx.); campo **"Título"** (sempre há título, nunca "se houver"); quadros "Instruções" e
+"Atenção: anulação"; **sem nome/CPF/assinatura** (identificação zera a redação); 4 quadrados pretos nos
+cantos para o aluno conferir que a folha inteira saiu na foto.
+
+Para um curso novo: conferir no edital o número de linhas da discursiva e gerar com
+`--curso <SIGLA> --simulado "<título>" --linhas <máx> --min <mín> --max <máx>`; conferir a imagem antes
+de enviar. Sem limites no edital (ou edital fechado), usar o modelo base.
+
+| Curso | Linhas (edital) | Arquivo |
+|---|---|---|
+| PMPE | 15 a 20 | `Folha-de-Redacao-SGA-PMPE.pdf` |
+| Demais | conferir no edital | gerar com `gerar.py` ou usar o modelo base |
