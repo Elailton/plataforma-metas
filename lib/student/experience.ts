@@ -4,6 +4,7 @@ import { cache } from "react"
 import { redirect } from "next/navigation"
 import { createClient } from "@/lib/supabase/server"
 import { logSafeServerError } from "@/lib/security/safe-error"
+import { isRetaFinalOpen } from "@/lib/courses/exam-date.mjs"
 import { getStudentContext } from "@/lib/student/queries"
 import {
   TEST_GROUP,
@@ -54,6 +55,21 @@ export const getStudentExperience = cache(async function getStudentExperience():
     })
     if (generalError) logSafeServerError("student.general_quiz_check_failed", generalError)
     if (generalError || !hasGeneral) disabled.push("simulado_mensal")
+  }
+  // Reta final: aparece só com metas de reta final publicadas e a partir de 30 dias antes da prova.
+  // O Grupo 3 (teste) vê antes da data para conferir.
+  if (!disabled.includes("reta_final")) {
+    const [{ data: courseRow }, { count }] = await Promise.all([
+      supabase.from("courses").select("exam_date").eq("id", context.currentCourse.id).maybeSingle(),
+      supabase
+        .from("goals")
+        .select("id", { count: "exact", head: true })
+        .eq("course_id", context.currentCourse.id)
+        .eq("status", "published")
+        .eq("kind", "reta_final"),
+    ])
+    const open = enrollment?.studyGroup === TEST_GROUP || isRetaFinalOpen(courseRow?.exam_date ?? null)
+    if (!open || !count) disabled.push("reta_final")
   }
   const off = new Set<string>(disabled)
   return {

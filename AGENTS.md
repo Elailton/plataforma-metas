@@ -239,6 +239,9 @@ lei seca a partir da Meta 08): `docs/ia/09-regras-metas.md`.
 seguir `docs/ia/10-prompt-mestre-cursos.md`.
 Assunto que caiu na última prova recebe `syllabus_topics.last_exam = true` e o selo "Cobrado no último
 concurso" no item da meta e no Edital (regra em `docs/ia/09-regras-metas.md`).
+`goals.kind = 'reta_final'`: metas da reta final, fora de "Minhas Metas", na aba "Reta final" (`/aluno/reta-final`),
+liberada 30 dias antes de `courses.exam_date` (o Grupo 3 vê antes para conferir); criadas à mão, marcadas pelo
+interruptor "Reta final" da meta no admin.
 
 Uma meta possui vários itens.
 
@@ -278,7 +281,7 @@ As contas existentes de um administrador e de um aluno de teste são dados prote
   no banco (`student_goal_scopes`, `student_group_allowed`).
 - `course_group_settings`: por curso e grupo, abas/funções desligadas
   (`metas`, `edital`, `diagnostico_semanal`, `simulado_mensal`, `relatorio`, `ranking`, `progresso`,
-  `ultimo_concurso`, `contador_prova`) e aviso
+  `ultimo_concurso`, `contador_prova`, `reta_final`) e aviso
   da tela inicial. Aba desligada some do menu e a rota volta para `/aluno`.
 - Fluxo de lançamento: lançar primeiro só no Grupo 3, o administrador confere com a
   conta de teste e depois libera nos Grupos 1 e 2. **Antes de lançar qualquer conteúdo

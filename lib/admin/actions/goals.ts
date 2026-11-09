@@ -172,3 +172,18 @@ export async function duplicateGoal(goalId: string, courseId: string) {
     })),
   })
 }
+
+/** Marca a meta como reta final (aba própria do aluno) ou volta para as metas regulares. */
+export async function setGoalKind(goalId: string, courseId: string, kind: "regular" | "reta_final") {
+  const { supabase } = await requireAdmin()
+  if (kind !== "regular" && kind !== "reta_final") throw new Error("Tipo de meta inválido.")
+  const { error } = await supabase
+    .from("goals")
+    .update({ kind, updated_at: new Date().toISOString() })
+    .eq("id", goalId)
+    .eq("course_id", courseId)
+    .select("id")
+    .single()
+  if (error) throwSafeDatabaseError("admin.goal.kind_failed", error, "Não foi possível alterar o tipo da meta.")
+  refreshGoal(courseId, goalId)
+}
