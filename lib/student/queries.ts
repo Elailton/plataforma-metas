@@ -55,6 +55,7 @@ const isMissingProgressRelation = (error: { code?: string; message?: string } | 
  */
 export const getStudentCourseSnapshot = cache(async function getStudentCourseSnapshot(
   courseId: string,
+  kind: "regular" | "reta_final" = "regular",
 ): Promise<StudentCourseSnapshot | null> {
   const context = await getStudentContext()
   const course = context?.courses.find((candidate) => candidate.id === courseId)
@@ -73,6 +74,7 @@ export const getStudentCourseSnapshot = cache(async function getStudentCourseSna
       .select(GOAL_SELECT)
       .eq("course_id", courseId)
       .eq("status", "published")
+      .eq("kind", kind)
       .is("goal_items.archived_at", null),
     supabase.from("student_goal_item_completions").select("goal_item_id").eq("user_id", context.profile.id),
   ])

@@ -39,10 +39,11 @@ Requisitos (R1–R7):
 1. **R1** Todo Diagnóstico Semanal leva no mínimo 5 questões da prova anterior do curso, só de
    assuntos cobrados nela e estudados no bloco; selo "Prova anterior" (banca, ano, cargo);
    o aluno vê o desempenho nelas; nunca anuladas; sem repetir questão entre diagnósticos.
-2. **R2** Banco de questões por curso (provas anteriores e questões dos diagnósticos, com
+2. **R2** (**já existia**: `question_bank_sources/_items/_answer_keys`, provas anteriores dos 6 cursos) Banco de questões por curso (provas anteriores e questões dos diagnósticos, com
    origem, disciplina, tópico, banca, ano e bloco) para o simulado geral. A janela "Geral" existe desde 06/11/2026 (ver `04-cursos-e-ofertas.md`).
    Nada é apagado; gabarito fora do alcance do aluno (RLS).
-3. **R3** Metas de reta final: tipo próprio, criadas à mão, apresentação visual diferente.
+3. **R3** (**feito em 09/11/2026**: `goals.kind`, aba `/aluno/reta-final`, função `reta_final`, abre 30 dias
+   antes de `exam_date`; falta criar as metas da reta final da PMPE, à mão) Metas de reta final: tipo próprio, criadas à mão, apresentação visual diferente.
 4. **R4** Card "caiu na última prova" nos tópicos do edital cobrados (anuladas nem existem
    no banco, então não geram card). **Feito em 09/11/2026** como selo "Cobrado no último concurso"
    (`syllabus_topics.last_exam`, função de grupo `ultimo_concurso`; ver `09-regras-metas.md`).

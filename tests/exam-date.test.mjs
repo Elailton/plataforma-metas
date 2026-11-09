@@ -26,3 +26,11 @@ test("contador some depois da prova e mostra se a data é prevista", () => {
   assert.equal(examCountdown("2026-11-01", true, NOW), null)
   assert.equal(isIsoDate("2027-02-30x"), false)
 })
+
+test("reta final abre 30 dias antes da prova e continua aberta até a data", async () => {
+  const { isRetaFinalOpen } = await import("../lib/courses/exam-date.mjs")
+  assert.equal(isRetaFinalOpen("2027-02-21", new Date("2027-01-21T15:00:00Z")), false) // 31 dias
+  assert.equal(isRetaFinalOpen("2027-02-21", new Date("2027-01-22T15:00:00Z")), true) // 30 dias
+  assert.equal(isRetaFinalOpen("2027-02-21", new Date("2027-02-25T15:00:00Z")), true) // depois da prova
+  assert.equal(isRetaFinalOpen(null), false)
+})

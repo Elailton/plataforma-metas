@@ -23,7 +23,13 @@ export default async function GoalDetailPage({
   if (!context) notFound()
   const snapshot = await getStudentCourseSnapshot(context.currentCourse.id)
   // Metas além da janela de prévia não são abertas nem por link direto.
-  const goal = snapshot ? studentGoalWindow(snapshot.goals).visible.find((candidate) => candidate.id === goalId) : undefined
+  let goal = snapshot ? studentGoalWindow(snapshot.goals).visible.find((candidate) => candidate.id === goalId) : undefined
+  let fromRetaFinal = false
+  if (!goal && (await getStudentExperience()).isEnabled("reta_final")) {
+    const reta = await getStudentCourseSnapshot(context.currentCourse.id, "reta_final")
+    goal = reta ? studentGoalWindow(reta.goals).visible.find((candidate) => candidate.id === goalId) : undefined
+    fromRetaFinal = Boolean(goal)
+  }
   if (!goal) notFound()
   // Materiais só desta meta (a lista geral de metas vem sem materiais).
   const materialsByItem = await getGoalItemMaterials(goal.items.map((item) => item.id))
@@ -33,8 +39,8 @@ export default async function GoalDetailPage({
   return (
     <PageContainer>
       <PageHeader
-        backHref="/aluno/metas"
-        backLabel="Minhas Metas"
+        backHref={fromRetaFinal ? "/aluno/reta-final" : "/aluno/metas"}
+        backLabel={fromRetaFinal ? "Reta final" : "Minhas Metas"}
         title={goal.title}
         action={<StatusBadge status={goal.isReleased ? goal.progressStatus : "locked"} />}
       />

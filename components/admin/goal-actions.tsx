@@ -18,7 +18,7 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog"
-import { deleteGoal, duplicateGoal, setGoalStatus } from "@/lib/admin/actions/goals"
+import { deleteGoal, duplicateGoal, setGoalKind, setGoalStatus } from "@/lib/admin/actions/goals"
 import type { AdminGoal } from "@/lib/admin/types"
 
 export function GoalActions({ goal }: { goal: AdminGoal }) {
@@ -34,6 +34,20 @@ export function GoalActions({ goal }: { goal: AdminGoal }) {
       router.refresh()
     } catch (error) {
       toast.error(error instanceof Error ? error.message : "Não foi possível atualizar a meta.")
+    } finally {
+      setPending(false)
+    }
+  }
+
+  async function handleToggleKind() {
+    setPending(true)
+    try {
+      const next = goal.kind === "reta_final" ? "regular" : "reta_final"
+      await setGoalKind(goal.id, goal.courseId, next)
+      toast.success(next === "reta_final" ? "Meta movida para a Reta final" : "Meta voltou para Minhas Metas")
+      router.refresh()
+    } catch (error) {
+      toast.error(error instanceof Error ? error.message : "Não foi possível alterar o tipo da meta.")
     } finally {
       setPending(false)
     }
@@ -76,6 +90,15 @@ export function GoalActions({ goal }: { goal: AdminGoal }) {
           onCheckedChange={handleToggleStatus}
           disabled={pending}
           aria-label="Publicar meta"
+        />
+      </div>
+      <div className="flex items-center gap-2.5 rounded-lg border border-border px-3 py-2 text-sm">
+        <span className="text-muted-foreground">Reta final</span>
+        <Switch
+          checked={goal.kind === "reta_final"}
+          onCheckedChange={handleToggleKind}
+          disabled={pending}
+          aria-label="Meta da reta final"
         />
       </div>
       <Button variant="outline" size="sm" onClick={handleDuplicate} disabled={pending}>

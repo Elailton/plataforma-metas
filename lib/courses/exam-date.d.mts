@@ -6,3 +6,5 @@ export function examCountdown(
   confirmed: boolean,
   now?: Date,
 ): { days: number; label: string; date: string; status: "confirmada" | "prevista" } | null
+export const RETA_FINAL_DAYS: number
+export function isRetaFinalOpen(examDate: string | null | undefined, now?: Date): boolean

@@ -266,6 +266,7 @@ function mapGoalRow(goal: any): AdminGoal {
     createdAt: goal.created_at,
     updatedAt: goal.updated_at,
     targetGroups: goal.target_groups ?? [1, 2],
+    kind: goal.kind === "reta_final" ? "reta_final" : "regular",
     items: goalItems,
   }
 }

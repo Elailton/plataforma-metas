@@ -1,4 +1,4 @@
-import { Home, ListChecks, BookOpen, LineChart, CircleUser, ClipboardCheck } from "lucide-react"
+import { Home, ListChecks, BookOpen, LineChart, CircleUser, ClipboardCheck, Flag } from "lucide-react"
 
 /** Rotas reunidas na aba "Simulados" (diagnóstico semanal e relatório). */
 export const SIMULADOS_HREF = "/aluno/simulados"
@@ -6,6 +6,7 @@ export const SIMULADOS_HREF = "/aluno/simulados"
 export const studentNavItems = [
   { href: "/aluno", label: "Início", shortLabel: "Início", icon: Home, matches: [] as string[] },
   { href: "/aluno/metas", label: "Minhas Metas", shortLabel: "Metas", icon: ListChecks, matches: [] as string[] },
+  { href: "/aluno/reta-final", label: "Reta final", shortLabel: "Reta final", icon: Flag, matches: [] as string[] },
   { href: "/aluno/edital", label: "Edital", shortLabel: "Edital", icon: BookOpen, matches: [] as string[] },
   {
     href: SIMULADOS_HREF,

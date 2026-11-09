@@ -83,6 +83,8 @@ export interface AdminGoal {
   createdAt: string
   updatedAt: string
   targetGroups: number[]
+  /** "reta_final": aba própria do aluno, 30 dias antes da prova. */
+  kind: "regular" | "reta_final"
   items: AdminGoalItem[]
 }
 
