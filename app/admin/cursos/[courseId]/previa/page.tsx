@@ -11,6 +11,7 @@ import { getAdminCourse, listCourseEdital, listCourseGoals, listMaterials } from
 import { formatDate, formatDateLong } from "@/lib/format"
 import { cn } from "@/lib/utils"
 import { isGoalReleased } from "@/lib/goals/release.mjs"
+import { isLastExamItem } from "@/lib/student/snapshot.mjs"
 import { formatMinutes, goalsForPreview, parsePreviewGroup, summarizeGoal } from "@/lib/goals/preview.mjs"
 import type { AdminGoal } from "@/lib/admin/types"
 import type { StudentGoalItem } from "@/lib/student/types"
@@ -45,6 +46,14 @@ export default async function AdminGoalPreviewPage({
   const subjectNames = new Map(edital.map((entry) => [entry.subject.id, entry.subject.name]))
   const topicNames = new Map(edital.flatMap((entry) => entry.topics.map((topic) => [topic.id, topic.title] as const)))
   const topicImportance = new Map(edital.flatMap((entry) => entry.topics.map((topic) => [topic.id, topic.importance] as const)))
+  const topicRows = new Map(
+    edital.flatMap((entry) =>
+      entry.topics.map((topic) => [topic.id, { id: topic.id, parent_topic_id: topic.parentTopicId, last_exam: topic.lastExam }] as const),
+    ),
+  )
+  const parentsWithLastExamChild = new Set(
+    edital.flatMap((entry) => entry.topics.filter((topic) => topic.parentTopicId && topic.lastExam).map((topic) => topic.parentTopicId as string)),
+  )
   const materialById = new Map(materials.map((material) => [material.id, material]))
 
   const href = (params: { grupo?: number | null; meta?: string }) => {
@@ -65,6 +74,11 @@ export default async function AdminGoalPreviewPage({
       subtopicId: item.subtopicId,
       subtopicName: item.subtopicId ? (topicNames.get(item.subtopicId) ?? null) : null,
       importance: (item.subtopicId ? topicImportance.get(item.subtopicId) : null) ?? (item.topicId ? topicImportance.get(item.topicId) : null) ?? null,
+      lastExam: isLastExamItem(
+        item.topicId ? topicRows.get(item.topicId) : null,
+        item.subtopicId ? topicRows.get(item.subtopicId) : null,
+        parentsWithLastExamChild,
+      ),
       instructions: item.instructions,
       suggestedQuestions: item.suggestedQuestions,
       materials: item.materialIds
@@ -262,7 +276,7 @@ function GoalPreview({
         <SectionHeader title={<span id="itens-previa">Itens da meta</span>} />
         <div className="flex flex-col gap-3 md:gap-4">
           {items.map((item) => (
-            <GoalItemChecklist key={item.id} item={item} preview />
+            <GoalItemChecklist key={item.id} item={item} preview showLastExam />
           ))}
         </div>
       </section>

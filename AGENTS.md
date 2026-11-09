@@ -237,6 +237,8 @@ Regras de montagem (séries de aula inteiras, questões em toda meta, RLM com ca
 lei seca a partir da Meta 08): `docs/ia/09-regras-metas.md`.
 **Todo curso fecha o edital em 90 metas** (regra de 09/11/2026); para estruturar um curso novo,
 seguir `docs/ia/10-prompt-mestre-cursos.md`.
+Assunto que caiu na última prova recebe `syllabus_topics.last_exam = true` e o selo "Cobrado no último
+concurso" no item da meta e no Edital (regra em `docs/ia/09-regras-metas.md`).
 
 Uma meta possui vários itens.
 
@@ -275,7 +277,8 @@ As contas existentes de um administrador e de um aluno de teste são dados prote
 - `target_groups` de metas e diagnósticos aceita 1, 2 e 3. A visibilidade é decidida
   no banco (`student_goal_scopes`, `student_group_allowed`).
 - `course_group_settings`: por curso e grupo, abas/funções desligadas
-  (`metas`, `edital`, `diagnostico_semanal`, `simulado_mensal`, `relatorio`, `ranking`, `progresso`) e aviso
+  (`metas`, `edital`, `diagnostico_semanal`, `simulado_mensal`, `relatorio`, `ranking`, `progresso`,
+  `ultimo_concurso`) e aviso
   da tela inicial. Aba desligada some do menu e a rota volta para `/aluno`.
 - Fluxo de lançamento: lançar primeiro só no Grupo 3, o administrador confere com a
   conta de teste e depois libera nos Grupos 1 e 2. **Antes de lançar qualquer conteúdo

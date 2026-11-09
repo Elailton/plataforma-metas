@@ -14,6 +14,7 @@ import { Checkbox } from "@/components/ui/checkbox"
 import { toast } from "sonner"
 import { setGoalItemCompleted } from "@/lib/student/actions"
 import { cn } from "@/lib/utils"
+import { LastExamBadge } from "@/components/student/last-exam-badge"
 import type { StudentGoalItem, StudentMaterial } from "@/lib/student/types"
 
 const DESCRIPTION_TRUNCATE_THRESHOLD = 160
@@ -34,9 +35,12 @@ export function GoalItemChecklist({
   item,
   locked = false,
   preview = false,
+  showLastExam = false,
 }: {
   item: StudentGoalItem
   locked?: boolean
+  /** Selo "Cobrado no último concurso" ligado para o grupo do aluno. */
+  showLastExam?: boolean
   /** Prévia do administrador: mesma aparência do aluno, sem salvar progresso. */
   preview?: boolean
 }) {
@@ -104,7 +108,12 @@ export function GoalItemChecklist({
         ) : null}
       </div>
 
-      {item.importance ? <ImportanceBadges importance={item.importance} /> : null}
+      {item.importance || (showLastExam && item.lastExam) ? (
+        <div className="flex flex-wrap items-center gap-1.5">
+          {item.importance ? <ImportanceBadges importance={item.importance} /> : null}
+          {showLastExam && item.lastExam ? <LastExamBadge /> : null}
+        </div>
+      ) : null}
 
       {item.instructions ? (
         <div className="flex flex-col gap-1.5 rounded-lg border-l-2 border-primary/60 bg-muted/30 py-2 pl-3 pr-3">
@@ -220,7 +229,7 @@ const importanceLabel: Record<NonNullable<StudentGoalItem["importance"]>, { labe
 function ImportanceBadges({ importance }: { importance: NonNullable<StudentGoalItem["importance"]> }) {
   const { label, className } = importanceLabel[importance]
   return (
-    <div className="flex flex-wrap items-center gap-1.5">
+    <>
       <span className={cn("rounded-full px-2 py-0.5 text-[11px] font-semibold uppercase tracking-wide", className)}>
         {label}
       </span>
@@ -229,7 +238,7 @@ function ImportanceBadges({ importance }: { importance: NonNullable<StudentGoalI
           Muito cobrado
         </span>
       ) : null}
-    </div>
+    </>
   )
 }
 

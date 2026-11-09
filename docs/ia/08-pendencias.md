@@ -44,7 +44,8 @@ Requisitos (R1–R7):
    Nada é apagado; gabarito fora do alcance do aluno (RLS).
 3. **R3** Metas de reta final: tipo próprio, criadas à mão, apresentação visual diferente.
 4. **R4** Card "caiu na última prova" nos tópicos do edital cobrados (anuladas nem existem
-   no banco, então não geram card).
+   no banco, então não geram card). **Feito em 09/11/2026** como selo "Cobrado no último concurso"
+   (`syllabus_topics.last_exam`, função de grupo `ultimo_concurso`; ver `09-regras-metas.md`).
 5. **R5** Tempo estimado das metas: hoje existe **só como texto** na descrição ("Meta de ~3h":
    365 de 366 metas do GMF e 158 de 170 do PMPE). Preservar; coluna nova só se um painel exigir.
 6. **R6** Trilha prioritária (selo "prioridade" marcado pelo mentor; o sistema só sugere

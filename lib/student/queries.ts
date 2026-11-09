@@ -66,7 +66,7 @@ export const getStudentCourseSnapshot = cache(async function getStudentCourseSna
     supabase.from("courses").select("id, name, slug, organization, cover_color").eq("id", courseId).single(),
     supabase
       .from("subjects")
-      .select("id, name, position, syllabus_topics(id, subject_id, parent_topic_id, title, position, importance)")
+      .select("id, name, position, syllabus_topics(id, subject_id, parent_topic_id, title, position, importance, last_exam)")
       .eq("course_id", courseId),
     supabase
       .from("goals")

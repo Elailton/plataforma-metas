@@ -250,6 +250,48 @@ test("importância do item vem do subtópico e, sem ela, do tópico; valores inv
   assert.deepEqual(out[0].items.map((entry) => entry.importance), ["high", "low", null, null])
 })
 
+test("selo cobrado no último concurso: vale o nível do item; tópico sem filho marcado passa a marca aos subtópicos", () => {
+  const edital = [
+    {
+      id: "s",
+      name: "Disciplina",
+      position: 1,
+      syllabus_topics: [
+        { id: "a", subject_id: "s", parent_topic_id: null, title: "Tópico com filho marcado", position: 1, last_exam: true },
+        { id: "a1", subject_id: "s", parent_topic_id: "a", title: "Filho cobrado", position: 1, last_exam: true },
+        { id: "a2", subject_id: "s", parent_topic_id: "a", title: "Filho não cobrado", position: 2, last_exam: false },
+        { id: "b", subject_id: "s", parent_topic_id: null, title: "Tópico cobrado sem detalhe", position: 2, last_exam: true },
+        { id: "b1", subject_id: "s", parent_topic_id: "b", title: "Filho herda", position: 1 },
+        { id: "c", subject_id: "s", parent_topic_id: null, title: "Não cobrado", position: 3, last_exam: false },
+        { id: "d", subject_id: "s", parent_topic_id: null, title: "Sem coluna (antes da migração)", position: 4 },
+      ],
+    },
+  ]
+  const g = [
+    {
+      id: "g",
+      course_id: "c",
+      title: "Meta 01",
+      description: null,
+      due_date: "2026-10-12",
+      created_at: CREATED,
+      goal_items: [
+        item("i1", "s", "a", 0, { subtopic_id: "a1" }),
+        item("i2", "s", "a", 1, { subtopic_id: "a2" }),
+        item("i3", "s", "a", 2),
+        item("i4", "s", "b", 3, { subtopic_id: "b1" }),
+        item("i5", "s", "c", 4),
+        item("i6", "s", "d", 5),
+      ],
+    },
+  ]
+  const snap = buildStudentSnapshot({ subjects: edital, goals: g, completedItemIds: [] })
+  assert.deepEqual(snap.goals[0].items.map((entry) => entry.lastExam), [true, false, true, true, false, false])
+  const topics = snap.subjects[0].topics
+  assert.deepEqual(topics.map((topic) => topic.lastExam), [true, true, false, false])
+  assert.deepEqual(topics[0].subtopics.map((topic) => topic.lastExam), [true, false])
+})
+
 test("materialsFromRelations ordena por posição e descarta material invisível", async () => {
   const { materialsFromRelations } = await import("../lib/student/snapshot.mjs")
   const list = materialsFromRelations([
