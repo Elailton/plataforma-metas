@@ -93,3 +93,8 @@ grupo antes de lançar conteúdo.
 - Questões de prova anterior trocadas por desatualização ou falta de legenda: PRF itens 82 e 79 (peso por eixo e
   registrador) e CFO questão 7 (alternativas em símbolos sem a legenda original).
 - PMPE: Metas 82–90 criadas (01–09/01/2027) com os 7 tópicos que faltavam e revisão final; G1 em `{3}`, G2 rascunho.
+- Trocas na conferência: questões de caderno fora do curso (política do Piauí), com gabarito duvidoso (Pangeia sem a
+  Antártida) ou confusas (crimes em tempo de guerra) foram substituídas por outras do mesmo caderno; questão que
+  repetia a da prova anterior no mesmo diagnóstico ou um diagnóstico antigo do grupo também foi trocada.
+- Os 12 diagnósticos ficaram completos (gabarito e explicação em todas). Versões G1 publicadas só no Grupo 3;
+  `qc_import_staging` removida em 09/11.
