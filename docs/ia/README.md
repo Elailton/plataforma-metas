@@ -17,6 +17,8 @@ Leia nesta ordem antes de qualquer tarefa:
 | [07-incidentes-e-licoes.md](07-incidentes-e-licoes.md) | O que deu errado, causa e o que mudou |
 | [08-pendencias.md](08-pendencias.md) | Trabalho em aberto e próximos passos combinados |
 | [09-regras-metas.md](09-regras-metas.md) | Regras de montagem das metas (séries de aula, questões, lei seca, RLM) |
+| [10-prompt-mestre-cursos.md](10-prompt-mestre-cursos.md) | Prompt mestre: estruturar um curso novo e fechar o edital em 90 metas |
+| [cursos/](cursos/) | Ficha de cada curso novo (edital, prova, importância, plano das 90 metas) |
 
 ## Como manter esta memória
 

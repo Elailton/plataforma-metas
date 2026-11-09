@@ -63,3 +63,13 @@ grupo antes de lançar conteúdo.
   foto e/ou texto colado, dois avisos de urgência antes do envio, correção em até 7 dias e resultado no
   Relatório. A correção é feita pela equipe fora da plataforma e lançada em `/admin/mini-simulados/redacoes`.
 - O cronômetro regressivo não envia a prova sozinho ao zerar (evita perder respostas); mostra "Tempo esgotado".
+
+## 2026-11-09 — Edital fecha em 90 metas; três cursos novos armazenados
+
+- Pedido do usuário: "todos os cursos devem fechar o edital em 90 metas", ao armazenar e ao corrigir;
+  primeiro um prompt mestre (`10-prompt-mestre-cursos.md`), depois segui-lo. Geração de metas fica para depois.
+- Armazenados os editais de SGA - PRF ADM, SGA - GCM Itaitinga e SGA - PCCE (fichas em `cursos/`), com
+  importância e questionário (q09/q13) ajustados ao edital. "Orientações iniciais" passou a ser a última disciplina.
+- Importância: quando a amostra da prova no TEC é pequena (1 questão por assunto), a base passa a ser a taxa
+  de cobrança das bancas enviada pelo usuário; assunto que caiu na prova anterior sobe para pelo menos "média".
+- Análise dos cursos atuais em `metas-novas/ANALISE-90-METAS.md`; nenhuma meta alterada até o usuário aprovar.

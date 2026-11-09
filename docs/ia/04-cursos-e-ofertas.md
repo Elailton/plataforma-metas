@@ -54,6 +54,11 @@
 | SGA - PMCE (soldado) | `6305aafa-3263-46c9-b1b7-1001c01b5994` | rascunho | edital pronto; metas pendentes |
 | SGA - PPCE | `4b4f4900-a0a3-4ebd-8507-511c16eb9029` | rascunho | edital pronto; metas pendentes |
 | SGA - CFO PMCE | `c09903b0-651f-43a8-9c43-5f8fe7f6cb17` | rascunho | edital pronto; metas pendentes |
+| SGA - PRF ADM | `4c3ca70b-72ac-4dcc-93ec-d08c4832df11` | rascunho | edital (FUNCAB 2014, 60 q) em 09/11/2026; só Meta 0 — ficha `cursos/sga-prf-adm.md` |
+| SGA - GCM Itaitinga | `4b7cb696-2a50-4880-9a56-54dcc4a239cb` | rascunho | edital (FUNCEPE 2015, 60 q, P2 peso 3) em 09/11/2026; só Meta 0 — ficha `cursos/sga-gcm-itaitinga.md` |
+| SGA - PCCE (Oficial Investigador) | `0203ffcb-bf2e-4e99-8706-de1785d22116` | rascunho | edital (CEV/UECE 2025, 100 q + redação + TAF) em 09/11/2026; só Meta 0 — ficha `cursos/sga-pcce.md`. Não confundir com PPCE |
+
+Regra de 09/11/2026: todo curso fecha o edital em **90 metas** (`09-regras-metas.md`).
 
 Cursos novos têm a "Meta 0 — Comece por aqui" em rascunho. Compras com SGA de cursos em
 rascunho já criam matrícula: o aluno vê "Acesso não liberado" até a publicação.

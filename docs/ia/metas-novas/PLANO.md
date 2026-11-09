@@ -3,6 +3,10 @@
 Gatilho: quando o usuário disser **"executar metas"**, seguir este plano até o fim e
 gravar todas as metas. Regras de montagem: `../09-regras-metas.md`.
 
+> **Atualizado em 09/11/2026:** a regra agora é fechar o edital em **90 metas** (conteúdo novo até a
+> Meta 84, fechamento até a 90). Onde este plano diz ~100 metas, vale 90. Veja
+> `../09-regras-metas.md` e `ANALISE-90-METAS.md` (corte proposto a partir da Meta 15).
+
 ## Decisões do usuário (29/10/2026)
 - Sem data de prova. Duração de **3 a 3,5 meses**: cerca de **100 metas** por curso
   (Meta 01 = 02/11/2026, uma por dia, até ~09/02/2027). Conteúdo novo até ~Meta 85;

@@ -235,6 +235,8 @@ Ao criar ou alterar políticas:
 
 Regras de montagem (séries de aula inteiras, questões em toda meta, RLM com caderno,
 lei seca a partir da Meta 08): `docs/ia/09-regras-metas.md`.
+**Todo curso fecha o edital em 90 metas** (regra de 09/11/2026); para estruturar um curso novo,
+seguir `docs/ia/10-prompt-mestre-cursos.md`.
 
 Uma meta possui vários itens.
 
