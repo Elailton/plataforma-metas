@@ -82,3 +82,14 @@ grupo antes de lançar conteúdo.
 - Lançado como função de grupo `ultimo_concurso`, desligada nos Grupos 1 e 2 pela migração (o Grupo 3 confere
   primeiro). Cursos criados depois disso começam com a função ligada; desligar na aba Grupos se preciso.
 - Mapeamento dos 9 cursos feito pelos relatórios do TEC da última prova (GCM pela prova de 2015).
+
+## 2026-11-09 — Diagnósticos de 15/11 e fechamento da PMPE em 90 metas
+- Fluxo pedido pelo usuário ("faça isso tudo nessa linha de fluxo"), prompt em `11-prompt-fluxo-novembro.md`.
+- 12 diagnósticos (G1 e G2 de PMPE 29–35, GMF 15–21, PRF/PMCE/PPCE/CFO 08–14), cada um com pelo menos 5
+  questões da última prova (`bank_item_id`) dentro do total. Versão G1 publicada só para `{3}`; G2 em rascunho.
+- Importação das questões do Qconcursos por tabela temporária `qc_import_staging` (só INSERT anônimo com código
+  de uso único, sem SELECT), removida ao fim. Motivo: o volume de enunciados não cabia na conversa.
+- GMF: sem caderno de Atualidades no bloco, as 3 vagas foram para Fortaleza, Constitucional e Legislação.
+- Questões de prova anterior trocadas por desatualização ou falta de legenda: PRF itens 82 e 79 (peso por eixo e
+  registrador) e CFO questão 7 (alternativas em símbolos sem a legenda original).
+- PMPE: Metas 82–90 criadas (01–09/01/2027) com os 7 tópicos que faltavam e revisão final; G1 em `{3}`, G2 rascunho.
