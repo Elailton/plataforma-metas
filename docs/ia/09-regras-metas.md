@@ -4,6 +4,17 @@ Pedido do usuário em 2026-10-29, depois de rever as metas da PMPE e da GMF. Val
 **toda meta nova** e para correções de metas **ainda não liberadas** (meta liberada não
 muda). O gerador e o passo a passo estão em `05-runbooks.md`.
 
+## Regra atual: o edital fecha em 90 metas (2026-11-09)
+- **Todo curso SGA fecha o edital em 90 metas**, ao armazenar e ao corrigir. Todo assunto do
+  edital tem aula (ou, no G1, itens só de questões para baixa incidência) e questões até a Meta 90.
+- Faixas:
+  - Metas 01–07: adaptação.
+  - Metas 08–84: conteúdo novo com lei seca e leitura.
+  - Metas 85–90: fechamento (últimos assuntos de baixa incidência e revisão geral de alta).
+  - Depois da 90: só revisão, caderno de erros, reforço e simulados.
+- Substitui o plano de ~100 metas de `metas-novas/PLANO.md`. Procedimento:
+  `10-prompt-mestre-cursos.md`. Análise dos cursos atuais: `metas-novas/ANALISE-90-METAS.md`.
+
 ## 0. Antes de montar: alinhamento do edital
 - Cada assunto do edital (tópico/subtópico) é ligado às suas **aulas** (um professor por
   disciplina; Português do Zero e trilhas repetidas ficam de fora), à **apostila**, à

@@ -3,6 +3,11 @@
 Ordem sugerida. Marcar com data quando concluir e mover a lição para `07` se houver.
 
 ## Metas dos SGA novos (PRF, PMCE, CFO, PPCE)
+- **09/11/2026 — regra das 90 metas:** decidir o corte proposto em `metas-novas/ANALISE-90-METAS.md`
+  (replanejar PRF/PMCE/PPCE/CFO a partir da Meta 15; GMF G1 antecipar 6 tópicos; PMPE incluir 7 tópicos e
+  criar Metas 82–90).
+- **PRF ADM, GCM Itaitinga, PCCE:** edital pronto (09/11); faltam aulas/materiais, cadernos, data de início,
+  grupo de lançamento, produto/ofertas Hotmart. GCM: confirmar as 3 fases do Anexo III (não veio no arquivo).
 - Metas 01–05 publicadas (29/10). Restante (~100 metas por curso) aguardando o usuário dizer
   **"executar metas"**: plano completo em `metas-novas/PLANO.md`.
 
