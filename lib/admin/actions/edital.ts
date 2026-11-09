@@ -187,3 +187,21 @@ export async function setSyllabusTopicImportance(
   revalidatePath(`/admin/cursos/${courseId}`)
   return { ok: true }
 }
+
+/** Marca/desmarca o assunto como cobrado na última prova do concurso. */
+export async function setSyllabusTopicLastExam(
+  topicId: string,
+  courseId: string,
+  lastExam: boolean,
+): Promise<EditalActionResult> {
+  const { supabase } = await requireAdmin()
+  if (typeof lastExam !== "boolean") return actionError("Valor inválido.")
+
+  const { error } = await supabase.from("syllabus_topics").update({ last_exam: lastExam }).eq("id", topicId)
+  if (error) {
+    logSafeServerError("admin.topic.last_exam_failed", error)
+    return actionError("Não foi possível salvar a marca de último concurso.")
+  }
+  revalidatePath(`/admin/cursos/${courseId}`)
+  return { ok: true }
+}

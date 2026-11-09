@@ -11,6 +11,7 @@ import { studentGoalWindow } from "@/lib/student/snapshot.mjs"
 import { formatDateLong } from "@/lib/format"
 import { goalAvailabilityLabel } from "@/lib/student/goal-availability"
 import { GoalReleaseRefresh } from "@/components/student/goal-release-refresh"
+import { getStudentExperience } from "@/lib/student/experience"
 
 export default async function GoalDetailPage({
   params,
@@ -27,6 +28,7 @@ export default async function GoalDetailPage({
   // Materiais só desta meta (a lista geral de metas vem sem materiais).
   const materialsByItem = await getGoalItemMaterials(goal.items.map((item) => item.id))
   const items = goal.items.map((item) => ({ ...item, materials: materialsByItem.get(item.id) ?? [] }))
+  const showLastExam = (await getStudentExperience()).isEnabled("ultimo_concurso")
 
   return (
     <PageContainer>
@@ -62,7 +64,7 @@ export default async function GoalDetailPage({
         <SectionHeader title={<span id="itens-meta">Itens da meta</span>} />
         <div className="flex flex-col gap-3 md:gap-4">
           {items.map((item) => (
-            <GoalItemChecklist key={item.id} item={item} locked={!goal.isReleased} />
+            <GoalItemChecklist key={item.id} item={item} locked={!goal.isReleased} showLastExam={showLastExam} />
           ))}
         </div>
       </section>

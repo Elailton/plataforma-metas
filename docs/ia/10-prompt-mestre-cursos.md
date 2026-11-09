@@ -59,6 +59,10 @@ das metas em si é um passo posterior, só quando o usuário pedir.
 - Questionário (20 perguntas, padrão): adaptar q03/q04 (nome do concurso), q09 (linhas = disciplinas
   do edital), q13 (disciplina característica), q17/q18/q20 só se houver TAF.
 - Meta 0 "Comece por aqui" (texto padrão; bloco "Prova objetiva e TAF" ou "Prova objetiva").
+- **Cobrado no último concurso:** marcar `last_exam = true` nos tópicos/subtópicos que caíram na última
+  prova (relatório "ASSUNTOS NO TEC" da prova ou a prova questão a questão; anuladas e questões fora do
+  edital não contam). Registrar os códigos em `docs/ia/cursos/dados/ultimo_concurso.py` e gerar o SQL com
+  `python3 -I ultimo_concurso.py <slug>`.
 - Conferir por SQL: contagem de disciplinas/tópicos, nenhuma disciplina vazia, importâncias válidas.
 
 ## Passo 5 — Registrar na memória

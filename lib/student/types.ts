@@ -29,6 +29,8 @@ export interface StudentGoalItem {
   subtopicName: string | null
   /** Importância do subtópico (ou, sem ela, do tópico) no edital; null = sem selo. */
   importance: TopicImportance | null
+  /** Assunto cobrado na última prova do concurso. */
+  lastExam: boolean
   instructions: string | null
   suggestedQuestions: number | null
   materials: StudentMaterial[]
@@ -74,6 +76,8 @@ export interface StudentTopic {
   title: string
   position: number
   studied: boolean
+  /** Assunto cobrado na última prova do concurso. */
+  lastExam: boolean
   subtopics: StudentTopic[]
 }
 

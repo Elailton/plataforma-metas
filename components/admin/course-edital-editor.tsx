@@ -37,6 +37,7 @@ import {
   renameSyllabusTopic,
   deleteSyllabusTopic,
   setSyllabusTopicImportance,
+  setSyllabusTopicLastExam,
 } from "@/lib/admin/actions/edital"
 import type { AdminSubject, AdminSyllabusTopic } from "@/lib/admin/types"
 import { SearchInput } from "@/components/search-input"
@@ -361,6 +362,22 @@ function TopicRow({
     }
   }
 
+  async function handleLastExam(value: boolean) {
+    setPending(true)
+    try {
+      const result = await setSyllabusTopicLastExam(topic.id, courseId, value)
+      if (!result.ok) {
+        toast.error(result.message)
+        return
+      }
+      onDone()
+    } catch (error) {
+      toast.error(error instanceof Error ? error.message : "Não foi possível salvar a marca de último concurso.")
+    } finally {
+      setPending(false)
+    }
+  }
+
   async function handleImportance(value: string) {
     setPending(true)
     try {
@@ -421,7 +438,17 @@ function TopicRow({
           <span className="mr-2 font-mono text-xs text-muted-foreground">{number}</span>
           {topicDisplayTitle(topic.title)}
         </span>
-        <div className="flex items-center gap-1">
+        <div className="flex items-center gap-2">
+          <label className="flex items-center gap-1 text-xs text-muted-foreground" title="Cobrado na última prova do concurso">
+            <input
+              type="checkbox"
+              checked={topic.lastExam}
+              onChange={(event) => handleLastExam(event.target.checked)}
+              disabled={pending}
+              className="size-3.5 accent-violet-600"
+            />
+            Último concurso
+          </label>
           <select
             value={topic.importance ?? ""}
             onChange={(event) => handleImportance(event.target.value)}

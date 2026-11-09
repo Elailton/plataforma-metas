@@ -4,12 +4,21 @@ import { useId, useState } from "react"
 import { CheckCircle2, ChevronDown, Circle } from "lucide-react"
 import { cn } from "@/lib/utils"
 import type { StudentTopic } from "@/lib/student/types"
+import { LastExamBadge } from "@/components/student/last-exam-badge"
 
 export function topicDisplayTitle(title: string) {
   return title.replace(/^\d+(?:\.\d+)*[\s.)-]+/, "").trim() || title
 }
 
-export function EditalTopic({ topic, index }: { topic: StudentTopic; index: number }) {
+export function EditalTopic({
+  topic,
+  index,
+  showLastExam = false,
+}: {
+  topic: StudentTopic
+  index: number
+  showLastExam?: boolean
+}) {
   const [open, setOpen] = useState(false)
   const panelId = useId()
   const hasSubtopics = topic.subtopics.length > 0
@@ -26,6 +35,7 @@ export function EditalTopic({ topic, index }: { topic: StudentTopic; index: numb
       </span>
       <span className={cn("min-w-0 flex-1 text-sm font-medium leading-snug", topic.studied ? "text-foreground" : "text-muted-foreground")}>
         {topicDisplayTitle(topic.title)}
+        {showLastExam && topic.lastExam ? <LastExamBadge compact className="ml-2 align-middle" /> : null}
       </span>
       {hasSubtopics ? (
         <>
@@ -77,6 +87,7 @@ export function EditalTopic({ topic, index }: { topic: StudentTopic; index: numb
                     className={cn("text-sm leading-relaxed", subtopic.studied ? "text-foreground/90" : "text-muted-foreground")}
                   >
                     {topicDisplayTitle(subtopic.title)}
+                    {showLastExam && subtopic.lastExam ? <LastExamBadge compact className="ml-2 align-middle" /> : null}
                   </span>
                 </li>
               ))}

@@ -144,6 +144,7 @@ export async function listSubjectTopics(
     title: topic.title,
     position: topic.position,
     importance: topic.importance ?? null,
+    lastExam: topic.last_exam === true,
   }))
 }
 
@@ -175,6 +176,7 @@ export async function listCourseEdital(
         title: t.title,
         position: t.position,
         importance: t.importance ?? null,
+        lastExam: t.last_exam === true,
       })),
   }))
 }

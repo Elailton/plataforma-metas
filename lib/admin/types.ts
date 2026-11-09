@@ -35,6 +35,8 @@ export interface AdminSyllabusTopic {
   title: string
   position: number
   importance: "high" | "medium" | "low" | null
+  /** Cobrado na última prova do concurso. */
+  lastExam: boolean
 }
 
 export type AdminMaterialType = "videoaula" | "apostila" | "link"

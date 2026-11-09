@@ -73,3 +73,12 @@ grupo antes de lançar conteúdo.
 - Importância: quando a amostra da prova no TEC é pequena (1 questão por assunto), a base passa a ser a taxa
   de cobrança das bancas enviada pelo usuário; assunto que caiu na prova anterior sobe para pelo menos "média".
 - Análise dos cursos atuais em `metas-novas/ANALISE-90-METAS.md`; nenhuma meta alterada até o usuário aprovar.
+
+## 2026-11-09 — Selo "Cobrado no último concurso"
+
+- Pedido do usuário: card "Cobrado no Último Concurso" nos assuntos que estiveram na última prova, nas metas,
+  e virar regra. Implementado como selo no item da meta e no Edital do aluno, coluna `syllabus_topics.last_exam`
+  e caixa "Último concurso" no editor de edital do admin.
+- Lançado como função de grupo `ultimo_concurso`, desligada nos Grupos 1 e 2 pela migração (o Grupo 3 confere
+  primeiro). Cursos criados depois disso começam com a função ligada; desligar na aba Grupos se preciso.
+- Mapeamento dos 9 cursos feito pelos relatórios do TEC da última prova (GCM pela prova de 2015).

@@ -4,6 +4,7 @@ import { Progress } from "@/components/ui/progress"
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion"
 import { EditalTopic } from "@/components/student/edital-topic"
 import { getStudentContext, getStudentCourseSnapshot } from "@/lib/student/queries"
+import { getStudentExperience } from "@/lib/student/experience"
 
 export default async function EditalPage() {
   const context = await getStudentContext()
@@ -11,6 +12,7 @@ export default async function EditalPage() {
   const snapshot = await getStudentCourseSnapshot(context.currentCourse.id)
   if (!snapshot) redirect("/auth/sem-acesso")
   const subjects = snapshot.subjects.filter((subject) => subject.topics.length > 0)
+  const showLastExam = (await getStudentExperience()).isEnabled("ultimo_concurso")
 
   return (
     <PageContainer>
@@ -62,7 +64,7 @@ export default async function EditalPage() {
               <AccordionContent>
                 <div className="flex flex-col divide-y divide-border/60 border-t border-border/60 pb-2">
                   {discipline.topics.map((topic, topicIndex) => (
-                    <EditalTopic key={topic.id} topic={topic} index={topicIndex} />
+                    <EditalTopic key={topic.id} topic={topic} index={topicIndex} showLastExam={showLastExam} />
                   ))}
                 </div>
               </AccordionContent>

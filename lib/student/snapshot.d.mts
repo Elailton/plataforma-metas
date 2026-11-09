@@ -7,6 +7,7 @@ export interface SnapshotTopicRow {
   title: string
   position: number
   importance?: string | null
+  last_exam?: boolean | null
 }
 export interface SnapshotSubjectRow {
   id: string
@@ -73,3 +74,9 @@ export function studentGoalWindow<T extends { isReleased: boolean; isDateRelease
 export function materialsFromRelations(
   relations: readonly { position?: number | null; materials?: SnapshotMaterialRow | SnapshotMaterialRow[] | null }[] | null | undefined,
 ): StudentMaterial[]
+
+export function isLastExamItem(
+  topic: Pick<SnapshotTopicRow, "id" | "last_exam"> | null | undefined,
+  subtopic: Pick<SnapshotTopicRow, "parent_topic_id" | "last_exam"> | null | undefined,
+  parentsWithLastExamChild?: Set<string>,
+): boolean

@@ -4,6 +4,18 @@ Pedido do usuário em 2026-10-29, depois de rever as metas da PMPE e da GMF. Val
 **toda meta nova** e para correções de metas **ainda não liberadas** (meta liberada não
 muda). O gerador e o passo a passo estão em `05-runbooks.md`.
 
+## Selo "Cobrado no último concurso" (regra de 2026-11-09)
+- Todo assunto do edital (tópico ou subtópico) que caiu na **última prova** do curso é marcado
+  `syllabus_topics.last_exam = true`, ao armazenar o curso e ao corrigir. Fonte: relatório "ASSUNTOS NO
+  TEC" da última prova; sem relatório, a própria prova, questão a questão. Questão anulada não conta;
+  questão fora do edital não marca nada.
+- O aluno vê o selo **"Cobrado no último concurso"** no item da meta e no assunto do Edital. No item,
+  vale a marca do nível do item (subtópico); tópico marcado sem nenhum subtópico marcado passa o selo a
+  todos os subtópicos (`isLastExamItem`).
+- Ao montar metas, assunto com o selo entra antes e com mais questões, como os de alta incidência.
+- O mapeamento de cada curso fica em `cursos/dados/ultimo_concurso.py` (código disciplina.tópico.subtópico).
+- Lançamento por grupo: função `ultimo_concurso` em `course_group_settings` (começou ligada só no Grupo 3).
+
 ## Regra atual: o edital fecha em 90 metas (2026-11-09)
 - **Todo curso SGA fecha o edital em 90 metas**, ao armazenar e ao corrigir. Todo assunto do
   edital tem aula (ou, no G1, itens só de questões para baixa incidência) e questões até a Meta 90.
