@@ -90,7 +90,9 @@ liberação acompanha. Acesso do SGA: 1 ano (ver `04`).
 
 Sem decisões em aberto. Falta só o gatilho do usuário.
 
-## Contador da prova na tela inicial (pedido do usuário em 2026-10-30, não construído)
+## Contador da prova na tela inicial (pedido do usuário em 2026-10-30) — **feito em 09/11/2026**
+- `courses.exam_date` / `exam_date_confirmed` (migração `20261109000200`), painel "Data da prova" nas
+  configurações do curso, card na tela inicial e função de grupo `contador_prova` (começa só no Grupo 3).
 - Na tela inicial do aluno, o curso mostra **quanto tempo falta para a prova** (só o PMPE,
   que é o único curso com data por enquanto).
 - Orientado por `courseId`, sem regra específica do PMPE: campo de data da prova no curso

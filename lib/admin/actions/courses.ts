@@ -3,7 +3,8 @@
 import { revalidatePath } from "next/cache"
 import { requireAdmin } from "@/lib/admin/auth"
 import type { CourseStatus } from "@/lib/admin/types"
-import { throwSafeDatabaseError } from "@/lib/security/safe-error"
+import { logSafeServerError, throwSafeDatabaseError } from "@/lib/security/safe-error"
+import { isIsoDate } from "@/lib/courses/exam-date.mjs"
 
 function slugify(value: string) {
   return value
@@ -100,4 +101,25 @@ export async function setCourseStatus(courseId: string, status: CourseStatus) {
 
   revalidatePath("/admin/cursos")
   revalidatePath(`/admin/cursos/${courseId}`)
+}
+
+/** Data da prova (contador do aluno e liberação da reta final). null remove. */
+export async function setCourseExamDate(
+  courseId: string,
+  examDate: string | null,
+  confirmed: boolean,
+): Promise<{ ok: true } | { ok: false; message: string }> {
+  const { supabase } = await requireAdmin()
+  if (examDate !== null && !isIsoDate(examDate)) return { ok: false, message: "Data inválida." }
+  const { error } = await supabase
+    .from("courses")
+    .update({ exam_date: examDate, exam_date_confirmed: examDate ? Boolean(confirmed) : false })
+    .eq("id", courseId)
+  if (error) {
+    logSafeServerError("admin.course.exam_date_failed", error)
+    return { ok: false, message: "Não foi possível salvar a data da prova." }
+  }
+  revalidatePath(`/admin/cursos/${courseId}`)
+  revalidatePath("/aluno")
+  return { ok: true }
 }

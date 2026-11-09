@@ -278,7 +278,7 @@ As contas existentes de um administrador e de um aluno de teste são dados prote
   no banco (`student_goal_scopes`, `student_group_allowed`).
 - `course_group_settings`: por curso e grupo, abas/funções desligadas
   (`metas`, `edital`, `diagnostico_semanal`, `simulado_mensal`, `relatorio`, `ranking`, `progresso`,
-  `ultimo_concurso`) e aviso
+  `ultimo_concurso`, `contador_prova`) e aviso
   da tela inicial. Aba desligada some do menu e a rota volta para `/aluno`.
 - Fluxo de lançamento: lançar primeiro só no Grupo 3, o administrador confere com a
   conta de teste e depois libera nos Grupos 1 e 2. **Antes de lançar qualquer conteúdo

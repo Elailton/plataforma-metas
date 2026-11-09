@@ -16,6 +16,9 @@ export interface AdminCourse {
   updatedAt: string
   groupsEnabled: boolean
   questionnaireSchema: unknown[]
+  /** Data da prova (AAAA-MM-DD) e se a banca já confirmou. */
+  examDate: string | null
+  examDateConfirmed: boolean
   studentsCount: number
   goalsCount: number
 }
