@@ -3,9 +3,16 @@
 Ordem sugerida. Marcar com data quando concluir e mover a lição para `07` se houver.
 
 ## Metas dos SGA novos (PRF, PMCE, CFO, PPCE)
-- **09/11/2026 — regra das 90 metas:** decidir o corte proposto em `metas-novas/ANALISE-90-METAS.md`
-  (replanejar PRF/PMCE/PPCE/CFO a partir da Meta 15; GMF G1 antecipar 6 tópicos; PMPE incluir 7 tópicos e
-  criar Metas 82–90).
+- **09/11/2026 — regra das 90 metas:** corte proposto em `metas-novas/ANALISE-90-METAS.md`.
+  - **PMPE: feito em 09/11** — Metas 82–90 (01 a 09/01/2027) criadas: versão G1 publicada só no Grupo 3
+    (`target_groups {3}`), versão G2 em rascunho `{2}`. Elas trazem os 7 assuntos que faltavam (Maria da
+    Penha atualizada, Olinda e Recife, cultura popular, as 2 da Discursiva e as 2 de súmulas) e revisão
+    final dos assuntos de alta incidência. Achado: Maria da Penha, Olinda/Recife e cultura popular **já
+    eram estudados**, mas com o item ligado a outro tópico do edital (há dois tópicos "Maria da Penha").
+    Depois da conferência: G1 → `{1}` e G2 → `published`.
+  - **Falta:** GMF G1 (antecipar 6 tópicos das Metas 91–94; Metas 91–104 viram revisão) e PRF/PMCE/PPCE/CFO
+    (replanejar a partir da Meta 15). Exige redistribuir o conteúdo das metas ainda não liberadas sem
+    passar de ~3h por meta.
 - **PRF ADM, GCM Itaitinga, PCCE:** edital pronto (09/11); faltam aulas/materiais, cadernos, data de início,
   grupo de lançamento, produto/ofertas Hotmart. GCM: confirmar as 3 fases do Anexo III (não veio no arquivo).
 - Metas 01–05 publicadas (29/10). Restante (~100 metas por curso) aguardando o usuário dizer
@@ -39,6 +46,9 @@ Requisitos (R1–R7):
 1. **R1** Todo Diagnóstico Semanal leva no mínimo 5 questões da prova anterior do curso, só de
    assuntos cobrados nela e estudados no bloco; selo "Prova anterior" (banca, ano, cargo);
    o aluno vê o desempenho nelas; nunca anuladas; sem repetir questão entre diagnósticos.
+   **Aplicado em 09/11** nos 12 diagnósticos de 15/11 (PMPE 29–35, GMF 15–21, PRF/PMCE/PPCE/CFO 08–14),
+   com `mini_quiz_questions.bank_item_id`. Questão da prova anterior desatualizada também não entra
+   (ex.: PRF 2021 item 82, tolerância de 12,5% por eixo hoje vigente).
 2. **R2** (**já existia**: `question_bank_sources/_items/_answer_keys`, provas anteriores dos 6 cursos) Banco de questões por curso (provas anteriores e questões dos diagnósticos, com
    origem, disciplina, tópico, banca, ano e bloco) para o simulado geral. A janela "Geral" existe desde 06/11/2026 (ver `04-cursos-e-ofertas.md`).
    Nada é apagado; gabarito fora do alcance do aluno (RLS).
