@@ -1,5 +1,6 @@
 "use client"
 
+import { CourseExamDatePanel } from "@/components/admin/course-exam-date-panel"
 import { useMemo, useState } from "react"
 import Link from "next/link"
 import { Eye, ListChecks, Plus, BookOpen, FileText } from "lucide-react"
@@ -218,6 +219,7 @@ export function CourseDetailTabs({
             </div>
           </CardContent>
         </Card>
+        <CourseExamDatePanel courseId={course.id} examDate={course.examDate} confirmed={course.examDateConfirmed} />
         <CourseGroupsPanel
           courseId={course.id}
           enabled={course.groupsEnabled}

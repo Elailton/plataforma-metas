@@ -14,6 +14,9 @@ import { RankingCard } from "@/components/mini-quizzes/ranking-card"
 import { getLatestWeeklyRanking } from "@/lib/mini-quizzes/queries"
 import { getStudentExperience } from "@/lib/student/experience"
 import { Megaphone } from "lucide-react"
+import { ExamCountdownCard } from "@/components/student/exam-countdown-card"
+import { examCountdown } from "@/lib/courses/exam-date.mjs"
+import { createClient } from "@/lib/supabase/server"
 import {
   getStudentContext,
   getStudentCourseSnapshot,
@@ -30,6 +33,17 @@ export default async function StudentHomePage() {
     showRanking ? getLatestWeeklyRanking(context.currentCourse.id).catch(() => null) : Promise.resolve(null),
   ])
   if (!snapshot) redirect("/auth/sem-acesso")
+  // Contador da prova: consulta separada e tolerante (a coluna é nova).
+  let countdown: ReturnType<typeof examCountdown> = null
+  if (experience.isEnabled("contador_prova")) {
+    const supabase = await createClient()
+    const { data: examRow } = await supabase
+      .from("courses")
+      .select("exam_date, exam_date_confirmed")
+      .eq("id", context.currentCourse.id)
+      .maybeSingle()
+    countdown = examCountdown(examRow?.exam_date ?? null, examRow?.exam_date_confirmed === true)
+  }
   // Disciplinas sem tópicos no edital (ex.: áreas só de materiais) não entram no progresso.
   const progressSubjects = snapshot.subjects.filter((subject) => subject.total > 0)
 
@@ -67,6 +81,8 @@ export default async function StudentHomePage() {
       />
 
       <InstallApp />
+
+      {countdown ? <ExamCountdownCard label={countdown.label} date={countdown.date} status={countdown.status} /> : null}
 
       {experience.notice ? (
         <div className="mb-6 flex items-start gap-3 rounded-xl border border-primary/40 bg-primary/10 p-4 text-sm text-foreground">

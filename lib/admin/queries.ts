@@ -44,6 +44,8 @@ export async function listAdminCourses(): Promise<AdminCourse[]> {
     updatedAt: course.updated_at,
     groupsEnabled: course.groups_enabled ?? false,
     questionnaireSchema: course.questionnaire_schema ?? [],
+    examDate: course.exam_date ?? null,
+    examDateConfirmed: course.exam_date_confirmed === true,
     studentsCount:
       enrollmentCounts?.filter(
         (enrollment) => enrollment.course_id === course.id,
@@ -99,6 +101,8 @@ export async function getAdminCourse(
     updatedAt: course.updated_at,
     groupsEnabled: course.groups_enabled ?? false,
     questionnaireSchema: course.questionnaire_schema ?? [],
+    examDate: course.exam_date ?? null,
+    examDateConfirmed: course.exam_date_confirmed === true,
     studentsCount: studentsCount ?? 0,
     goalsCount: goalsCount ?? 0,
   }
