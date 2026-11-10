@@ -106,3 +106,10 @@ grupo antes de lançar conteúdo.
   Simulados Gerais, revisão espaçada e relatório. Imagem em `public/apresentacao/sga-mockup.webp`.
 - A aba Reta final passa a abrir 45 dias antes de `courses.exam_date` (antes eram 30):
   `RETA_FINAL_DAYS = 45` em `lib/courses/exam-date.mjs`.
+
+## 2026-11-10 — Prévia do primeiro acesso no admin
+
+- `/admin/cursos/<id>/primeiro-acesso` mostra ao administrador o mesmo formulário do aluno
+  (introdução, questionário, revisão e senha), com o questionário do curso. Prop `preview`:
+  nada é gravado. Botão "Prévia do primeiro acesso" ao lado de "Prévia do aluno".
+- Textos do primeiro acesso: as respostas personalizam o relatório; a disponibilidade define o ritmo.

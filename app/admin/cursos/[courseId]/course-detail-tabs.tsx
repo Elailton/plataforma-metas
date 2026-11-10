@@ -123,6 +123,10 @@ export function CourseDetailTabs({
               <Eye data-icon="inline-start" />
               Prévia do aluno
             </Button>
+            <Button variant="outline" render={<Link href={`/admin/cursos/${course.id}/primeiro-acesso`} />} nativeButton={false}>
+              <Eye data-icon="inline-start" />
+              Prévia do primeiro acesso
+            </Button>
             <Button render={<Link href={`/admin/cursos/${course.id}/metas/nova`} />} nativeButton={false}>
               <Plus data-icon="inline-start" />
               Criar meta
