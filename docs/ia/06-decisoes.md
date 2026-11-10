@@ -148,3 +148,15 @@ grupo antes de lançar conteúdo.
   feita pelo Claude antes do merge/aplicação (`01-regras.md`, 4a; runbook em `05`).
 - Fase 2 (grupo único) autorizada ("rode a fase 2"): o painel mostra o Grupo 2 como "encerrado" e
   explica que todo aluno novo entra no Grupo 1. Nada muda para o aluno.
+
+## 2026-11-10 — Matriz geral fechada em 90 e Fase 3
+
+- PMPE: Metas 82–90 (G1) liberadas para o Grupo 1 (estavam só no G3). PMPE fecha o edital na Meta 90.
+- GMF: Metas 91–104 (G1) e 91–99 (G2) viraram `kind = 'reta_final'` (revisão final); plano principal em 90.
+  A Reta final do GMF só abre com `exam_date` definido e a função ligada.
+- PRF: itens de Língua Estrangeira (Metas 76 e 77) ganharam o caderno de Espanhol ao lado do de Inglês,
+  com a orientação de usar o idioma escolhido.
+- CFO: caderno 15563896 (30 questões do Estatuto do Torcedor, sem anuladas/desatualizadas) na Meta 83 (G1),
+  com aviso de que os crimes hoje estão na Lei Geral do Esporte.
+- GCM Itaitinga fica fora até ter as 90 metas.
+- Fase 3 implementada com tabela própria de extras (ver `12`).

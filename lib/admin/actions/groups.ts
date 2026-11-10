@@ -136,3 +136,25 @@ export async function saveGroupSettings(
     )
   refresh(courseId)
 }
+
+/** Volume do bloco "Se sobrar tempo" de um aluno (null volta a seguir a resposta de horas). */
+export async function setStudentExtraTier(
+  enrollmentId: string,
+  courseId: string,
+  tier: number | null,
+) {
+  const { supabase } = await requireAdmin()
+  if (tier !== null && ![0, 1, 2, 3].includes(tier)) throw new Error("Volume inválido.")
+  const { error } = await supabase.rpc("admin_set_extra_tier", {
+    requested_enrollment_id: enrollmentId,
+    requested_course_id: courseId,
+    requested_tier: tier,
+  })
+  if (error)
+    throwSafeDatabaseError(
+      "admin.groups.extra_tier",
+      error,
+      "Não foi possível alterar o volume extra.",
+    )
+  refresh(courseId)
+}

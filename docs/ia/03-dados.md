@@ -16,6 +16,8 @@ O modelo completo (matrícula, direitos, bloqueios, metas, mini simulados) está
 | `manual_course_grants` | Concessões manuais | indireto |
 | `course_access_blocks` | Bloqueios com motivo (privado do admin) | motivo pode citar pessoa: evitar |
 | `student_goal_item_completions` | Progresso por item | — |
+| `goal_extra_items` / `goal_extra_item_materials` | Bloco "Se sobrar tempo" (2026-11-10): extras por meta, nível 1–3, fora do progresso e sem conclusão | — |
+| `enrollments.extra_tier_override` | Volume extra definido pelo admin (null = pela resposta de horas) | — |
 | `mini_quiz_attempts` / `_answers` | Tentativas e respostas | — |
 | `access_resend_requests` | Pedidos de reenvio: hashes HMAC de e-mail/IP, outcome | só hash, **retenção 30 dias** |
 

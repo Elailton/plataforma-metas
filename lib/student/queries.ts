@@ -134,3 +134,39 @@ export async function getGoalItemMaterials(itemIds: string[]): Promise<Map<strin
   for (const id of itemIds) result.set(id, materialsFromRelations(byItem.get(id) ?? []) as StudentMaterial[])
   return result
 }
+
+export interface StudentGoalExtraItem {
+  id: string
+  tier: number
+  instructions: string
+  suggestedQuestions: number | null
+  materials: StudentMaterial[]
+}
+
+/**
+ * Bloco "Se sobrar tempo" de uma meta: itens extras do nível do aluno (o RLS decide o nível,
+ * a meta e o curso). Opcionais: não têm conclusão e não entram no progresso.
+ */
+export async function getGoalExtraItems(goalId: string): Promise<StudentGoalExtraItem[]> {
+  const supabase = await createClient()
+  const { data, error } = await supabase
+    .from("goal_extra_items")
+    .select("id, tier, instructions, suggested_questions, position, goal_extra_item_materials(position, materials(id, title, type, url))")
+    .eq("goal_id", goalId)
+    .is("archived_at", null)
+    .order("tier")
+    .order("position")
+  if (error) {
+    logSafeServerError("student.goal_extras.read_failed", error)
+    return []
+  }
+  return (data ?? []).map((row) => ({
+    id: row.id,
+    tier: row.tier,
+    instructions: row.instructions,
+    suggestedQuestions: row.suggested_questions,
+    materials: materialsFromRelations(
+      (row.goal_extra_item_materials ?? []) as unknown as Parameters<typeof materialsFromRelations>[0],
+    ) as StudentMaterial[],
+  }))
+}

@@ -34,7 +34,7 @@ import {
 import { UserPlus, Users } from "lucide-react"
 import { toast } from "sonner"
 import { SearchInput } from "@/components/search-input"
-import { setStudentGroup } from "@/lib/admin/actions/groups"
+import { setStudentExtraTier, setStudentGroup } from "@/lib/admin/actions/groups"
 import { filterBySearch } from "@/lib/search.mjs"
 import type { AdminCourseStudent } from "@/lib/admin/types"
 import {
@@ -349,7 +349,7 @@ export function CourseStudentsTable({
                       }}
                     >
                       <option value="none">Sem grupo</option>
-                      <option value="1">Grupo 1 — até 4h</option>
+                      <option value="1">Grupo 1</option>
                       <option value="2">Grupo 2 (encerrado)</option>
                       <option value="3-1">Grupo 3 · teste (vê o G1 + testes)</option>
                       <option value="3-2">Grupo 3 · teste (vê o G2 + testes)</option>
@@ -359,6 +359,38 @@ export function CourseStudentsTable({
                         Definido pelo administrador
                       </p>
                     )}
+                    <select
+                      aria-label={`Volume extra de ${student.fullName}`}
+                      value={student.extraTierOverride ?? "auto"}
+                      disabled={pending}
+                      className="mt-2 block rounded border p-2 text-xs"
+                      onChange={(event) => {
+                        const value = event.target.value
+                        startTransition(async () => {
+                          try {
+                            await setStudentExtraTier(
+                              student.id,
+                              courseId,
+                              value === "auto" ? null : Number(value),
+                            )
+                            toast.success("Volume extra atualizado.")
+                            router.refresh()
+                          } catch (error) {
+                            toast.error(
+                              error instanceof Error
+                                ? error.message
+                                : "Não foi possível alterar o volume extra",
+                            )
+                          }
+                        })
+                      }}
+                    >
+                      <option value="auto">Extras: pelas horas do formulário</option>
+                      <option value="0">Extras: só a base</option>
+                      <option value="1">Extras: +30 min (3h)</option>
+                      <option value="2">Extras: +1h30 (4h)</option>
+                      <option value="3">Extras: +2h (mais de 4h)</option>
+                    </select>
                     {student.questionnaire && (
                       <details className="mt-2 text-xs">
                         <summary>Respostas do formulário</summary>
