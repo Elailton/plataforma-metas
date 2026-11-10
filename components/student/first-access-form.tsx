@@ -176,7 +176,7 @@ export function FirstAccessForm({
     }
   }
   return (
-    <main className={styles.page}>
+    <main className={styles.page} data-wide={screen === "intro"}>
       <header className={styles.header}>
         <BrandLogo className={styles.logo} alt="" aria-hidden="true" />
         <div>
@@ -217,6 +217,8 @@ export function FirstAccessForm({
         <div className={styles.content} key={`${screen}-${index}`}>
           {screen === "intro" && (
             <>
+              <div className={styles.hero}>
+              <div>
               <p className={styles.eyebrow}>BEM-VINDO AO SGA</p>
               <h1 ref={title} tabIndex={-1}>
                 O edital inteiro em 90 dias.
@@ -227,15 +229,17 @@ export function FirstAccessForm({
                 tempo. Aulas, questões e revisão já vêm organizadas. Basta
                 reservar no mínimo 2 horas por dia.
               </p>
+              </div>
               <div className={styles.mockup}>
                 <Image
                   src="/apresentacao/sga-mockup.webp"
                   alt="A área do aluno do SGA no computador e no celular, com a correção comentada do Diagnóstico Semanal"
                   width={1536}
                   height={1024}
-                  sizes="(max-width: 760px) 100vw, 628px"
+                  sizes="(max-width: 900px) 100vw, 560px"
                   priority
                 />
+              </div>
               </div>
               <ol className={styles.timeline} aria-label="Como funciona">
                 <li>

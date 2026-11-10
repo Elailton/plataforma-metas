@@ -17,3 +17,11 @@ export function questionnaireLabels(
   schema: unknown,
   answers: Record<string, unknown>,
 ): Record<string, string>;
+export const AVAILABILITY_STANDARD: {
+  title: string;
+  description: string;
+  options: { value: string; label: string }[];
+};
+export function withAvailabilityStandard(
+  schema: QuestionnaireQuestion[],
+): QuestionnaireQuestion[];
