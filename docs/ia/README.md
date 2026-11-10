@@ -4,10 +4,13 @@ Esta pasta é a **fonte de verdade operacional** para qualquer IA ou pessoa que 
 no projeto. O `AGENTS.md` (raiz) traz as regras técnicas de código; aqui ficam as regras
 de operação, o estado atual, as decisões e as lições aprendidas com alunos reais.
 
+**Qualquer IA começa por [00-comece-aqui.md](00-comece-aqui.md)** (identidade, protocolo, acessos, verificação).
+
 Leia nesta ordem antes de qualquer tarefa:
 
 | Arquivo | Para que serve |
 |---|---|
+| [00-comece-aqui.md](00-comece-aqui.md) | **AI Memory**: ponto de entrada de qualquer IA (identidade, ordem de leitura, protocolo de sessão, segurança, acessos) |
 | [01-regras.md](01-regras.md) | Regras invioláveis (dados, alunos, conteúdo, e-mail, publicação) |
 | [02-arquitetura.md](02-arquitetura.md) | Como o sistema funciona hoje, limites de infraestrutura e capacidade medida |
 | [03-dados.md](03-dados.md) | Tabelas, o que cada uma guarda, dados pessoais e retenção |
@@ -21,6 +24,9 @@ Leia nesta ordem antes de qualquer tarefa:
 | [11-prompt-fluxo-novembro.md](11-prompt-fluxo-novembro.md) | Prompt do fluxo de 09/11/2026 (diagnósticos, 90 metas, contador, provas anteriores) |
 | [12-plano-personalizacao.md](12-plano-personalizacao.md) | Plano aprovado em 10/11/2026: formulário enxuto, grupo único, extras por horas, reforço e relatório mensal, com o prompt de cada fase |
 | [13-correcao-redacao.md](13-correcao-redacao.md) | Regras e procedimento de correção das redações do Simulado Geral (critérios, anulação, comentário, onde lançar) |
+| [14-fluxos-ponta-a-ponta.md](14-fluxos-ponta-a-ponta.md) | Todos os fluxos, da criação do curso ao e-mail de acesso e à rotina semanal |
+| [15-padroes-tecnicos.md](15-padroes-tecnicos.md) | Receitas práticas: SQL, criação de metas, Hotmart Club, ucode, Qconcursos, formatos, testes |
+| [skills/](skills/) | Skills do Claude em texto puro (contexto da plataforma, revisão de segurança, OWASP, STRIDE, correção de redação) |
 | [cursos/](cursos/) | Ficha de cada curso novo (edital, prova, importância, plano das 90 metas) |
 
 ## Como manter esta memória
