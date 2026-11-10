@@ -26,11 +26,15 @@ Leia nesta ordem antes de qualquer tarefa:
 | [13-correcao-redacao.md](13-correcao-redacao.md) | Regras e procedimento de correção das redações do Simulado Geral (critérios, anulação, comentário, onde lançar) |
 | [14-fluxos-ponta-a-ponta.md](14-fluxos-ponta-a-ponta.md) | Todos os fluxos, da criação do curso ao e-mail de acesso e à rotina semanal |
 | [15-padroes-tecnicos.md](15-padroes-tecnicos.md) | Receitas práticas: SQL, criação de metas, Hotmart Club, ucode, Qconcursos, formatos, testes |
+| [16-grupos-e-avaliacoes.md](16-grupos-e-avaliacoes.md) | Grupos, lançamentos, Diagnóstico Semanal, Simulado Geral e Redação (movido do `AGENTS.md`) |
+| [estado-atual.md](estado-atual.md) | **Médio prazo**: foco atual, situação por área e próximo passo (atualizar a cada sessão) |
+| [sessoes.md](sessoes.md) | **Registro de sessões**: passagem de bastão entre IAs (a mais nova no topo) |
 | [skills/](skills/) | Skills do Claude em texto puro (contexto da plataforma, revisão de segurança, OWASP, STRIDE, correção de redação) |
 | [cursos/](cursos/) | Ficha de cada curso novo (edital, prova, importância, plano das 90 metas) |
 
 ## Como manter esta memória
 
+- **Fim de toda sessão**: atualizar `estado-atual.md` e registrar a sessão em `sessoes.md`.
 - **Toda mudança relevante atualiza a memória no mesmo PR**: nova regra → `01`; nova
   peça ou limite → `02`; nova coluna/tabela → `03`; nova oferta/curso → `04`; novo
   procedimento → `05`; decisão do usuário → `06`; incidente → `07`; item concluído ou
