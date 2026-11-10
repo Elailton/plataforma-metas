@@ -27,3 +27,9 @@ test("aba Simulados: some só com semanal, mensal e relatório desligados; seç�
   assert.deepEqual(simuladosSections(["diagnostico_semanal", "simulado_mensal"]).map((s) => s.href), ["/aluno/relatorio"])
   assert.deepEqual(normalizeDisabledFeatures(["simulado_mensal"]), ["simulado_mensal"])
 })
+test("rótulos do painel: Grupo 2 aparece como encerrado", async () => {
+  const { groupOptionLabel } = await import("../lib/groups/experience.mjs")
+  assert.equal(groupOptionLabel(1), "Grupo 1")
+  assert.equal(groupOptionLabel(2), "Grupo 2 (encerrado)")
+  assert.equal(groupOptionLabel(3), "Grupo 3 (teste)")
+})

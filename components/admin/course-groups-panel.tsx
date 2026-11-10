@@ -46,8 +46,9 @@ export function CourseGroupsPanel({
       </CardHeader>
       <CardContent className="flex flex-col gap-4">
         <p className="text-sm text-muted-foreground">
-          Grupo 1: até 4 horas por dia. Grupo 2: mais de 4 horas. Sem grupo: sem
-          metas. Ao ativar, matrículas atuais sem classificação deixam de
+          Todo aluno novo entra no Grupo 1; as horas declaradas ajustam o volume
+          extra das metas. O Grupo 2 está encerrado para novos alunos. Sem grupo:
+          sem metas. Ao ativar, matrículas atuais sem classificação deixam de
           receber metas até serem atribuídas. Desativar devolve as metas a todos
           os matriculados ativos.
         </p>

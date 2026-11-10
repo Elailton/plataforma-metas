@@ -11,3 +11,5 @@ export const SIMULADOS_HREF: "/aluno/simulados"
 export function simuladosSections(
   disabled: readonly string[] | null | undefined,
 ): Array<{ key: "diagnostico_semanal" | "simulado_mensal" | "relatorio"; label: string; href: string }>
+
+export function groupOptionLabel(group: number): string;

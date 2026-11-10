@@ -78,7 +78,7 @@ function LoginForm() {
       const nextIsAllowed =
         next?.startsWith("/") &&
         !next.startsWith("//") &&
-        ((isAdmin && next.startsWith("/admin")) || (!isAdmin && next.startsWith("/aluno")))
+        ((isAdmin && (next.startsWith("/admin") || next.startsWith("/previa/primeiro-acesso/"))) || (!isAdmin && next.startsWith("/aluno")))
       if (nextIsAllowed && next && destination !== "/auth/sem-acesso") destination = next
 
       router.push(destination)

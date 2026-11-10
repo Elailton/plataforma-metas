@@ -4,6 +4,7 @@ import { useRouter } from "next/navigation"
 import { useRef, useState } from "react"
 import { Plus, Trash2, Save, ChevronDown, ChevronUp } from "lucide-react"
 import { toast } from "sonner"
+import { groupOptionLabel } from "@/lib/groups/experience.mjs"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Textarea } from "@/components/ui/textarea"
@@ -318,14 +319,15 @@ export function GoalForm({
                         )
                       }
                     />
-                    {group === 3 ? "Grupo 3 (teste)" : `Grupo ${group}`}
+                    {groupOptionLabel(group)}
                   </label>
                 ))}
               </div>
               <FieldDescription>
                 Para testar antes, marque só o Grupo 3 (sua conta de teste) e
-                depois libere para os Grupos 1 e 2. Em cursos com divisão ativa,
-                alunos sem grupo não recebem metas.
+                depois libere. O Grupo 2 não recebe alunos novos; mantenha-o
+                marcado só no que os alunos que ainda estão nele precisam. Em
+                cursos com divisão ativa, alunos sem grupo não recebem metas.
               </FieldDescription>
             </Field>
             <Field>

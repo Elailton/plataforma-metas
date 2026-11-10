@@ -71,6 +71,14 @@ Regras técnicas de código (matrículas, RLS, webhook, segredos) estão no `AGE
     revert do PR, SQL de reversão).
 22. Atualizar esta memória (`docs/ia/`) no mesmo PR da mudança.
 
+4a. **Revisão de segurança obrigatória pelo Claude** (pedido do usuário em 2026-11-10: "precisa
+    existir revisão de segurança por você"). Antes de mesclar qualquer PR de código e antes de
+    aplicar qualquer migração: rodar a skill `revisao-seguranca-pr` sobre o diff (autorização e RLS,
+    dados pessoais, entradas não confiáveis, segredos, regressões, raio de impacto) e **exercitar o
+    caminho real de gravação** que a mudança toca (ex.: envio do aluno, não só a tela; lição do
+    incidente de 2026-11-10 em `07`). Registrar o resultado no corpo do PR em "Revisão de
+    segurança". Achado alto/médio bloqueia o merge até ser corrigido.
+
 ## 5. Segurança e LGPD
 
 23. Segredos só no servidor (Vercel), nunca em `NEXT_PUBLIC_*`, nunca em log, nunca no
