@@ -10,9 +10,14 @@ Ordem sugerida. Marcar com data quando concluir e mover a lição para `07` se h
     final dos assuntos de alta incidência. Achado: Maria da Penha, Olinda/Recife e cultura popular **já
     eram estudados**, mas com o item ligado a outro tópico do edital (há dois tópicos "Maria da Penha").
     Depois da conferência: G1 → `{1}` e G2 → `published`.
-  - **Falta:** GMF G1 (antecipar 6 tópicos das Metas 91–94; Metas 91–104 viram revisão) e PRF/PMCE/PPCE/CFO
-    (replanejar a partir da Meta 15). Exige redistribuir o conteúdo das metas ainda não liberadas sem
-    passar de ~3h por meta.
+  - **GMF G1: feito em 10/11** — Metas 22–94 reempacotadas (aulas até a 89, lei seca até a 90; 91–104 revisão).
+  - **PRF, PMCE, PPCE e CFO: feito em 10/11** — Metas 51–90 criadas e publicadas em G1 `{1}` e G2 `{2}` com as aulas
+    que faltavam nas trilhas, assuntos sem aula por questões, lei seca, revisão semanal do caderno de erros e
+    revisão final. Edital coberto: PRF 90/91 (Espanhol fora: o curso usa Inglês), PMCE 104/104, PPCE 89/89,
+    CFO 115/116 (falta "Estatuto do Torcedor": não há caderno; criar no Qconcursos se o usuário quiser).
+    Ferramentas: `metas-novas/gen.py`, `pack2.py`, `run_gen.py` e `*_c.py` (mapa aula→assunto e cadernos).
+    **Conferir:** PRF G1 "enxuto" (sem videoaulas de bloco de questões; baixa incidência só por questões);
+    CFO recebeu cópia dos 3 cadernos de Atualidades da PMCE (mesmos links do Qconcursos).
 - **PRF ADM, GCM Itaitinga, PCCE:** edital pronto (09/11); faltam aulas/materiais, cadernos, data de início,
   grupo de lançamento, produto/ofertas Hotmart. GCM: confirmar as 3 fases do Anexo III (não veio no arquivo).
 - Metas 01–05 publicadas (29/10). Restante (~100 metas por curso) aguardando o usuário dizer
