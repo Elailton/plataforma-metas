@@ -17,9 +17,13 @@ Ordem sugerida. Marcar com data quando concluir e mover a lição para `07` se h
   (16, 17 e 18/11); plano das 90 metas em `docs/ia/cursos/sga-pcce-plano-90.md` e `sga-prf-adm-plano-90.md`.
   Faltam: publicar os cursos (estão em rascunho), aulas do PRF ADM ainda em gravação (Administração,
   Arquivologia, Legislação PRF e partes de RLM/Constitucional/Informática), cadernos novos para os assuntos
-  sem caderno reaproveitado (PCCE 122, PRF ADM 43), Vade Mecum, produto/ofertas Hotmart.
-- **GCM Itaitinga:** edital pronto; aulas não estão em "Minhas compras" da Hotmart, então sem materiais
-  nem metas ainda. Confirmar as 3 fases do Anexo III.
+  sem caderno reaproveitado (PCCE 122, PRF ADM 43), Vade Mecum do PRF ADM, produto/ofertas Hotmart.
+  Vade Mecum do PCCE cadastrado em 10/11 (Hotmart, atualizado até 06/05/2026).
+- **GCM Itaitinga (10/11):** 231 aulas do produto Hotmart 8876393 (GMI) cadastradas; Metas 01–03 publicadas
+  (16, 17 e 18/11) para os Grupos 1 e 2 (o único aluno atual está no G2); plano em
+  `docs/ia/cursos/sga-gcm-itaitinga-plano-90.md`. Faltam: Vade Mecum e simulados (em produção na Hotmart),
+  aulas de Lei Orgânica, direção defensiva, mecânica, segurança do trabalho e Atualidades; cadernos novos;
+  confirmar as 3 fases do Anexo III.
 - Metas 01–05 publicadas (29/10). Restante (~100 metas por curso) aguardando o usuário dizer
   **"executar metas"**: plano completo em `metas-novas/PLANO.md`.
 
@@ -187,6 +191,6 @@ Sem decisões em aberto. Falta só o gatilho do usuário.
 - [x] Fase 3 liberada (2026-11-10). Retirar o aviso "O SGA foi atualizado" em 17/11 (lembrete agendado).
 - [ ] GCM Itaitinga: 1 aluno continua no Grupo 2 até o curso ter as 90 metas.
 - [ ] GMF: definir `exam_date` para a Reta final (Metas 91–104) abrir.
-- [ ] GCM Itaitinga: montar as 90 metas (fora do plano por enquanto).
+- [x] GCM Itaitinga: plano das 90 metas feito (10/11); Metas 01–03 publicadas.
 - [ ] Fase 4: marcar assunto nas 60 questões do PMPE; "Seu reforço" e "pode acelerar".
 - [ ] Fase 5: relatório mensal.
