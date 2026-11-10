@@ -103,5 +103,5 @@ lançar primeiro no Grupo 3; atualizar `06`, `08` e este arquivo no mesmo PR.
 |---|---|
 | 1 | **Concluída em 2026-11-10**: PR #123 mesclado; migração `questionario_enxuto` aplicada e conferida; formulário enxuto gravado nos 9 cursos (PRF ADM com 4 perguntas, sem TAF). Cópia dos questionários de 20 perguntas em `docs/ia/questionarios/` |
 | 2 | **Concluída em 2026-11-10**: rótulos e textos do painel (Grupo 2 "encerrado"); nada muda para o aluno |
-| 3 | Em andamento (2026-11-10): migração, tela e conteúdo; aguardando conferência no Grupo 3 |
+| 3 | **Concluída em 2026-11-10**: aprovada pelo usuário; `se_sobrar_tempo` ligado nos 6 cursos; 55 alunos do G2 movidos para o G1 com nível 3; aviso publicado até 17/11 |
 | 4–5 | Pendentes, nesta ordem |

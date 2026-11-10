@@ -160,3 +160,14 @@ grupo antes de lançar conteúdo.
   com aviso de que os crimes hoje estão na Lei Geral do Esporte.
 - GCM Itaitinga fica fora até ter as 90 metas.
 - Fase 3 implementada com tabela própria de extras (ver `12`).
+
+## 2026-11-10 — Liberação da Fase 3 e migração do Grupo 2
+
+- Aprovado pelo usuário ("aprovado, pode continuar"). Bloco "Se sobrar tempo" ligado nos Grupos 1 e 2 dos
+  6 cursos em funcionamento; aviso "O SGA foi atualizado" nos Grupos 1, 2 e 3 por 7 dias.
+- 55 alunos do Grupo 2 (PMPE, GMF, PRF, PMCE, PPCE, CFO) passaram ao Grupo 1, com nível extra 3 (pelas horas).
+- **Progresso preservado na troca**: como a liberação é sequencial, quem tinha concluído as k primeiras metas
+  do G2 recebeu as k primeiras metas do G1 como concluídas (758 conclusões, 30 alunos). As conclusões antigas
+  do G2 continuam no banco. Motivo: o G2 cobre o mesmo conteúdo em ritmo maior; sem isso o aluno voltaria à Meta 1.
+- Tentativas de diagnóstico do G2 ficam no histórico; os diagnósticos do G1 aparecem para eles como novos.
+- GCM Itaitinga (fora do plano): o único aluno do G2 continua no G2.
