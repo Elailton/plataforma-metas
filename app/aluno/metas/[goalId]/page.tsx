@@ -6,7 +6,8 @@ import { GoalItemChecklist } from "@/components/student/goal-item-checklist"
 import { StatusBadge } from "@/components/status-badge"
 import { Progress } from "@/components/ui/progress"
 import { SectionHeader } from "@/components/page-header"
-import { getGoalItemMaterials, getStudentContext, getStudentCourseSnapshot } from "@/lib/student/queries"
+import { getGoalExtraItems, getGoalItemMaterials, getStudentContext, getStudentCourseSnapshot } from "@/lib/student/queries"
+import { GoalExtras } from "@/components/student/goal-extras"
 import { studentGoalWindow } from "@/lib/student/snapshot.mjs"
 import { formatDateLong } from "@/lib/format"
 import { goalAvailabilityLabel } from "@/lib/student/goal-availability"
@@ -34,7 +35,10 @@ export default async function GoalDetailPage({
   // Materiais só desta meta (a lista geral de metas vem sem materiais).
   const materialsByItem = await getGoalItemMaterials(goal.items.map((item) => item.id))
   const items = goal.items.map((item) => ({ ...item, materials: materialsByItem.get(item.id) ?? [] }))
-  const showLastExam = (await getStudentExperience()).isEnabled("ultimo_concurso")
+  const experience = await getStudentExperience()
+  const showLastExam = experience.isEnabled("ultimo_concurso")
+  // Bloco "Se sobrar tempo": extras do nível do aluno (RLS), opcionais e fora do progresso.
+  const extras = experience.isEnabled("se_sobrar_tempo") ? await getGoalExtraItems(goal.id) : []
 
   return (
     <PageContainer>
@@ -74,6 +78,7 @@ export default async function GoalDetailPage({
           ))}
         </div>
       </section>
+      <GoalExtras items={extras} locked={!goal.isReleased} />
     </PageContainer>
   )
 }

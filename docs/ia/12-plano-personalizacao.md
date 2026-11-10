@@ -58,23 +58,23 @@ lançar primeiro no Grupo 3; atualizar `06`, `08` e este arquivo no mesmo PR.
 > 4. Nenhum texto ao aluno nesta fase.
 
 ### Fase 3 — "Se sobrar tempo" (volume por horas) e migração do G2
-> Objetivo: quem tem mais horas recebe mais questões e revisão, sem mudar a base.
-> 1. Migração aditiva: `goal_items.extra_tier smallint null check (extra_tier in (1,2,3))`
->    (null = base). Função `student_extra_tier(enrollment)` a partir de `questionnaire->answers->>'q01'`
->    (de_1_a_2h/ate_1h → 0; de_2_a_3h → 1; de_3_a_4h → 2; de_4_a_6h/mais_6h → 3) e coluna opcional
->    `enrollments.extra_tier_override` para o administrador. RLS: o aluno só lê itens extras de tier ≤ o seu.
-> 2. Progresso da meta e do edital **ignoram** itens com `extra_tier` (contam só a base).
-> 3. Tela da meta: seção "Se sobrar tempo" abaixo da base, recolhida, com os itens do nível do aluno.
-> 4. Conteúdo: gerar com o gerador de `docs/ia/metas-novas/` itens extras por meta: tier 1 ≈ 30 min,
->    tier 2 ≈ 1h30, tier 3 ≈ 2h, só com cadernos dos assuntos da própria meta e revisão de assuntos já
->    vistos; nunca assunto futuro; nunca misturar cursos.
-> 5. Lançar no Grupo 3 (conta de teste simulando cada faixa), depois liberar.
-> 6. Migração dos 56 alunos do G2 para o G1 (só depois dos extras publicados no G1): por aluno,
->    `admin_set_enrollment_group(id, curso, 1, …)`; conclusões ficam; edital estudado fica.
->    Itens do G1 cujo tópico o aluno já estudou aparecem como já estudados no Edital (regra existente).
-> 7. Aviso (7 dias, G3 primeiro): **"O SGA foi atualizado! Agora suas metas trazem um bloco 'Se sobrar
->    tempo' com questões e revisão extras para o seu ritmo. Suas metas foram atualizadas conforme o seu
->    relatório."**
+> Implementação (2026-11-10): **tabela própria** `goal_extra_items` (+ `goal_extra_item_materials`), e não
+> uma coluna em `goal_items`, para não tocar em progresso, edital, conclusões nem nas RPCs existentes.
+> 1. Migração `20261110000200_se_sobrar_tempo.sql`: tabelas, `enrollments.extra_tier_override`,
+>    `extra_tier_from_q01` (de_1_a_2h/ate_1h → 0; de_2_a_3h → 1; de_3_a_4h → 2; de_4_a_6h/mais_6h → 3),
+>    `student_extra_tier(curso)`, RLS (aluno lê só extras de metas que já vê e de nível ≤ o seu),
+>    `admin_set_extra_tier`, função de grupo `se_sobrar_tempo` desligada no G1/G2.
+> 2. Tela da meta: seção recolhida "Se sobrar tempo" (`components/student/goal-extras.tsx`), sem conclusão.
+> 3. Painel: seletor "Extras" por aluno na lista de alunos do curso.
+> 4. Conteúdo (gerado por SQL, só metas a partir de hoje, cadernos já usados nas metas do mesmo curso):
+>    nível 1 ≈ +30 min (mais 10 questões dos assuntos da própria meta, no mesmo caderno); nível 2 ≈ +1h
+>    (revisão espaçada: 20 questões de assuntos de 5 a 10 metas antes); nível 3 ≈ +30 min (10 questões
+>    de assuntos de 14 a 25 metas antes). Cumulativo: 3h → +30 min; 4h → +1h30; mais de 4h → +2h.
+> 5. Conta de teste (G3): `extra_tier_override = 3` para ver tudo. Usuário confere e libera.
+> 6. Na liberação: ligar `se_sobrar_tempo` no G1, mover os alunos do G2 para o G1
+>    (`admin_set_enrollment_group`), e aviso (7 dias): **"O SGA foi atualizado! Agora suas metas trazem
+>    um bloco 'Se sobrar tempo' com questões e revisão extras para o seu ritmo. Suas metas foram
+>    atualizadas conforme o seu relatório."**
 
 ### Fase 4 — "Seu reforço" e "pode acelerar"
 > Objetivo: depois de cada Diagnóstico Semanal, o aluno recebe os cadernos dos assuntos em que errou.
@@ -103,4 +103,5 @@ lançar primeiro no Grupo 3; atualizar `06`, `08` e este arquivo no mesmo PR.
 |---|---|
 | 1 | **Concluída em 2026-11-10**: PR #123 mesclado; migração `questionario_enxuto` aplicada e conferida; formulário enxuto gravado nos 9 cursos (PRF ADM com 4 perguntas, sem TAF). Cópia dos questionários de 20 perguntas em `docs/ia/questionarios/` |
 | 2 | **Concluída em 2026-11-10**: rótulos e textos do painel (Grupo 2 "encerrado"); nada muda para o aluno |
-| 3–5 | Pendentes, nesta ordem |
+| 3 | Em andamento (2026-11-10): migração, tela e conteúdo; aguardando conferência no Grupo 3 |
+| 4–5 | Pendentes, nesta ordem |

@@ -1,5 +1,5 @@
 export const TEST_GROUP: 3
-export type GroupFeatureKey = "metas" | "edital" | "diagnostico_semanal" | "simulado_mensal" | "relatorio" | "ranking" | "progresso" | "ultimo_concurso" | "contador_prova" | "reta_final"
+export type GroupFeatureKey = "metas" | "edital" | "diagnostico_semanal" | "simulado_mensal" | "relatorio" | "ranking" | "progresso" | "ultimo_concurso" | "contador_prova" | "reta_final" | "se_sobrar_tempo"
 export const GROUP_FEATURES: ReadonlyArray<{ key: GroupFeatureKey; label: string; href: string | null }>
 export function isFeatureKey(value: unknown): value is GroupFeatureKey
 export function normalizeDisabledFeatures(values: unknown): GroupFeatureKey[]

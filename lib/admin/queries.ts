@@ -307,7 +307,7 @@ export async function listCourseStudents(
   const { data: enrollments, error: enrollmentError } = await supabase
     .from("enrollments")
     .select(
-      "id, user_id, course_id, status, enrolled_at, study_group, mirror_group, group_manual_override, questionnaire, profiles!enrollments_user_id_fkey(full_name, avatar_initials)",
+      "id, user_id, course_id, status, enrolled_at, study_group, mirror_group, group_manual_override, extra_tier_override, questionnaire, profiles!enrollments_user_id_fkey(full_name, avatar_initials)",
     )
     .eq("course_id", courseId)
     .order("enrolled_at", { ascending: false })
@@ -359,6 +359,7 @@ export async function listCourseStudents(
       studyGroup: enrollment.study_group,
       mirrorGroup: enrollment.mirror_group ?? 1,
       groupManualOverride: enrollment.group_manual_override,
+      extraTierOverride: enrollment.extra_tier_override ?? null,
       questionnaire: enrollment.questionnaire,
       manualStatus:
         manual.data?.find((row) => row.user_id === enrollment.user_id)

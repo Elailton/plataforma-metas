@@ -136,6 +136,8 @@ export interface AdminCourseStudent extends AdminStudent {
   studyGroup: number | null
   mirrorGroup: number
   groupManualOverride: boolean
+  /** Volume do bloco "Se sobrar tempo" definido pelo admin (null = pela resposta de horas). */
+  extraTierOverride: number | null
   questionnaire:
     | import("@/lib/groups/questionnaire.mjs").QuestionnairePayload
     | null
