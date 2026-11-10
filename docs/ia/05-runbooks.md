@@ -67,7 +67,11 @@ aguardar o status da Vercel "success" → conferir no site.
 
 ### Migração
 Arquivo em `supabase/migrations/AAAAMMDDHHMMSS_nome.sql`, aditivo, com reversão no
-cabeçalho → enviar ao usuário → ele roda no SQL Editor → conferir por SQL.
+cabeçalho → teste em banco descartável no CI → **o Claude revisa e aplica** com
+`apply_migration` (autorização permanente de 2026-11-10; o usuário não revisa SQL) →
+conferir por SQL (função/coluna nova, permissões de `anon`/`authenticated`). Se a migração
+depende de código novo, aplicar só depois do deploy da Vercel; se o código depende dela,
+aplicar antes do merge.
 
 ### Reverter um deploy
 Vercel → projeto → Deployments → deploy anterior → "Promote"/Rollback; ou `git revert`

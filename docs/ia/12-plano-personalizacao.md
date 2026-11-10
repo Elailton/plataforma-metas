@@ -101,5 +101,5 @@ lançar primeiro no Grupo 3; atualizar `06`, `08` e este arquivo no mesmo PR.
 ## Estado
 | Fase | Estado |
 |---|---|
-| 1 | Código no PR #123 (com o #121); aguardando conferência do usuário na prévia e merge; depois migração e UPDATE dos 9 cursos |
+| 1 | **Concluída em 2026-11-10**: PR #123 mesclado; migração `questionario_enxuto` aplicada e conferida; formulário enxuto gravado nos 9 cursos (PRF ADM com 4 perguntas, sem TAF). Cópia dos questionários de 20 perguntas em `docs/ia/questionarios/` |
 | 2–5 | Pendentes, nesta ordem |

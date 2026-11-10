@@ -134,3 +134,10 @@ grupo antes de lançar conteúdo.
   seu relatório"); aviso "O SGA foi atualizado" a cada melhoria percebida (regra 12a de `01`).
 - Motivo: personalizar sem perder o controle de um plano revisado; domínio declarado é pouco
   confiável, o diagnóstico mede. Detalhes e prompts: `12-plano-personalizacao.md`.
+
+## 2026-11-10 — Migrações aplicadas pelo Claude
+
+- O usuário autorizou de forma permanente: "pode automatizar rodar a migração, eu não reviso pois não
+  tenho conhecimento, então sempre deve ser revisado por você". O Claude revisa, testa no CI e aplica
+  (`apply_migration`), confere por SQL e registra. Substitui "o usuário roda no SQL Editor".
+- Primeira aplicada assim: `20261110000100_questionario_enxuto.sql`.

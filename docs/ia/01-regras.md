@@ -10,8 +10,11 @@ Regras técnicas de código (matrículas, RLS, webhook, segredos) estão no `AGE
    em vez de excluir. Exceção só com pedido explícito do usuário, para um caso nomeado
    (ex.: "reinicie as metas do aluno X"), e registrando em `07`.
 2. **Migrações**: preparar o arquivo em `supabase/migrations/` com o SQL de reversão no
-   cabeçalho; o usuário roda no SQL Editor; depois conferir por consulta. Só migrações
-   aditivas/não destrutivas, salvo pedido explícito.
+   cabeçalho; **o Claude revisa e aplica** (`apply_migration`) — autorização permanente do
+   usuário em 2026-11-10 ("pode automatizar rodar a migração; sempre deve ser revisado por você"),
+   porque o usuário não revisa SQL. Antes de aplicar: CI verde com teste em banco descartável,
+   código compatível já publicado quando a migração depender dele, reversão no cabeçalho.
+   Depois: conferir por consulta. Só migrações aditivas/não destrutivas, salvo pedido explícito.
 3. **Testes de permissão/RLS em produção** só dentro de transação desfeita
    (`begin; ... rollback;`) ou somente leitura (`begin read only`).
 4. **Teste de carga e dados sintéticos** só em banco separado (branch do Supabase),
