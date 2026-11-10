@@ -13,8 +13,13 @@ Ordem sugerida. Marcar com data quando concluir e mover a lição para `07` se h
   - **Falta:** GMF G1 (antecipar 6 tópicos das Metas 91–94; Metas 91–104 viram revisão) e PRF/PMCE/PPCE/CFO
     (replanejar a partir da Meta 15). Exige redistribuir o conteúdo das metas ainda não liberadas sem
     passar de ~3h por meta.
-- **PRF ADM, GCM Itaitinga, PCCE:** edital pronto (09/11); faltam aulas/materiais, cadernos, data de início,
-  grupo de lançamento, produto/ofertas Hotmart. GCM: confirmar as 3 fases do Anexo III (não veio no arquivo).
+- **PCCE e PRF ADM (10/11):** materiais da Hotmart cadastrados; Metas 01–03 criadas e publicadas para o Grupo 1
+  (16, 17 e 18/11); plano das 90 metas em `docs/ia/cursos/sga-pcce-plano-90.md` e `sga-prf-adm-plano-90.md`.
+  Faltam: publicar os cursos (estão em rascunho), aulas do PRF ADM ainda em gravação (Administração,
+  Arquivologia, Legislação PRF e partes de RLM/Constitucional/Informática), cadernos novos para os assuntos
+  sem caderno reaproveitado (PCCE 122, PRF ADM 43), Vade Mecum, produto/ofertas Hotmart.
+- **GCM Itaitinga:** edital pronto; aulas não estão em "Minhas compras" da Hotmart, então sem materiais
+  nem metas ainda. Confirmar as 3 fases do Anexo III.
 - Metas 01–05 publicadas (29/10). Restante (~100 metas por curso) aguardando o usuário dizer
   **"executar metas"**: plano completo em `metas-novas/PLANO.md`.
 
