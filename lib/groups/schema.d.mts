@@ -22,6 +22,5 @@ export const AVAILABILITY_STANDARD: {
   description: string;
   options: { value: string; label: string }[];
 };
-export function withAvailabilityStandard(
-  schema: QuestionnaireQuestion[],
-): QuestionnaireQuestion[];
+export const ESSAY_QUESTION: Omit<QuestionnaireQuestion, "id">;
+export function compactQuestionnaire(schema: unknown): QuestionnaireQuestion[];

@@ -175,3 +175,11 @@ Sem decisões em aberto. Falta só o gatilho do usuário.
 - PMPE (edital aberto): 1º em 08/11/2026, 2º em 22/11/2026. **Pendente: montar as 60 questões
   do 1º antes de 08/11 e do 2º antes de 22/11**, e publicar o 3º (06/12) fechado quando o 2º abrir.
 - Demais cursos (edital fechado): sem simulado geral por enquanto, sem previsão.
+
+## Plano de personalização (aprovado em 2026-11-10) — ver `12-plano-personalizacao.md`
+- [ ] Fase 1: conferir prévia do PR #123 → merge → rodar `20261110000100_questionario_enxuto.sql` →
+      gravar formulário enxuto nos 9 cursos SGA.
+- [ ] Fase 2: grupo único no painel (G2 encerrado para conteúdo novo).
+- [ ] Fase 3: bloco "Se sobrar tempo" + migração dos 56 alunos do G2 + aviso "O SGA foi atualizado".
+- [ ] Fase 4: marcar assunto nas 60 questões do PMPE; "Seu reforço" e "pode acelerar".
+- [ ] Fase 5: relatório mensal.

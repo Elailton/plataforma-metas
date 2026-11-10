@@ -122,3 +122,15 @@ grupo antes de lançar conteúdo.
 - A prévia mudou para `/previa/primeiro-acesso/<id>` (tela cheia, só administrador) e já aplica a
   Pergunta 1 padrão (`withAvailabilityStandard`), para conferir antes de atualizar o banco.
 - No computador (≥ 900 px) a apresentação usa até 1120 px: texto ao lado do mockup e 3 colunas.
+
+## 2026-11-10 — Plano de personalização aprovado (substitui a ideia de plano individual por aluno)
+
+- Aprovado com todas as recomendações: base de 90 metas (~2h30) igual para todos num grupo só;
+  formulário enxuto (horas, rotina, redação, TAF, acessos); horas viram o bloco opcional "Se sobrar
+  tempo"; "Seu reforço" após cada diagnóstico; "pode acelerar" com ≥ 80% nos 2 últimos; relatório mensal.
+- G2 fecha para novos alunos já (migração `20261110000100`); os 56 atuais passam ao G1 junto com os
+  extras de 4h (Fase 3).
+- Textos ao aluno sempre positivos; mudança de grupo nunca é citada ("metas atualizadas conforme o
+  seu relatório"); aviso "O SGA foi atualizado" a cada melhoria percebida (regra 12a de `01`).
+- Motivo: personalizar sem perder o controle de um plano revisado; domínio declarado é pouco
+  confiável, o diagnóstico mede. Detalhes e prompts: `12-plano-personalizacao.md`.
