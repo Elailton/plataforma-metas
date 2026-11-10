@@ -98,3 +98,18 @@ grupo antes de lançar conteúdo.
   repetia a da prova anterior no mesmo diagnóstico ou um diagnóstico antigo do grupo também foi trocada.
 - Os 12 diagnósticos ficaram completos (gabarito e explicação em todas). Versões G1 publicadas só no Grupo 3;
   `qc_import_staging` removida em 09/11.
+
+## 2026-11-10 — Tempo nas descrições e Metas 51–90 dos cursos novos
+- Pedido do usuário: descrição das metas com "Meta de ~2h 30m" no G1 e "Meta de ~4h" no G2 (só o texto);
+  o planejamento mantém a carga real (~3h G1, até ~5h G2).
+- GMF G1 reempacotado para fechar as aulas até a Meta 89 (itens movidos = arquivados e copiados; nada apagado).
+- PRF, PMCE, PPCE e CFO: Metas 01–50 mantidas; conteúdo restante nas Metas 51–90, lançado direto em G1/G2
+  (escolha do usuário). Metas criadas como rascunho e publicadas depois dos itens (o gatilho
+  `check_goal_item_consistency` não enxerga metas criadas no mesmo comando).
+- PRF G1 não cabia em ~3h (≈150 h para 120 h): o usuário escolheu "enxugar" — sem videoaulas de bloco de
+  questões, assuntos de baixa incidência só por questões, lei seca só nos de alta incidência e sem revisão
+  espaçada nas Metas 51–90. Nos outros cursos o G1 coube sem cortes (lei seca só de alta e sem revisão espaçada no G1).
+- Regras do gerador: série de aulas do mesmo assunto na mesma meta (até 90 min no G1 e 150 min no G2), questões
+  do caderno do assunto logo depois, lei seca na mesma meta da aula, revisão semanal nas Metas 56/63/70/77/84,
+  discursiva da PRF nas 55/62/69/76/83 e "Revisão final" dos assuntos de alta incidência nas metas que sobram.
+
