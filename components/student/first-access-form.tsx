@@ -219,8 +219,8 @@ export function FirstAccessForm({
                 <Image
                   src="/apresentacao/sga-mockup.webp"
                   alt="A área do aluno do SGA no computador e no celular, com a correção comentada do Diagnóstico Semanal"
-                  width={1536}
-                  height={1024}
+                  width={1504}
+                  height={948}
                   sizes="(max-width: 760px) 100vw, 628px"
                   priority
                 />

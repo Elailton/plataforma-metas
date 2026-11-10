@@ -432,10 +432,7 @@
 }
 /* Introdução do primeiro acesso (apresentação do SGA). */
 .mockup {
-  margin: 4px -36px 28px;
-  background: radial-gradient(ellipse at 50% 40%, rgba(255, 226, 2, 0.08), transparent 60%), #0e0f11;
-  border-top: 1px solid #2b2e33;
-  border-bottom: 1px solid #2b2e33;
+  margin: 8px 0 28px;
 }
 .mockup img {
   display: block;
@@ -519,10 +516,6 @@
   line-height: 1.5;
 }
 @media (max-width: 540px) {
-  .mockup {
-    margin-left: -22px;
-    margin-right: -22px;
-  }
   .timeline,
   .highlights {
     grid-template-columns: 1fr;
