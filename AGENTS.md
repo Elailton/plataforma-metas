@@ -240,7 +240,7 @@ seguir `docs/ia/10-prompt-mestre-cursos.md`.
 Assunto que caiu na última prova recebe `syllabus_topics.last_exam = true` e o selo "Cobrado no último
 concurso" no item da meta e no Edital (regra em `docs/ia/09-regras-metas.md`).
 `goals.kind = 'reta_final'`: metas da reta final, fora de "Minhas Metas", na aba "Reta final" (`/aluno/reta-final`),
-liberada 30 dias antes de `courses.exam_date` (o Grupo 3 vê antes para conferir); criadas à mão, marcadas pelo
+liberada 45 dias antes de `courses.exam_date` (o Grupo 3 vê antes para conferir); criadas à mão, marcadas pelo
 interruptor "Reta final" da meta no admin.
 
 Uma meta possui vários itens.

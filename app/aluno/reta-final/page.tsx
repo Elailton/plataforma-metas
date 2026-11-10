@@ -14,7 +14,7 @@ export default async function RetaFinalPage() {
 
   return (
     <PageContainer>
-      <PageHeading title="Reta final" description="Metas especiais para os últimos 30 dias antes da prova." />
+      <PageHeading title="Reta final" description="Metas especiais para os últimos 45 dias antes da prova." />
       <div className="mb-6 flex items-start gap-3 rounded-xl border-2 border-primary bg-primary/10 p-4 text-sm leading-relaxed text-foreground">
         <Flag className="mt-0.5 size-4.5 shrink-0 text-primary" aria-hidden="true" />
         <p>

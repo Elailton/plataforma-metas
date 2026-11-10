@@ -56,7 +56,7 @@ export const getStudentExperience = cache(async function getStudentExperience():
     if (generalError) logSafeServerError("student.general_quiz_check_failed", generalError)
     if (generalError || !hasGeneral) disabled.push("simulado_mensal")
   }
-  // Reta final: aparece só com metas de reta final publicadas e a partir de 30 dias antes da prova.
+  // Reta final: aparece só com metas de reta final publicadas e a partir de 45 dias antes da prova.
   // O Grupo 3 (teste) vê antes da data para conferir.
   if (!disabled.includes("reta_final")) {
     const [{ data: courseRow }, { count }] = await Promise.all([
