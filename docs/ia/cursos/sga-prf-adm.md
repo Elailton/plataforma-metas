@@ -51,7 +51,10 @@ ainda se o Decreto nº 1.655/1995 continua em vigor (o TEC não o marca como rev
 - **Baixa:** tipologia textual, ética e democracia, Poder Executivo, CNJ, Lei 9.784/99, RH no serviço
   público, planejamento de RH, QVT e educação corporativa.
 
-## Plano das 90 metas (a gerar)
+## Plano das 90 metas (feito em 10/11/2026: ver `sga-prf-adm-plano-90.md`)
+
+> **Material incompleto (10/11/2026):** o usuário ainda está publicando aulas na Hotmart. A cada lote de metas, recadastrar as aulas novas e refazer o plano (ver `08-pendencias.md`, "Material incompleto").
+
 
 A distribuição de vagas de disciplina considera metade do peso pelos pontos na prova e metade pelo
 volume do edital. G1 tem 2 disciplinas por dia (168 vagas nas Metas 01–84); G2 tem 3 (252 vagas).

@@ -171,3 +171,4 @@ grupo antes de lançar conteúdo.
   do G2 continuam no banco. Motivo: o G2 cobre o mesmo conteúdo em ritmo maior; sem isso o aluno voltaria à Meta 1.
 - Tentativas de diagnóstico do G2 ficam no histórico; os diagnósticos do G1 aparecem para eles como novos.
 - GCM Itaitinga (fora do plano): o único aluno do G2 continua no G2.
+- 2026-11-10: PRF ADM e GCM Itaitinga começam (16/11) com material incompleto; as aulas são acrescentadas conforme o usuário publica e as metas avançam, sem alterar metas já publicadas.

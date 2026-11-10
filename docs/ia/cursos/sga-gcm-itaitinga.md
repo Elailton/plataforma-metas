@@ -61,7 +61,10 @@ penais, fora do edital.
   - higiene;
   - demais itens de primeiros socorros.
 
-## Plano das 90 metas (a gerar)
+## Plano das 90 metas (feito em 10/11/2026: ver `sga-gcm-itaitinga-plano-90.md`)
+
+> **Material incompleto (10/11/2026):** o usuário ainda está publicando aulas na Hotmart. A cada lote de metas, recadastrar as aulas novas e refazer o plano (ver `08-pendencias.md`, "Material incompleto").
+
 
 O peso 3 da P2 faz os conhecimentos específicos ocuparem quase metade das vagas.
 

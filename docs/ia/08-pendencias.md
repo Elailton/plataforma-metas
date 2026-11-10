@@ -138,6 +138,19 @@ Sem decisões em aberto. Falta só o gatilho do usuário.
 6. Decidir se "Encontrar minha compra" volta às telas (hoje só por URL).
 7. Parte 2 ("Reenviar acesso" só com e-mail): adiada; reavaliar após 1–4.
 
+## Material incompleto: PRF ADM e GCM Itaitinga (regra do usuário, 10/11/2026)
+"PRF ADM e GCM está incompleto, mantenha isso na memória, irei atualizar o material e vamos adicionando
+conforme as metas."
+- O usuário vai publicar aulas novas na Hotmart (PRF ADM produto 8825974; GCM/GMI produto 8876393).
+- **Antes de gerar cada lote de metas** desses dois cursos: reler as trilhas na Hotmart ("Minhas compras"),
+  cadastrar as aulas novas (mesmo formato `Trilha | Ordem | Duração`, sem duplicar URL), rodar de novo
+  `docs/ia/cursos/dados/plano90.py` / `plano90_gcm.py` e atualizar o `*-plano-90.md`. Metas já publicadas não mudam.
+- Enquanto faltar aula, o assunto entra só com questões (plano: a partir da Meta 15) e a aula é
+  incluída numa meta seguinte quando sair. Não inventar material nem usar aula de outro curso sem pedir.
+- Faltando hoje: PRF ADM — Noções de Administração, Arquivologia, Legislação Relativa à PRF, resto de RLM,
+  Constitucional e Informática, Vade Mecum. GCM — Vade Mecum, simulados, Lei Orgânica, direção defensiva,
+  mecânica, segurança do trabalho, higiene, assalto e Atualidades.
+
 ## Lançamento dos cursos novos (PRF, PMCE, PPCE, CFO PMCE)
 - Metas, Meta 0 e publicação. **Perguntar o grupo antes de lançar.**
 - Confirmar na primeira venda de cada um que o ucode está certo.
