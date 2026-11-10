@@ -9,7 +9,7 @@
 ## Regras de ouro (resumo de `docs/ia/01-regras.md`)
 
 1. **Nada destrutivo no banco de produção.** Arquivar em vez de excluir; migrações
-   aditivas, com reversão, rodadas pelo usuário.
+   aditivas, com reversão, revisadas e aplicadas pelo Claude (autorização de 2026-11-10).
 2. **Nada de e-mail em massa.** Resend gratuito: 100 e-mails/dia e 3.000/mês.
 3. **Perguntar em qual grupo lançar** qualquer conteúdo ou função (1, 2, 3); lançar
    primeiro no Grupo 3. **Nunca mostrar o grupo ao aluno.**
