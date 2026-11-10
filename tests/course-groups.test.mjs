@@ -280,6 +280,9 @@ test("atomic goal save stores targets and rolls back invalid groups", async () =
 test("import derives group only from q01 and rejects incomplete and inconsistent payload", () => {
   assert.equal(groupFromAvailability("de_3_a_4h"), 1)
   assert.equal(groupFromAvailability("de_4_a_6h"), 2)
+  assert.equal(groupFromAvailability("2 horas"), 1)
+  assert.equal(groupFromAvailability("4 horas"), 1)
+  assert.equal(groupFromAvailability("Mais de 4 horas"), 2)
   assert.throws(() => groupFromAvailability("8"))
   const raw = {
     id_envio: ID,

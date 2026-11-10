@@ -98,3 +98,10 @@ grupo antes de lançar conteúdo.
   repetia a da prova anterior no mesmo diagnóstico ou um diagnóstico antigo do grupo também foi trocada.
 - Os 12 diagnósticos ficaram completos (gabarito e explicação em todas). Versões G1 publicadas só no Grupo 3;
   `qc_import_staging` removida em 09/11.
+
+## 2026-11-10 — Pergunta 1 do questionário: mínimo de 2 horas
+- O SGA fecha o edital em 90 dias, com revisão espaçada e questões organizadas automaticamente, e exige no
+  mínimo 2 horas por dia. A pergunta 1 passa a ter 4 opções: 2 horas (`de_1_a_2h`), 3 horas (`de_2_a_3h`),
+  4 horas (`de_3_a_4h`) e Mais de 4 horas (`de_4_a_6h`). Os códigos antigos foram mantidos, então
+  `study_group_from_q01` não muda (até 4h → Grupo 1; mais de 4h → Grupo 2) e respostas antigas continuam válidas.
+- A validação aceita qualquer subconjunto das faixas conhecidas, desde que tenha ao menos uma de cada grupo.
