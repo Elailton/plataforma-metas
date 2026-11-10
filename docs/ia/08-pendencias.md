@@ -179,7 +179,8 @@ Sem decisões em aberto. Falta só o gatilho do usuário.
 ## Plano de personalização (aprovado em 2026-11-10) — ver `12-plano-personalizacao.md`
 - [x] Fase 1 (2026-11-10): PR #123, migração aplicada, formulário enxuto nos 9 cursos.
 - [x] Fase 2 (2026-11-10): painel mostra o Grupo 2 como encerrado; aluno novo sempre no Grupo 1.
-- [ ] Fase 3: código e conteúdo prontos no Grupo 3 (2026-11-10); falta conferência do usuário → ligar no G1, mover G2 → G1, aviso.
+- [x] Fase 3 liberada (2026-11-10). Retirar o aviso "O SGA foi atualizado" em 17/11 (lembrete agendado).
+- [ ] GCM Itaitinga: 1 aluno continua no Grupo 2 até o curso ter as 90 metas.
 - [ ] GMF: definir `exam_date` para a Reta final (Metas 91–104) abrir.
 - [ ] GCM Itaitinga: montar as 90 metas (fora do plano por enquanto).
 - [ ] Fase 4: marcar assunto nas 60 questões do PMPE; "Seu reforço" e "pode acelerar".
