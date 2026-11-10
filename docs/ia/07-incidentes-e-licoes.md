@@ -32,3 +32,15 @@ Formato: data — o que aconteceu — causa — o que mudou / lição.
 - **Correção:** migração `20261108000400_redacao_corrige_cursos_ativos.sql` (`in (select public.active_course_ids())`).
 - **Lição:** nos testes SQL, copiar a assinatura real das funções auxiliares (`pg_get_function_result`)
   em vez de inventar o stub; para `active_course_ids()`, usar sempre `in (select ...)`.
+
+## 2026-11-10 — Formulário enxuto travava o envio do primeiro acesso
+
+- O que houve: depois de gravar o formulário de 5 perguntas nos cursos (Fase 1), o envio do aluno
+  passava por `normalizeSubmission`, que ainda exigia as respostas q01 a q20. O aluno que tentasse
+  concluir o primeiro acesso receberia erro.
+- Causa: a prévia do administrador não envia nada, então o caminho de envio não foi exercitado; o
+  teste cobria o validador do questionário, mas não o envio do aluno.
+- Correção: `normalizeSubmission` conta as perguntas presentes (até 8 ou 20); teste novo do envio
+  enxuto; simulação ponta a ponta (rótulos → normalização) com o questionário de cada curso.
+- Lição: mudança de formato de dados exige testar **o caminho de gravação real** (envio do aluno),
+  não só a tela; incluir isso na revisão de segurança/qualidade antes de aplicar no banco.
