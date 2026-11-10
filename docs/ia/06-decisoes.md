@@ -119,3 +119,6 @@ grupo antes de lançar conteúdo.
   4 horas (`de_3_a_4h`) e Mais de 4 horas (`de_4_a_6h`). Os códigos antigos foram mantidos, então
   `study_group_from_q01` não muda (até 4h → Grupo 1; mais de 4h → Grupo 2) e respostas antigas continuam válidas.
 - A validação aceita qualquer subconjunto das faixas conhecidas, desde que tenha ao menos uma de cada grupo.
+- A prévia mudou para `/previa/primeiro-acesso/<id>` (tela cheia, só administrador) e já aplica a
+  Pergunta 1 padrão (`withAvailabilityStandard`), para conferir antes de atualizar o banco.
+- No computador (≥ 900 px) a apresentação usa até 1120 px: texto ao lado do mockup e 3 colunas.

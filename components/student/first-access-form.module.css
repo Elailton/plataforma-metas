@@ -521,3 +521,49 @@
     grid-template-columns: 1fr;
   }
 }
+/* Computador: a apresentação usa a largura da tela (texto ao lado do mockup). */
+@media (min-width: 900px) {
+  .page[data-wide="true"] .header,
+  .page[data-wide="true"] .progress {
+    max-width: 1120px;
+  }
+  .page[data-wide="true"] .card {
+    max-width: 1120px;
+  }
+  .page[data-wide="true"] .content {
+    padding: 44px 48px;
+  }
+  .hero {
+    display: grid;
+    grid-template-columns: minmax(0, 0.9fr) minmax(0, 1.1fr);
+    align-items: center;
+    gap: 36px;
+    margin-bottom: 12px;
+  }
+  .hero .mockup {
+    margin: 0;
+  }
+  .hero .description {
+    margin-bottom: 0;
+  }
+  .page[data-wide="true"] .content h1 {
+    font-size: 40px;
+  }
+  .page[data-wide="true"] .highlights {
+    grid-template-columns: repeat(3, 1fr);
+  }
+  .page[data-wide="true"] .actions {
+    justify-content: flex-end;
+  }
+  .page[data-wide="true"] .actions .primary {
+    flex: 0 0 auto;
+    width: auto;
+    min-width: 280px;
+  }
+}
+/* Telas médias (tablet): card um pouco mais largo nas demais etapas. */
+@media (min-width: 900px) {
+  .card {
+    max-width: 760px;
+  }
+}
