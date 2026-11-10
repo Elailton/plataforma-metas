@@ -430,3 +430,101 @@
     transition: none !important;
   }
 }
+/* Introdução do primeiro acesso (apresentação do SGA). */
+.mockup {
+  margin: 4px -36px 28px;
+  background: radial-gradient(ellipse at 50% 40%, rgba(255, 226, 2, 0.08), transparent 60%), #0e0f11;
+  border-top: 1px solid #2b2e33;
+  border-bottom: 1px solid #2b2e33;
+}
+.mockup img {
+  display: block;
+  width: 100%;
+  height: auto;
+}
+.timeline {
+  list-style: none;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 10px;
+  margin: 0 0 32px;
+  padding: 0;
+  counter-reset: etapa;
+}
+.timeline li {
+  position: relative;
+  padding: 16px 14px 14px;
+  border: 1px solid #2b2e33;
+  border-radius: 14px;
+  background: #212327;
+  counter-increment: etapa;
+}
+.timeline li::before {
+  content: counter(etapa);
+  display: inline-grid;
+  place-items: center;
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  background: #ffe202;
+  color: #131417;
+  font-size: 12px;
+  font-weight: 800;
+  margin-bottom: 10px;
+}
+.timeline strong {
+  display: block;
+  font-size: 14px;
+  margin-bottom: 4px;
+}
+.timeline span {
+  color: #a7a9ad;
+  font-size: 12.5px;
+  line-height: 1.45;
+}
+.subtitle {
+  font-size: 16px;
+  font-weight: 700;
+  margin-bottom: 14px;
+}
+.highlights {
+  list-style: none;
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 10px;
+  margin: 0;
+  padding: 0;
+}
+.highlights li {
+  display: flex;
+  gap: 12px;
+  padding: 14px;
+  border: 1px solid #2b2e33;
+  border-radius: 14px;
+  background: #212327;
+}
+.highlights svg {
+  flex-shrink: 0;
+  color: #ffe202;
+  margin-top: 2px;
+}
+.highlights strong {
+  display: block;
+  font-size: 14px;
+  margin-bottom: 4px;
+}
+.highlights span {
+  color: #a7a9ad;
+  font-size: 12.5px;
+  line-height: 1.5;
+}
+@media (max-width: 540px) {
+  .mockup {
+    margin-left: -22px;
+    margin-right: -22px;
+  }
+  .timeline,
+  .highlights {
+    grid-template-columns: 1fr;
+  }
+}

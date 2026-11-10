@@ -98,3 +98,11 @@ grupo antes de lançar conteúdo.
   repetia a da prova anterior no mesmo diagnóstico ou um diagnóstico antigo do grupo também foi trocada.
 - Os 12 diagnósticos ficaram completos (gabarito e explicação em todas). Versões G1 publicadas só no Grupo 3;
   `qc_import_staging` removida em 09/11.
+
+## 2026-11-10 — Introdução do primeiro acesso e Reta final em 45 dias
+
+- O primeiro acesso abre com uma tela de apresentação do SGA (antes do questionário):
+  edital em 90 metas, Reta final 45 dias antes da prova, Diagnóstico Semanal, até 6
+  Simulados Gerais, revisão espaçada e relatório. Imagem em `public/apresentacao/sga-mockup.webp`.
+- A aba Reta final passa a abrir 45 dias antes de `courses.exam_date` (antes eram 30):
+  `RETA_FINAL_DAYS = 45` em `lib/courses/exam-date.mjs`.

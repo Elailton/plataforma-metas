@@ -4,7 +4,20 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import { BrandLogo } from "@/components/brand-logo";
 import { LegalLinks } from "@/components/legal/legal-links";
 import { useRouter } from "next/navigation";
-import { AlertTriangle, ArrowRight, Check, ChevronLeft, LockKeyhole } from "lucide-react";
+import Image from "next/image";
+import {
+  AlertTriangle,
+  ArrowRight,
+  BarChart3,
+  CalendarClock,
+  Check,
+  ChevronLeft,
+  ClipboardCheck,
+  FileText,
+  Flag,
+  LockKeyhole,
+  Repeat,
+} from "lucide-react";
 import { submitFirstAccessQuestionnaire } from "@/lib/groups/student-actions";
 import { createClient } from "@/lib/supabase/client";
 import { SUPPORT_PHONE_LABEL, SUPPORT_WHATSAPP_URL } from "@/lib/support";
@@ -48,8 +61,8 @@ export function FirstAccessForm({
   const [whatsapp, setWhatsapp] = useState("");
   const [loaded, setLoaded] = useState(false);
   const [screen, setScreen] = useState<
-    "welcome" | "question" | "review" | "password"
-  >("welcome");
+    "intro" | "welcome" | "question" | "review" | "password"
+  >("intro");
   const [index, setIndex] = useState(0);
   const [editing, setEditing] = useState(false);
   const [confirming, setConfirming] = useState(false);
@@ -179,13 +192,109 @@ export function FirstAccessForm({
       </div>
       <section className={styles.card}>
         <div className={styles.stages}>
-          <span data-active={screen === "welcome" || screen === "question"}>
+          <span
+            data-active={
+              screen === "intro" || screen === "welcome" || screen === "question"
+            }
+          >
             01 · Seu perfil
           </span>
           <span data-active={screen === "review"}>02 · Revisão</span>
           <span data-active={screen === "password"}>03 · Seu acesso</span>
         </div>
         <div className={styles.content} key={`${screen}-${index}`}>
+          {screen === "intro" && (
+            <>
+              <p className={styles.eyebrow}>BEM-VINDO AO SGA</p>
+              <h1 ref={title} tabIndex={-1}>
+                O edital inteiro em 90 dias.
+              </h1>
+              <p className={styles.description}>
+                O Sistema Guiado da Aprovação transforma o edital em metas
+                diárias: você sabe o que estudar, em que ordem e por quanto
+                tempo. Aulas, questões e revisão já vêm organizadas. Basta
+                reservar no mínimo 2 horas por dia.
+              </p>
+              <div className={styles.mockup}>
+                <Image
+                  src="/apresentacao/sga-mockup.webp"
+                  alt="A área do aluno do SGA no computador e no celular, com a correção comentada do Diagnóstico Semanal"
+                  width={1536}
+                  height={1024}
+                  sizes="(max-width: 760px) 100vw, 628px"
+                  priority
+                />
+              </div>
+              <ol className={styles.timeline} aria-label="Como funciona">
+                <li>
+                  <strong>Metas 01 a 90</strong>
+                  <span>Todo o edital, meta a meta</span>
+                </li>
+                <li>
+                  <strong>45 dias antes da prova</strong>
+                  <span>Abre a Reta final</span>
+                </li>
+                <li>
+                  <strong>Dia da prova</strong>
+                  <span>Conteúdo visto e revisado</span>
+                </li>
+              </ol>
+              <h2 className={styles.subtitle}>O que você encontra na plataforma</h2>
+              <ul className={styles.highlights}>
+                <li>
+                  <ClipboardCheck size={20} />
+                  <div>
+                    <strong>Metas diárias</strong>
+                    <span>Aula, questões do assunto e lei seca em cada meta, com o tempo previsto.</span>
+                  </div>
+                </li>
+                <li>
+                  <Repeat size={20} />
+                  <div>
+                    <strong>Revisão espaçada e questões automáticas</strong>
+                    <span>Os assuntos voltam no momento certo, com cadernos de questões prontos e caderno de erros.</span>
+                  </div>
+                </li>
+                <li>
+                  <CalendarClock size={20} />
+                  <div>
+                    <strong>Diagnóstico Semanal</strong>
+                    <span>A cada 7 metas, com cronômetro, correção comentada e ranking.</span>
+                  </div>
+                </li>
+                <li>
+                  <FileText size={20} />
+                  <div>
+                    <strong>Até 6 Simulados Gerais</strong>
+                    <span>No formato da prova, com todas as disciplinas.</span>
+                  </div>
+                </li>
+                <li>
+                  <Flag size={20} />
+                  <div>
+                    <strong>Reta final</strong>
+                    <span>Metas especiais liberadas 45 dias antes da prova.</span>
+                  </div>
+                </li>
+                <li>
+                  <BarChart3 size={20} />
+                  <div>
+                    <strong>Relatório e progresso</strong>
+                    <span>Seu desempenho por disciplina e assunto e o quanto do edital você já estudou.</span>
+                  </div>
+                </li>
+              </ul>
+              <div className={styles.actions}>
+                <button
+                  className={styles.primary}
+                  onClick={() => setScreen("welcome")}
+                >
+                  Começar
+                  <ArrowRight size={18} />
+                </button>
+              </div>
+            </>
+          )}
           {screen === "welcome" && (
             <>
               <p className={styles.eyebrow}>UMA PREPARAÇÃO COM A SUA CARA</p>
