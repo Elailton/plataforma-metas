@@ -1,0 +1,9 @@
+# Memória e instruções de IA: qualquer mudança exige aprovação do dono do repositório
+# (só vale com a proteção da branch main ligada no GitHub: "Require review from Code Owners").
+/AGENTS.md          @Elailton
+/CLAUDE.md          @Elailton
+/GEMINI.md          @Elailton
+/docs/ia/           @Elailton
+/.github/           @Elailton
+/.claude/           @Elailton
+/supabase/migrations/ @Elailton

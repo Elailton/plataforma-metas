@@ -80,7 +80,7 @@ cadernos já usados no curso (`12` Fase 3).
 
 **D1. Diagnóstico Semanal**: um a cada 7 metas, liberado só após **concluir** a meta que fecha o bloco
 (`unlock_goal_id`), metade da prova real, questões só dos cadernos do bloco, revisão crítica de cada
-questão (regras em `AGENTS.md` e `skills/sga-plataforma.md`). Lançar primeiro no Grupo 3.
+questão (regras em `16-grupos-e-avaliacoes.md` e `skills/sga-plataforma.md`). Lançar primeiro no Grupo 3.
 
 **D2. Simulado Geral** (`kind='mensal'`): todas as disciplinas no formato da prova, por **data**
 (14 dias com edital aberto, 30 com fechado — **perguntar** se o edital está aberto). Deixar o próximo

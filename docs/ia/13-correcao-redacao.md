@@ -6,7 +6,7 @@ qualquer IA que corrija ou ajude a corrigir. Fila atual em `08-pendencias.md`, "
 
 ## Como a redação chega
 - Hoje só o **Simulado Geral 01 da PMPE** (curso `sistema-guiado-da-aprovacao`) tem redação, publicado em
-  08/11/2026 para todos os grupos. Funcionamento técnico em `AGENTS.md`, "Redação do Simulado Geral".
+  08/11/2026 para todos os grupos. Funcionamento técnico em `16-grupos-e-avaliacoes.md`, "Redação do Simulado Geral".
 - Opcional e feita **no tempo da prova**. Junto com as respostas, o aluno envia: só foto(s) da folha (até 3),
   só o texto digitado, ou os dois. Não existe envio posterior (15 min de tolerância, `ESSAY_TOO_LATE`).
 - Folha padrão SGA (PDF em `public/folhas-redacao/`): PMPE com 20 linhas numeradas, mínimo na 15 e máximo na
