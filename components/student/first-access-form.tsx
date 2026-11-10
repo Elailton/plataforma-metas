@@ -45,10 +45,13 @@ export function FirstAccessForm({
   questionnaires,
   userId,
   email,
+  preview = false,
 }: {
   questionnaires: OnboardingQuestionnaire[];
   userId: string;
   email: string;
+  /** Prévia do administrador: percorre as telas sem gravar nada. */
+  preview?: boolean;
 }) {
   const router = useRouter();
   const steps = useMemo(
@@ -138,6 +141,10 @@ export function FirstAccessForm({
       setError("As senhas não coincidem.");
       return;
     }
+    if (preview) {
+      setError("Prévia do administrador: nada foi gravado. O aluno seguiria para a área de estudos.");
+      return;
+    }
     setPending(true);
     try {
       validateOnboardingAnswers(questionnaires, answers);
@@ -190,6 +197,11 @@ export function FirstAccessForm({
           }}
         />
       </div>
+      {preview && (
+        <p className={styles.note} role="status">
+          Prévia do administrador: é a tela que o aluno vê no primeiro acesso. Nada é gravado.
+        </p>
+      )}
       <section className={styles.card}>
         <div className={styles.stages}>
           <span
