@@ -2,7 +2,7 @@ import { notFound, redirect } from "next/navigation"
 import { FirstAccessForm } from "@/components/student/first-access-form"
 import { requireAdmin } from "@/lib/admin/auth"
 import { getAdminCourse } from "@/lib/admin/queries"
-import { validateQuestionnaireSchema, withAvailabilityStandard } from "@/lib/groups/schema.mjs"
+import { compactQuestionnaire } from "@/lib/groups/schema.mjs"
 
 export const dynamic = "force-dynamic"
 
@@ -23,9 +23,10 @@ export default async function FirstAccessPreviewPage({
   if (!isAdmin) redirect(`/auth/login?next=/previa/primeiro-acesso/${encodeURIComponent(courseId)}`)
   const course = await getAdminCourse(courseId)
   if (!course) notFound()
-  let schema: ReturnType<typeof validateQuestionnaireSchema> = []
+  let schema: ReturnType<typeof compactQuestionnaire> = []
   try {
-    schema = withAvailabilityStandard(validateQuestionnaireSchema(course.questionnaireSchema))
+    // Mostra o formulário enxuto mesmo antes de o banco ser atualizado.
+    schema = compactQuestionnaire(course.questionnaireSchema)
   } catch {
     schema = []
   }

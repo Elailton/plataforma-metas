@@ -34,6 +34,11 @@ Regras técnicas de código (matrículas, RLS, webhook, segredos) estão no `AGE
 11. Não guardar nem repetir dados pessoais de compradores vindos de payloads colados
     (CPF, endereço, telefone). Só e-mail quando estritamente necessário.
 12. Resposta pública nunca revela se um e-mail tem conta, matrícula ou compra.
+12a. **Textos para o aluno sempre positivos** (regra de 2026-11-10): nenhum texto informa algo
+    prejudicial (perda, reinício, corte, rebaixamento). Toda mudança é apresentada como melhora.
+    Mudança de grupo **nunca** é comunicada: diga que "as metas foram atualizadas conforme o seu
+    relatório". Cada atualização que o aluno percebe leva o aviso "O SGA foi atualizado" na tela
+    inicial (`course_group_settings.notice`), primeiro no Grupo 3.
 
 ## 3. Conteúdo pedagógico
 

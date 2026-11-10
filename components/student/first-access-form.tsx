@@ -226,8 +226,8 @@ export function FirstAccessForm({
               <p className={styles.description}>
                 O Sistema Guiado da Aprovação transforma o edital em metas
                 diárias: você sabe o que estudar, em que ordem e por quanto
-                tempo. Aulas, questões e revisão já vêm organizadas. Basta
-                reservar no mínimo 2 horas por dia.
+                tempo. Aulas, questões e revisão já vêm organizadas, no ritmo
+                da sua rotina.
               </p>
               </div>
               <div className={styles.mockup}>
@@ -329,7 +329,7 @@ export function FirstAccessForm({
               {steps.length > 0 && (
                 <>
                   <LockedAnswersNotice title="Atenção: depois de concluído, o questionário não pode ser editado">
-                    Suas respostas personalizam o seu relatório de desempenho.
+                    Suas respostas ajustam o volume das suas metas.
                     Responda com calma e confira tudo na revisão antes de
                     concluir.
                   </LockedAnswersNotice>
@@ -362,8 +362,8 @@ export function FirstAccessForm({
                     />
                   </label>
                   <p className={styles.note}>
-                    Sua disponibilidade diária define o ritmo das suas metas. As
-                    demais respostas personalizam o seu relatório.
+                    Sua disponibilidade diária ajusta o volume das suas metas. As
+                    demais respostas ajudam seu mentor a acompanhar sua rotina.
                   </p>
                 </>
               )}
@@ -508,12 +508,12 @@ export function FirstAccessForm({
                 mudar suas respostas.
               </p>
               <LockedAnswersNotice title="Depois de confirmar, suas respostas não poderão ser editadas">
-                Elas personalizam o seu relatório e o ritmo das suas metas. Se precisar
-                alterar alguma resposta, fale com o suporte no WhatsApp{" "}
+                Elas ajustam o volume das suas metas. Se precisar alterar
+                alguma resposta depois, fale com o suporte no WhatsApp{" "}
                 <a href={SUPPORT_WHATSAPP_URL} target="_blank" rel="noopener noreferrer">
                   {SUPPORT_PHONE_LABEL}
                 </a>
-                : suas metas serão reiniciadas.
+                .
               </LockedAnswersNotice>
               <div className={styles.review}>
                 {steps.map((s, i) => (
@@ -570,14 +570,12 @@ export function FirstAccessForm({
                     <h2 id="confirm-answers-title">Confirmar suas respostas?</h2>
                     <p id="confirm-answers-text">
                       Depois de confirmar, <strong>não será possível alterar
-                      o questionário</strong>, porque suas respostas personalizam
-                      o seu relatório e o ritmo das suas metas.
+                      o questionário</strong>, porque suas respostas ajustam o
+                      volume das suas metas.
                     </p>
                     <p>
-                      Se precisar alterar alguma resposta, fale com o suporte
-                      no WhatsApp {SUPPORT_PHONE_LABEL}:{" "}
-                      <strong>suas metas serão reiniciadas</strong> e o plano
-                      recomeça do início.
+                      Se precisar alterar alguma resposta depois, fale com o
+                      suporte no WhatsApp {SUPPORT_PHONE_LABEL}.
                     </p>
                     <div className={styles.actions}>
                       <button

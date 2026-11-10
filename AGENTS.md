@@ -287,6 +287,19 @@ As contas existentes de um administrador e de um aluno de teste são dados prote
   conta de teste e depois libera nos Grupos 1 e 2. **Antes de lançar qualquer conteúdo
   ou função, perguntar ao usuário em qual grupo lançar (1, 2, 3 ou combinação).**
 - Nunca mostrar o número do grupo ao aluno.
+- **Grupo único para novos alunos (2026-11-10):** `study_group_from_q01` manda toda faixa válida
+  para o Grupo 1; o Grupo 2 não recebe alunos novos. Os alunos atuais do G2 passam para o G1 junto
+  com o bloco "Se sobrar tempo" (Fase 3 de `docs/ia/12-plano-personalizacao.md`), nunca antes.
+- **Textos ao aluno sempre positivos**: nada prejudicial; mudança de grupo nunca é citada ("as metas
+  foram atualizadas conforme o seu relatório"); toda atualização percebida leva o aviso
+  "O SGA foi atualizado" (`docs/ia/01-regras.md`, regra 12a).
+- **Formulário enxuto (2026-11-10):** `compactQuestionnaire` (`lib/groups/schema.mjs`) monta, a partir
+  do questionário de 20 perguntas, o de até 5: horas (padrão `AVAILABILITY_STANDARD`, sem citar
+  mínimo de horas), rotina, redação, TAF (se houver) e acessos. Domínio e nível são medidos pelos
+  diagnósticos. O banco aceita o questionário do curso (até 8 ou 20 perguntas). Prévia do
+  administrador em `/previa/primeiro-acesso/<curso>` (nada é gravado).
+- Plano de personalização (horas + reforço + relatório) e prompts de cada fase:
+  `docs/ia/12-plano-personalizacao.md`.
 
 ## Mini Simulados
 
