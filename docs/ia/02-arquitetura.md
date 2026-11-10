@@ -54,8 +54,8 @@ transação não tem nenhum direito. Eventos anteriores à migração não têm 
 
 ## Integração com IAs
 
-- Supabase MCP: `execute_sql` funciona (vários comandos numa transação funcionam;
-  `apply_migration` costuma ser cancelado → usuário roda a migração).
+- Supabase MCP: `execute_sql` e `apply_migration` funcionam (desde 2026-11-10 o Claude revisa e aplica
+  as migrações). Sem MCP, a IA entrega o SQL e o usuário roda no SQL Editor.
 - Vercel MCP: acesso ao time `team_6e3R0tU6Zj0WxscAyqTzcZx6`, projeto
   `prj_eYmjORDWd3Q5Biu0yATnZuuGfZOV` (logs, erros, deploys).
 - O sandbox da IA não alcança `*.supabase.co` nem a API da Hotmart por HTTP.

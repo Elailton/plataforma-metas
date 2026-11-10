@@ -1,5 +1,11 @@
 # AGENTS.md
 
+> **AI Memory — qualquer IA começa por [`docs/ia/00-comece-aqui.md`](docs/ia/00-comece-aqui.md).**
+> Lá estão a identidade do assistente, a ordem de leitura, o protocolo de cada sessão e os acessos.
+> Todos os fluxos (do curso novo ao e-mail de acesso): [`docs/ia/14-fluxos-ponta-a-ponta.md`](docs/ia/14-fluxos-ponta-a-ponta.md);
+> receitas práticas: [`docs/ia/15-padroes-tecnicos.md`](docs/ia/15-padroes-tecnicos.md); skills em texto: [`docs/ia/skills/`](docs/ia/skills/).
+> A integridade dessa memória é conferida no CI por `tests/ia-memory.test.mjs`.
+
 > **Leia primeiro: o projeto está em produção, com alunos pagantes.**
 > Antes de qualquer tarefa, leia a memória do projeto em [`docs/ia/`](docs/ia/README.md):
 > regras invioláveis (`01-regras.md`), arquitetura e limites (`02`), dados pessoais (`03`),
