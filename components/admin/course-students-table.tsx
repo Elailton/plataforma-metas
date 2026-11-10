@@ -350,7 +350,7 @@ export function CourseStudentsTable({
                     >
                       <option value="none">Sem grupo</option>
                       <option value="1">Grupo 1 — até 4h</option>
-                      <option value="2">Grupo 2 — mais de 4h</option>
+                      <option value="2">Grupo 2 (encerrado)</option>
                       <option value="3-1">Grupo 3 · teste (vê o G1 + testes)</option>
                       <option value="3-2">Grupo 3 · teste (vê o G2 + testes)</option>
                     </select>

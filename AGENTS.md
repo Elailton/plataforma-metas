@@ -16,7 +16,8 @@
 4. **Nunca misturar cursos** e usar só questões reais de prova (inéditas só com
    autorização, marcadas com `[[inedita]]`).
 5. **Perguntar antes de mesclar/publicar**; CI `validate` obrigatório; caminho de
-   reversão sempre definido.
+   reversão sempre definido. **Toda mudança de código ou banco passa por revisão de segurança
+   feita pelo Claude antes do merge/aplicação** (regra de 2026-11-10; `docs/ia/01-regras.md`, 4a).
 6. **Dados pessoais no mínimo**: nada de CPF, endereço, telefone ou payload em banco,
    log ou repositório; resposta pública nunca revela se um e-mail tem conta ou compra.
 7. **Nunca digitar senhas** nem trocar senhas/contas protegidas (admin e conta de teste).

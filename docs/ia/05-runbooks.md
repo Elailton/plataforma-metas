@@ -65,6 +65,13 @@ branch → commit (com as linhas de atribuição) → `git push` → PR via `gh 
 aguardar check `validate` → mostrar o resumo e pedir para mesclar → merge com rebase →
 aguardar o status da Vercel "success" → conferir no site.
 
+### Revisão de segurança (antes de todo merge ou migração)
+1. Skill `revisao-seguranca-pr` sobre `git diff main...HEAD` (e o SQL da migração).
+2. Exercitar o caminho real de gravação que a mudança toca (script com as funções de domínio ou
+   teste em banco descartável).
+3. Escrever no PR a seção "Revisão de segurança": o que foi checado, achados e correções.
+4. Achado alto/médio → corrigir antes de mesclar.
+
 ### Migração
 Arquivo em `supabase/migrations/AAAAMMDDHHMMSS_nome.sql`, aditivo, com reversão no
 cabeçalho → teste em banco descartável no CI → **o Claude revisa e aplica** com

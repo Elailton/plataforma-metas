@@ -102,4 +102,5 @@ lançar primeiro no Grupo 3; atualizar `06`, `08` e este arquivo no mesmo PR.
 | Fase | Estado |
 |---|---|
 | 1 | **Concluída em 2026-11-10**: PR #123 mesclado; migração `questionario_enxuto` aplicada e conferida; formulário enxuto gravado nos 9 cursos (PRF ADM com 4 perguntas, sem TAF). Cópia dos questionários de 20 perguntas em `docs/ia/questionarios/` |
-| 2–5 | Pendentes, nesta ordem |
+| 2 | **Concluída em 2026-11-10**: rótulos e textos do painel (Grupo 2 "encerrado"); nada muda para o aluno |
+| 3–5 | Pendentes, nesta ordem |

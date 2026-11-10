@@ -141,3 +141,10 @@ grupo antes de lançar conteúdo.
   tenho conhecimento, então sempre deve ser revisado por você". O Claude revisa, testa no CI e aplica
   (`apply_migration`), confere por SQL e registra. Substitui "o usuário roda no SQL Editor".
 - Primeira aplicada assim: `20261110000100_questionario_enxuto.sql`.
+
+## 2026-11-10 — Revisão de segurança obrigatória e Fase 2
+
+- Regra nova (pedido do usuário): toda mudança de código ou banco passa por revisão de segurança
+  feita pelo Claude antes do merge/aplicação (`01-regras.md`, 4a; runbook em `05`).
+- Fase 2 (grupo único) autorizada ("rode a fase 2"): o painel mostra o Grupo 2 como "encerrado" e
+  explica que todo aluno novo entra no Grupo 1. Nada muda para o aluno.

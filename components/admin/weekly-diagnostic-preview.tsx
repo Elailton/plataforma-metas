@@ -4,6 +4,7 @@ import { useEffect, useMemo, useState } from "react"
 import { useRouter } from "next/navigation"
 import { Eye, Play, RotateCcw, Send, Timer, Upload, Undo2 } from "lucide-react"
 import { toast } from "sonner"
+import { groupOptionLabel } from "@/lib/groups/experience.mjs"
 import { Button } from "@/components/ui/button"
 import { StatCard } from "@/components/stat-card"
 import { cn } from "@/lib/utils"
@@ -55,7 +56,7 @@ export function WeeklyDiagnosticGroups({ quizId, groups }: { quizId: string; gro
               setSelected((current) => (event.target.checked ? [...current, group] : current.filter((g) => g !== group)))
             }
           />
-          {group === 3 ? "Grupo 3 (teste)" : `Grupo ${group}`}
+          {groupOptionLabel(group)}
         </label>
       ))}
       <Button size="sm" variant="outline" onClick={save} disabled={pending || !changed || selected.length === 0}>

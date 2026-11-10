@@ -11,7 +11,7 @@ import type { AdminGroupSettings } from "@/lib/admin/queries"
 
 const GROUP_INFO: Record<number, { title: string; description: string }> = {
   1: { title: "Grupo 1", description: "Alunos do Grupo 1." },
-  2: { title: "Grupo 2", description: "Alunos do Grupo 2." },
+  2: { title: "Grupo 2 (encerrado)", description: "Só os alunos que já estavam no Grupo 2. Não recebe alunos novos." },
   3: {
     title: "Grupo 3 · teste",
     description: "Só a conta de teste. Ligue aqui primeiro o que for novo, confira como aluno e depois ligue nos outros grupos.",

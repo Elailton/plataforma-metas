@@ -178,7 +178,7 @@ Sem decisões em aberto. Falta só o gatilho do usuário.
 
 ## Plano de personalização (aprovado em 2026-11-10) — ver `12-plano-personalizacao.md`
 - [x] Fase 1 (2026-11-10): PR #123, migração aplicada, formulário enxuto nos 9 cursos.
-- [ ] Fase 2: grupo único no painel (G2 encerrado para conteúdo novo).
+- [x] Fase 2 (2026-11-10): painel mostra o Grupo 2 como encerrado; aluno novo sempre no Grupo 1.
 - [ ] Fase 3: bloco "Se sobrar tempo" + migração dos 56 alunos do G2 + aviso "O SGA foi atualizado".
 - [ ] Fase 4: marcar assunto nas 60 questões do PMPE; "Seu reforço" e "pode acelerar".
 - [ ] Fase 5: relatório mensal.
