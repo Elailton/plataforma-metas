@@ -75,10 +75,19 @@ rascunho já criam matrícula: o aluno vê "Acesso não liberado" até a publica
 | PMCE | `X25479334G` | `71cc3eba-ab2f-4a47-a973-2972175615e7` | `qao1b38j`+, `0irwm9tl`+, `00kggstw`+, `h4a2n6je`+; `1imnzz5x`−, `kftyjfqc`− |
 | PPCE | `O66446852H` | `1e4ad940-5886-42f0-813f-133384cd6693` | `y72wg47k`+, `t1e0ol35`+, `1pitc078`+, `bbz5otbm`+; `ou6u9p9r`− Turbo |
 | PRF | `U91982297E` | `3d8e7813-847d-4140-a1aa-d5fdfe0532bd` | `acuq8iko`+, `m50mentn`+, `fi4b2za6`+, `zxrkgal3`+; `2gf1w761`− Turbo |
+| PRF ADM | `Y108231024P` | `841567fd-404b-40a3-b693-7ae74896f5eb` (produto 8825974) | `oip1gp5w`+ (cadastrada em 10/11/2026) |
+| PCCE | `W79187935C` | `671b9533-75a1-48f9-8aa4-86453f8cdd64` (produto 2629594, "Imersão PCCE") | `kwkkrdu3`+ (cadastrada em 10/11/2026) |
+| GCM Itaitinga | `H108323440W` | `2087a8bf-467f-4dc3-acfd-1a47b83509f7` (produto 8876393, "GMI") | `st6riqpl`+ (cadastrada em 10/11/2026) |
 
 Pendente de confirmação: a primeira venda real de CFO, PMCE, PPCE e PRF pelas ofertas
 "+" confirma que o checkout corresponde ao ucode cadastrado. Se chegar como "Produto sem
 mapeamento ativo", o produto é outro.
+
+PRF ADM, PCCE e GCM (10/11/2026): ucode lido do próprio checkout (`pay.hotmart.com/<código>`, dado
+`ucode` da página), conferido com o id do produto do Hotmart Club. Política `authorized_offers` com só a
+oferta informada pelo usuário; outras ofertas desses produtos chegam como "Oferta não cadastrada" e
+precisam ser classificadas com o usuário. Webhook: o usuário precisa cadastrar a configuração dos produtos
+PCCE e PRF ADM na Hotmart (o GMI já tem "SGA - GMI").
 
 ## Regras de negócio confirmadas pelo usuário
 
