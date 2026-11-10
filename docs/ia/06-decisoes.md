@@ -113,3 +113,9 @@ grupo antes de lançar conteúdo.
   (introdução, questionário, revisão e senha), com o questionário do curso. Prop `preview`:
   nada é gravado. Botão "Prévia do primeiro acesso" ao lado de "Prévia do aluno".
 - Textos do primeiro acesso: as respostas personalizam o relatório; a disponibilidade define o ritmo.
+## 2026-11-10 — Pergunta 1 do questionário: mínimo de 2 horas
+- O SGA fecha o edital em 90 dias, com revisão espaçada e questões organizadas automaticamente, e exige no
+  mínimo 2 horas por dia. A pergunta 1 passa a ter 4 opções: 2 horas (`de_1_a_2h`), 3 horas (`de_2_a_3h`),
+  4 horas (`de_3_a_4h`) e Mais de 4 horas (`de_4_a_6h`). Os códigos antigos foram mantidos, então
+  `study_group_from_q01` não muda (até 4h → Grupo 1; mais de 4h → Grupo 2) e respostas antigas continuam válidas.
+- A validação aceita qualquer subconjunto das faixas conhecidas, desde que tenha ao menos uma de cada grupo.
