@@ -313,7 +313,7 @@ export function FirstAccessForm({
               {steps.length > 0 && (
                 <>
                   <LockedAnswersNotice title="Atenção: depois de concluído, o questionário não pode ser editado">
-                    Suas respostas definem a organização das suas metas.
+                    Suas respostas personalizam o seu relatório de desempenho.
                     Responda com calma e confira tudo na revisão antes de
                     concluir.
                   </LockedAnswersNotice>
@@ -347,7 +347,7 @@ export function FirstAccessForm({
                   </label>
                   <p className={styles.note}>
                     Sua disponibilidade diária define o ritmo das suas metas. As
-                    demais respostas ajudam seu mentor a conhecer você.
+                    demais respostas personalizam o seu relatório.
                   </p>
                 </>
               )}
@@ -492,7 +492,7 @@ export function FirstAccessForm({
                 mudar suas respostas.
               </p>
               <LockedAnswersNotice title="Depois de confirmar, suas respostas não poderão ser editadas">
-                Elas influenciam diretamente nas suas metas. Se precisar
+                Elas personalizam o seu relatório e o ritmo das suas metas. Se precisar
                 alterar alguma resposta, fale com o suporte no WhatsApp{" "}
                 <a href={SUPPORT_WHATSAPP_URL} target="_blank" rel="noopener noreferrer">
                   {SUPPORT_PHONE_LABEL}
@@ -554,8 +554,8 @@ export function FirstAccessForm({
                     <h2 id="confirm-answers-title">Confirmar suas respostas?</h2>
                     <p id="confirm-answers-text">
                       Depois de confirmar, <strong>não será possível alterar
-                      o questionário</strong>, porque suas respostas influenciam
-                      diretamente nas suas metas.
+                      o questionário</strong>, porque suas respostas personalizam
+                      o seu relatório e o ritmo das suas metas.
                     </p>
                     <p>
                       Se precisar alterar alguma resposta, fale com o suporte
