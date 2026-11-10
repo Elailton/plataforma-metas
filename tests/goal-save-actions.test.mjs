@@ -77,6 +77,7 @@ test("formulário real conserva o ID carregado e envia a versão ao salvar", asy
     "@/components/admin/material-form-dialog": { MaterialFormDialog: ({ trigger }) => trigger ?? null },
     "@/components/admin/material-type-icon": { MaterialTypeIcon: "span", materialTypeLabel: {} },
     "@/lib/search.mjs": search,
+    "@/lib/groups/experience.mjs": { groupOptionLabel: (group) => `Grupo ${group}` },
   }
   for (const name of ["button", "input", "textarea", "checkbox", "field", "select", "card"]) {
     dependencies["@/components/ui/" + name] = new Proxy({}, { get: (_, key) => key })
