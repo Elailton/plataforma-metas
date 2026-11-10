@@ -151,6 +151,13 @@ conforme as metas."
   Constitucional e Informática, Vade Mecum. GCM — Vade Mecum, simulados, Lei Orgânica, direção defensiva,
   mecânica, segurança do trabalho, higiene, assalto e Atualidades.
 
+## Redações para corrigir (Simulado Geral 01 – PMPE) — regras em `13-correcao-redacao.md`
+- [ ] Em 10/11/2026: **2 redações pendentes** (ambas com foto; uma também com texto digitado), enviadas em
+  09/11 e 10/11. **Prazos: 16/11 e 17/11/2026** (7 dias após o envio). Corrigir fora da plataforma e lançar
+  as 4 notas e o comentário em `/admin/mini-simulados/redacoes`.
+- Conferir a fila no painel (ou contar por SQL, sem dados pessoais:
+  `select status, count(*), min(submitted_at) from mini_quiz_essays group by status`).
+
 ## Lançamento dos cursos novos (PRF, PMCE, PPCE, CFO PMCE)
 - Metas, Meta 0 e publicação. **Perguntar o grupo antes de lançar.**
 - Confirmar na primeira venda de cada um que o ucode está certo.

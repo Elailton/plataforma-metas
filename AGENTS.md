@@ -358,7 +358,7 @@ na plataforma, orientados por `courseId` (nada específico de um concurso).
   **Não existe envio posterior.** Sem redação, o aluno confirma "Enviar sem redação?". Com redação, 2
   avisos (legibilidade → anulação sem recurso; conteúdo fora da redação → banimento). Uma redação por
   tentativa, em `mini_quiz_essays`; texto sem limite visível (interno 12.000 caracteres, ~100 linhas).
-  Correção fora da plataforma, prazo de **7 dias**; o administrador lança 4 notas de 0 a 10 ou a anulação
+  Correção fora da plataforma (regras: `docs/ia/13-correcao-redacao.md`), prazo de **7 dias**; o administrador lança 4 notas de 0 a 10 ou a anulação
   (`admin_grade_mini_quiz_essay`, tela `/admin/mini-simulados/redacoes`) e o resultado aparece no Relatório.
   Com `time_limit_minutes`, o cronômetro é regressivo (tempo real da prova; não envia sozinho ao zerar).
   Antes de iniciar: quadro "Redação: prepare-se ANTES de iniciar" (aviso "Novidade em teste", folha para

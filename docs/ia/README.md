@@ -20,6 +20,7 @@ Leia nesta ordem antes de qualquer tarefa:
 | [10-prompt-mestre-cursos.md](10-prompt-mestre-cursos.md) | Prompt mestre: estruturar um curso novo e fechar o edital em 90 metas |
 | [11-prompt-fluxo-novembro.md](11-prompt-fluxo-novembro.md) | Prompt do fluxo de 09/11/2026 (diagnósticos, 90 metas, contador, provas anteriores) |
 | [12-plano-personalizacao.md](12-plano-personalizacao.md) | Plano aprovado em 10/11/2026: formulário enxuto, grupo único, extras por horas, reforço e relatório mensal, com o prompt de cada fase |
+| [13-correcao-redacao.md](13-correcao-redacao.md) | Regras e procedimento de correção das redações do Simulado Geral (critérios, anulação, comentário, onde lançar) |
 | [cursos/](cursos/) | Ficha de cada curso novo (edital, prova, importância, plano das 90 metas) |
 
 ## Como manter esta memória
