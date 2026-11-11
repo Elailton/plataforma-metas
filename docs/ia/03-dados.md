@@ -19,6 +19,7 @@ O modelo completo (matrícula, direitos, bloqueios, metas, mini simulados) está
 | `goal_extra_items` / `goal_extra_item_materials` | Bloco "Se sobrar tempo" (2026-11-10): extras por meta, nível 1–3, fora do progresso e sem conclusão | — |
 | `enrollments.extra_tier_override` | Volume extra definido pelo admin (null = pela resposta de horas) | — |
 | `mini_quiz_attempts` / `_answers` | Tentativas e respostas | — |
+| `mini_quiz_essay_reports` + bucket privado `essay-feedback-reports` | PDF de devolutiva ligado à redação, público, publicação e primeira abertura; implementação de 11/11 ainda não publicada | conteúdo pedagógico e identificação eventualmente presente no PDF. Acesso só ao dono com matrícula ativa e ao administrador; caminhos sem nomes. Mesma política de retenção das respostas, com execução/revisão jurídica pendentes em `08` |
 | `access_resend_requests` | Pedidos de reenvio: hashes HMAC de e-mail/IP, outcome | só hash, **retenção 30 dias** |
 
 ## Aviso de privacidade e termos
