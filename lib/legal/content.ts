@@ -28,7 +28,7 @@ export const COMPANY_EMAIL = "cursoprofericklima@gmail.com"
 
 export const PRIVACY: LegalDocument = {
   title: "Aviso de Privacidade",
-  updatedAt: LEGAL_UPDATED_AT,
+  updatedAt: "11/11/2026",
   intro:
     "Este aviso explica como o Sistema Guiado da Aprovação (SGA) trata os seus dados pessoais, em conformidade com a Lei Geral de Proteção de Dados (Lei nº 13.709/2018).",
   sections: [
@@ -53,6 +53,7 @@ export const PRIVACY: LegalDocument = {
             ["Respostas do questionário do curso: horas disponíveis e rotina (trabalho, escalas, cuidados com filhos ou familiares), experiência e desempenho em provas e questões, hábitos e dificuldades de estudo (como cansaço ou concentração) e preparação física para o teste físico", "Organizar suas metas de estudo e definir qual versão das metas do curso você segue", "Execução de contrato (art. 7º, V)"],
             ["Metas e itens concluídos, edital estudado", "Mostrar seu progresso", "Execução de contrato (art. 7º, V)"],
             ["Tentativas e respostas dos mini simulados e do Diagnóstico Semanal", "Corrigir, gerar o relatório de erros e acompanhar sua evolução", "Execução de contrato (art. 7º, V)"],
+            ["Redações enviadas e correções do professor, incluindo PDFs e a data da primeira abertura da análise", "Disponibilizar a devolutiva individual, acompanhar sua evolução e retirar o lembrete após a leitura", "Execução de contrato (art. 7º, V)"],
             ["Nome curto no ranking", "Mostrar sua posição, somente se você escolher aparecer", "Consentimento (art. 7º, I)"],
             ["Registros de acesso (data, hora e IP)", "Segurança e cumprimento de obrigação legal", "Obrigação legal (art. 7º, II) e legítimo interesse (art. 7º, IX)"],
             ["Estatísticas de uso sem identificação (página visitada sem parâmetros, data, país e região, tipo de dispositivo, sistema e navegador)", "Medir o uso da plataforma e corrigir problemas", "Legítimo interesse (art. 7º, IX)"],
@@ -72,7 +73,7 @@ export const PRIVACY: LegalDocument = {
           type: "ul",
           items: [
             "Hotmart: processa a venda e o pagamento e nos informa a compra.",
-            "Supabase: banco de dados e login.",
+            "Supabase: banco de dados, login e armazenamento privado das redações e correções.",
             "Vercel: hospedagem da plataforma e estatísticas de uso (Vercel Web Analytics).",
             "Resend: envio dos e-mails de acesso.",
           ],
@@ -95,7 +96,7 @@ export const PRIVACY: LegalDocument = {
         {
           type: "ul",
           items: [
-            "Conta, progresso e respostas: enquanto o acesso estiver ativo e por 5 anos depois, para fins contratuais e de defesa em eventuais disputas. Depois disso, eliminamos ou anonimizamos.",
+            "Conta, progresso, respostas e correções de redação: enquanto o acesso estiver ativo e por 5 anos depois, para fins contratuais e de defesa em eventuais disputas. Depois disso, eliminamos ou anonimizamos.",
             "E-mail da compra guardado junto aos avisos da Hotmart: até 90 dias, quando a compra não gerou acesso; se gerou, enquanto durar o vínculo.",
             "Pedidos de reenvio de acesso (guardados só em forma codificada, sem o e-mail em claro): 30 dias.",
             "Registros de acesso: 6 meses, conforme o Marco Civil da Internet.",

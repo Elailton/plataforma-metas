@@ -15,6 +15,7 @@ Não alterar notas, função `nota_geral`, outros alunos ou outros cursos. Sem e
 - Aviso na tela inicial só para quem tem PDF próprio ainda não visto. Abrir a análise
   marca a versão como vista; prefetch não marca. PDF continua no Relatório.
 - Download autenticado por rota sem cache, sem endereço público e sem service_role.
+- Aviso de privacidade atualizado: PDF individual e primeira abertura para controlar lembrete.
 - Troca concorrente usa comparação do caminho anterior; preserva arquivos anteriores.
 
 ## Validação e lançamento
