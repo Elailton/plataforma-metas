@@ -38,6 +38,18 @@ evento `reprocess:<transação>`). Quem já tem conta recebe o curso sem e-mail.
 Admin → curso → Alunos → "Conceder acesso manual" (nome é obrigatório para conta nova).
 Preferir antes descobrir por que a compra não liberou (oferta? e-mail diferente?).
 
+### Aluno comprou com e-mail digitado errado (2026-11-11)
+1. Achar a compra pelo e-mail parecido em `hotmart_webhook_events.buyer_email` e a conta em `auth.users`.
+2. Só corrigir se a conta **nunca entrou** (`last_sign_in_at` nula) e **não existe** conta com o e-mail certo.
+   Então, num comando só: `update auth.users set email=<certo>` e
+   `update auth.identities set identity_data = identity_data || {"email": <certo>}` (provider `email`), com
+   guarda no `where` (id, e-mail antigo, `last_sign_in_at is null`). Matrícula, direito e transação ficam iguais.
+3. Conferir `find_auth_user_id_by_email(<certo>)` e enviar o acesso por `/auth/reenviar-acesso` (um envio);
+   confirmar em `access_resend_requests.outcome = 'sent'`.
+4. Se a conta já foi usada ou o e-mail certo já tem conta: não mexer; perguntar ao usuário (concessão manual).
+5. Eventos futuros da mesma transação chegam com o e-mail antigo: reembolso continua ligado pela transação;
+   uma nova aprovação pode falhar como conflito — conferir e tratar à mão. Não registrar e-mails na memória.
+
 ## Hotmart
 
 ### Cadastrar produto/ofertas de um curso
