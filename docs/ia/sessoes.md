@@ -21,7 +21,9 @@ só as 15 mais recentes aqui; ao passar disso, resuma as antigas em uma linha ca
 - Pedido: mostrar "com redação" em verde ao lado da objetiva e ordenar pela soma; conta de teste e Grupo 1 confirmados.
 - Feito: RPC adicional com autorização e consentimento, função de grupo independente e card comparativo; ranking provisório para correções pendentes.
 - Escopo: PMPE; não alterar diagnóstico semanal, notas, tentativas, cópias de conferência ou `nota_geral` do Relatório.
-- Próximo passo: testes, revisão, migração, ativação nos públicos autorizados e publicação.
+- Verificado: 313 testes locais, TypeScript e build aprovados; teste SQL repetido após endurecer o bloqueio por função de ranking desligada.
+- Banco: migração aplicada, função ativa só na PMPE G1/teste; soma 52 + 27 = 79, 4 participantes, 1 correção pendente. Notas e `nota_geral` preservadas.
+- Próximo passo: publicar o PR #136 e conferir o card na interface; verificação remota ainda na fila, sem afirmar CI verde.
 
 ### 2026-11-11 — Codex — cópia publicada na conta de teste
 - Pedido: publicar o PR #134 e entregar a devolutiva atual à conta protegida para replicar o caminho do aluno.
