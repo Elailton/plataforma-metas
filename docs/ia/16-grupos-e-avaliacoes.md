@@ -106,3 +106,14 @@ na plataforma, orientados por `courseId` (nada específico de um concurso).
 - Acesso do aluno segue `active_course_ids()`; o administrador salva por
   `admin_save_mini_quiz`, com IDs estáveis e versão `updated_at`.
 
+
+## Ranking com redação (pedido de 11/11/2026)
+No Simulado Geral com redação, a função de grupo `ranking_nota_final` permite ordenar
+pela soma da objetiva com a redação corrigida, com desempate pelo menor tempo. O card
+compara objetiva /60 e total /100, com "com redação" em verde quando corrigida.
+Enquanto houver participante com redação em correção, indicar ranking provisório e
+nota parcial; redação ainda não corrigida soma zero até o lançamento. Não incluir
+cópias de conferência, alterar tentativas ou expor comentários/notas por critério.
+Consentimento e nome curto preservados. Diagnóstico Semanal continua por acertos.
+Liberação autorizada: PMPE, conta de teste e Grupo 1. Grupo 2 e outros cursos não mudam.
+A função `nota_geral` do Relatório continua independente; não habilitar por este pedido.

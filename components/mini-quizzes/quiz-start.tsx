@@ -93,7 +93,7 @@ export function QuizStart({
             Deseja aparecer no ranking deste {noun}?
           </legend>
           {[
-            { value: true, title: "Sim, quero aparecer", hint: "Seu primeiro nome e a inicial do sobrenome aparecem com acertos e tempo." },
+            { value: true, title: "Sim, quero aparecer", hint: essay ? "Seu nome abreviado aparece com acertos e tempo. O ranking também pode incluir a nota da redação e a soma final." : "Seu primeiro nome e a inicial do sobrenome aparecem com acertos e tempo." },
             { value: false, title: "Não, prefiro ficar fora", hint: "Você vê o ranking, mas seu nome não aparece nele." },
           ].map((option) => {
             const checked = ranking === option.value

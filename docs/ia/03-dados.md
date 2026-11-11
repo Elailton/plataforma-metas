@@ -62,3 +62,11 @@ atualizar o aviso no mesmo PR.**
 
 Contagens e cadastros mudam: sempre consultar o banco antes de agir. Consultas úteis:
 `docs/operacao/diagnostico-origem-matriculas.sql` (somente leitura).
+
+## Ranking com nota final (11/11/2026)
+Com `ranking_nota_final` habilitado por curso/público, a RPC de ranking inclui somente
+status resumido, total da redação e soma, além do nome curto, objetiva e tempo já
+compartilhados por quem escolheu participar. Não retorna texto, comentário, fotos,
+PDF, notas por critério, e-mail ou IDs dos outros alunos. Convite de participação
+e aviso de privacidade atualizados; validar com o jurídico a abrangência da opção
+de participação dos alunos anteriores. Sem mudança de notas ou nova retenção.

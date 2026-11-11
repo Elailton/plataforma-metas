@@ -194,3 +194,8 @@ O usuário autorizou implementar/publicar a entrega automática de cada análise
 segue o caminho normal do aluno, com leitura separada, sem criar tentativas ou notas
 fictícias. Restringir ao UUID configurado e à matrícula ativa no Grupo 3 do mesmo curso.
 Não alterar acesso comercial, senha, nota ou lembrete do aluno original.
+
+## 2026-11-11 — Ranking do Simulado Geral soma redação
+Usuário pediu selo verde "com redação", comparação com a objetiva e classificação
+pela nota final. Confirmou conta de teste e Grupo 1; escopo PMPE. Usar função separada
+`ranking_nota_final`, preservando `nota_geral`, diagnóstico semanal e consentimento.

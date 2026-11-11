@@ -25,6 +25,8 @@ export function RankingCard({
   className?: string
 }) {
   const participants = rows[0]?.participants ?? 0
+  const combined = rows.some((row) => row.combined_enabled)
+  const provisional = combined && (rows[0]?.pending_count ?? 0) > 0
   const me = rows.find((row) => row.is_me)
   return (
     <section className={cn("rounded-xl border border-border bg-card p-4 md:p-5", className)} aria-label={title}>
@@ -35,7 +37,8 @@ export function RankingCard({
             {title}
           </h2>
           <p className="mt-0.5 text-xs text-muted-foreground">
-            {subtitle ?? "Mais acertos primeiro; no empate, o menor tempo."}
+            {subtitle ?? (combined ? "Maior nota final primeiro; no empate, o menor tempo." : "Mais acertos primeiro; no empate, o menor tempo.")}
+            {provisional ? " Ranking provisório enquanto as redações são corrigidas." : null}
             {participants > 0 ? ` · ${participants} ${participants === 1 ? "participante" : "participantes"}` : null}
           </p>
         </div>
@@ -75,8 +78,16 @@ export function RankingCard({
                     {row.is_me ? <span className="ml-1.5 text-xs font-normal text-primary">você</span> : null}
                   </span>
                   <span className="shrink-0 text-right tabular-nums">
-                    <span className="block font-semibold text-foreground">
-                      {row.correct_count}/{row.total_count}
+                    <span className="flex flex-wrap items-center justify-end gap-x-3 gap-y-1">
+                      <span className="font-semibold text-foreground" aria-label={`Objetiva ${row.correct_count} de ${row.total_count}`}>
+                        {row.correct_count}/{row.total_count}
+                      </span>
+                      {row.combined_enabled ? (
+                        <span className={cn("flex flex-col items-end", row.essay_status === "graded" ? "text-success" : "text-muted-foreground")}>
+                          <span className="text-[11px] font-medium">{row.essay_status === "graded" ? "com redação" : row.essay_status === "pending" ? "redação em correção" : "somente objetiva"}</span>
+                          <span className="font-semibold">{row.final_score}/{row.final_max}{row.essay_status === "pending" ? <span className="ml-1 text-[10px] font-normal">parcial</span> : null}</span>
+                        </span>
+                      ) : null}
                     </span>
                     <span className="block text-[11px] text-muted-foreground">{formatDuration(row.duration_seconds)}</span>
                   </span>

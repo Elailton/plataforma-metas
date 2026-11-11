@@ -148,13 +148,23 @@ export interface RankingRow {
   duration_seconds: number | null
   is_me: boolean
   participants: number
+  combined_enabled?: boolean
+  essay_status?: "graded" | "pending" | "none" | null
+  essay_score?: number | null
+  final_score?: number | null
+  final_max?: number | null
+  pending_count?: number
 }
 
 /** Ranking de um simulado (topo e a própria posição). Falha vira lista vazia: o ranking nunca derruba a página. */
 export async function getQuizRanking(quizId: string, limit = 10): Promise<RankingRow[]> {
   if (!isUuid(quizId)) return []
   const supabase = await createClient()
-  const { data, error } = await supabase.rpc("mini_quiz_ranking", { p_quiz_id: quizId, p_limit: limit })
+  const params = { p_quiz_id: quizId, p_limit: limit }
+  const result = await supabase.rpc("mini_quiz_ranking_final", params)
+  // Compatibilidade durante deploy/migração. Outros erros não contornam autorização.
+  const { data, error } = result.error && ["PGRST202", "42883"].includes(result.error.code)
+    ? await supabase.rpc("mini_quiz_ranking", params) : result
   if (error) {
     logSafeServerError("mini_quiz.ranking_failed", error)
     return []
