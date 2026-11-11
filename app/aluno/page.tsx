@@ -1,3 +1,6 @@
+import { getStudentEssays } from "@/lib/mini-quizzes/essays"
+import { getEssayReports } from "@/lib/mini-quizzes/essay-reports"
+import { reportHref } from "@/lib/mini-quizzes/essay-report.mjs"
 import { InstallApp } from "@/components/student/install-app"
 import { studySummary } from "@/lib/groups/questionnaire.mjs"
 import Link from "next/link"
@@ -33,6 +36,10 @@ export default async function StudentHomePage() {
     showRanking ? getLatestWeeklyRanking(context.currentCourse.id).catch(() => null) : Promise.resolve(null),
   ])
   if (!snapshot) redirect("/auth/sem-acesso")
+  const essays = experience.isEnabled("relatorio")
+    ? await getStudentEssays(context.currentCourse.id, context.profile.id) : []
+  const reports = await getEssayReports(essays.map((essay) => essay.id))
+  const unreadReports = reports.filter((report) => !report.viewed_at)
   // Contador da prova: consulta separada e tolerante (a coluna é nova).
   let countdown: ReturnType<typeof examCountdown> = null
   if (experience.isEnabled("contador_prova")) {
@@ -81,6 +88,14 @@ export default async function StudentHomePage() {
       />
 
       <InstallApp />
+
+      {unreadReports.map((report) => (
+        <Link key={report.essay_id} href={reportHref(report.essay_id)} className="mb-4 flex items-center justify-between gap-4 rounded-xl border border-primary/40 bg-primary/10 p-4 transition-colors hover:bg-primary/15">
+          <span><span className="block font-semibold">Sua redação foi corrigida</span>
+          <span className="block text-sm text-muted-foreground">{essays.find((essay) => essay.id === report.essay_id)?.quizTitle}. Clique aqui para ler a análise e baixar o PDF.</span></span>
+          <ArrowRight className="size-5 shrink-0 text-primary" aria-hidden="true" />
+        </Link>
+      ))}
 
       {countdown ? <ExamCountdownCard label={countdown.label} date={countdown.date} status={countdown.status} /> : null}
 
