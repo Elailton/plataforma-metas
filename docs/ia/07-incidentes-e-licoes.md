@@ -44,3 +44,12 @@ Formato: data — o que aconteceu — causa — o que mudou / lição.
   enxuto; simulação ponta a ponta (rótulos → normalização) com o questionário de cada curso.
 - Lição: mudança de formato de dados exige testar **o caminho de gravação real** (envio do aluno),
   não só a tela; incluir isso na revisão de segurança/qualidade antes de aplicar no banco.
+
+## 2026-11-11 — Verificação remota sem iniciar
+Os runs de `validate` do PR #134 permaneceram `queued`, sem jobs. O GitHub recusou
+cancelamento e reexecução; nova execução do mesmo código também ficou na fila.
+Testes locais (incluindo SQL real), TypeScript e build aprovados; preview da Vercel
+aprovado. Usuário informado do bloqueio e autorizou publicar. Na retomada, PR já
+mesclado e produção READY; migração/configuração aplicadas após nova revisão/testes.
+Não afirmar CI verde quando só há testes locais. Não repetir atualizações técnicas
+sem nova informação útil. Não houve alteração de nota, tentativa ou leitura original.

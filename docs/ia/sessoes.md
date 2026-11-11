@@ -17,6 +17,15 @@ só as 15 mais recentes aqui; ao passar disso, resuma as antigas em uma linha ca
 
 ## Sessões
 
+### 2026-11-11 — Codex — cópia publicada na conta de teste
+- Pedido: publicar o PR #134 e entregar a devolutiva atual à conta protegida para replicar o caminho do aluno.
+- Feito: PR encontrado já mesclado (`4170581`), produção READY; migração aditiva aplicada e destinatário configurado por RPC administrativa.
+- Feito: devolutiva existente entregue automaticamente; cópia com leitura própria, PDF privado, nota e comentário. Publicações futuras usam o trigger.
+- Verificado em produção: conta configurada acessa o PDF; outro aluno não acessa; original e contagens de tentativas preservados; cópia não lida na conferência.
+- Verificado: endpoint novo registrado no PostgREST e anônimo negado (401/42501). Testes locais de SQL, actions, rota e memória aprovados.
+- Limite: CI remoto permaneceu na fila, sem jobs; usuário autorizou publicação após ciência do bloqueio. Não registrar CI como aprovado.
+- Próximo passo: conferir pela conta protegida, selecionando o curso PMPE em Relatório → Redações. Acompanhar o CI remoto quando retomar.
+
 ### 2026-11-11 — Codex — cópia das devolutivas para conferência
 - Pedido: regra permanente e implementação para toda devolutiva também chegar à conta de teste; disponibilizar a atual agora.
 - Feito: configuração administrativa por UUID, cópias com leitura independente e trigger de publicação; mesmo caminho de Relatório/Redações/download.

@@ -227,7 +227,9 @@ conforme as metas."
 - A função `nota_geral` não foi ativada no Grupo 1 nesta tarefa; notas existentes preservadas.
 
 ## Conferência automática das devolutivas (11/11/2026)
-- Preparada regra e implementação de cópia privada para conta de teste; aplicar migração,
-  configurar destinatário e publicar após CI/revisão. Incluir a devolutiva já existente.
+- Concluído em 11/11: PR #134 mesclado, migração aplicada, conta protegida configurada e
+  devolutiva existente disponível; próximos PDFs geram entrega automática.
+- Acompanhar CI remoto preso na fila: usuário autorizou a publicação após testes locais,
+  revisão de segurança e ciência desse bloqueio. Não confundir fila com aprovação.
 - Para cada curso novo, incluir matrícula ativa da conta protegida no Grupo 3 no checklist
   de lançamento; não criar tentativas ou alterar notas para conferir o fluxo.

@@ -47,3 +47,13 @@ exigem a matrícula de teste correspondente; nenhuma matrícula ou senha é alte
 Plano técnico: tabela privada de destinatário, tabela de cópias, trigger de publicação,
 RPC de leitura mínima, permissão de Storage restrita à cópia e integração no mesmo
 caminho Relatório → Redações, com lembrete independente. Revisão, SQL real, CI e deploy.
+
+### Cópia publicada e conferida em 11/11/2026
+PR #134 mesclado, produção READY no commit `4170581`, migração aplicada e conta
+protegida configurada por UUID no banco. A devolutiva existente está na conta de
+teste, com nota/comentário/PDF e aviso independente. Conferir selecionando o curso
+correspondente antes de abrir Relatório → Redações.
+Configuração administrativa preencheu as cópias antigas sem alterar a redação real
+ou o total de tentativas da conta de teste. RLS real negou outro aluno; API negou
+anônimo. A publicação foi autorizada expressamente após informação de CI remoto
+preso na fila; testes locais e build passaram, sem alegar execução remota aprovada.
