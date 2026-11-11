@@ -26,3 +26,11 @@ a revisão pode ser feita pelo assistente responsável, sem exclusividade do Cla
 e autorizou migração e publicação após a revisão. Conferir CI e estado de produção.
 Aplicar a migração aditiva, publicar o código, anexar o PDF recebido à redação autorizada
 para Grupo 1 e conferir acesso exclusivo do destinatário, mantendo o lembrete não lido.
+
+## Publicado em 11/11/2026
+PR #132 mesclado, CI aprovado, migração aplicada pela API do Supabase e produção
+READY no commit `6bcd194`. Primeiro PDF anexado somente ao destinatário autorizado,
+público Grupo 1. Teste RLS de produção, em transação somente leitura: dono vê arquivo
+e relatório; outro aluno não vê. Bucket privado, SHA-256 do download igual ao original.
+O aviso permaneceu não lido na conferência, sem consumir a notificação em teste.
+Sem e-mail/push e sem alterar notas ou habilitar `nota_geral` para outros públicos.
