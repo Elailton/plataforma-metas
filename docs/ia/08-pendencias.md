@@ -233,3 +233,7 @@ conforme as metas."
   revisão de segurança e ciência desse bloqueio. Não confundir fila com aprovação.
 - Para cada curso novo, incluir matrícula ativa da conta protegida no Grupo 3 no checklist
   de lançamento; não criar tentativas ou alterar notas para conferir o fluxo.
+
+## Ranking pela nota final (11/11/2026)
+- Implementação em branch; testar, revisar, aplicar migração e liberar `ranking_nota_final`
+  somente na PMPE para conta de teste e Grupo 1. Ordenação final e selo verde autorizados.

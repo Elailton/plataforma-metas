@@ -54,7 +54,7 @@ export const PRIVACY: LegalDocument = {
             ["Metas e itens concluídos, edital estudado", "Mostrar seu progresso", "Execução de contrato (art. 7º, V)"],
             ["Tentativas e respostas dos mini simulados e do Diagnóstico Semanal", "Corrigir, gerar o relatório de erros e acompanhar sua evolução", "Execução de contrato (art. 7º, V)"],
             ["Redações enviadas e correções do professor, incluindo PDFs e a data da primeira abertura da análise", "Disponibilizar a devolutiva individual, permitir sua conferência pedagógica pelo responsável pela plataforma, acompanhar sua evolução e retirar o lembrete após a leitura", "Execução de contrato (art. 7º, V)"],
-            ["Nome curto no ranking", "Mostrar sua posição, somente se você escolher aparecer", "Consentimento (art. 7º, I)"],
+            ["Nome curto, acertos, tempo e nota da redação e total nos simulados que a incluem", "Mostrar sua posição no ranking, somente se você escolher aparecer", "Consentimento (art. 7º, I)"],
             ["Registros de acesso (data, hora e IP)", "Segurança e cumprimento de obrigação legal", "Obrigação legal (art. 7º, II) e legítimo interesse (art. 7º, IX)"],
             ["Estatísticas de uso sem identificação (página visitada sem parâmetros, data, país e região, tipo de dispositivo, sistema e navegador)", "Medir o uso da plataforma e corrigir problemas", "Legítimo interesse (art. 7º, IX)"],
           ],

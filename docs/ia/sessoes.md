@@ -17,6 +17,12 @@ só as 15 mais recentes aqui; ao passar disso, resuma as antigas em uma linha ca
 
 ## Sessões
 
+### 2026-11-11 — Codex — ranking pela nota final
+- Pedido: mostrar "com redação" em verde ao lado da objetiva e ordenar pela soma; conta de teste e Grupo 1 confirmados.
+- Feito: RPC adicional com autorização e consentimento, função de grupo independente e card comparativo; ranking provisório para correções pendentes.
+- Escopo: PMPE; não alterar diagnóstico semanal, notas, tentativas, cópias de conferência ou `nota_geral` do Relatório.
+- Próximo passo: testes, revisão, migração, ativação nos públicos autorizados e publicação.
+
 ### 2026-11-11 — Codex — cópia publicada na conta de teste
 - Pedido: publicar o PR #134 e entregar a devolutiva atual à conta protegida para replicar o caminho do aluno.
 - Feito: PR encontrado já mesclado (`4170581`), produção READY; migração aditiva aplicada e destinatário configurado por RPC administrativa.
