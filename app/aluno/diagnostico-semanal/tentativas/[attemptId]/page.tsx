@@ -13,7 +13,7 @@ import { getAttemptReview, getQuizRanking } from "@/lib/mini-quizzes/queries"
 import { getStudentExperience, requireStudentFeature } from "@/lib/student/experience"
 import { formatDuration, nextAvailableAt, percentage } from "@/lib/mini-quizzes/core.mjs"
 import { getAttemptEssay, getQuizEssayPrompt } from "@/lib/mini-quizzes/essays"
-import { EssayResult } from "@/components/mini-quizzes/essay-result"
+import { CombinedScoreCard, EssayResult } from "@/components/mini-quizzes/essay-result"
 
 export const dynamic = "force-dynamic"
 
@@ -29,7 +29,9 @@ export default async function MiniQuizAttemptPage({ params }: { params: Promise<
   const { attempt } = review
   const score = percentage(attempt.correct_count, attempt.total_count)
   const next = nextAvailableAt(attempt.submitted_at)
-  const rankingOn = (await getStudentExperience()).isEnabled("ranking")
+  const experience = await getStudentExperience()
+  const rankingOn = experience.isEnabled("ranking")
+  const showTotal = experience.isEnabled("nota_geral")
   const ranking = rankingOn ? await getQuizRanking(attempt.quiz_id) : []
   const essayPrompt = monthly ? await getQuizEssayPrompt(attempt.quiz_id) : null
   const essay = essayPrompt ? await getAttemptEssay(attempt.id) : null
@@ -63,11 +65,14 @@ export default async function MiniQuizAttemptPage({ params }: { params: Promise<
       {essayPrompt ? (
         <section id="redacao" aria-label="Redação" className="mb-6 flex scroll-mt-20 flex-col gap-4">
           {essay ? (
-            <EssayResult essay={essay} title="Sua redação" />
+            <EssayResult essay={essay} title="Sua redação" attempt={showTotal ? attempt : null} />
           ) : (
+            <>
+            {showTotal ? <CombinedScoreCard attempt={attempt} essay={null} /> : null}
             <p className="rounded-xl border border-border bg-card p-4 text-sm text-muted-foreground">
               Você não enviou redação neste simulado. A redação só pode ser enviada junto com as respostas, dentro do tempo da prova.
             </p>
+            </>
           )}
         </section>
       ) : null}

@@ -1,14 +1,54 @@
 import { CheckCircle2, Clock, XCircle } from "lucide-react"
 import { cn } from "@/lib/utils"
-import { ESSAY_CRITERIA, ESSAY_MAX_SCORE, ESSAY_MIN_SCORE, essayReviewDeadline } from "@/lib/mini-quizzes/essay.mjs"
+import { ESSAY_CRITERIA, ESSAY_MAX_SCORE, ESSAY_MIN_SCORE, combinedScore, essayReviewDeadline } from "@/lib/mini-quizzes/essay.mjs"
 import type { EssayRow } from "@/lib/mini-quizzes/essay.mjs"
 import { formatDateTime } from "./format"
 
 const dateOnly = (value: Date) =>
   value.toLocaleDateString("pt-BR", { day: "2-digit", month: "2-digit", year: "numeric", timeZone: "America/Fortaleza" })
 
+type AttemptScore = { correct_count: number; total_count: number }
+
+/** Nota geral do simulado: objetiva (1 ponto por questão) + redação, como no edital. */
+export function CombinedScoreCard({ attempt, essay, className }: { attempt: AttemptScore; essay: EssayRow | null; className?: string }) {
+  const score = combinedScore(attempt, essay)
+  const note =
+    score.status === "graded"
+      ? `Como na prova: cada questão vale 1 ponto e a redação soma até ${score.essayMax} pontos.`
+      : score.status === "pending"
+        ? `Sua redação está em correção e vai somar até ${score.essayMax} pontos a esta nota.`
+        : score.status === "annulled"
+          ? `Na prova, a redação soma até ${score.essayMax} pontos. No próximo simulado, capriche na foto da folha inteira.`
+          : `Na prova, a redação soma até ${score.essayMax} pontos: envie a sua no próximo simulado.`
+  return (
+    <div className={cn("rounded-xl border border-primary/40 bg-primary/10 p-4 md:p-5", className)}>
+      <p className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">Nota geral</p>
+      <p className="mt-1 text-3xl font-semibold tabular-nums text-foreground">
+        {score.total}
+        <span className="text-base font-normal text-muted-foreground">/{score.max}</span>
+      </p>
+      <p className="mt-1 text-sm tabular-nums text-foreground">
+        Objetiva {score.objective}/{score.objectiveMax}
+        {" + "}
+        Redação {score.status === "graded" ? `${score.essayPoints}/${score.essayMax}` : score.status === "pending" ? "em correção" : `0/${score.essayMax}`}
+      </p>
+      <p className="mt-2 text-xs text-muted-foreground">{note}</p>
+    </div>
+  )
+}
+
 /** Situação e resultado de uma redação enviada. */
-export function EssayResult({ essay, title, className }: { essay: EssayRow; title?: string; className?: string }) {
+export function EssayResult({
+  essay,
+  title,
+  className,
+  attempt,
+}: {
+  essay: EssayRow
+  title?: string
+  className?: string
+  attempt?: AttemptScore | null
+}) {
   const deadline = essayReviewDeadline(essay.submitted_at)
   const images = essay.image_paths?.length ?? 0
   const sent = [images > 0 ? `${images} ${images === 1 ? "foto" : "fotos"}` : null, essay.body ? "texto colado" : null].filter(Boolean).join(" e ")
@@ -26,6 +66,7 @@ export function EssayResult({ essay, title, className }: { essay: EssayRow; titl
           Enviada só pelo texto digitado: a correção é aproximada (sem avaliar letra, margens e número de linhas) e pode ser imprecisa.
         </p>
       ) : null}
+      {attempt ? <CombinedScoreCard attempt={attempt} essay={essay} className="mb-4" /> : null}
       {essay.status === "pending" ? (
         <p className="flex items-start gap-2 text-sm text-foreground">
           <Clock className="mt-0.5 size-4 shrink-0 text-primary" aria-hidden="true" />

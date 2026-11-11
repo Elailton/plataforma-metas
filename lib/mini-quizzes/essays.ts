@@ -38,6 +38,7 @@ export async function getAttemptEssay(attemptId: string): Promise<EssayRow | nul
 
 export interface StudentEssay extends EssayRow {
   quizTitle: string
+  attempt: { correct_count: number; total_count: number } | null
 }
 
 /** Redações do aluno no curso, para o Relatório. */
@@ -46,7 +47,7 @@ export async function getStudentEssays(courseId: string, userId: string): Promis
   const supabase = await createClient()
   const { data, error } = await supabase
     .from("mini_quiz_essays")
-    .select(`${ESSAY_COLUMNS}, mini_quizzes(title)`)
+    .select(`${ESSAY_COLUMNS}, mini_quizzes(title), mini_quiz_attempts(correct_count, total_count)`)
     .eq("course_id", courseId)
     .eq("user_id", userId)
     .order("submitted_at", { ascending: false })
@@ -56,7 +57,12 @@ export async function getStudentEssays(courseId: string, userId: string): Promis
   }
   return (data ?? []).map((row) => {
     const quiz = Array.isArray(row.mini_quizzes) ? row.mini_quizzes[0] : row.mini_quizzes
-    return { ...(row as unknown as EssayRow), quizTitle: (quiz as { title?: string } | null)?.title ?? "Simulado" }
+    const attempt = Array.isArray(row.mini_quiz_attempts) ? row.mini_quiz_attempts[0] : row.mini_quiz_attempts
+    return {
+      ...(row as unknown as EssayRow),
+      quizTitle: (quiz as { title?: string } | null)?.title ?? "Simulado",
+      attempt: (attempt as { correct_count: number; total_count: number } | null) ?? null,
+    }
   })
 }
 
