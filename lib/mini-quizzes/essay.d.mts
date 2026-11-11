@@ -21,6 +21,19 @@ export const ESSAY_MAX_BODY: number
 export const ESSAY_MAX_IMAGE_BYTES: number
 export function essayReviewDeadline(submittedAt: string): Date | null
 export function essayStatusLabel(essay: Pick<EssayRow, "status" | "score_total"> | null | undefined): string | null
+export interface CombinedScore {
+  objective: number
+  objectiveMax: number
+  essayPoints: number
+  essayMax: number
+  status: EssayRow["status"] | "none"
+  total: number
+  max: number
+}
+export function combinedScore(
+  attempt: { correct_count: number | null; total_count: number | null } | null | undefined,
+  essay: Pick<EssayRow, "status" | "score_total"> | null | undefined,
+): CombinedScore
 export function remainingSeconds(limitMinutes: number | null | undefined, elapsed: number): number | null
 export function parseEssayScores(values: unknown): number[] | null
 export function essayImagePath(userId: string, attemptId: string, index: number, id: string, mime: string): string

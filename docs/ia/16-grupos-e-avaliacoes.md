@@ -94,6 +94,10 @@ na plataforma, orientados por `courseId` (nada específico de um concurso).
   Antes de iniciar: quadro "Redação: prepare-se ANTES de iniciar" (aviso "Novidade em teste", folha para
   baixar, orientações) e 2 avisos ao clicar em Iniciar. A folha (PDF **sem o tema**) fica em
   `public/folhas-redacao/` e é indicada na proposta pela linha `[[folha:/folhas-redacao/<arquivo>.pdf]]`.
+- **Nota geral** (pedida em 11/11/2026, função de grupo `nota_geral`, migração `20261111000100`): na correção do
+  Simulado Geral e no Relatório, o aluno vê "Objetiva X/60 + Redação Y/40 = Z/100", como no edital PMPE
+  (Tabela 10.1: 1 ponto por questão + redação até 40 = 100 na 1ª etapa). Redação pendente/anulada/ausente soma 0.
+  Só exibição (`combinedScore` em `lib/mini-quizzes/essay.mjs`). Começou desligada nos Grupos 1 e 2.
 - O administrador faz a prévia do diagnóstico como aluno (nada é gravado) e publica pela própria tela.
 - O diagnóstico mensal usa a primeira tentativa de cada mini simulado no mês (fuso de
   Brasília, `is_first_of_month`). Refazer fica no histórico e não altera o mês.
