@@ -17,6 +17,15 @@ só as 15 mais recentes aqui; ao passar disso, resuma as antigas em uma linha ca
 
 ## Sessões
 
+### 2026-11-11 — Codex — publicação da análise em PDF
+- Pedido: usuário esclareceu que a revisão pode ser feita pelo Codex e autorizou migração e publicação completas.
+- Feito: revisão de segurança, CI aprovado, migração aditiva aplicada pela API, PR #132 mesclado e deploy de produção READY (`6bcd194`).
+- Feito: PDF recebido anexado exclusivamente à redação autorizada, público Grupo 1; lembrete individual não lido, sem e-mail/push e sem alterar notas.
+- Verificado: RLS real em transação somente leitura permite PDF ao dono e nega a outro aluno; bucket privado; arquivo baixado confere com o SHA-256 do original.
+- Verificado: notas e objetiva preservadas, 1 publicação apenas. Página de análise e download exigem login.
+- Próximo passo: corrigir a redação ainda pendente até 17/11; futuras devolutivas pelo painel.
+- Regra atualizada: revisão obrigatória de segurança sem exclusividade do Claude (`01`, decisão de 11/11).
+
 ### 2026-11-11 — Codex — PDF privado da correção e lembrete individual
 - Pedido: acesso pelo Relatório à análise de cada redação, PDF para baixar e aviso só ao destinatário; Grupo 1 direto autorizado.
 - Feito: caminho Relatório → Redações → análise; upload no admin; bucket privado, RLS e RPCs de publicação/leitura; aviso individual com controle de versão.

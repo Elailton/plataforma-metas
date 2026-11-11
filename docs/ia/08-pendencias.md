@@ -218,8 +218,10 @@ conforme as metas."
 - [ ] Fase 4: marcar assunto nas 60 questões do PMPE; "Seu reforço" e "pode acelerar".
 - [ ] Fase 5: relatório mensal.
 
-## PDF da análise de redação (11/11/2026)
-- Implementação preparada: `17-plano-pdf-redacoes.md`. Usuário autorizou em 11/11 revisão pelo Codex, merge e migração; concluir publicação e anexo.
-- Depois: anexar o PDF final autorizado na correção individual pelo painel, público Grupo 1,
-  e verificar o lembrete exclusivo do destinatário. Sem alterar a nota já lançada.
-- Não ativar `nota_geral` no Grupo 1 nesta tarefa: pedido anterior colado é contexto, não autorização.
+## PDF da análise de redação (11/11/2026) — concluído
+- PR #132 mesclado, migração `20261111000200_essay_feedback_reports` aplicada e produção publicada.
+- PDF autorizado anexado a uma única redação do Grupo 1, com lembrete individual; outro aluno não acessa.
+- Caminho do aluno: Relatório → Redações → Análise da redação → Baixar PDF da análise.
+- Caminho do admin: Mini Simulados → Redações → cartão corrigido → PDF da análise.
+- O arquivo é privado, até 3 MB; substituir preserva o anterior e renova o lembrete do dono.
+- A função `nota_geral` não foi ativada no Grupo 1 nesta tarefa; notas existentes preservadas.
