@@ -31,7 +31,7 @@ begin
  from public.enrollments en join public.courses c on c.id=en.course_id
  where en.user_id=v_uid and en.course_id=v_quiz.course_id;
  if v_quiz.kind='mensal' and nullif(btrim(v_quiz.essay_prompt),'') is not null and v_group is not null then
-   select not ('ranking_nota_final'=any(coalesce(s.disabled_features,'{}'::text[]))) into v_combined
+   select not (coalesce(s.disabled_features,'{}'::text[]) && array['ranking_nota_final','ranking']::text[]) into v_combined
    from (select 1) dummy left join public.course_group_settings s
      on s.course_id=v_quiz.course_id and s.study_group=v_group;
  end if;

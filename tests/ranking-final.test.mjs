@@ -54,6 +54,9 @@ test("ranking final: soma, desempate, consentimento, grupos, escopo e privacidad
   assert.deepEqual(top.map(r=>[r.rank,r.is_me]),[[1,false],[2,true]])
   assert.equal((await rank(T))[0].final_score,100) // conta de teste só aparece para si.
   assert.ok((await rank(USERS.groupTwo)).every(r=>!r.combined_enabled))
+  await db.query("update course_group_settings set disabled_features=array_append(disabled_features,'ranking') where course_id=$1 and study_group=1",[C])
+  assert.ok((await rank(A)).every(r=>!r.combined_enabled && r.essay_score===null))
+  await db.query("update course_group_settings set disabled_features=array_remove(disabled_features,'ranking') where course_id=$1 and study_group=1",[C])
   // Correção posterior reorganiza a classificação na consulta seguinte, sem gravar ranking.
   await db.query("update mini_quiz_essays set status='graded',score_total=36 where attempt_id=$1",[ad])
   rows=await rank(A)
