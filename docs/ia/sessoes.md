@@ -1,6 +1,6 @@
 # Registro de sessões (memória episódica, passagem de bastão entre IAs)
 
-Revisado em: 2026-11-10. Uma entrada por sessão, **a mais nova no topo**, no máximo ~10 linhas. Mantenha
+Revisado em: 2026-11-11. Uma entrada por sessão, **a mais nova no topo**, no máximo ~10 linhas. Mantenha
 só as 15 mais recentes aqui; ao passar disso, resuma as antigas em uma linha cada em "Resumo anterior"
 (esquecimento controlado). Decisões vão também para `06`; tarefas abertas para `08`.
 
@@ -16,6 +16,14 @@ só as 15 mais recentes aqui; ao passar disso, resuma as antigas em uma linha ca
 ```
 
 ## Sessões
+
+### 2026-11-11 — Codex — PDF privado da correção e lembrete individual
+- Pedido: acesso pelo Relatório à análise de cada redação, PDF para baixar e aviso só ao destinatário; Grupo 1 direto autorizado.
+- Feito: caminho Relatório → Redações → análise; upload no admin; bucket privado, RLS e RPCs de publicação/leitura; aviso individual com controle de versão.
+- Conferido no banco (somente leitura): 1 redação corrigida e 1 pendente; memória antiga de 2 pendentes retificada.
+- Não feito: merge, migração, deploy, anexo e aviso reais. Exigem revisão pelo Claude antes de publicação, conforme `01`.
+- Próximo passo: conferir CI e revisão do PR; aplicar migração e anexar o PDF final pelo painel ao destinatário autorizado, Grupo 1. Não alterar notas ou `nota_geral`.
+- Conferir: usar o PDF final aprovado pelo professor; não incluir arquivo/dados de aluno no Git.
 
 ### 2026-11-10 — Claude (Opus) — personalização, cursos novos e AI Memory
 - Pedido: fases 1–3 da personalização; materiais e 90 metas de PCCE, PRF ADM e GCM; Metas 01–03 para 16/11;

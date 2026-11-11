@@ -1,3 +1,5 @@
+import { EssayReportForm } from "@/components/admin/essay-report-form"
+import { getEssayReports } from "@/lib/mini-quizzes/essay-reports"
 import { PageHeader, SectionHeader } from "@/components/page-header"
 import { Badge } from "@/components/ui/badge"
 import { listAdminCourses } from "@/lib/admin/queries"
@@ -21,6 +23,8 @@ export default async function AdminEssaysPage({ searchParams }: { searchParams: 
   const course = resolveCourse(courses, curso)
   if (!course) return <PageHeader title="Redações" description="Cadastre um curso primeiro." />
   const essays = await listAdminEssays(course.id)
+  const reports = await getEssayReports(essays.map((essay) => essay.id))
+  const reportPaths = new Map(reports.map((report) => [report.essay_id, report.storage_path]))
   const pending = essays.filter((essay) => essay.status === "pending")
   const done = essays.filter((essay) => essay.status !== "pending").reverse()
 
@@ -77,6 +81,7 @@ export default async function AdminEssaysPage({ searchParams }: { searchParams: 
                       scores={essay.scores}
                       feedback={essay.feedback}
                     />
+                    {essay.status === "graded" ? <EssayReportForm essayId={essay.id} currentPath={reportPaths.get(essay.id) ?? null} /> : null}
                   </li>
                 )
               })}

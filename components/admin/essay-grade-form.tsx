@@ -1,5 +1,6 @@
 "use client"
 
+import { useRouter } from "next/navigation"
 import { useState } from "react"
 import { toast } from "sonner"
 import { Button } from "@/components/ui/button"
@@ -20,6 +21,7 @@ export function EssayGradeForm({
   scores: number[] | null
   feedback: string | null
 }) {
+  const router = useRouter()
   const [values, setValues] = useState<string[]>(ESSAY_CRITERIA.map((_, index) => (scores?.[index] ?? "").toString()))
   const [note, setNote] = useState(feedback ?? "")
   const [pending, setPending] = useState(false)
@@ -30,7 +32,7 @@ export function EssayGradeForm({
     try {
       const result = await gradeMiniQuizEssay(essayId, next, values, note)
       if (!result.ok) toast.error(result.error)
-      else toast.success(next === "graded" ? "Resultado salvo." : next === "annulled" ? "Redação anulada." : "Voltou para a fila.")
+      else { toast.success(next === "graded" ? "Resultado salvo." : next === "annulled" ? "Redação anulada." : "Voltou para a fila."); router.refresh() }
     } finally {
       setPending(false)
     }

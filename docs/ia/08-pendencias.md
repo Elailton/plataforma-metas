@@ -156,7 +156,7 @@ conforme as metas."
   09/11 e 10/11. **Prazos: 16/11 e 17/11/2026** (7 dias após o envio). Corrigir fora da plataforma e lançar
   as 4 notas e o comentário em `/admin/mini-simulados/redacoes`.
 - 11/11/2026: 1ª redação (envio de 09/11) corrigida fora da plataforma: 27/40 (estimativa pedagógica), PDF de
-  devolutiva entregue ao usuário; **falta lançar no painel** (a pedido do usuário). Falta a 2ª (prazo 17/11).
+  devolutiva entregue ao usuário; **lançamento confirmado em 11/11 por consulta agregada ao banco** (1 corrigida e 1 pendente). Falta a 2ª (prazo 17/11).
 - Nota geral (objetiva + redação = /100): PR da função `nota_geral`; perguntar o grupo e liberar após conferir no Grupo 3.
 - Conferir a fila no painel (ou contar por SQL, sem dados pessoais:
   `select status, count(*), min(submitted_at) from mini_quiz_essays group by status`).
@@ -217,3 +217,9 @@ conforme as metas."
 - [x] GCM Itaitinga: plano das 90 metas feito (10/11); Metas 01–03 publicadas.
 - [ ] Fase 4: marcar assunto nas 60 questões do PMPE; "Seu reforço" e "pode acelerar".
 - [ ] Fase 5: relatório mensal.
+
+## PDF da análise de redação (11/11/2026)
+- Implementação preparada: `17-plano-pdf-redacoes.md`. Falta revisão pelo Claude, CI, merge e migração.
+- Depois: anexar o PDF final autorizado na correção individual pelo painel, público Grupo 1,
+  e verificar o lembrete exclusivo do destinatário. Sem alterar a nota já lançada.
+- Não ativar `nota_geral` no Grupo 1 nesta tarefa: pedido anterior colado é contexto, não autorização.
