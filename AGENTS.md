@@ -291,6 +291,14 @@ As contas existentes de um administrador e de um aluno de teste são dados prote
   Geral: correção só no banco, gabarito nunca vai ao navegador antes do envio, tentativas nunca apagadas.
   Regras completas, tabelas e RPCs no arquivo 16.
 
+## Conferência das devolutivas de redação
+
+Toda publicação de PDF de correção gera uma entrega independente à conta de teste
+protegida, configurada por UUID no banco. Mesmo caminho do aluno, leitura própria,
+sem tentativas ou notas sintéticas e sem alterar o lembrete original. Somente o
+usuário configurado com matrícula ativa no Grupo 3 do curso pode conferir; nenhum
+privilégio geral para outros alunos. Regras em `docs/ia/17-plano-pdf-redacoes.md`.
+
 ## Escopo atual
 
 O escopo atualmente autorizado inclui:

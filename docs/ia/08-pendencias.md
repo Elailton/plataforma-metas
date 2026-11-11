@@ -225,3 +225,9 @@ conforme as metas."
 - Caminho do admin: Mini Simulados → Redações → cartão corrigido → PDF da análise.
 - O arquivo é privado, até 3 MB; substituir preserva o anterior e renova o lembrete do dono.
 - A função `nota_geral` não foi ativada no Grupo 1 nesta tarefa; notas existentes preservadas.
+
+## Conferência automática das devolutivas (11/11/2026)
+- Preparada regra e implementação de cópia privada para conta de teste; aplicar migração,
+  configurar destinatário e publicar após CI/revisão. Incluir a devolutiva já existente.
+- Para cada curso novo, incluir matrícula ativa da conta protegida no Grupo 3 no checklist
+  de lançamento; não criar tentativas ou alterar notas para conferir o fluxo.

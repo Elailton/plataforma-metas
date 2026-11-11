@@ -3,6 +3,7 @@
 import { randomUUID } from "node:crypto"
 import { revalidatePath } from "next/cache"
 import { requireAdmin } from "@/lib/admin/auth"
+import { getEssayAnalysisData } from "@/lib/mini-quizzes/essay-reports"
 import { getStudentContext } from "@/lib/student/queries"
 import { requireStudentFeature } from "@/lib/student/experience"
 import { createClient } from "@/lib/supabase/server"
@@ -51,10 +52,12 @@ export async function viewEssayReport(essayId: string, storagePath: string) {
   if (!context) return
   await requireStudentFeature("relatorio")
   const supabase = await createClient()
-  const { data: essay } = await supabase.from("mini_quiz_essays").select("id")
-    .eq("id",essayId).eq("course_id",context.currentCourse.id).eq("user_id",context.profile.id).maybeSingle()
-  if (!essay) return
-  const { error } = await supabase.rpc("student_view_essay_report",{p_essay_id:essayId,p_storage_path:storagePath})
+  const data = await getEssayAnalysisData(context.currentCourse.id,context.profile.id)
+  const essay = data.essays.find((item) => item.id === essayId)
+  if (!essay || !data.reports.some((item) => item.essay_id === essayId && item.storage_path === storagePath)) return
+  const { error } = essay.isTestCopy
+    ? await supabase.rpc("student_view_essay_report_test_copy",{p_copy_id:essayId,p_storage_path:storagePath})
+    : await supabase.rpc("student_view_essay_report",{p_essay_id:essayId,p_storage_path:storagePath})
   if (error) logSafeServerError("essay_report.view_failed", error)
   else revalidatePath("/aluno")
 }

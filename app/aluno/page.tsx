@@ -1,5 +1,4 @@
-import { getStudentEssays } from "@/lib/mini-quizzes/essays"
-import { getEssayReports } from "@/lib/mini-quizzes/essay-reports"
+import { getEssayAnalysisData } from "@/lib/mini-quizzes/essay-reports"
 import { reportHref } from "@/lib/mini-quizzes/essay-report.mjs"
 import { InstallApp } from "@/components/student/install-app"
 import { studySummary } from "@/lib/groups/questionnaire.mjs"
@@ -36,9 +35,8 @@ export default async function StudentHomePage() {
     showRanking ? getLatestWeeklyRanking(context.currentCourse.id).catch(() => null) : Promise.resolve(null),
   ])
   if (!snapshot) redirect("/auth/sem-acesso")
-  const essays = experience.isEnabled("relatorio")
-    ? await getStudentEssays(context.currentCourse.id, context.profile.id) : []
-  const reports = await getEssayReports(essays.map((essay) => essay.id))
+  const {essays,reports} = experience.isEnabled("relatorio")
+    ? await getEssayAnalysisData(context.currentCourse.id, context.profile.id) : {essays:[],reports:[]}
   const unreadReports = reports.filter((report) => !report.viewed_at)
   // Contador da prova: consulta separada e tolerante (a coluna é nova).
   let countdown: ReturnType<typeof examCountdown> = null

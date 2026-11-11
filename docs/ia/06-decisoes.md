@@ -187,3 +187,10 @@ mas pode ser executada pelo Codex; a referência exclusiva ao Claude era própri
 anterior. Substitui a exclusividade registrada em 10/11, sem dispensar testes, CI, reversão
 e verificação posterior. Nesta sessão, o usuário autorizou revisar, aplicar a migração,
 mesclar, publicar e entregar a devolutiva individual na plataforma, direto no Grupo 1.
+
+## 2026-11-11 — Toda devolutiva deve chegar também à conta de teste
+O usuário autorizou implementar/publicar a entrega automática de cada análise em PDF
+à conta de teste protegida e disponibilizar a já existente imediatamente. A conferência
+segue o caminho normal do aluno, com leitura separada, sem criar tentativas ou notas
+fictícias. Restringir ao UUID configurado e à matrícula ativa no Grupo 3 do mesmo curso.
+Não alterar acesso comercial, senha, nota ou lembrete do aluno original.

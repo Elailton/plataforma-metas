@@ -22,6 +22,18 @@ O modelo completo (matrícula, direitos, bloqueios, metas, mini simulados) está
 | `mini_quiz_essay_reports` + bucket privado `essay-feedback-reports` | PDF de devolutiva ligado à redação, público, publicação e primeira abertura; implementação de 11/11 ainda não publicada | conteúdo pedagógico e identificação eventualmente presente no PDF. Acesso só ao dono com matrícula ativa e ao administrador; caminhos sem nomes. Mesma política de retenção das respostas, com execução/revisão jurídica pendentes em `08` |
 | `access_resend_requests` | Pedidos de reenvio: hashes HMAC de e-mail/IP, outcome | só hash, **retenção 30 dias** |
 
+## Conferência das devolutivas (11/11/2026)
+`essay_report_test_recipient` guarda apenas o UUID da conta de teste controlada pelo
+responsável, com leitura/configuração administrativa. `mini_quiz_essay_report_test_copies`
+guarda vínculo, curso, caminho do PDF e primeira abertura da cópia. Não replica fotos,
+texto original, tentativas ou respostas. A RPC expõe nota/comentário e pontuação objetiva
+somente para conferência, sem usar esses valores nas estatísticas da conta de teste.
+O PDF continua privado e pode conter a identificação já presente na devolutiva original.
+Só a conta configurada, com matrícula ativa no Grupo 3 do curso, pode abrir a cópia;
+qualquer conta comum, outro usuário de teste ou matrícula bloqueada é negada.
+Mesma finalidade pedagógica e retenção da devolutiva original, pendente da validação
+jurídica geral registrada em `08`. Não há novo fornecedor ou comunicação por e-mail.
+
 ## Aviso de privacidade e termos
 
 Textos em `lib/legal/content.ts` (páginas `/privacidade` e `/termos`, públicas; links no login,
