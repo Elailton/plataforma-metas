@@ -235,5 +235,8 @@ conforme as metas."
   de lançamento; não criar tentativas ou alterar notas para conferir o fluxo.
 
 ## Ranking pela nota final (11/11/2026)
-- Implementação em branch; testar, revisar, aplicar migração e liberar `ranking_nota_final`
-  somente na PMPE para conta de teste e Grupo 1. Ordenação final e selo verde autorizados.
+- PR #136: código/testes e revisão concluídos; migração aplicada e `ranking_nota_final`
+  liberado somente na PMPE para conta de teste e Grupo 1. Soma e ordenação conferidas
+  no banco, mantendo `nota_geral` do Relatório desligada no Grupo 1. Conferir o card após deploy.
+- Convite de participação e aviso de privacidade atualizados; levar ao jurídico a
+  abrangência da escolha dos participantes anteriores, conforme `03-dados.md`.

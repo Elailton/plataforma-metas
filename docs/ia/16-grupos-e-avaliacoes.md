@@ -117,3 +117,8 @@ cópias de conferência, alterar tentativas ou expor comentários/notas por crit
 Consentimento e nome curto preservados. Diagnóstico Semanal continua por acertos.
 Liberação autorizada: PMPE, conta de teste e Grupo 1. Grupo 2 e outros cursos não mudam.
 A função `nota_geral` do Relatório continua independente; não habilitar por este pedido.
+
+Migração `20261111000400` aplicada em 11/11; PMPE G1 e G3 configurados. Banco conferido:
+4 participantes, 1 redação corrigida (52 + 27 = 79/100) e 1 em correção. PR #136
+contém o card comparativo. `nota_geral` do Relatório permaneceu independente e desligada
+no Grupo 1; nenhuma nota, tentativa ou cópia de conferência foi alterada.
