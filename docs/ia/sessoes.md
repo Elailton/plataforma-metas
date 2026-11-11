@@ -17,6 +17,13 @@ só as 15 mais recentes aqui; ao passar disso, resuma as antigas em uma linha ca
 
 ## Sessões
 
+### 2026-11-11 — Codex — cópia das devolutivas para conferência
+- Pedido: regra permanente e implementação para toda devolutiva também chegar à conta de teste; disponibilizar a atual agora.
+- Feito: configuração administrativa por UUID, cópias com leitura independente e trigger de publicação; mesmo caminho de Relatório/Redações/download.
+- Segurança: acesso restrito à conta configurada e matrícula ativa no Grupo 3 do curso; sem acesso geral às redações/fotos, sem tentativas sintéticas.
+- Verificado: conta protegida já possui matrícula ativa de teste na PMPE; notas e lembrete originais não serão alterados.
+- Próximo passo: CI, revisão, migração, configuração do destinatário, publicação e teste da cópia existente.
+
 ### 2026-11-11 — Codex — publicação da análise em PDF
 - Pedido: usuário esclareceu que a revisão pode ser feita pelo Codex e autorizou migração e publicação completas.
 - Feito: revisão de segurança, CI aprovado, migração aditiva aplicada pela API, PR #132 mesclado e deploy de produção READY (`6bcd194`).

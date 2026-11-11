@@ -15,14 +15,15 @@ function load(file,imports){
  runInNewContext(code,{exports,File,FormData,Response,require(name){assert.ok(name in imports,`Unexpected import ${name}`);return imports[name]}})
  return exports
 }
-function setup({admin=true,status="graded",uploadError=null,publishError=null}={}){
+function setup({admin=true,status="graded",uploadError=null,publishError=null,context=null,analysis={essays:[],reports:[]}}={}){
  const calls=[]
  const query={select(){return this},eq(){return this},async maybeSingle(){return {data:{id:E,course_id:C,status}}}}
  const supabase={from:()=>query,storage:{from:()=>({async upload(path,file,options){calls.push({kind:"upload",path,size:file.size,options});return {error:uploadError}}})},async rpc(name,payload){calls.push({kind:"rpc",name,payload});return {error:publishError}}}
  const actions=load("lib/mini-quizzes/essay-report-actions.ts",{
+  "@/lib/mini-quizzes/essay-reports":{getEssayAnalysisData:async()=>analysis},
   "node:crypto":{randomUUID:()=>V},"next/cache":{revalidatePath:path=>calls.push({kind:"refresh",path})},
   "@/lib/admin/auth":{requireAdmin:async()=>{if(!admin)throw Error("Acesso negado");return {supabase}}},
-  "@/lib/student/queries":{getStudentContext:async()=>null},"@/lib/student/experience":{requireStudentFeature:async()=>{}},
+  "@/lib/student/queries":{getStudentContext:async()=>context},"@/lib/student/experience":{requireStudentFeature:async()=>{}},
   "@/lib/supabase/server":{createClient:async()=>supabase},"@/lib/mini-quizzes/core.mjs":{isUuid},
   "@/lib/mini-quizzes/essay-report.mjs":pdfRules,"@/lib/security/safe-error":{logSafeServerError:()=>{}},
  })
@@ -72,4 +73,45 @@ test("action real: falhas não publicam sucesso, não notificam nem apagam arqui
  assert.equal(result.ok,false)
  assert.match(result.error,/outra janela/)
  assert.deepEqual(conflict.calls.map(x=>x.kind),["upload","rpc"])
+})
+
+
+test("leitura da cópia usa RPC própria e não consome o lembrete original",async()=>{
+ const path=`${C}/${E}/${V}.pdf`
+ const context={currentCourse:{id:C},profile:{id:V}}
+ const analysis={essays:[{id:E,isTestCopy:true}],reports:[{essay_id:E,storage_path:path}]}
+ const {actions,calls}=setup({context,analysis})
+ await actions.viewEssayReport(E,path)
+ assert.equal(calls[0].name,"student_view_essay_report_test_copy")
+ assert.equal(calls[0].payload.p_copy_id,E)
+ const noMatch=setup({context,analysis})
+ await noMatch.actions.viewEssayReport(E,"caminho-antigo")
+ assert.equal(noMatch.calls.length,0)
+})
+
+test("download real: cópia autorizada usa Storage privado; IDs sem entrega recebem 404",async()=>{
+ const path=`${C}/${E}/${V}.pdf`
+ const requests=[]
+ function route({session=true,enabled=true,report=true}={}){
+  return load("app/api/student/essay-reports/[essayId]/route.ts",{
+   "@/lib/student/queries":{getStudentContext:async()=>session?{currentCourse:{id:C},profile:{id:V}}:null},
+   "@/lib/student/experience":{getStudentExperience:async()=>({isEnabled:()=>enabled})},
+   "@/lib/supabase/server":{createClient:async()=>({storage:{from(bucket){return {async download(key){requests.push({bucket,key});return {data:new Blob(["%PDF-1.7"]),error:null}}}}}})},
+   "@/lib/mini-quizzes/core.mjs":{isUuid},
+   "@/lib/mini-quizzes/essay-reports":{getEssayAnalysisData:async()=>({reports:report?[{essay_id:E,storage_path:path}]:[]})},
+   "@/lib/mini-quizzes/essay-report.mjs":pdfRules,
+   "@/lib/security/safe-error":{logSafeServerError:()=>{}},
+  })
+ }
+ const ok=await route().GET(new Request("https://example.com"),{params:Promise.resolve({essayId:E})})
+ assert.equal(ok.status,200)
+ assert.match(ok.headers.get("content-disposition"),/^attachment/)
+ assert.equal(ok.headers.get("cache-control"),"private, no-store")
+ assert.equal(requests[0].bucket,pdfRules.REPORT_BUCKET)
+ assert.equal(requests[0].key,path)
+ for(const options of [{session:false},{enabled:false},{report:false}]){
+  const denied=await route(options).GET(new Request("https://example.com"),{params:Promise.resolve({essayId:E})})
+  assert.equal(denied.status,404)
+ }
+ assert.equal(requests.length,1)
 })

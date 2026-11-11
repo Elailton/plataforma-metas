@@ -25,6 +25,14 @@ qualquer IA que corrija ou ajude a corrigir. Fila atual em `08-pendencias.md`, "
 - A correção é feita **fora da plataforma** (a IA ajuda; o professor confere e lança). A IA não acessa as
   fotos sem o professor: ele baixa/mostra a imagem ou cola o texto.
 
+## Conferência obrigatória na conta de teste (11/11/2026)
+Toda devolutiva em PDF deve estar disponível também na conta de teste protegida,
+no mesmo curso e caminho Relatório → Redações. A entrega de conferência é automática,
+com identificação e lembrete próprios. Ler a cópia não marca o aviso real como lido.
+Não criar tentativas, respostas ou notas para simular entrega. Antes de liberar um
+curso novo, garantir matrícula ativa da conta protegida no Grupo 3 desse curso.
+A conta é configurada por UUID no banco, sem e-mail/senha no código. Detalhes em `17`.
+
 ## Proposta do Simulado Geral 01 (PMPE)
 **Tema: O uso da inteligência artificial na segurança pública: entre a eficiência e a proteção dos
 direitos fundamentais.** Textos motivadores (didáticos): I – IA no cotidiano e na segurança pública

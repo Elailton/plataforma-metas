@@ -34,3 +34,16 @@ público Grupo 1. Teste RLS de produção, em transação somente leitura: dono 
 e relatório; outro aluno não vê. Bucket privado, SHA-256 do download igual ao original.
 O aviso permaneceu não lido na conferência, sem consumir a notificação em teste.
 Sem e-mail/push e sem alterar notas ou habilitar `nota_geral` para outros públicos.
+
+## Cópia automática para conferência (pedido de 11/11/2026)
+Cada PDF publicado deve gerar uma entrega separada à conta de teste protegida.
+Usar configuração administrativa por UUID, nunca e-mail/senha no código ou na memória.
+A cópia tem identidade e leitura próprias e usa o PDF privado original; abrir a cópia
+não marca a entrega real como lida. Não criar tentativas, respostas ou notas artificiais.
+A conta configurada só vê cópias no curso em que possui matrícula ativa no Grupo 3.
+Não estender esse privilégio a todas as contas de teste nem a alunos comuns.
+Sincronizar publicações futuras e incluir a devolutiva já publicada. Outros cursos
+exigem a matrícula de teste correspondente; nenhuma matrícula ou senha é alterada.
+Plano técnico: tabela privada de destinatário, tabela de cópias, trigger de publicação,
+RPC de leitura mínima, permissão de Storage restrita à cópia e integração no mesmo
+caminho Relatório → Redações, com lembrete independente. Revisão, SQL real, CI e deploy.
