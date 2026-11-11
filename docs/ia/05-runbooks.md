@@ -74,7 +74,7 @@ aguardar o status da Vercel "success" → conferir no site.
 
 ### Migração
 Arquivo em `supabase/migrations/AAAAMMDDHHMMSS_nome.sql`, aditivo, com reversão no
-cabeçalho → teste em banco descartável no CI → **o Claude revisa e aplica** com
+cabeçalho → teste em banco descartável no CI → **o assistente responsável (Claude ou Codex) revisa e aplica** com
 `apply_migration` (autorização permanente de 2026-11-10; o usuário não revisa SQL) →
 conferir por SQL (função/coluna nova, permissões de `anon`/`authenticated`). Se a migração
 depende de código novo, aplicar só depois do deploy da Vercel; se o código depende dela,

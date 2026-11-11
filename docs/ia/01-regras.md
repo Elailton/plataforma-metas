@@ -10,9 +10,9 @@ Regras técnicas de código (matrículas, RLS, webhook, segredos) estão no `AGE
    em vez de excluir. Exceção só com pedido explícito do usuário, para um caso nomeado
    (ex.: "reinicie as metas do aluno X"), e registrando em `07`.
 2. **Migrações**: preparar o arquivo em `supabase/migrations/` com o SQL de reversão no
-   cabeçalho; **o Claude revisa e aplica** (`apply_migration`) — autorização permanente do
+   cabeçalho; **o assistente responsável (Claude ou Codex) revisa e aplica** (MCP ou API de migrações do Supabase) — autorização permanente do
    usuário em 2026-11-10 ("pode automatizar rodar a migração; sempre deve ser revisado por você"),
-   porque o usuário não revisa SQL. Antes de aplicar: CI verde com teste em banco descartável,
+   esclarecida em 2026-11-11: a revisão é de segurança, sem exclusividade do Claude. Antes de aplicar: CI verde com teste em banco descartável,
    código compatível já publicado quando a migração depender dele, reversão no cabeçalho.
    Depois: conferir por consulta. Só migrações aditivas/não destrutivas, salvo pedido explícito.
 3. **Testes de permissão/RLS em produção** só dentro de transação desfeita
@@ -71,8 +71,8 @@ Regras técnicas de código (matrículas, RLS, webhook, segredos) estão no `AGE
     revert do PR, SQL de reversão).
 22. Atualizar esta memória (`docs/ia/`) no mesmo PR da mudança.
 
-4a. **Revisão de segurança obrigatória pelo Claude** (pedido do usuário em 2026-11-10: "precisa
-    existir revisão de segurança por você"). Antes de mesclar qualquer PR de código e antes de
+4a. **Revisão de segurança obrigatória pelo assistente responsável** (pedido do usuário em 2026-11-10: "precisa
+    existir revisão de segurança por você", esclarecido em 2026-11-11: Claude ou Codex). Antes de mesclar qualquer PR de código e antes de
     aplicar qualquer migração: rodar a skill `revisao-seguranca-pr` sobre o diff (autorização e RLS,
     dados pessoais, entradas não confiáveis, segredos, regressões, raio de impacto) e **exercitar o
     caminho real de gravação** que a mudança toca (ex.: envio do aluno, não só a tela; lição do

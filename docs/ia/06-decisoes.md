@@ -180,3 +180,10 @@ O usuário pediu Relatório → Redações → página de análise e download pr
 na plataforma somente para o dono da redação. Autorizou lançamento direto no Grupo 1.
 O PDF não entra no Git nem em bucket público; publicação pelo administrador após a nota.
 Sem e-mail em massa, sem alteração de notas ou da função `nota_geral`. Plano em `17-plano-pdf-redacoes.md`.
+
+## 2026-11-11 — Revisão de segurança sem exclusividade de ferramenta
+Esclarecimento explícito do usuário: a revisão de segurança antes de migração é obrigatória,
+mas pode ser executada pelo Codex; a referência exclusiva ao Claude era própria do fluxo
+anterior. Substitui a exclusividade registrada em 10/11, sem dispensar testes, CI, reversão
+e verificação posterior. Nesta sessão, o usuário autorizou revisar, aplicar a migração,
+mesclar, publicar e entregar a devolutiva individual na plataforma, direto no Grupo 1.

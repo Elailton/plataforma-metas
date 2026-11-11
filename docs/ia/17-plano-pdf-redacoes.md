@@ -21,7 +21,8 @@ Não alterar notas, função `nota_geral`, outros alunos ou outros cursos. Sem e
 ## Validação e lançamento
 Testar SQL real em PGlite: dono/outro aluno, curso/grupo, bloqueio, status, upload admin,
 publicação inválida, reenvio, leitura e troca de versão. Executar testes, tsc e build.
-Revisão de segurança pelo Codex documentada no PR; a revisão exigida pelo Claude
-continua pendente antes de merge/aplicação. Nenhuma migração de produção pelo Codex.
-Após aprovação: Claude revisa/aplica migração, publica o código e anexa o PDF correto
-pelo painel para a redação autorizada, público Grupo 1. Conferir conta destinatária.
+Revisão de segurança pelo Codex documentada no PR. Em 11/11 o usuário esclareceu que
+a revisão pode ser feita pelo assistente responsável, sem exclusividade do Claude,
+e autorizou migração e publicação após a revisão. Conferir CI e estado de produção.
+Aplicar a migração aditiva, publicar o código, anexar o PDF recebido à redação autorizada
+para Grupo 1 e conferir acesso exclusivo do destinatário, mantendo o lembrete não lido.

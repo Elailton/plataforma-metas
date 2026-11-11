@@ -15,7 +15,7 @@
 ## Regras de ouro (resumo de `docs/ia/01-regras.md`)
 
 1. **Nada destrutivo no banco de produção.** Arquivar em vez de excluir; migrações
-   aditivas, com reversão, revisadas e aplicadas pelo Claude (autorização de 2026-11-10).
+   aditivas, com reversão, revisadas e aplicadas pelo assistente responsável (Claude ou Codex), conforme autorização de 2026-11-11.
 2. **Nada de e-mail em massa.** Resend gratuito: 100 e-mails/dia e 3.000/mês.
 3. **Perguntar em qual grupo lançar** qualquer conteúdo ou função (1, 2, 3); lançar
    primeiro no Grupo 3. **Nunca mostrar o grupo ao aluno.**
@@ -23,7 +23,7 @@
    autorização, marcadas com `[[inedita]]`).
 5. **Perguntar antes de mesclar/publicar**; CI `validate` obrigatório; caminho de
    reversão sempre definido. **Toda mudança de código ou banco passa por revisão de segurança
-   feita pelo Claude antes do merge/aplicação** (regra de 2026-11-10; `docs/ia/01-regras.md`, 4a).
+   feita pelo assistente responsável antes do merge/aplicação** (regra esclarecida em 2026-11-11; `docs/ia/01-regras.md`, 4a).
 6. **Dados pessoais no mínimo**: nada de CPF, endereço, telefone ou payload em banco,
    log ou repositório; resposta pública nunca revela se um e-mail tem conta ou compra.
 7. **Nunca digitar senhas** nem trocar senhas/contas protegidas (admin e conta de teste).
