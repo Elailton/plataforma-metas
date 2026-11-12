@@ -88,12 +88,39 @@ test("monta metas, materiais e edital com progresso sem contar tópico repetido"
   const pt = snapshot.subjects[0]
   assert.deepEqual(pt.topics.map((topic) => topic.title), ["Fonologia", "Crase"])
   assert.deepEqual(pt.topics[0].subtopics.map((topic) => [topic.title, topic.studied]), [["Sílabas", true]])
-  // pt2 aparece em duas metas, mas conta uma vez; pt1a vem do subtópico do item.
-  assert.equal(pt.studied, 2)
+  // pt2 aparece em duas metas, mas conta uma vez; pt1a vem do subtópico do item e, como é o
+  // único subtópico de pt1, o tópico pt1 também fica estudado.
+  assert.equal(pt.topics[0].studied, true)
+  assert.equal(pt.studied, 3)
   assert.equal(pt.total, 3)
   assert.equal(snapshot.totalTopics, 4)
-  assert.equal(snapshot.studiedTopics, 2)
-  assert.equal(snapshot.editalPercentage, 50)
+  assert.equal(snapshot.studiedTopics, 3)
+  assert.equal(snapshot.editalPercentage, 75)
+})
+
+test("edital fecha 100%: item no tópico inteiro marca os subtópicos; tópico fecha com todos os filhos", () => {
+  const edital = [{
+    id: "s", name: "Direito", position: 1, syllabus_topics: [
+      { id: "a", subject_id: "s", parent_topic_id: null, title: "Tópico estudado inteiro", position: 1 },
+      { id: "a1", subject_id: "s", parent_topic_id: "a", title: "Sub 1", position: 1 },
+      { id: "a2", subject_id: "s", parent_topic_id: "a", title: "Sub 2", position: 2 },
+      { id: "b", subject_id: "s", parent_topic_id: null, title: "Tópico por partes", position: 2 },
+      { id: "b1", subject_id: "s", parent_topic_id: "b", title: "Sub 1", position: 1 },
+      { id: "b2", subject_id: "s", parent_topic_id: "b", title: "Sub 2", position: 2 },
+    ],
+  }]
+  const metas = [{ id: "g", course_id: "c", title: "Meta 90", description: null, due_date: "2026-10-01", created_at: CREATED, goal_items: [
+    item("x", "s", "a", 0), item("y", "s", "b", 1, { subtopic_id: "b1" }), item("z", "s", "b", 2, { subtopic_id: "b2" }),
+  ] }]
+  const now = new Date("2026-10-13T15:00:00Z")
+  const done = buildStudentSnapshot({ subjects: edital, goals: metas, completedItemIds: ["x", "y", "z"], now })
+  assert.equal(done.editalPercentage, 100)
+  const partial = buildStudentSnapshot({ subjects: edital, goals: metas, completedItemIds: ["y"], now })
+  const [a, b] = partial.subjects[0].topics
+  assert.equal(a.studied, false)
+  assert.deepEqual(b.subtopics.map((topic) => topic.studied), [true, false])
+  assert.equal(b.studied, false)
+  assert.equal(partial.studiedTopics, 1)
 })
 
 test("resumo de lista não leva itens nem materiais", () => {

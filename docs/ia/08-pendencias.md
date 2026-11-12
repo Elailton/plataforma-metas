@@ -1,4 +1,14 @@
-# 08 — Pendências (atualizado em 2026-10-30)
+# 08 — Pendências (atualizado em 2026-11-12)
+
+## Agora (12/11/2026)
+- **Edital 100% até a Meta 90 em todos os cursos** (regra do usuário). Lacunas medidas em 12/11 (unidades do edital
+  sem item nas 90 metas regulares): GMF 0 e PMCE 0 (ok); PMPE G1 1 (Defesa do Estado), PMPE G2 22 (G2 só tem 82
+  metas); CFO G1 4 (Maria da Penha) e G2 1; PPCE G1 8 e G2 4; PRF G1 55 e G2 54 (31 resoluções CONTRAN, Lei 8.112,
+  crimes, Constitucional). Encaixar nas metas ainda não liberadas, sem passar de ~3h por meta.
+- **2º Simulado Geral PMPE (22/11):** montar as 60 questões (usuário pediu para fazer depois).
+- **PCCE e PRF ADM:** em espera até o 1º aluno (a partir de 16/11). Webhook Hotmart depois.
+- **Data da prova do GMF:** não definida; GMF sem Reta final.
+
 
 Ordem sugerida. Marcar com data quando concluir e mover a lição para `07` se houver.
 

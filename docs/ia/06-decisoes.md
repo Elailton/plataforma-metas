@@ -199,3 +199,18 @@ Não alterar acesso comercial, senha, nota ou lembrete do aluno original.
 Usuário pediu selo verde "com redação", comparação com a objetiva e classificação
 pela nota final. Confirmou conta de teste e Grupo 1; escopo PMPE. Usar função separada
 `ranking_nota_final`, preservando `nota_geral`, diagnóstico semanal e consentimento.
+
+## 2026-11-12 — Publicar sem perguntar, cursos fechados e escopo enxuto
+- **Publicar:** o usuário autorizou mesclar e publicar sem pedir aprovação o que ele pediu (CI verde e revisão
+  de segurança continuam obrigatórios). Ele não é programador; confere só conteúdo e organização.
+- **Nota geral** (objetiva + redação) ligada nos Grupos 1 e 2 de todos os cursos.
+- **Aviso "O SGA foi atualizado"** retirado em 12/11 (antes do previsto para 17/11).
+- **GCM Itaitinga:** curso arquivado, não existe mais.
+- **PCCE e PRF ADM:** em espera até o primeiro aluno usar (a partir de 16/11); sem venda, sem SGA. Webhook depois.
+- **GMF não tem Reta final:** as 23 metas `reta_final` (14 G1, 9 G2) foram arquivadas. **Todo curso termina na
+  Meta 90 com o edital 100% na aba Edital.** A aba passou a contar o tópico como estudado quando ele inteiro ou
+  todos os seus subtópicos foram estudados (item no tópico inteiro marca os subtópicos).
+- **Aulas faltantes** (PRF ADM, GCM): pendentes, talvez cobertas por apostilas.
+- **Proteção da `main` com Code Owners:** não usar (bloquearia os merges automáticos; o usuário não revisa código).
+- **Fechados sem mesclar:** PRs #130 (compra com e-mail errado), #99 (banco de questões), #98, #88 e #27.
+- **Jurídico e promessas do site:** resolvidos pelo usuário.

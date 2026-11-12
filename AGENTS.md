@@ -21,7 +21,7 @@
    primeiro no Grupo 3. **Nunca mostrar o grupo ao aluno.**
 4. **Nunca misturar cursos** e usar só questões reais de prova (inéditas só com
    autorização, marcadas com `[[inedita]]`).
-5. **Perguntar antes de mesclar/publicar**; CI `validate` obrigatório; caminho de
+5. **Mesclar/publicar sem perguntar o que o usuário pediu** (decisão de 2026-11-12), com CI `validate` verde; caminho de
    reversão sempre definido. **Toda mudança de código ou banco passa por revisão de segurança
    feita pelo assistente responsável antes do merge/aplicação** (regra esclarecida em 2026-11-11; `docs/ia/01-regras.md`, 4a).
 6. **Dados pessoais no mínimo**: nada de CPF, endereço, telefone ou payload em banco,
@@ -376,5 +376,5 @@ Confirme também que:
 1. Atualize `docs/ia/estado-atual.md` (foco e próximos passos) e acrescente o registro da sessão no topo
    de `docs/ia/sessoes.md` (modelo no próprio arquivo).
 2. Decisões do usuário em `06`, incidentes em `07`, pendências em `08`, no mesmo PR.
-3. Nada destrutivo, nada de e-mail em massa, perguntar o grupo, perguntar antes de mesclar, revisão de
+3. Nada destrutivo, nada de e-mail em massa, perguntar o grupo, CI verde antes de mesclar, revisão de
    segurança feita, nunca mostrar o grupo ao aluno, nunca gravar segredo ou dado pessoal na memória.

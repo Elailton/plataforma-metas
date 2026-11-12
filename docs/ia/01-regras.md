@@ -63,8 +63,10 @@ Regras técnicas de código (matrículas, RLS, webhook, segredos) estão no `AGE
 ## 4. Código e publicação
 
 18. Trabalhar em branch; PR via `gh`; CI `validate` (testes, `tsc`, build) obrigatório.
-19. **Perguntar antes de mesclar/publicar**, exceto quando o pedido do usuário já for
-    "faça e publique". Se o usuário interromper um merge, tratar como "não publicar".
+19. **Mesclar e publicar sem perguntar** o que o usuário pediu, desde que o CI `validate` esteja verde e a
+    revisão de segurança feita (decisão de 2026-11-12: "publicar sem precisar de mim"; ele não é programador
+    e só confere o resultado). Perguntar só antes de ação irreversível, destrutiva ou em dados de alunos.
+    Se o usuário interromper um merge, tratar como "não publicar".
 20. Funcionalidade nova voltada ao aluno pode ir ao ar **escondida** (sem links) para
     o usuário testar por URL antes de expor.
 21. Toda mudança com risco tem caminho de reversão descrito (Rollback da Vercel,
