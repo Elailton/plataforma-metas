@@ -21,9 +21,9 @@ const base={rank:1,display_name:'Aluna E.',correct_count:52,total_count:60,durat
 test('ranking: comparação em verde e sinalização de nota parcial',()=>{
  const html=renderToStaticMarkup(React.createElement(exports.RankingCard,{rows:[{...base,combined_enabled:true,essay_status:'graded',essay_score:27,final_score:79,final_max:100,pending_count:1}]}))
  assert.match(html,/52\/60/);assert.match(html,/79/);assert.match(html,/100/)
- assert.match(html,/com redação/);assert.match(html,/text-success/);assert.match(html,/Ranking provisório/)
+ assert.match(html,/com redação/);assert.match(html,/text-success/);assert.match(html,/Ranking provisório/);assert.match(html,/Objetiva/)
  const pending=renderToStaticMarkup(React.createElement(exports.RankingCard,{rows:[{...base,combined_enabled:true,essay_status:'pending',final_score:52,final_max:100,pending_count:1}]}))
- assert.match(pending,/redação em correção/);assert.match(pending,/parcial/);assert.doesNotMatch(pending,/com redação/)
+ assert.match(pending,/redação em correção/);assert.match(pending,/parcial/);assert.doesNotMatch(pending,/text-success" aria-label="Nota final/)
  const legacy=renderToStaticMarkup(React.createElement(exports.RankingCard,{rows:[base]}))
  assert.match(legacy,/Mais acertos/);assert.doesNotMatch(legacy,/com redação|Ranking provisório/)
 })

@@ -109,9 +109,24 @@ export function InstallAppProvider({ children }: { children: ReactNode }) {
   )
 }
 
-export function InstallApp({ variant = "banner" }: { variant?: "banner" | "account" }) {
+export function InstallApp({ variant = "banner" }: { variant?: "banner" | "account" | "row" }) {
   const state = useContext(InstallContext)
-  if (!state?.ready || state.installed || (variant === "banner" && state.dismissed)) return null
+  if (!state?.ready || state.installed || (variant !== "account" && state.dismissed)) return null
+  if (variant === "row") return (
+    <div className="flex items-center gap-3 px-4 py-3">
+      <span className="flex size-9 shrink-0 items-center justify-center rounded-lg bg-muted text-primary" aria-hidden="true">
+        <Smartphone className="size-4.5" />
+      </span>
+      <span className="min-w-0 flex-1">
+        <span className="block text-sm font-semibold text-foreground">Tenha o SGA na sua tela inicial</span>
+        <span className="block text-sm text-muted-foreground">Acesse suas metas pelo ícone do aplicativo.</span>
+      </span>
+      <span className="flex shrink-0 gap-1">
+        <Button type="button" size="sm" onClick={state.install} disabled={state.busy}>{state.busy ? "Aguarde..." : "Instalar"}</Button>
+        <Button type="button" size="sm" variant="ghost" onClick={state.dismiss} className="hidden sm:inline-flex">Agora não</Button>
+      </span>
+    </div>
+  )
   if (variant === "account") return (
     <section className="mb-8 rounded-xl border border-border bg-card p-4 md:p-5" aria-label="Aplicativo SGA">
       <button type="button" onClick={state.install} disabled={state.busy} className="flex min-h-12 w-full items-center gap-3 rounded-md text-left focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring disabled:opacity-50">
