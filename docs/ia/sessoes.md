@@ -17,6 +17,16 @@ só as 15 mais recentes aqui; ao passar disso, resuma as antigas em uma linha ca
 
 ## Sessões
 
+### 2026-11-12 — Claude (Opus) — redações (PDF, nota), ajuste visual e Início
+- Pedido: corrigir/entregar redações PMPE em PDF; nota geral (objetiva + redação); alinhar ao design o que o Codex fez
+  (PDF da correção, Redações, ranking com redação) e deixar o Início menos carregado.
+- Feito: PR #131 (`nota_geral`, só G3); Jaiane lançada no painel (27/40); PDFs de devolutiva das 2 alunas;
+  PR deste ajuste: avisos do Início num só cartão (redação corrigida, contador, novidades, instalar app),
+  Redações/Análise com `PageHeader` e cartões padrão, ranking com colunas alinhadas (Objetiva | com redação).
+- Não feito: nota da Cibelle no painel (sessão de admin caiu; pedir login ao usuário).
+- Próximo passo: lançar a nota da Cibelle (7, 8, 9, 8) e publicar o PDF dela; conferir o Início no G3.
+- Conferir: ligar `nota_geral` no Grupo 1 quando o usuário aprovar.
+
 ### 2026-11-11 — Codex — ranking pela nota final
 - Pedido: mostrar "com redação" em verde ao lado da objetiva e ordenar pela soma; conta de teste e Grupo 1 confirmados.
 - Feito: RPC adicional com autorização e consentimento, função de grupo independente e card comparativo; ranking provisório para correções pendentes.

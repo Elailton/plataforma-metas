@@ -1,7 +1,7 @@
-import Link from "next/link"
 import { notFound, redirect } from "next/navigation"
-import { Download } from "lucide-react"
-import { PageContainer, PageHeading } from "@/components/student/page-container"
+import { Download, FileText } from "lucide-react"
+import { PageContainer } from "@/components/student/page-container"
+import { PageHeader } from "@/components/page-header"
 import { buttonVariants } from "@/components/ui/button"
 import { EssayResult } from "@/components/mini-quizzes/essay-result"
 import { EssayReportSeen } from "@/components/mini-quizzes/essay-report-seen"
@@ -23,15 +23,31 @@ export default async function EssayAnalysisPage({params}:{params:Promise<{essayI
   const essay = data.essays.find((item) => item.id === essayId)
   if (!essay) notFound()
   const report = data.reports.find((item) => item.essay_id === essayId)
-  return <PageContainer>
-    <PageHeading title={`Análise da redação · ${essay.quizTitle}`} description="Leia a devolutiva do professor e veja o que praticar na próxima redação." />
-    <Link href="/aluno/relatorio/redacoes" className={buttonVariants({variant:"outline",className:"mb-6"})}>Voltar às redações</Link>
-    {report ? <section className="mb-6 rounded-xl border border-primary/40 bg-primary/10 p-5" aria-label="PDF da correção">
-      <h2 className="mb-2 text-lg font-semibold">Sua análise está pronta</h2>
-      <p className="mb-4 text-sm text-muted-foreground">Baixe o PDF para ler os comentários e as orientações para seus próximos estudos.</p>
-      <a href={`/api/student/essay-reports/${essay.id}`} className={buttonVariants()}><Download className="mr-2 size-4" aria-hidden="true" />Baixar PDF da análise</a>
-      <EssayReportSeen essayId={essay.id} storagePath={report.storage_path} />
-    </section> : <p className="mb-6 text-sm text-muted-foreground">Quando o professor disponibilizar o PDF da análise, você poderá baixá-lo aqui.</p>}
-    <EssayResult essay={essay} title={essay.quizTitle} attempt={experience.isEnabled("nota_geral") ? essay.attempt : null} />
-  </PageContainer>
+  return (
+    <PageContainer>
+      <PageHeader
+        backHref="/aluno/relatorio/redacoes"
+        backLabel="Redações"
+        title={`Redação · ${essay.quizTitle}`}
+        description="A nota por critério, o comentário do professor e a análise completa em PDF."
+      />
+      {report ? (
+        <section className="mb-4 flex flex-col gap-3 rounded-xl border border-primary/40 bg-primary/10 p-4 sm:flex-row sm:items-center" aria-label="PDF da análise">
+          <span className="flex size-11 shrink-0 items-center justify-center rounded-lg bg-primary text-primary-foreground" aria-hidden="true">
+            <FileText className="size-5" />
+          </span>
+          <span className="min-w-0 flex-1">
+            <span className="block text-base font-semibold text-foreground">Análise completa em PDF</span>
+            <span className="block text-sm text-muted-foreground">Seus pontos fortes, cada ajuste com o antes e depois e o que praticar na próxima.</span>
+          </span>
+          <a href={`/api/student/essay-reports/${essay.id}`} className={buttonVariants({ className: "shrink-0" })}>
+            <Download className="size-4" aria-hidden="true" />
+            Baixar PDF
+          </a>
+          <EssayReportSeen essayId={essay.id} storagePath={report.storage_path} />
+        </section>
+      ) : null}
+      <EssayResult essay={essay} attempt={experience.isEnabled("nota_geral") ? essay.attempt : null} />
+    </PageContainer>
+  )
 }

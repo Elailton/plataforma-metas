@@ -37,10 +37,14 @@ export function RankingCard({
             {title}
           </h2>
           <p className="mt-0.5 text-xs text-muted-foreground">
-            {subtitle ?? (combined ? "Maior nota final primeiro; no empate, o menor tempo." : "Mais acertos primeiro; no empate, o menor tempo.")}
-            {provisional ? " Ranking provisório enquanto as redações são corrigidas." : null}
+            {subtitle ?? (combined ? "Objetiva + redação; no empate, o menor tempo." : "Mais acertos primeiro; no empate, o menor tempo.")}
             {participants > 0 ? ` · ${participants} ${participants === 1 ? "participante" : "participantes"}` : null}
           </p>
+          {provisional ? (
+            <p className="mt-1.5 inline-flex rounded-md bg-muted px-2 py-0.5 text-[11px] text-muted-foreground">
+              Ranking provisório: há redações em correção
+            </p>
+          ) : null}
         </div>
         {href ? (
           <Link href={href} className="inline-flex shrink-0 items-center gap-1 rounded-md text-xs font-medium text-primary hover:underline">
@@ -53,6 +57,15 @@ export function RankingCard({
       {rows.length === 0 ? (
         <p className="rounded-lg border border-dashed border-border px-3 py-4 text-center text-sm text-muted-foreground">{emptyText}</p>
       ) : (
+        <>
+        {combined ? (
+          <div className="flex items-center gap-3 px-2.5 pb-1 text-[11px] font-medium text-muted-foreground" aria-hidden="true">
+            <span className="w-6 shrink-0" />
+            <span className="flex-1" />
+            <span className="w-12 shrink-0 text-right">Objetiva</span>
+            <span className="w-16 shrink-0 text-right text-success">com redação</span>
+          </div>
+        ) : null}
         <ol className="flex flex-col">
           {rows.map((row, index) => {
             const gap = index > 0 && row.rank > rows[index - 1].rank + 1
@@ -73,29 +86,48 @@ export function RankingCard({
                   >
                     {row.rank}º
                   </span>
-                  <span className="min-w-0 flex-1 truncate font-medium text-foreground">
-                    {row.display_name}
-                    {row.is_me ? <span className="ml-1.5 text-xs font-normal text-primary">você</span> : null}
+                  <span className="min-w-0 flex-1">
+                    <span className="block truncate font-medium text-foreground">
+                      {row.display_name}
+                      {row.is_me ? <span className="ml-1.5 text-xs font-normal text-primary">você</span> : null}
+                    </span>
+                    {combined ? (
+                      <span className="block text-[11px] text-muted-foreground">
+                        {formatDuration(row.duration_seconds)}
+                        {row.essay_status === "pending" ? " · redação em correção" : row.essay_status === "graded" ? null : " · sem redação"}
+                      </span>
+                    ) : null}
                   </span>
-                  <span className="shrink-0 text-right tabular-nums">
-                    <span className="flex flex-wrap items-center justify-end gap-x-3 gap-y-1">
-                      <span className="font-semibold text-foreground" aria-label={`Objetiva ${row.correct_count} de ${row.total_count}`}>
+                  {combined ? (
+                    <>
+                      <span className="w-12 shrink-0 text-right tabular-nums text-muted-foreground" aria-label={`Objetiva ${row.correct_count} de ${row.total_count}`}>
                         {row.correct_count}/{row.total_count}
                       </span>
-                      {row.combined_enabled ? (
-                        <span className={cn("flex flex-col items-end", row.essay_status === "graded" ? "text-success" : "text-muted-foreground")}>
-                          <span className="text-[11px] font-medium">{row.essay_status === "graded" ? "com redação" : row.essay_status === "pending" ? "redação em correção" : "somente objetiva"}</span>
-                          <span className="font-semibold">{row.final_score}/{row.final_max}{row.essay_status === "pending" ? <span className="ml-1 text-[10px] font-normal">parcial</span> : null}</span>
-                        </span>
-                      ) : null}
+                      <span
+                        className={cn(
+                          "w-16 shrink-0 text-right font-semibold tabular-nums",
+                          row.essay_status === "graded" ? "text-success" : "text-muted-foreground",
+                        )}
+                        aria-label={`Nota final ${row.final_score} de ${row.final_max}${row.essay_status === "pending" ? ", parcial" : ""}`}
+                      >
+                        {row.final_score}/{row.final_max}
+                        {row.essay_status === "pending" ? <span className="sr-only"> parcial</span> : null}
+                      </span>
+                    </>
+                  ) : (
+                    <span className="shrink-0 text-right tabular-nums">
+                      <span className="block font-semibold text-foreground">
+                        {row.correct_count}/{row.total_count}
+                      </span>
+                      <span className="block text-[11px] text-muted-foreground">{formatDuration(row.duration_seconds)}</span>
                     </span>
-                    <span className="block text-[11px] text-muted-foreground">{formatDuration(row.duration_seconds)}</span>
-                  </span>
+                  )}
                 </div>
               </li>
             )
           })}
         </ol>
+        </>
       )}
       {rows.length > 0 && !me ? (
         <p className="mt-3 text-xs text-muted-foreground">Você não aparece neste ranking.</p>

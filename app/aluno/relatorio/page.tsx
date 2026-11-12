@@ -1,6 +1,6 @@
 import Link from "next/link"
 import { redirect } from "next/navigation"
-import { BookMarked, ChevronRight } from "lucide-react"
+import { BookMarked, ChevronRight, FileText } from "lucide-react"
 import { PageContainer, PageHeading } from "@/components/student/page-container"
 import { SimuladosTabs } from "@/components/student/simulados-tabs"
 import { SectionHeader } from "@/components/page-header"
@@ -9,6 +9,7 @@ import { getStudentContext } from "@/lib/student/queries"
 import { getDiagnosisData, getErrorReport } from "@/lib/mini-quizzes/queries"
 import { buildDiagnosis, isValidMonthKey } from "@/lib/mini-quizzes/core.mjs"
 import { getEssayAnalysisData } from "@/lib/mini-quizzes/essay-reports"
+import { Badge } from "@/components/ui/badge"
 
 export const dynamic = "force-dynamic"
 
@@ -21,6 +22,7 @@ export default async function StudentReportPage({ searchParams }: { searchParams
     getErrorReport(context.currentCourse.id, context.profile.id),
     getEssayAnalysisData(context.currentCourse.id, context.profile.id),
   ])
+  const unread = analysis.reports.filter((report) => !report.viewed_at).length
   const diagnosis = buildDiagnosis({ ...data, month: isValidMonthKey(mes) ? mes : null })
   const errorCount = errors.length
 
@@ -34,7 +36,7 @@ export default async function StudentReportPage({ searchParams }: { searchParams
 
       <Link
         href="/aluno/relatorio/caderno-de-erros"
-        className="mb-8 flex items-center gap-4 rounded-xl border border-primary/40 bg-primary/10 p-4 transition-colors hover:bg-primary/15"
+        className={`${analysis.essays.length > 0 ? "mb-3" : "mb-8"} flex items-center gap-4 rounded-xl border border-primary/40 bg-primary/10 p-4 transition-colors hover:bg-primary/15`}
       >
         <span className="flex size-11 shrink-0 items-center justify-center rounded-lg bg-primary text-primary-foreground" aria-hidden="true">
           <BookMarked className="size-5" />
@@ -51,9 +53,21 @@ export default async function StudentReportPage({ searchParams }: { searchParams
       </Link>
 
       {analysis.essays.length > 0 ? (
-        <Link href="/aluno/relatorio/redacoes" className="mb-8 flex items-center justify-between gap-4 rounded-xl border border-border bg-card p-5 transition-colors hover:bg-muted/50">
-          <span><span className="block text-lg font-semibold">Redações</span><span className="block text-sm text-muted-foreground">Veja suas notas, os comentários e os PDFs das análises.</span></span>
-          <ChevronRight className="size-5 shrink-0" aria-hidden="true" />
+        <Link
+          href="/aluno/relatorio/redacoes"
+          className="mb-8 flex items-center gap-4 rounded-xl border border-border bg-card p-4 transition-colors hover:bg-muted/50"
+        >
+          <span className="flex size-11 shrink-0 items-center justify-center rounded-lg bg-muted text-primary" aria-hidden="true">
+            <FileText className="size-5" />
+          </span>
+          <span className="min-w-0 flex-1">
+            <span className="flex items-center gap-2 text-base font-semibold text-foreground">
+              Redações
+              {unread > 0 ? <Badge>{unread === 1 ? "nova correção" : `${unread} novas correções`}</Badge> : null}
+            </span>
+            <span className="block text-sm text-muted-foreground">Notas, comentários e a análise em PDF de cada redação.</span>
+          </span>
+          <ChevronRight className="size-5 shrink-0 text-muted-foreground" aria-hidden="true" />
         </Link>
       ) : null}
 

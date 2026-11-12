@@ -4,7 +4,8 @@ import { InstallApp } from "@/components/student/install-app"
 import { studySummary } from "@/lib/groups/questionnaire.mjs"
 import Link from "next/link"
 import { redirect } from "next/navigation"
-import { ArrowRight, BookOpen, CalendarClock, CheckCircle2, ListChecks } from "lucide-react"
+import { ArrowRight, BookOpen, CalendarClock, CalendarDays, CheckCircle2, FileText, ListChecks, Megaphone } from "lucide-react"
+import { HomeNotices, type HomeNotice } from "@/components/student/home-notices"
 import { PageContainer } from "@/components/student/page-container"
 import { PageHeader, SectionHeader } from "@/components/page-header"
 import { StatCard } from "@/components/stat-card"
@@ -15,8 +16,6 @@ import { DisciplineProgressList } from "@/components/student/discipline-progress
 import { RankingCard } from "@/components/mini-quizzes/ranking-card"
 import { getLatestWeeklyRanking } from "@/lib/mini-quizzes/queries"
 import { getStudentExperience } from "@/lib/student/experience"
-import { Megaphone } from "lucide-react"
-import { ExamCountdownCard } from "@/components/student/exam-countdown-card"
 import { examCountdown } from "@/lib/courses/exam-date.mjs"
 import { createClient } from "@/lib/supabase/server"
 import {
@@ -75,6 +74,31 @@ export default async function StudentHomePage() {
   const recentGoals =
     goalWindow.recent.length > 0 ? goalWindow.recent.slice(0, 3) : goalWindow.next ? [goalWindow.next] : []
   const firstName = context.profile.fullName.split(" ")[0]
+  // Avisos num só cartão: redação corrigida (uma linha, mesmo com várias), contador e novidades.
+  const notices: HomeNotice[] = []
+  if (unreadReports.length > 0) {
+    const first = essays.find((essay) => essay.id === unreadReports[0].essay_id)
+    notices.push({
+      key: "redacao",
+      icon: FileText,
+      highlight: true,
+      title: unreadReports.length === 1 ? "Sua redação foi corrigida" : `${unreadReports.length} redações corrigidas`,
+      text: unreadReports.length === 1 ? `${first?.quizTitle ?? "Simulado"} · veja a nota e baixe a análise em PDF` : "Veja as notas e baixe as análises em PDF",
+      href: unreadReports.length === 1 ? reportHref(unreadReports[0].essay_id) : "/aluno/relatorio/redacoes",
+    })
+  }
+  if (countdown) {
+    notices.push({
+      key: "prova",
+      icon: CalendarDays,
+      title: countdown.label,
+      text: `Prova em ${countdown.date}${countdown.status === "prevista" ? " (data prevista, pode mudar)" : ""}`,
+    })
+  }
+  if (experience.notice) {
+    const [head, ...rest] = experience.notice.split("\n")
+    notices.push({ key: "aviso", icon: Megaphone, title: head, text: rest.join("\n").trim() || undefined })
+  }
   const hasGoals = snapshot.goals.length > 0
 
   return (
@@ -85,24 +109,7 @@ export default async function StudentHomePage() {
         description={summary.length > 0 ? summary.join(" · ") : "Seu plano de estudos e o progresso no edital."}
       />
 
-      <InstallApp />
-
-      {unreadReports.map((report) => (
-        <Link key={report.essay_id} href={reportHref(report.essay_id)} className="mb-4 flex items-center justify-between gap-4 rounded-xl border border-primary/40 bg-primary/10 p-4 transition-colors hover:bg-primary/15">
-          <span><span className="block font-semibold">Sua redação foi corrigida</span>
-          <span className="block text-sm text-muted-foreground">{essays.find((essay) => essay.id === report.essay_id)?.quizTitle}. Clique aqui para ler a análise e baixar o PDF.</span></span>
-          <ArrowRight className="size-5 shrink-0 text-primary" aria-hidden="true" />
-        </Link>
-      ))}
-
-      {countdown ? <ExamCountdownCard label={countdown.label} date={countdown.date} status={countdown.status} /> : null}
-
-      {experience.notice ? (
-        <div className="mb-6 flex items-start gap-3 rounded-xl border border-primary/40 bg-primary/10 p-4 text-sm text-foreground">
-          <Megaphone className="mt-0.5 size-4.5 shrink-0 text-primary" aria-hidden="true" />
-          <p className="whitespace-pre-line leading-relaxed">{experience.notice}</p>
-        </div>
-      ) : null}
+      {notices.length > 0 ? <HomeNotices items={notices} extra={<InstallApp variant="row" />} /> : <InstallApp />}
 
       <div className="mb-8 grid grid-cols-2 gap-3 md:mb-10 md:grid-cols-3 md:gap-4">
         <StatCard
