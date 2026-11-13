@@ -17,6 +17,14 @@ só as 15 mais recentes aqui; ao passar disso, resuma as antigas em uma linha ca
 
 ## Sessões
 
+### 2026-11-13 — Codex — passagem técnica e diagnósticos restantes
+- Pedido: resumo técnico do trabalho aplicado e atualização da memória para o Claude; PCCE/PRF ADM fora da prioridade por ora.
+- Feito: `ops/replanejamento-90/PASSAGEM-CLAUDE.md`, com PR #142 mesclado, cobertura, limites, preservações, testes, ocorrência 429 e reversão.
+- Consulta somente leitura: 16 diagnósticos semanais preparados para G1 nos seis cursos, incluindo seis de 15/11, todos com questões e gabaritos comentados. G2/teste não duplicados na conta.
+- Faltam criar 56 até a Meta 84: PMPE 7, GMF 9, PRF/PMCE/PPCE/CFO 10 cada. Metas 85–90: mais seis avaliações apenas recomendadas, sem aprovação nem criação.
+- Não feito: novos diagnósticos, questões, liberações ou alterações em produção; esta passagem é documental. PCCE/PRF ADM pausados, sem alteração dos dados.
+- Próximo passo: alinhar preparação do lote semanal de 22/11 e Simulado Geral 02 PMPE (60 questões); conferir banco antes de novas ações.
+
 ### 2026-11-13 — Codex — seis editais contemplados até a Meta 90
 - Pedido: PMPE, GMF, PRF, PMCE, PPCE e CFO PMCE; G1 e conferência pela conta de teste; preservar metas liberadas e progresso.
 - Decisões: legislação/PDF + questões quando faltar aula; conferir normas da PRF; manter todo o volume aceitando metas mais longas, sem transferir itens a opcionais.

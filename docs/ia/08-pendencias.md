@@ -3,8 +3,9 @@
 ## Agora (13/11/2026)
 - **Concluído em 13/11:** seis cursos com 100% do edital cadastrado contemplado até a Meta 90, conferido no banco (1.131 unidades; zero lacunas). Foram ajustadas 86 metas futuras sem progresso, preservando volume, datas e histórico; carga máxima ajustada ~3h31. Relatório em `ops/replanejamento-90/RESULTADO.md`.
 - **Concluído em 13/11:** seis Diagnósticos Semanais de 15/11 (PMPE, GMF, PRF, PMCE, PPCE e CFO PMCE) liberados para G1 e teste, com data e conclusão da meta preservadas. G2 encerrado pelo usuário; rascunhos antigos não são pendência de lançamento.
+- **Diagnósticos Semanais restantes (consulta de 13/11, só G1):** 16 preparados (incluindo os seis de 15/11), faltam criar 56 para os 12 blocos completos por curso até a Meta 84: PMPE 7, GMF 9, PRF 10, PMCE 10, PPCE 10 e CFO 10. Próximo lote em 22/11. Mais seis avaliações de encerramento das Metas 85–90 foram apenas recomendadas, ainda sem aprovação; total potencial 62, sem contar Simulados Gerais. [Passagem técnica](../../ops/replanejamento-90/PASSAGEM-CLAUDE.md).
 - **2º Simulado Geral PMPE (22/11):** montar as 60 questões (usuário pediu para fazer depois).
-- **PCCE e PRF ADM:** em espera até o 1º aluno (a partir de 16/11). Webhook Hotmart depois.
+- **PCCE e PRF ADM: pausados em 13/11 por pedido do usuário.** Fora da prioridade atual; não retomar automaticamente pelo gatilho antigo do primeiro aluno. Preservar dados e pendências históricas.
 - **Data da prova do GMF:** não definida; GMF sem Reta final.
 
 
