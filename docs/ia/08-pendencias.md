@@ -1,6 +1,7 @@
-# 08 — Pendências (atualizado em 2026-11-12)
+# 08 — Pendências (atualizado em 2026-11-13)
 
-## Agora (12/11/2026)
+## Agora (13/11/2026)
+- **Concluído em 13/11:** seis Diagnósticos Semanais de 15/11 (PMPE, GMF, PRF, PMCE, PPCE e CFO PMCE) liberados para G1 e teste, com data e conclusão da meta preservadas. G2 encerrado pelo usuário; rascunhos antigos não são pendência de lançamento.
 - **Edital 100% até a Meta 90 em todos os cursos** (regra do usuário). Lacunas medidas em 12/11 (unidades do edital
   sem item nas 90 metas regulares): GMF 0 e PMCE 0 (ok); PMPE G1 1 (Defesa do Estado), PMPE G2 22 (G2 só tem 82
   metas); CFO G1 4 (Maria da Penha) e G2 1; PPCE G1 8 e G2 4; PRF G1 55 e G2 54 (31 resoluções CONTRAN, Lei 8.112,

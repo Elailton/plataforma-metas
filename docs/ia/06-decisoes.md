@@ -4,6 +4,7 @@ Formato: data — decisão — motivo — status. Não apagar: marcar "substitu�
 
 | Data | Decisão | Motivo | Status |
 |---|---|---|---|
+| 2026-11-13 | G2 encerrado; novas liberações destinadas a G1 e teste. Seis diagnósticos de 15/11 autorizados para G1 sem antecipar data nem retirar conclusão da meta | Confirmação expressa do usuário | Vigente; banco conferido |
 | 2026-09-01 | Progresso real por item e percentual do edital fazem parte do produto | Escopo do beta ampliado pelo usuário | Vigente |
 | 2026-10-09 | Liberação por oferta (`authorized_offers`): só ofertas "+ SGA" liberam | Separar "curso apenas" de "curso + SGA" | Vigente |
 | 2026-10-16 | Reenvio de acesso não consulta a API de vendas; casos sem matrícula vão ao suporte | API da Hotmart instável; evitar criar acesso sem prova | Vigente |

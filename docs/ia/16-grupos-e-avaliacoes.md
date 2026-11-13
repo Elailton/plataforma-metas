@@ -1,9 +1,11 @@
 # 16 — Grupos, lançamentos e avaliações (Diagnóstico Semanal, Simulado Geral, Redação)
 
-Revisado em: 2026-11-10. Texto movido do `AGENTS.md` (2026-11-10) para deixar o arquivo raiz curto;
+Revisado em: 2026-11-13. Texto movido do `AGENTS.md` (2026-11-10) para deixar o arquivo raiz curto;
 o conteúdo é o mesmo e continua obrigatório. Correção de redação: `13-correcao-redacao.md`.
 
 ## Grupos, Grupo 3 (teste) e lançamentos
+
+**Atualização de 13/11/2026:** o usuário confirmou o encerramento do Grupo 2. Novas liberações destinam-se ao Grupo 1 e à conta de teste conforme autorização. Referências abaixo a G2 são histórico/compatibilidade; rascunhos legados não devem ser publicados por inferência. Nenhuma matrícula foi alterada nessa confirmação.
 
 - Grupos de estudo: 1 e 2 (alunos) e 3 (teste, só a conta de teste do administrador).
   O Grupo 3 vê tudo do grupo que espelha (`enrollments.mirror_group`, 1 ou 2) e o que
