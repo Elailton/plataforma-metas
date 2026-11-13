@@ -17,6 +17,15 @@ só as 15 mais recentes aqui; ao passar disso, resuma as antigas em uma linha ca
 
 ## Sessões
 
+### 2026-11-13 — Codex — fechamento de seis editais na Meta 90 (preparação)
+- Pedido: PMPE, GMF, PRF, PMCE, PPCE e CFO PMCE; preservar metas liberadas e qualquer progresso. G1 e conferência em teste.
+- Decisões: legislação/PDF + questões quando faltar aula; conferir normas atuais da PRF; manter todo o volume e aceitar metas mais longas, sem transferir itens a opcionais.
+- Preparado: `ops/replanejamento-90/lote.json`, 86 metas futuras, 157 itens, cinco substituições com arquivo histórico e 34 fontes oficiais; carga máxima ajustada ~3h31.
+- Cobertura projetada: zero lacunas nos seis; GMF/PMCE já completos e sem alterações. PMPE +1, CFO +4, PPCE +8, PRF +55 unidades contempladas.
+- Verificado: nove testes SQL real em PGlite; lote completo exercitado em banco descartável, mantendo todas as outras metas idênticas e sem escrita em dados de alunos.
+- Não feito: aplicação em produção. Controlador revisável em `executar.py`, com transações, guardas de versão/data/conteúdo/progresso e reversão sem apagar histórico.
+- Próximo passo: CI/revisão, aplicar o lote, conferir cobertura por consulta e registrar o resultado neste PR. Não incluir PCCE/PRF ADM nesta aplicação.
+
 ### 2026-11-13 — Codex — diagnósticos de 15/11 liberados ao Grupo 1
 - Pedido: usuário confirmou os seis diagnósticos para G1, preservando 15/11 e conclusão da meta; informou que G2 foi encerrado.
 - Feito no banco: seis diagnósticos publicados, antes só G3, agora `target_groups {1,3}`; sem alterar questões, gabaritos, tentativas ou metas.
