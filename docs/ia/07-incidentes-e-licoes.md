@@ -20,6 +20,7 @@ Formato: data — o que aconteceu — causa — o que mudou / lição.
 | 2026-10-28 | "Encontrar minha compra" mandava ao suporte uma compra "curso apenas" de curso em rascunho | Filtro de curso publicado aplicado também à explicação | Corrigido (PR #81) |
 | 2026-11-06 | Aluno do GMF pediu para mudar respostas do questionário (não achava onde) | Não existe tela para isso; o aviso não dizia como pedir | Com autorização do usuário: questionário reaberto, 4 conclusões de itens apagadas (metas reiniciadas), acesso reenviado por e-mail; aviso do questionário passou a indicar o WhatsApp do suporte |
 | 2026-11-06 | Plataforma toda lenta logo após publicar a aba Simulados | `student_upcoming_quizzes` (~1,3 s) chamada no layout de toda página, recalculando o escopo do aluno por meta | Menu passou a usar `student_has_general_quiz` (leve); a lista de próximos ficou só nas telas Semanal/Geral e foi otimizada (migração `20261106000300`). Lição: nada pesado no layout; medir com `pg_stat_statements` antes de publicar RPC nova |
+| 2026-11-13 | TEC Concursos pediu reCAPTCHA e passou a responder 429 na rotina de diagnósticos | Triagem rápida: dezenas de trocas de questão a cada ~2 s no navegador interno | Rotina parada sem resolver CAPTCHA; lição: o ritmo lento vale também para **navegar** (≥ 10 s por questão), não só para resolver |
 
 ## 2026-11-08 — Redação do Simulado Geral recusada (erro 42809)
 

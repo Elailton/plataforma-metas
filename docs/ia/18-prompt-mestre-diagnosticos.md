@@ -14,7 +14,9 @@ formato das avaliações em `16-grupos-e-avaliacoes.md` e `docs/ia/skills/sga-pl
 4. O usuário **autorizou** (13/11/2026) resolver questões na conta TEC dele apenas para ler o
    gabarito oficial, e no Qconcursos pela parceria B2B. Ritmo: **uma questão a cada ≥ 20 s**; se vier
    429 ou "Just a moment", espere 2 min; persistindo, pare o curso do dia e registre. Nunca resolva
-   CAPTCHA nem tente contornar bloqueio.
+   CAPTCHA nem tente contornar bloqueio. **Navegar também é devagar** (≥ 10 s por troca de questão, sem
+   varrer dezenas de questões em sequência): em 13/11 a triagem rápida gerou reCAPTCHA e 429 (ver `07`).
+   Progresso parcial fica em `ops/diagnosticos-2211/*.json` até o diagnóstico/simulado estar completo.
 
 ## 1. Cursos, tamanho e banca de referência
 | Curso (slug) | Questões | Formato | Banca de referência |
