@@ -1,6 +1,7 @@
 # 08 — Pendências (atualizado em 2026-11-13)
 
 ## Agora (13/11/2026)
+- **Preparado em 13/11:** lote dos seis cursos para fechar o edital até a Meta 90, em `ops/replanejamento-90/RESULTADO.md`. Zero lacunas projetadas; aplicar após revisão e conferir no banco. Manter todo o volume, com metas mais longas, conforme decisão expressa; nenhuma transferência a opcionais.
 - **Concluído em 13/11:** seis Diagnósticos Semanais de 15/11 (PMPE, GMF, PRF, PMCE, PPCE e CFO PMCE) liberados para G1 e teste, com data e conclusão da meta preservadas. G2 encerrado pelo usuário; rascunhos antigos não são pendência de lançamento.
 - **Edital 100% até a Meta 90 em todos os cursos** (regra do usuário). Lacunas medidas em 12/11 (unidades do edital
   sem item nas 90 metas regulares): GMF 0 e PMCE 0 (ok); PMPE G1 1 (Defesa do Estado), PMPE G2 22 (G2 só tem 82

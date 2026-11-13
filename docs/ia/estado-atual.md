@@ -6,7 +6,7 @@ objetivo, situação e próximo passo. O histórico vai para `sessoes.md`; a lis
 
 | Área | Situação em 2026-11-13 | Próximo passo |
 |---|---|---|
-| Edital 100% na Meta 90 | GMF e PMCE fecham 100%; lacunas em PRF (55), PMPE G2 (22), PPCE, CFO, PMPE G1 (1) | Encaixar os tópicos faltantes nas metas futuras (`08`) |
+| Edital 100% na Meta 90 | Lote dos seis cursos preparado: zero lacunas projetadas; 86 metas futuras, 157 itens, sem cortar volume | Aplicar lote revisado de `ops/replanejamento-90/` e conferir no banco |
 | Redações PMPE | 2 corrigidas, com nota e PDF publicados (27 e 32/40); Nota geral ligada G1/G2 | 2º Simulado Geral (22/11) |
 | PCCE e PRF ADM | Em espera até o 1º aluno (a partir de 16/11) | Lote de metas 04+ quando houver aluno |
 | GCM Itaitinga | Arquivado | — |
