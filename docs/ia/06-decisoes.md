@@ -4,6 +4,7 @@ Formato: data — decisão — motivo — status. Não apagar: marcar "substitu�
 
 | Data | Decisão | Motivo | Status |
 |---|---|---|---|
+| 2026-11-13 | Pausar PCCE e PRF ADM na prioridade atual | Usuário: “esqueça PF ADM e PCCE por enquanto” | Vigente; preservar os dados e não retomar automaticamente por primeiro aluno |
 | 2026-11-13 | Fechar o edital dos seis cursos até a Meta 90 só em metas futuras sem progresso; usar legislação/PDF + questões quando faltar aula adequada; conferir normas da PRF; manter volume integral aceitando metas mais longas | Confirmações expressas do usuário; rejeitou reduzir questões/transferir aprofundamentos a opcionais | Aplicada em produção; seis cursos com zero lacunas conferidas em 13/11; lote em `ops/replanejamento-90/` |
 | 2026-11-13 | G2 encerrado; novas liberações destinadas a G1 e teste. Seis diagnósticos de 15/11 autorizados para G1 sem antecipar data nem retirar conclusão da meta | Confirmação expressa do usuário | Vigente; banco conferido |
 | 2026-09-01 | Progresso real por item e percentual do edital fazem parte do produto | Escopo do beta ampliado pelo usuário | Vigente |

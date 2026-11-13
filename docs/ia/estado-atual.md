@@ -8,8 +8,9 @@ objetivo, situação e próximo passo. O histórico vai para `sessoes.md`; a lis
 |---|---|---|
 | Edital 100% na Meta 90 | Aplicado e conferido no banco: seis cursos com 90 metas e zero lacunas; 86 metas futuras ajustadas, sem cortar volume | Manter cobertura ao editar; detalhes em `ops/replanejamento-90/RESULTADO.md` |
 | Redações PMPE | 2 corrigidas, com nota e PDF publicados (27 e 32/40); Nota geral ligada G1/G2 | 2º Simulado Geral (22/11) |
-| PCCE e PRF ADM | Em espera até o 1º aluno (a partir de 16/11) | Lote de metas 04+ quando houver aluno |
+| PCCE e PRF ADM | Pausados por pedido do usuário em 13/11; fora da prioridade atual | Retomar somente após alinhar prioridade |
 | GCM Itaitinga | Arquivado | — |
 | GMF | Sem Reta final (metas extras arquivadas); prova sem data | Usuário informar `exam_date` se houver |
 | Diagnósticos de 15/11 | Seis cursos publicados para G1 e teste; data e conclusão da meta preservadas | Alunos acessam a partir de 15/11 após concluir a meta do bloco |
+| Diagnósticos restantes | 16 preparados; faltam criar 56 até a Meta 84 nos seis cursos | Próximo lote 22/11; encerramento 85–90 apenas sugerido. [Passagem técnica](../../ops/replanejamento-90/PASSAGEM-CLAUDE.md) |
 | Publicação | Mesclar/publicar sem perguntar o que foi pedido (CI verde + revisão) | — |
