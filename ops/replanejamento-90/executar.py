@@ -37,7 +37,9 @@ commit;"""
 if __name__=='__main__':
  if len(sys.argv)!=4 or sys.argv[3]!='--apply':raise SystemExit('Exige plano, diretório de registro e --apply.')
  plan=json.loads(Path(sys.argv[1]).read_text());out=Path(sys.argv[2]);out.mkdir(parents=True,exist_ok=True)
- frozen_before=freeze_hash(plan['frozen_goals']);(out/'frozen-before.json').write_text(json.dumps(frozen_before))
+ frozen_before=freeze_hash(plan['frozen_goals']);base=out/'frozen-before.json'
+ if base.exists():assert json.loads(base.read_text())==frozen_before,'PLAN_FROZEN_CHANGED_BEFORE_RESUME'
+ else:base.write_text(json.dumps(frozen_before))
  query(sources_sql(plan['sources']))
  done=[]
  for n,op in enumerate(plan['operations'],1):

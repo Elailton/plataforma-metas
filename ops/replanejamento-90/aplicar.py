@@ -1,7 +1,7 @@
 """Compila uma operação restrita a uma meta futura. Sem conexão por padrão.
 A execução administrativa usa exclusivamente a API de Management do Supabase.
 """
-import json,sys,os,urllib.request,urllib.error
+import json,sys,os,urllib.request,urllib.error,time,email.utils,datetime
 
 def lit(v):
  if v is None:return 'null'
@@ -52,15 +52,34 @@ do $guard$ begin
 end $guard$;
 insert into public.materials(id,course_id,subject_id,title,type,url,description) select id,course_id,subject_id,title,type,url,description from _sources on conflict(id) do nothing;commit;"""
 
+_last_request=0.0
+
 def query(sql):
+ global _last_request
  token=os.environ['SUPABASE_ACCESS_TOKEN']
- req=urllib.request.Request('https://api.supabase.com/v1/projects/cbryvevesiaoqmwwlnet/database/query',data=json.dumps({'query':sql}).encode(),headers={'Authorization':'Bearer '+token,'Content-Type':'application/json'},method='POST')
- try:
-  with urllib.request.urlopen(req,timeout=55) as r:return json.load(r)
- except urllib.error.HTTPError as e:
-  body=e.read().decode(errors='replace');import re
-  code=re.search(r'PLAN_[A-Z_]+',body)
-  raise RuntimeError(f'Supabase HTTP {e.code}: '+(code[0] if code else 'operação recusada; nenhuma informação de conta foi registrada')) from None
+ for attempt in range(7):
+  delay=1.05-(time.monotonic()-_last_request)
+  if delay>0:time.sleep(delay)
+  req=urllib.request.Request('https://api.supabase.com/v1/projects/cbryvevesiaoqmwwlnet/database/query',data=json.dumps({'query':sql}).encode(),headers={'Authorization':'Bearer '+token,'Content-Type':'application/json'},method='POST')
+  _last_request=time.monotonic()
+  try:
+   with urllib.request.urlopen(req,timeout=55) as r:return json.load(r)
+  except urllib.error.HTTPError as e:
+   body=e.read().decode(errors='replace')
+   if e.code==429 and attempt<6:
+    header=e.headers.get('Retry-After') if e.headers else None
+    try:wait=max(0,float(header))
+    except (TypeError,ValueError):
+     try:wait=max(0,(email.utils.parsedate_to_datetime(header)-datetime.datetime.now(datetime.timezone.utc)).total_seconds())
+     except (TypeError,ValueError):wait=min(55,15*(attempt+1))
+    print('Limite temporário da API; pausa antes de retomar a mesma operação.',flush=True)
+    while wait>0:
+     chunk=min(wait,45);time.sleep(chunk);wait-=chunk
+    continue
+   import re
+   code=re.search(r'PLAN_[A-Z_]+',body)
+   raise RuntimeError(f'Supabase HTTP {e.code}: '+(code[0] if code else 'operação recusada; nenhuma informação de conta foi registrada')) from None
+ raise RuntimeError('Limite da API persistente; reexecutar o controlador para conferir o estado antes de continuar.')
 
 if __name__=='__main__':
  if sys.argv[1:] == ['--compile-stdin']:
