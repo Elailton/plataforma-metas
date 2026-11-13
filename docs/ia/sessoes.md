@@ -17,6 +17,13 @@ só as 15 mais recentes aqui; ao passar disso, resuma as antigas em uma linha ca
 
 ## Sessões
 
+### 2026-11-13 — Claude — lote de diagnósticos de 22/11 (início, pausado)
+- Pedido: começar o lote semanal de 22/11 e o Simulado Geral 02 PMPE; depois, pausar e guardar para avaliar o TEC Concursos.
+- Feito: inventário (6 blocos completos; Simulado Geral 02 publicado sem questões); PMPE 36–42 com 30 questões escolhidas e 15 gabaritos oficiais, em `ops/diagnosticos-2211/pmpe-36-42.json`. Nada gravado no banco. Apagada a pedido a tentativa da conta de teste no diagnóstico Metas 22–28 (respostas e início junto).
+- Não feito / bloqueios: Qconcursos devolveu 429 ao ler gabaritos (respostas pela conta autorizada pelo usuário, parceria B2B); lote pausado.
+- Próximo passo: definir a fonte (TEC Concursos ou Qconcursos com ritmo lento) e retomar PMPE 36–42, depois GMF, PRF, PMCE, PPCE, CFO e Simulado Geral 02.
+- Conferir: o Simulado Geral 02 abre em 22/11 e está vazio; precisa das 60 questões antes disso.
+
 ### 2026-11-13 — Codex — passagem técnica e diagnósticos restantes
 - Pedido: resumo técnico do trabalho aplicado e atualização da memória para o Claude; PCCE/PRF ADM fora da prioridade por ora.
 - Feito: `ops/replanejamento-90/PASSAGEM-CLAUDE.md`, com PR #142 mesclado, cobertura, limites, preservações, testes, ocorrência 429 e reversão.
