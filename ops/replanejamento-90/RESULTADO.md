@@ -1,6 +1,6 @@
 # Fechamento do edital cadastrado até a Meta 90 — seis cursos
 
-Preparado em 13/11/2026. Público autorizado: Grupo 1, com conferência pela conta de teste. Nenhuma nova liberação para G2. Meta 0 fica fora das 90 metas de estudo.
+Aplicado e conferido em produção em 13/11/2026. Público autorizado: Grupo 1, com conferência pela conta de teste. Nenhuma nova liberação para G2. Meta 0 fica fora das 90 metas de estudo.
 
 ## Decisões do usuário
 
@@ -10,7 +10,7 @@ Preparado em 13/11/2026. Público autorizado: Grupo 1, com conferência pela con
 - **Manter todo o volume e aceitar metas mais longas.** A opção de reduzir questões/transferir aprofundamentos a “Se sobrar tempo” foi recusada. Nenhuma transferência foi planejada.
 - PCCE e PRF ADM foram discutidos anteriormente, mas não fazem parte desta aplicação de seis cursos.
 
-## Cobertura projetada
+## Cobertura conferida no banco
 
 A cobertura é do planejamento, não de conclusões dos alunos. Conta unidades terminais do edital com item próprio ou ancestral programado. As lacunas acrescentadas foram detalhadas em atividades de leitura e prática; não houve marcação automática de estudo.
 
@@ -23,9 +23,9 @@ A cobertura é do planejamento, não de conclusões dos alunos. Conta unidades t
 | PPCE | 212 | 8 | 0 | 14 |
 | CFO PMCE | 204 | 4 | 0 | 3 |
 
-GMF e PMCE não precisam receber mudanças para este fechamento. Os seis mantêm os mesmos IDs e datas das 90 metas regulares. O plano acrescenta 157 itens (incluindo cinco substituições), com materiais do próprio curso e 34 fontes oficiais adicionais da PRF. Cinco itens anteriores são arquivados para corrigir um vínculo de aula e quatro referências legislativas; os vínculos históricos são mantidos. Questões anteriores não são cortadas.
+GMF e PMCE não precisaram receber mudanças para este fechamento. Os seis mantêm os mesmos IDs e datas das 90 metas regulares. O lote acrescentou 157 itens (incluindo cinco substituições), com materiais do próprio curso e 34 fontes oficiais adicionais da PRF. Cinco itens anteriores foram arquivados para corrigir um vínculo de aula e quatro referências legislativas; os vínculos históricos são mantidos. Questões anteriores não são cortadas.
 
-A maior carga entre as metas ajustadas é de aproximadamente 211 minutos (3h31), estimada pelas orientações de cada item. As descrições serão atualizadas para refletir a nova carga. As revisões já programadas, o caderno de erros, discursiva e diagnósticos são preservados.
+A maior carga entre as metas ajustadas é de aproximadamente 211 minutos (3h31), estimada pelas orientações de cada item. As descrições foram atualizadas para refletir a nova carga. As revisões já programadas, o caderno de erros, discursiva e diagnósticos são preservados.
 
 ## Conteúdo acrescentado
 
@@ -60,4 +60,13 @@ O cadastro histórico do edital traz “92/1998”; a referência correta é 92/
 
 ## Aplicação
 
-Pendente de execução após os testes e a revisão do lote. Registrar a conferência agregada do banco ao concluir, sem dados pessoais.
+Executada após revisão de segurança e CI aprovado. Conferência de produção:
+
+- Cada um dos seis cursos tem exatamente 90 números distintos de metas regulares publicadas para G1, Meta 01 a 90; 1.131 unidades terminais, nenhuma sem vínculo próprio ou ancestral no planejamento.
+- 86 metas gravadas/conferidas; 157 itens novos ativos, cinco originais arquivados e mantidos. Cada meta modificada confere com o estado esperado integral dos itens e materiais.
+- Todas as metas fora do lote continuam idênticas pelos hashes de linhas, itens e materiais antes/depois; nenhum dado de aluno foi escrito.
+- Desbloqueios, datas e públicos de todos os diagnósticos dos seis cursos conferem exatamente com o snapshot anterior.
+- GMF e PMCE não receberam nenhuma mudança; não foi cortado volume nem criado bloco opcional para esconder lacunas.
+- A API impôs 429 após 36 metas. Retomada com intervalo e diário persistente reconheceu as existentes; não houve duplicação. O controlador não repete automaticamente gravações com resultado incerto.
+
+Evidências agregadas e SQL de reversão ficam no diretório privado de execução, fora do Git. PR #142 guarda o plano sem dados pessoais, testes e regras de preservação. Esta conferência comprova a cobertura do planejamento cadastrado, não a conclusão dos alunos nem uma nova auditoria jurídica integral de todo material antigo.

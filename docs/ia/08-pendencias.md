@@ -1,12 +1,8 @@
 # 08 — Pendências (atualizado em 2026-11-13)
 
 ## Agora (13/11/2026)
-- **Preparado em 13/11:** lote dos seis cursos para fechar o edital até a Meta 90, em `ops/replanejamento-90/RESULTADO.md`. Zero lacunas projetadas; aplicar após revisão e conferir no banco. Manter todo o volume, com metas mais longas, conforme decisão expressa; nenhuma transferência a opcionais.
+- **Concluído em 13/11:** seis cursos com 100% do edital cadastrado contemplado até a Meta 90, conferido no banco (1.131 unidades; zero lacunas). Foram ajustadas 86 metas futuras sem progresso, preservando volume, datas e histórico; carga máxima ajustada ~3h31. Relatório em `ops/replanejamento-90/RESULTADO.md`.
 - **Concluído em 13/11:** seis Diagnósticos Semanais de 15/11 (PMPE, GMF, PRF, PMCE, PPCE e CFO PMCE) liberados para G1 e teste, com data e conclusão da meta preservadas. G2 encerrado pelo usuário; rascunhos antigos não são pendência de lançamento.
-- **Edital 100% até a Meta 90 em todos os cursos** (regra do usuário). Lacunas medidas em 12/11 (unidades do edital
-  sem item nas 90 metas regulares): GMF 0 e PMCE 0 (ok); PMPE G1 1 (Defesa do Estado), PMPE G2 22 (G2 só tem 82
-  metas); CFO G1 4 (Maria da Penha) e G2 1; PPCE G1 8 e G2 4; PRF G1 55 e G2 54 (31 resoluções CONTRAN, Lei 8.112,
-  crimes, Constitucional). Encaixar nas metas ainda não liberadas, sem passar de ~3h por meta.
 - **2º Simulado Geral PMPE (22/11):** montar as 60 questões (usuário pediu para fazer depois).
 - **PCCE e PRF ADM:** em espera até o 1º aluno (a partir de 16/11). Webhook Hotmart depois.
 - **Data da prova do GMF:** não definida; GMF sem Reta final.
@@ -15,16 +11,7 @@
 Ordem sugerida. Marcar com data quando concluir e mover a lição para `07` se houver.
 
 ## Metas dos SGA novos (PRF, PMCE, CFO, PPCE)
-- **09/11/2026 — regra das 90 metas:** corte proposto em `metas-novas/ANALISE-90-METAS.md`.
-  - **PMPE: feito em 09/11** — Metas 82–90 (01 a 09/01/2027) criadas: versão G1 publicada só no Grupo 3
-    (`target_groups {3}`), versão G2 em rascunho `{2}`. Elas trazem os 7 assuntos que faltavam (Maria da
-    Penha atualizada, Olinda e Recife, cultura popular, as 2 da Discursiva e as 2 de súmulas) e revisão
-    final dos assuntos de alta incidência. Achado: Maria da Penha, Olinda/Recife e cultura popular **já
-    eram estudados**, mas com o item ligado a outro tópico do edital (há dois tópicos "Maria da Penha").
-    Depois da conferência: G1 → `{1}` e G2 → `published`.
-  - **Falta:** GMF G1 (antecipar 6 tópicos das Metas 91–94; Metas 91–104 viram revisão) e PRF/PMCE/PPCE/CFO
-    (replanejar a partir da Meta 15). Exige redistribuir o conteúdo das metas ainda não liberadas sem
-    passar de ~3h por meta.
+- **Histórico de 09/11, superado em 13/11:** o replanejamento dos seis cursos foi aplicado e conferido no banco. Todos têm Meta 01–90 publicada para G1 e zero lacunas de planejamento. GMF e PMCE já estavam completos; os quatro outros receberam complementos futuros. Propostas antigas de corte ou limite rígido de ~3h não valem: usuário determinou manter o volume. G2 encerrado, sem nova publicação.
 - **PCCE e PRF ADM (10/11):** materiais da Hotmart cadastrados; Metas 01–03 criadas e publicadas para o Grupo 1
   (16, 17 e 18/11); plano das 90 metas em `docs/ia/cursos/sga-pcce-plano-90.md` e `sga-prf-adm-plano-90.md`.
   Faltam: publicar os cursos (estão em rascunho), aulas do PRF ADM ainda em gravação (Administração,
@@ -36,8 +23,7 @@ Ordem sugerida. Marcar com data quando concluir e mover a lição para `07` se h
   `docs/ia/cursos/sga-gcm-itaitinga-plano-90.md`. Faltam: Vade Mecum e simulados (em produção na Hotmart),
   aulas de Lei Orgânica, direção defensiva, mecânica, segurança do trabalho e Atualidades; cadernos novos;
   confirmar as 3 fases do Anexo III.
-- Metas 01–05 publicadas (29/10). Restante (~100 metas por curso) aguardando o usuário dizer
-  **"executar metas"**: plano completo em `metas-novas/PLANO.md`.
+- **Histórico de 29/10, superado:** as primeiras cinco metas estavam publicadas e o restante aguardava autorização. Para os seis cursos, a execução em 90 metas está concluída e conferida em 13/11; `metas-novas/PLANO.md` é referência histórica, sem novo gatilho pendente.
 
 ## Provas anteriores e preparação direcionada (planejamento de 2026-10-30, regras INATIVAS)
 **Gatilho:** nada desta seção vale nem é executado até o usuário dizer **"executar provas

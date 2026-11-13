@@ -17,14 +17,15 @@ só as 15 mais recentes aqui; ao passar disso, resuma as antigas em uma linha ca
 
 ## Sessões
 
-### 2026-11-13 — Codex — fechamento de seis editais na Meta 90 (preparação)
-- Pedido: PMPE, GMF, PRF, PMCE, PPCE e CFO PMCE; preservar metas liberadas e qualquer progresso. G1 e conferência em teste.
-- Decisões: legislação/PDF + questões quando faltar aula; conferir normas atuais da PRF; manter todo o volume e aceitar metas mais longas, sem transferir itens a opcionais.
-- Preparado: `ops/replanejamento-90/lote.json`, 86 metas futuras, 157 itens, cinco substituições com arquivo histórico e 34 fontes oficiais; carga máxima ajustada ~3h31.
-- Cobertura projetada: zero lacunas nos seis; GMF/PMCE já completos e sem alterações. PMPE +1, CFO +4, PPCE +8, PRF +55 unidades contempladas.
-- Verificado: nove testes SQL real em PGlite; lote completo exercitado em banco descartável, mantendo todas as outras metas idênticas e sem escrita em dados de alunos.
-- Não feito: aplicação em produção. Controlador revisável em `executar.py`, com transações, guardas de versão/data/conteúdo/progresso e reversão sem apagar histórico.
-- Próximo passo: CI/revisão, aplicar o lote, conferir cobertura por consulta e registrar o resultado neste PR. Não incluir PCCE/PRF ADM nesta aplicação.
+### 2026-11-13 — Codex — seis editais contemplados até a Meta 90
+- Pedido: PMPE, GMF, PRF, PMCE, PPCE e CFO PMCE; G1 e conferência pela conta de teste; preservar metas liberadas e progresso.
+- Decisões: legislação/PDF + questões quando faltar aula; conferir normas da PRF; manter todo o volume aceitando metas mais longas, sem transferir itens a opcionais.
+- Feito em produção: 86 metas futuras, 157 itens novos, cinco substituições arquivadas com histórico e 34 fontes oficiais; carga máxima ajustada ~3h31. PR #142 registra lote, controlador e conferência.
+- Cobertura real do planejamento: 90 metas em cada curso, zero lacunas; PMPE 182, GMF 156, PRF 221, PMCE 156, PPCE 212 e CFO 204 unidades. Não são conclusões dos alunos.
+- Preservado: todas as demais metas idênticas (hash antes/depois), GMF/PMCE sem alterações, datas/público das metas e desbloqueios dos diagnósticos; nenhuma escrita em dados de alunos ou envio de e-mail.
+- Verificado: 14 testes de SQL/integridade/transporte e memória; lote completo em PGlite; consulta independente de produção e conferência de cada gravação; revisão de segurança e CI aprovados antes da aplicação.
+- Ocorrência: limite 429 da API após 36 metas; retomada com intervalo e reconhecimento das gravações existentes, sem duplicar itens. Reversão só futura e sem progresso, arquivando em vez de apagar.
+- Próximo passo: Simulado Geral 02 PMPE (22/11); PCCE/PRF ADM ficam fora deste lote de seis cursos. Manter correspondência pedagógica ao editar as metas.
 
 ### 2026-11-13 — Codex — diagnósticos de 15/11 liberados ao Grupo 1
 - Pedido: usuário confirmou os seis diagnósticos para G1, preservando 15/11 e conclusão da meta; informou que G2 foi encerrado.
