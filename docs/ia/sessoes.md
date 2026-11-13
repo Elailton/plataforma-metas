@@ -1,6 +1,6 @@
 # Registro de sessões (memória episódica, passagem de bastão entre IAs)
 
-Revisado em: 2026-11-11. Uma entrada por sessão, **a mais nova no topo**, no máximo ~10 linhas. Mantenha
+Revisado em: 2026-11-13. Uma entrada por sessão, **a mais nova no topo**, no máximo ~10 linhas. Mantenha
 só as 15 mais recentes aqui; ao passar disso, resuma as antigas em uma linha cada em "Resumo anterior"
 (esquecimento controlado). Decisões vão também para `06`; tarefas abertas para `08`.
 
@@ -16,6 +16,15 @@ só as 15 mais recentes aqui; ao passar disso, resuma as antigas em uma linha ca
 ```
 
 ## Sessões
+
+### 2026-11-13 — Codex — diagnósticos de 15/11 liberados ao Grupo 1
+- Pedido: usuário confirmou os seis diagnósticos para G1, preservando 15/11 e conclusão da meta; informou que G2 foi encerrado.
+- Feito no banco: seis diagnósticos publicados, antes só G3, agora `target_groups {1,3}`; sem alterar questões, gabaritos, tentativas ou metas.
+- Cursos/blocos: PMPE 29–35 (30 questões); GMF 15–21 (40); PRF 08–14 (60); PMCE 08–14 (50); PPCE 08–14 (45); CFO PMCE 08–14 (50).
+- Segurança: IDs exatos e seis cursos distintos; transação com bloqueio, validações de metas publicadas G1 no mesmo curso/data, itens, gabaritos/comentários e função ativa; conferência após commit.
+- Preservado: status publicado, data 15/11, `unlock_goal_id` original (Meta 35, 21 ou 14) e acesso de teste. Rascunhos G2 e matrículas não alterados; nenhum e-mail.
+- Reversão: retirar G1 apenas desses seis IDs, mantendo G3 e todo histórico, se autorizada; não apagar conteúdo ou tentativas.
+- Próximo passo: preparar as 60 questões do Simulado Geral 02 PMPE para 22/11; G2 não é público de novas liberações.
 
 ### 2026-11-12 — Claude (Opus) — redações (PDF, nota), ajuste visual e Início
 - Pedido: corrigir/entregar redações PMPE em PDF; nota geral (objetiva + redação); alinhar ao design o que o Codex fez
