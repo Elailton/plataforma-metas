@@ -1,25 +1,122 @@
 {
-  "curso": "sistema-guiado-da-aprovacao (PMPE)",
-  "avaliacao": "Diagnóstico Semanal: Metas 36 a 42",
-  "liberacao": "2026-11-22 (desbloqueio pela Meta 42)",
-  "publico": "G1 + conta de teste (G3); G2 não recebe",
-  "estado": "PAUSADO em 13/11/2026 por pedido do usuário; nada gravado no banco",
-  "formato": "30 questões, 5 por disciplina; mínimo 5 da última prova (AOCP 2024) via bank_item_id",
-  "ultima_prova_bank_items": {
-    "Historia_PE": [{"n": 12, "id": "bec662d3-1893-43e8-ba8f-b7ea99258faf", "gab": "C"}, {"n": 18, "id": "5746ea8e-4c9f-4d19-b086-aac524d963fd", "gab": "C"}],
-    "RLM": [{"n": 21, "id": "bd41717d-267b-42b8-9e43-5e1d9a74d66f", "gab": "D"}, {"n": 24, "id": "b2b977b1-9773-4ed3-8213-91189d62fb56", "gab": "A"}],
-    "Informatica": [{"n": 32, "id": "fe102ea8-0ce6-415b-9f0d-96f665f625b6", "gab": "B"}]
+ "curso": "sistema-guiado-da-aprovacao (PMPE)",
+ "avaliacao": "Diagnóstico Semanal: Metas 36 a 42",
+ "liberacao": "2026-11-22 (desbloqueio pela Meta 42)",
+ "publico": "G1 + conta de teste (G3); G2 não recebe",
+ "estado": "PAUSADO; 13/11 (execução extra): TEC ainda em 429; responder no Qconcursos foi negado pela permissão da rotina (autorização da rotina cobre só o TEC). Nada gravado no banco.",
+ "formato": "30 questões, 5 por disciplina; mínimo 5 da última prova (AOCP 2024) via bank_item_id",
+ "ultima_prova_bank_items": {
+  "Historia_PE": [
+   {
+    "n": 12,
+    "id": "bec662d3-1893-43e8-ba8f-b7ea99258faf",
+    "gab": "C"
+   },
+   {
+    "n": 18,
+    "id": "5746ea8e-4c9f-4d19-b086-aac524d963fd",
+    "gab": "C"
+   }
+  ],
+  "RLM": [
+   {
+    "n": 21,
+    "id": "bd41717d-267b-42b8-9e43-5e1d9a74d66f",
+    "gab": "D"
+   },
+   {
+    "n": 24,
+    "id": "b2b977b1-9773-4ed3-8213-91189d62fb56",
+    "gab": "A"
+   }
+  ],
+  "Informatica": [
+   {
+    "n": 32,
+    "id": "fe102ea8-0ce6-415b-9f0d-96f665f625b6",
+    "gab": "B"
+   }
+  ]
+ },
+ "qconcursos_selecionadas": {
+  "Portugues": {
+   "4084793": "B",
+   "3167577": "B",
+   "4225508": "E",
+   "4113893": "D"
   },
-  "qconcursos_selecionadas": {
-    "Portugues": {"4084793": "B", "3167577": "B", "4225508": "E", "4113893": "D", "4343166": null},
-    "Constitucional": {"4305185": "B", "4140790": "D", "2497599": "B", "4295840": "A", "4254923": "A"},
-    "DH_Legislacao": {"2567342": null, "2530362": null, "2511996": null, "4223690": null, "4250011": null},
-    "RLM": {"4338423": null, "4278922": null, "4118213": null},
-    "Historia_PE": {"4356638": null, "3891677": null, "3797485": null},
-    "Informatica": {"3507670": null, "3252553": null, "3283358": null, "3539871": null}
+  "Constitucional": {
+   "4305185": "B",
+   "4140790": "D",
+   "2497599": "B",
+   "4295840": "A",
+   "4254923": "A"
   },
-  "gabarito": "valor = gabarito oficial lido no Qconcursos; null = ainda não obtido (limite 429 do Qconcursos)",
-  "descartadas": {"4215977": "depende de destaque visual perdido", "4102400": "nível magistratura", "3167583": "trocada por 3167577", "1285413": "item de pedagogia misturado", "4100844": "debate historiográfico subjetivo", "3011481": "lista de exigências confusa"},
-  "cadernos_do_bloco": [15294125, 15294126, 15294127, 15294128, 15294129, 15294130, 15294213, 15294214, 15294215, 15294216, 15294217, 15294218, 15294241, 15294242, 15294164, 15294169, 15294150, 15294151, 15294152, 15294153, 15294154, 15294155, 15294172, 15294173, 15294174, 15294175, 15294179],
-  "proximo": "obter os 15 gabaritos faltantes (ou trocar a fonte para o TEC Concursos), escrever comentários próprios e inserir em mini_quizzes/mini_quiz_questions/mini_quiz_answer_keys espelhando o diagnóstico 29–35 (402ecc4d-...)"
+  "DH_Legislacao": {
+   "2567342": null,
+   "2530362": null,
+   "2511996": null,
+   "4223690": null,
+   "4250011": null
+  },
+  "RLM": {
+   "4338423": null,
+   "4278922": null,
+   "4118213": null
+  },
+  "Historia_PE": {
+   "4356638": null,
+   "3891677": null,
+   "3797485": null
+  },
+  "Informatica": {
+   "3507670": null,
+   "3252553": null,
+   "3283358": null,
+   "3539871": null
+  }
+ },
+ "gabarito": "valor = gabarito oficial lido no Qconcursos; null = ainda não obtido (limite 429 do Qconcursos)",
+ "descartadas": {
+  "4215977": "depende de destaque visual perdido",
+  "4102400": "nível magistratura",
+  "3167583": "trocada por 3167577",
+  "1285413": "item de pedagogia misturado",
+  "4100844": "debate historiográfico subjetivo",
+  "3011481": "lista de exigências confusa",
+  "4343166": "Consulplan 2026 Procurador Jurídico, 4 alternativas: nível acima do cargo; trocar por outra de Português do bloco"
+ },
+ "cadernos_do_bloco": [
+  15294125,
+  15294126,
+  15294127,
+  15294128,
+  15294129,
+  15294130,
+  15294213,
+  15294214,
+  15294215,
+  15294216,
+  15294217,
+  15294218,
+  15294241,
+  15294242,
+  15294164,
+  15294169,
+  15294150,
+  15294151,
+  15294152,
+  15294153,
+  15294154,
+  15294155,
+  15294172,
+  15294173,
+  15294174,
+  15294175,
+  15294179
+ ],
+ "proximo": "obter os 15 gabaritos faltantes (ou trocar a fonte para o TEC Concursos), escrever comentários próprios e inserir em mini_quizzes/mini_quiz_questions/mini_quiz_answer_keys espelhando o diagnóstico 29–35 (402ecc4d-...)",
+ "gabarito_conferido_13_11": {
+  "2567342": "leitura própria: E (Lei 7.716/1989, art. 16 — perda do cargo); falta confirmar gabarito oficial"
+ }
 }
