@@ -17,6 +17,12 @@ só as 15 mais recentes aqui; ao passar disso, resuma as antigas em uma linha ca
 
 ## Sessões
 
+### 2026-11-13 — Claude — execução extra da rotina (1 diagnóstico por curso)
+- Pedido: execução extra disparada pelo usuário; começar pela PMPE 36–42.
+- Feito: só triagem: Q4343166 descartada (Procurador, 4 alternativas); Q2567342 lida (provável E). Nada gravado no banco.
+- Bloqueios: TEC ainda em 429 (testado 2 vezes, com 2 min de intervalo); responder no Qconcursos para ler o gabarito foi negado pela permissão desta rotina (a autorização da rotina só cita o TEC).
+- Próximo passo: o usuário liberar o TEC (abrir no navegador interno) ou incluir explicitamente o Qconcursos na autorização da rotina; então completar SG02 e PMPE 36–42.
+
 ### 2026-11-13 — Claude — rotina diária de diagnósticos (1ª execução, TEC Concursos)
 - Pedido: rotina agendada: até 2 diagnósticos por curso e o Simulado Geral 02 PMPE (prioridade), via TEC Concursos.
 - Feito: Simulado Geral 02 PMPE com **20 de 60** questões prontas (10 Português, 10 Constitucional; Instituto AOCP, área policial, 2019–2026), gabarito oficial conferido no TEC e comentário próprio, em `ops/diagnosticos-2211/pmpe-simulado-geral-02.json`. **Nada gravado no banco** (simulado incompleto não deve ser publicado).
