@@ -203,6 +203,15 @@ Usuário pediu selo verde "com redação", comparação com a objetiva e classif
 pela nota final. Confirmou conta de teste e Grupo 1; escopo PMPE. Usar função separada
 `ranking_nota_final`, preservando `nota_geral`, diagnóstico semanal e consentimento.
 
+## 2026-11-13 — Fontes das avaliações e rotina diária
+- Cadernos das metas seguem no **Qconcursos** (parceria B2B). **Diagnósticos Semanais e Simulados Gerais
+  passam a usar o TEC Concursos**, sempre com Área (Carreira) = Policial.
+- O usuário autorizou resolver questões nas contas dele (TEC e Qconcursos) só para ler o gabarito oficial.
+- Rotina diária agendada (~10h): **2 diagnósticos por curso** nos 6 cursos ativos, seguindo
+  `18-prompt-mestre-diagnosticos.md`, publicados para G1 + conta de teste.
+- A pedido, foi apagada a tentativa da conta de teste no diagnóstico PMPE Metas 22–28 (exceção à regra
+  "tentativas nunca apagadas", só para a conta de teste).
+
 ## 2026-11-12 — Publicar sem perguntar, cursos fechados e escopo enxuto
 - **Publicar:** o usuário autorizou mesclar e publicar sem pedir aprovação o que ele pediu (CI verde e revisão
   de segurança continuam obrigatórios). Ele não é programador; confere só conteúdo e organização.

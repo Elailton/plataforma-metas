@@ -28,6 +28,7 @@ Leia nesta ordem antes de qualquer tarefa:
 | [15-padroes-tecnicos.md](15-padroes-tecnicos.md) | Receitas práticas: SQL, criação de metas, Hotmart Club, ucode, Qconcursos, formatos, testes |
 | [16-grupos-e-avaliacoes.md](16-grupos-e-avaliacoes.md) | Grupos, lançamentos, Diagnóstico Semanal, Simulado Geral e Redação (movido do `AGENTS.md`) |
 | [17-plano-pdf-redacoes.md](17-plano-pdf-redacoes.md) | PDF privado da análise e lembrete individual, plano e publicação |
+| [18-prompt-mestre-diagnosticos.md](18-prompt-mestre-diagnosticos.md) | Prompt mestre da rotina diária: diagnósticos e simulados pelo TEC Concursos (área policial) |
 | [estado-atual.md](estado-atual.md) | **Médio prazo**: foco atual, situação por área e próximo passo (atualizar a cada sessão) |
 | [sessoes.md](sessoes.md) | **Registro de sessões**: passagem de bastão entre IAs (a mais nova no topo) |
 | [skills/](skills/) | Skills do Claude em texto puro (contexto da plataforma, revisão de segurança, OWASP, STRIDE, correção de redação) |
