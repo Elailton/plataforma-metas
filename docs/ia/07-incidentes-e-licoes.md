@@ -53,3 +53,7 @@ aprovado. Usuário informado do bloqueio e autorizou publicar. Na retomada, PR j
 mesclado e produção READY; migração/configuração aplicadas após nova revisão/testes.
 Não afirmar CI verde quando só há testes locais. Não repetir atualizações técnicas
 sem nova informação útil. Não houve alteração de nota, tentativa ou leitura original.
+
+## 2026-11-13 — Limite de requisições durante lote de conteúdo
+
+A API de gerenciamento do Supabase retornou 429 depois de 36 metas verificadas. As transações anteriores estavam confirmadas; a requisição recusada não foi tratada como sucesso. A retomada reconheceu o conteúdo já aplicado por IDs e estado exato, preservou o hash original das metas congeladas e terminou as 86 sem duplicação. O controlador agora espaça chamadas e respeita Retry-After somente para 429; outros resultados incertos exigem nova leitura antes de retomar. Lição: lotes em produção precisam de intervalo, diário persistente, idempotência e conferência após cada transação, além da revisão prévia.
