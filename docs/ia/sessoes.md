@@ -17,6 +17,13 @@ só as 15 mais recentes aqui; ao passar disso, resuma as antigas em uma linha ca
 
 ## Sessões
 
+### 2026-11-13 — Claude — rotina diária de diagnósticos (1ª execução, TEC Concursos)
+- Pedido: rotina agendada: até 2 diagnósticos por curso e o Simulado Geral 02 PMPE (prioridade), via TEC Concursos.
+- Feito: Simulado Geral 02 PMPE com **20 de 60** questões prontas (10 Português, 10 Constitucional; Instituto AOCP, área policial, 2019–2026), gabarito oficial conferido no TEC e comentário próprio, em `ops/diagnosticos-2211/pmpe-simulado-geral-02.json`. **Nada gravado no banco** (simulado incompleto não deve ser publicado).
+- Não feito / bloqueios: o TEC exibiu verificação de segurança (reCAPTCHA) e depois HTTP 429 persistente (testado após 2, 4 e ~14 min); rotina parada sem resolver CAPTCHA. Nenhum diagnóstico semanal gerado. Causa provável: navegação rápida entre questões (~2 s) para triagem.
+- Próximo passo: completar SG02 (faltam História de PE, RLM, Informática, DH/Legislação, 10 cada) antes de 22/11; depois PMPE 36–42 (reaproveitar `pmpe-36-42.json`). Navegar devagar (≥ 10 s por troca de questão).
+- Conferir: se o TEC continuar bloqueado, o usuário precisa liberar a conta/sessão no navegador interno.
+
 ### 2026-11-13 — Claude — lote de diagnósticos de 22/11 (início, pausado)
 - Pedido: começar o lote semanal de 22/11 e o Simulado Geral 02 PMPE; depois, pausar e guardar para avaliar o TEC Concursos.
 - Feito: inventário (6 blocos completos; Simulado Geral 02 publicado sem questões); PMPE 36–42 com 30 questões escolhidas e 15 gabaritos oficiais, em `ops/diagnosticos-2211/pmpe-36-42.json`. Nada gravado no banco. Apagada a pedido a tentativa da conta de teste no diagnóstico Metas 22–28 (respostas e início junto).

@@ -1,0 +1,447 @@
+{
+ "avaliacao": "Simulado Geral 02 (PMPE, sistema-guiado-da-aprovacao)",
+ "liberacao": "2026-11-22 (já publicado, vazio; kind='mensal')",
+ "formato": "60 questões A–E, 10 por disciplina na ordem do Simulado Geral 01: Língua Portuguesa, História de Pernambuco, Raciocínio Lógico, Informática, Direito Constitucional, Direitos Humanos e Legislação Extravagante",
+ "fonte": "TEC Concursos, filtros: Objetivas + Área Policial + Instituto AOCP + anos 2019–2026 + remover anuladas/desatualizadas",
+ "estado": "PARCIAL em 13/11/2026: 20 de 60 com gabarito oficial conferido no TEC e comentário próprio pronto; nada gravado no banco (não publicar simulado incompleto). Rotina parou por verificação de segurança (reCAPTCHA) e HTTP 429 do TEC.",
+ "contagem": {
+  "POR": 10,
+  "CON": 10
+ },
+ "faltam": {
+  "História de Pernambuco": 10,
+  "Raciocínio Lógico": 10,
+  "Informática": 10,
+  "Direitos Humanos e Legislação Extravagante": 10
+ },
+ "descartadas_tec": {
+  "3791444/3791441 e demais DEPEN MG/SAP SP 2026": "só 4 alternativas",
+  "2288584": "destaque perdido",
+  "3179306": "ambígua (travessão)",
+  "2702826": "alternativa A também isola aposto explicativo",
+  "2288845/1717293": "dependem do texto-base",
+  "3139493": "trocada por crase (variedade)"
+ },
+ "questoes": [
+  {
+   "subj": "POR",
+   "tec": 841381,
+   "src": "Instituto AOCP - 2019 - PC ES - Auxiliar de Perícia Médico-Legal",
+   "st": "No excerto “[...] o motivo __pelo qual__ os eventos são sempre reinterpretados [...]”, a expressão em destaque pode ser substituída, sem alterar o sentido principal, por",
+   "alts": [
+    "pelo que.",
+    "porque.",
+    "por que.",
+    "que.",
+    "por quê."
+   ],
+   "key": "C",
+   "exp": "“Pelo qual” é preposição **por** + pronome relativo **o qual**, retomando “o motivo”. A forma equivalente é **por que** separado e sem acento: preposição + pronome relativo “que” (= pelo qual).",
+   "why": {
+    "A": "“pelo que” não é a forma usual para retomar “motivo” nesse contexto.",
+    "B": "“porque” junto é conjunção causal/explicativa, não pronome relativo.",
+    "D": "“que” sozinho elimina a preposição exigida (“reinterpretados por um motivo”).",
+    "E": "“por quê” com acento só aparece em fim de frase ou antes de pausa forte."
+   }
+  },
+  {
+   "subj": "POR",
+   "tec": 3596124,
+   "src": "Instituto AOCP - 2025 - IGP RS - Papiloscopista",
+   "st": "Quanto às regras de acentuação gráfica, assinale a alternativa **correta**.",
+   "alts": [
+    "Em “[...] __compatível__ com o __diagnóstico__ do transtorno do jogo [...]”, os termos destacados são acentuados pela mesma razão.",
+    "Em “[...] uma enfermidade caracterizada pelo desejo __incontrolável__ de jogar mesmo diante de __prejuízos__.”, os termos destacados acentuam-se tanto devido à terminação de cada um quanto pelo fato de apresentarem tonicidade na penúltima sílaba.",
+    "Em “[...] comportamentos __problemáticos__ relacionados às apostas [...]”, “problemáticos” acentua-se tanto devido à terminação em “s” quanto pela tonicidade na antepenúltima sílaba.",
+    "Em “A rede __pública__ de __saúde__ não __está__ preparada para lidar com isso [...]”, é diferente o motivo pelo qual se acentuam cada um dos termos destacados.",
+    "No trecho “[...] podem compreender e manipular os resultados de algo que, na realidade, é __aleatório__.”, o termo destacado acentua-se por apresentar tonicidade na antepenúltima sílaba."
+   ],
+   "key": "D",
+   "exp": "Cada palavra tem um motivo diferente: **pública** é proparoxítona (todas são acentuadas); **saúde** leva acento no **u** tônico do hiato; **está** é oxítona terminada em **a**.",
+   "why": {
+    "A": "“compatível” é paroxítona terminada em **l**; “diagnóstico” é proparoxítona. Motivos diferentes.",
+    "B": "“incontrolável” é paroxítona terminada em **l**, mas “prejuízos” leva acento pelo **i** tônico do hiato, não pela terminação.",
+    "C": "Proparoxítonas são sempre acentuadas; a terminação em “s” não importa.",
+    "E": "“aleatório” é paroxítona terminada em ditongo crescente (-io), e é por isso que recebe acento."
+   }
+  },
+  {
+   "subj": "POR",
+   "tec": 2900696,
+   "src": "Instituto AOCP - 2024 - DEPPEN PR - Policial Penal",
+   "st": "No trecho “Porém, __assim como__ nós precisamos treinar nosso molejo, as abelhas não nascem pés de valsa.”, a expressão em destaque estabelece, em relação a outra oração, o sentido de",
+   "alts": [
+    "conclusão.",
+    "causa.",
+    "concessão.",
+    "comparação.",
+    "condição."
+   ],
+   "key": "D",
+   "exp": "“Assim como” é locução conjuntiva **comparativa**: aproxima a situação das pessoas (precisam treinar o molejo) da situação das abelhas (também não nascem sabendo dançar).",
+   "why": {
+    "A": "Conclusão seria “portanto”, “logo”.",
+    "B": "Causa seria “porque”, “já que”.",
+    "C": "Concessão seria “embora”, “ainda que”.",
+    "E": "Condição seria “se”, “caso”."
+   }
+  },
+  {
+   "subj": "POR",
+   "tec": 3596079,
+   "src": "Instituto AOCP - 2025 - IGP RS - Papiloscopista",
+   "st": "Tendo em vista as regras de colocação pronominal da língua portuguesa, assinale a alternativa em que a reescrita proposta (depois da seta) **NÃO** se mantém condizente com a norma-padrão.",
+   "alts": [
+    "“3,4% são jogadores com baixo risco de se tornarem dependentes [...]” → “3,4% são jogadores com baixo risco de tornarem-se dependentes [...]”.",
+    "“Esses sinais começaram a se intensificar durante a pandemia [...]” → “Esses sinais começaram a intensificar-se durante a pandemia [...]”.",
+    "“Esse transtorno se manifesta quando a pessoa perde o controle [...]” → “Esse transtorno manifesta-se quando a pessoa perde o controle [...]”.",
+    "“Isso inclui apostar mais do que se deveria ou poderia [...]” → “Isso inclui apostar mais do que deveria-se ou poderia [...]”.",
+    "“A relação entre as duas regiões se inverte [...]” → “A relação entre as duas regiões inverte-se [...]”."
+   ],
+   "key": "D",
+   "exp": "Em “do que se deveria”, a palavra **que** atrai o pronome: a **próclise** é obrigatória. A ênclise “deveria-se” fere a norma-padrão (além disso, não se usa ênclise com verbo no futuro do pretérito).",
+   "why": {
+    "A": "Com infinitivo, tanto “de se tornarem” quanto “de tornarem-se” são aceitos.",
+    "B": "Locução com infinitivo admite “a se intensificar” ou “a intensificar-se”.",
+    "C": "Sujeito expresso sem palavra atrativa: a ênclise “manifesta-se” é correta.",
+    "E": "Também sem palavra atrativa: “inverte-se” é correta."
+   }
+  },
+  {
+   "subj": "POR",
+   "tec": 3797229,
+   "src": "Instituto AOCP - 2026 - Prefeitura de Curitiba - Guarda Municipal",
+   "st": "A respeito do trecho “A doação de sangue é um ato de solidariedade e cidadania, que tem importância vital para a saúde pública.”, é correto afirmar que",
+   "alts": [
+    "o termo “importância” pode ser substituído, sem prejuízo sintático e semântico, por “grandeza”.",
+    "o vocábulo “doação” é oposto ao termo “benefício”.",
+    "o termo “solidariedade” pode ser substituído, sem prejuízo de sentido, por “reciprocidade”.",
+    "o termo “vital” corresponde a algo essencial e indispensável.",
+    "o termo “cidadania” faz referência aos direitos dos cidadãos, mas não aos seus deveres."
+   ],
+   "key": "D",
+   "exp": "No trecho, “importância **vital**” significa importância essencial, indispensável, ligada à própria manutenção da vida.",
+   "why": {
+    "A": "“Grandeza” fala de tamanho ou magnitude; não tem o mesmo sentido de “importância”.",
+    "B": "Doar gera benefício a quem recebe; os termos não são opostos.",
+    "C": "“Reciprocidade” supõe troca mútua; solidariedade é ajuda sem esperar retorno.",
+    "E": "Cidadania envolve direitos **e** deveres."
+   }
+  },
+  {
+   "subj": "POR",
+   "tec": 2288587,
+   "src": "Instituto AOCP - 2022 - PC GO - Escrivão de Polícia",
+   "st": "Assinale a alternativa em que o verbo “poder” **NÃO** apresenta um sujeito simples.",
+   "alts": [
+    "“A produção de arroz poderia cair em 6% com altas emissões.”.",
+    "“A produção de trigo poderia cair 21% [...]”.",
+    "“Pode falar dos efeitos dessa crise climática na segurança alimentar e na saúde humana?”.",
+    "“Além disso, a combinação do aumento continuado de emissões de gases de efeito estufa com o desmatamento local pode causar uma queda de 33% [...]”.",
+    "“Isto poderia levar à escassez global de alimentos [...]”."
+   ],
+   "key": "C",
+   "exp": "Em “Pode falar dos efeitos...?”, o sujeito não está escrito na frase: é **oculto (desinencial)**, identificado pelo contexto da entrevista (“você pode falar...?”).",
+   "why": {
+    "A": "Sujeito simples: “A produção de arroz”.",
+    "B": "Sujeito simples: “A produção de trigo”.",
+    "D": "Sujeito simples, com um único núcleo: “a **combinação** do aumento... com o desmatamento local”.",
+    "E": "Sujeito simples: o pronome “Isto”."
+   }
+  },
+  {
+   "subj": "POR",
+   "tec": 2288817,
+   "src": "Instituto AOCP - 2022 - PC GO - Papiloscopista",
+   "st": "Qual a relação sintático-semântica estabelecida entre as orações “[...] treinam os líderes para que identifiquem problemas em suas equipes [...]”?",
+   "alts": [
+    "Adição.",
+    "Contraste.",
+    "Finalidade.",
+    "Concessão.",
+    "Comparação."
+   ],
+   "key": "C",
+   "exp": "“**Para que**” introduz oração subordinada adverbial **final**: os líderes são treinados com o objetivo de identificar problemas nas equipes.",
+   "why": {
+    "A": "Adição seria marcada por “e”, “não só... mas também”.",
+    "B": "Contraste seria “mas”, “porém”.",
+    "D": "Concessão seria “embora”, “ainda que”.",
+    "E": "Comparação seria “como”, “assim como”."
+   }
+  },
+  {
+   "subj": "POR",
+   "tec": 3596116,
+   "src": "Instituto AOCP - 2025 - IGP RS - Papiloscopista",
+   "st": "Dentre as expressões destacadas, qual exerce a mesma função sintática do segmento sublinhado em “[...] por terem usado instrumentos __de aferição__ diferentes.”?",
+   "alts": [
+    "“[...] os dados sobre jogo estão __detalhados__ em um documento [...]”.",
+    "“Os 17,4% restantes, número que corresponde a quase 28 milhões de brasileiros, se distribuem __da seguinte forma__ [...]”.",
+    "“[...] 3,4% são jogadores com baixo risco de se tornarem __dependentes__ [...]”.",
+    "“[...] não participou __da versão atual do levantamento__.”.",
+    "“A rede __pública__ de saúde não está preparada para lidar com isso [...]”."
+   ],
+   "key": "E",
+   "exp": "“De aferição” é locução adjetiva que caracteriza o substantivo “instrumentos”: é **adjunto adnominal**. “Pública” também caracteriza o substantivo “rede”: adjunto adnominal.",
+   "why": {
+    "A": "“detalhados” liga-se ao sujeito por meio do verbo “estar”: predicativo do sujeito.",
+    "B": "“da seguinte forma” indica modo: adjunto adverbial.",
+    "C": "“dependentes” vem depois do verbo de ligação “tornar-se”: predicativo do sujeito.",
+    "D": "“da versão atual do levantamento” completa o verbo “participar” (participar de): objeto indireto."
+   }
+  },
+  {
+   "subj": "POR",
+   "tec": 2702907,
+   "src": "Instituto AOCP - 2023 - Polícia Científica PR - Agente Auxiliar da Perícia Oficial",
+   "st": "Sobre o excerto “Dentre seus diversos trabalhos, ele ainda é reconhecido por seus esboços e obras baseados na arte da dissecação.”, assinale a alternativa correta.",
+   "alts": [
+    "O trecho “Dentre seus diversos trabalhos”, pode ser reescrito como “Dentre os diversos trabalhos deles”, sem que isso cause prejuízo sintático ou semântico ao excerto.",
+    "O termo “ainda” apresenta o mesmo sentido que em “Ainda que tenha se esforçado, não alcançou seu objetivo”.",
+    "O excerto está na voz passiva, sendo “por seus esboços e obras” o agente da passiva, isto é, o responsável por executar a ação de reconhecer.",
+    "O termo “ele” não pode ser omitido sem que isso cause prejuízo sintático e semântico ao excerto.",
+    "O termo “baseados” pode ser substituído por “baseadas” sem que isso cause prejuízo sintático ou semântico ao excerto."
+   ],
+   "key": "E",
+   "exp": "Quando o adjetivo vem **depois** de dois substantivos de gêneros diferentes (“esboços” e “obras”), ele pode ir para o masculino plural (“baseados”) ou concordar com o mais próximo (“baseadas”). As duas formas estão corretas.",
+   "why": {
+    "A": "“deles” é plural e muda a referência: o texto fala de uma única pessoa (“ele”).",
+    "B": "Aqui “ainda” indica continuidade/acréscimo; em “ainda que” há ideia de concessão.",
+    "C": "“por seus esboços e obras” indica o motivo do reconhecimento, não quem reconhece; não é agente da passiva.",
+    "D": "O sujeito “ele” poderia ficar oculto (“ainda é reconhecido”), pois o verbo e o contexto já o identificam."
+   }
+  },
+  {
+   "subj": "POR",
+   "tec": 2609505,
+   "src": "Instituto AOCP - 2022 - FUNDASE RN - Agente Socioeducativo",
+   "st": "Considerando os excertos adaptados do texto, assinale a alternativa que apresenta somente usos **corretos** de crase.",
+   "alts": [
+    "O sistema e-Noé não impede às inundações.",
+    "O dispositivo protege às cidades das enchentes.",
+    "Em paralelo à essa ação, câmeras fotografam o leito do rio.",
+    "O sensor refere-se à tal possibilidade de proteção para os moradores.",
+    "Alagando às avenidas de cinco bairros do município."
+   ],
+   "key": "D",
+   "exp": "“Referir-se” exige a preposição **a**, e “tal possibilidade” pode vir antecedida do artigo feminino **a** (“a tal possibilidade”). A + a = **à**: “refere-se à tal possibilidade”.",
+   "why": {
+    "A": "“impedir” é transitivo direto (impede algo): “impede as inundações”, sem crase.",
+    "B": "“proteger” é transitivo direto (protege as cidades): sem crase.",
+    "C": "Não há crase antes do pronome demonstrativo “essa”: “em paralelo a essa ação”.",
+    "E": "“alagar” é transitivo direto (alagando as avenidas): sem crase."
+   }
+  },
+  {
+   "subj": "CON",
+   "tec": 841592,
+   "src": "Instituto AOCP - 2019 - PC ES - Escrivão de Polícia",
+   "st": "São formas de governo:",
+   "alts": [
+    "Presidencialismo e Parlamentarismo.",
+    "Monarquia e República.",
+    "Estado liberal e Estado social.",
+    "Estado unitário e Estado federal.",
+    "Democracia e totalitarismo."
+   ],
+   "key": "B",
+   "exp": "**Forma de governo** diz como o poder é exercido e transmitido: **monarquia** (vitalícia e hereditária) ou **república** (eletiva, temporária e com responsabilidade do governante). O Brasil adota a república (art. 1º da CF).",
+   "why": {
+    "A": "Presidencialismo e parlamentarismo são **sistemas** de governo.",
+    "C": "Estado liberal e Estado social são modelos de atuação estatal.",
+    "D": "Estado unitário e federal são **formas de Estado**.",
+    "E": "Democracia e totalitarismo são regimes políticos."
+   }
+  },
+  {
+   "subj": "CON",
+   "tec": 2703312,
+   "src": "Instituto AOCP - 2023 - Polícia Científica PR - Agente Auxiliar da Perícia Oficial",
+   "st": "Nos termos da Constituição Federal, assinale a alternativa que apresenta corretamente um dos fundamentos da República Federativa do Brasil.",
+   "alts": [
+    "Independência nacional.",
+    "Pluralismo político.",
+    "Construir uma sociedade livre, justa e solidária.",
+    "Garantir o desenvolvimento nacional.",
+    "Solução pacífica dos conflitos."
+   ],
+   "key": "B",
+   "exp": "Os fundamentos estão no **art. 1º** da CF: soberania, cidadania, dignidade da pessoa humana, valores sociais do trabalho e da livre iniciativa e **pluralismo político** (macete “SO-CI-DI-VA-PLU”).",
+   "why": {
+    "A": "Independência nacional é princípio das relações internacionais (art. 4º, I).",
+    "C": "Construir uma sociedade livre, justa e solidária é objetivo fundamental (art. 3º, I).",
+    "D": "Garantir o desenvolvimento nacional é objetivo fundamental (art. 3º, II).",
+    "E": "Solução pacífica dos conflitos é princípio das relações internacionais (art. 4º, VII)."
+   }
+  },
+  {
+   "subj": "CON",
+   "tec": 3797307,
+   "src": "Instituto AOCP - 2026 - Prefeitura de Curitiba - Guarda Municipal",
+   "st": "A respeito da inviolabilidade do domicílio enquanto direito individual fundamental, segundo a Constituição da República Federativa do Brasil de 1988, é correto afirmar que",
+   "alts": [
+    "o consentimento de vizinho autoriza o ingresso de alguém no domicílio alheio quando informado por escrito e em formulário específico.",
+    "em caso de flagrante delito, o ingresso no domicílio depende de consentimento do morador.",
+    "uma busca domiciliar determinada judicialmente deve ser cumprida durante o dia e independe do consentimento do morador.",
+    "a casa é asilo inviolável do indivíduo, ninguém nela podendo penetrar senão para prestar socorro.",
+    "desastre e determinação judicial autorizam o ingresso no domicílio alheio tanto durante o dia quanto durante a noite."
+   ],
+   "key": "C",
+   "exp": "Pelo **art. 5º, XI**, a casa é asilo inviolável; sem consentimento do morador, só se entra em caso de **flagrante delito, desastre ou para prestar socorro** (a qualquer hora) ou, **durante o dia**, por **determinação judicial**. A ordem judicial dispensa o consentimento, mas só pode ser cumprida de dia.",
+   "why": {
+    "A": "Quem consente é o **morador**, não o vizinho.",
+    "B": "No flagrante delito, o ingresso não depende de consentimento.",
+    "D": "Além do socorro, a CF admite flagrante, desastre e ordem judicial (de dia).",
+    "E": "Desastre permite entrar a qualquer hora, mas a ordem judicial só **durante o dia**."
+   }
+  },
+  {
+   "subj": "CON",
+   "tec": 3179385,
+   "src": "Instituto AOCP - 2024 - SAP SC - Agente de Segurança Socioeducativo",
+   "st": "Um agente de segurança socioeducativo foi intimado para apresentar defesa em processo administrativo instaurado para apurar falta que teria cometido no exercício da função. Nesse contexto, soube que a Constituição da República Federativa do Brasil prevê expressamente como direito fundamental aos litigantes em processo administrativo",
+   "alts": [
+    "a irrestrita liberdade probatória.",
+    "a assistência jurídica integral e gratuita.",
+    "o contraditório e ampla defesa.",
+    "a flexibilidade dos prazos.",
+    "a plenitude de defesa."
+   ],
+   "key": "C",
+   "exp": "O **art. 5º, LV** assegura “aos litigantes, em processo judicial **ou administrativo**, e aos acusados em geral” o **contraditório e a ampla defesa**, com os meios e recursos a ela inerentes.",
+   "why": {
+    "A": "A CF não prevê liberdade probatória irrestrita; provas ilícitas são inadmissíveis (art. 5º, LVI).",
+    "B": "Assistência jurídica integral e gratuita é para quem comprovar insuficiência de recursos (art. 5º, LXXIV), não para todo litigante.",
+    "D": "“Flexibilidade dos prazos” não é garantia constitucional.",
+    "E": "“Plenitude de defesa” é garantia própria do **Tribunal do Júri** (art. 5º, XXXVIII)."
+   }
+  },
+  {
+   "subj": "CON",
+   "tec": 2703301,
+   "src": "Instituto AOCP - 2023 - Polícia Científica PR - Agente Auxiliar da Perícia Oficial",
+   "st": "Joaquim, cidadão, tomou conhecimento de que foi autorizada, pelo órgão público competente, a construção de vultuoso empreendimento imobiliário em sua cidade, sem que, contudo, fossem observadas as normas ambientais vigentes. Nesse caso, à luz da ordem constitucional, objetivando anular o referido ato lesivo ao meio ambiente, Joaquim deverá ajuizar",
+   "alts": [
+    "ação popular.",
+    "mandado de segurança.",
+    "ação de improbidade administrativa.",
+    "ação civil pública.",
+    "mandado de injunção."
+   ],
+   "key": "A",
+   "exp": "Pelo **art. 5º, LXXIII**, **qualquer cidadão** pode propor **ação popular** para anular ato lesivo ao patrimônio público, à moralidade administrativa, **ao meio ambiente** e ao patrimônio histórico e cultural (sem custas, salvo má-fé).",
+   "why": {
+    "B": "Mandado de segurança protege direito líquido e certo do próprio impetrante, não o meio ambiente em nome da coletividade.",
+    "C": "A ação de improbidade não é proposta pelo cidadão, e sim pelo Ministério Público.",
+    "D": "O cidadão não tem legitimidade para a ação civil pública (MP, Defensoria, entes públicos, associações).",
+    "E": "Mandado de injunção serve para suprir falta de norma regulamentadora."
+   }
+  },
+  {
+   "subj": "CON",
+   "tec": 3797310,
+   "src": "Instituto AOCP - 2026 - Prefeitura de Curitiba - Guarda Municipal",
+   "st": "Conforme a Constituição da República Federativa do Brasil de 1988, são direitos sociais:",
+   "alts": [
+    "a educação e a saúde.",
+    "o lazer e a liberdade de expressão.",
+    "a honra e a segurança.",
+    "a liberdade de locomoção e o trabalho.",
+    "a vida privada e a alimentação."
+   ],
+   "key": "A",
+   "exp": "O **art. 6º** lista os direitos sociais: **educação, saúde**, alimentação, trabalho, moradia, transporte, lazer, segurança, previdência social, proteção à maternidade e à infância e assistência aos desamparados. Educação e saúde estão nessa lista.",
+   "why": {
+    "B": "Lazer é direito social, mas liberdade de expressão é direito individual (art. 5º).",
+    "C": "Segurança está no art. 6º, mas a honra é direito individual (art. 5º, X).",
+    "D": "Trabalho é direito social, mas liberdade de locomoção é direito individual (art. 5º, XV).",
+    "E": "Alimentação é direito social, mas vida privada é direito individual (art. 5º, X)."
+   }
+  },
+  {
+   "subj": "CON",
+   "tec": 841577,
+   "src": "Instituto AOCP - 2019 - PC ES - Auxiliar de Perícia Médico-Legal",
+   "st": "As normas constitucionais determinam alguns cargos que são privativos de brasileiro nato. Dentre eles, está o cargo de",
+   "alts": [
+    "Ministro de Estado da Defesa.",
+    "Ministro do Superior Tribunal de Justiça.",
+    "Governador de Estado.",
+    "Ministro da Justiça e Segurança Pública.",
+    "Advogado-Geral da União."
+   ],
+   "key": "A",
+   "exp": "O **art. 12, § 3º** lista os cargos privativos de brasileiro nato: Presidente e Vice; Presidente da Câmara; Presidente do Senado; Ministro do **STF**; carreira diplomática; oficial das Forças Armadas; e **Ministro de Estado da Defesa** (macete “MP3.COM”).",
+   "why": {
+    "B": "Ministro do STJ pode ser naturalizado; só o do STF é privativo de nato.",
+    "C": "Governador não está na lista do art. 12, § 3º.",
+    "D": "Entre os Ministros de Estado, só o da Defesa é privativo de nato.",
+    "E": "Advogado-Geral da União não está na lista."
+   }
+  },
+  {
+   "subj": "CON",
+   "tec": 2900716,
+   "src": "Instituto AOCP - 2024 - DEPPEN PR - Policial Penal",
+   "st": "A organização político-administrativa da República Federativa do Brasil, de acordo com a Constituição de 1988, compreende:",
+   "alts": [
+    "o Poder Legislativo, o Poder Executivo e o Poder Judiciário.",
+    "a União, os Estados, o Distrito Federal e os Municípios.",
+    "a Presidência da República, o Conselho da República e o Conselho de Defesa Nacional.",
+    "o Poder Executivo, o Poder Legislativo e o Conselho Nacional de Justiça.",
+    "a Presidência da República e os Ministérios."
+   ],
+   "key": "B",
+   "exp": "Pelo **art. 18** da CF, a organização político-administrativa compreende **a União, os Estados, o Distrito Federal e os Municípios**, todos autônomos. Os Territórios, se criados, integram a União e não são entes federativos.",
+   "why": {
+    "A": "Legislativo, Executivo e Judiciário são os **Poderes** da União (art. 2º), não a organização político-administrativa.",
+    "C": "São órgãos do Poder Executivo federal e órgãos de consulta.",
+    "D": "O CNJ é órgão do Poder Judiciário.",
+    "E": "Presidência e Ministérios integram a estrutura do Poder Executivo federal."
+   }
+  },
+  {
+   "subj": "CON",
+   "tec": 3179425,
+   "src": "Instituto AOCP - 2024 - SAP SC - Agente de Segurança Socioeducativo",
+   "st": "Durante um incidente em um determinado Centro de Atendimento Socioeducativo, um agente de segurança socioeducativo, sem observar o procedimento disciplinar adequado, aplicou punição a um adolescente que foi visto, pelo próprio agente, cometendo uma falta grave. Nesse caso, seria possível considerar que o agente violou qual princípio administrativo expressamente previsto na Constituição da República Federativa do Brasil?",
+   "alts": [
+    "Justiça.",
+    "Impessoalidade.",
+    "Segurança jurídica.",
+    "Legalidade.",
+    "Reserva legal."
+   ],
+   "key": "D",
+   "exp": "Pela **legalidade** (art. 37, *caput*), o agente público só pode agir como a lei determina. Punir sem seguir o procedimento disciplinar previsto é agir fora da lei, mesmo que a falta tenha ocorrido.",
+   "why": {
+    "A": "“Justiça” não está entre os princípios do art. 37 (LIMPE).",
+    "B": "Impessoalidade trata de agir sem favorecer ou perseguir pessoas; o problema aqui é ignorar o procedimento legal.",
+    "C": "Segurança jurídica não está expressa no art. 37 da CF.",
+    "E": "Reserva legal é técnica que exige lei para certas matérias; não é princípio expresso do art. 37."
+   }
+  },
+  {
+   "subj": "CON",
+   "tec": 2609587,
+   "src": "Instituto AOCP - 2022 - FUNDASE RN - Agente Socioeducativo",
+   "st": "Considere que Diana foi aprovada, em concurso público de provas e títulos promovido pela administração direta do Estado do Rio Grande do Norte, para determinado cargo de provimento efetivo. Nesse caso, à luz da sistemática constitucional, Diana adquirirá estabilidade",
+   "alts": [
+    "imediatamente após a nomeação.",
+    "imediatamente após a posse.",
+    "após decorrido um ano de efetivo exercício.",
+    "após decorridos dois anos de efetivo exercício.",
+    "após decorridos três anos de efetivo exercício."
+   ],
+   "key": "E",
+   "exp": "Pelo **art. 41** da CF (redação da EC 19/1998), são estáveis **após três anos de efetivo exercício** os servidores nomeados para cargo de provimento efetivo em virtude de concurso público; exige-se ainda avaliação especial de desempenho.",
+   "why": {
+    "A": "A nomeação apenas dá início ao vínculo; não gera estabilidade.",
+    "B": "A posse também não gera estabilidade.",
+    "C": "Um ano não é o prazo constitucional.",
+    "D": "Dois anos era o prazo antes da EC 19/1998; hoje são três."
+   }
+  }
+ ]
+}

@@ -12,5 +12,5 @@ objetivo, situação e próximo passo. O histórico vai para `sessoes.md`; a lis
 | GCM Itaitinga | Arquivado | — |
 | GMF | Sem Reta final (metas extras arquivadas); prova sem data | Usuário informar `exam_date` se houver |
 | Diagnósticos de 15/11 | Seis cursos publicados para G1 e teste; data e conclusão da meta preservadas | Alunos acessam a partir de 15/11 após concluir a meta do bloco |
-| Diagnósticos restantes | 16 preparados; faltam criar 56 até a Meta 84 nos seis cursos | Próximo lote 22/11; encerramento 85–90 apenas sugerido. [Passagem técnica](../../ops/replanejamento-90/PASSAGEM-CLAUDE.md) |
+| Diagnósticos restantes | Rotina diária via TEC (arquivo 18) iniciada em 13/11: SG02 PMPE com 20/60 prontas fora do banco; TEC bloqueou (reCAPTCHA + 429) | Completar SG02 antes de 22/11, depois PMPE 36–42; navegar devagar. [Passagem técnica](../../ops/replanejamento-90/PASSAGEM-CLAUDE.md) |
 | Publicação | Mesclar/publicar sem perguntar o que foi pedido (CI verde + revisão) | — |
