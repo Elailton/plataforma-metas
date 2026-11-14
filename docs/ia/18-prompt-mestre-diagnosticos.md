@@ -9,7 +9,10 @@ formato das avaliações em `16-grupos-e-avaliacoes.md` e `docs/ia/skills/sga-pl
 ## 0. Antes de começar (toda execução)
 1. `git pull` da `main`; leia `00-comece-aqui.md`, `estado-atual.md`, `08-pendencias.md` e este arquivo.
 2. Confira no banco (Supabase `cbryvevesiaoqmwwlnet`) o que já existe — **nunca confie só na memória**.
-3. Navegador interno: o TEC precisa estar logado na conta do usuário. Sem login, **pare** e avise.
+3. Navegador: usar o **Chrome do usuário** (Claude in Chrome, decisão de 14/11), onde o TEC está logado no
+   **Plano Padrão** (sem o limite de 15 questões/dia da conta gratuita). O navegador interno estava deslogado.
+   A janela do Chrome precisa estar **visível (não minimizada)**: minimizada, a aba congela (capturas de tela
+   expiram e o gerador de cadernos não conclui). Sem login ou com a janela congelada, **pare** e avise.
    Nunca digite senha. Cookies: "Somente essenciais".
 4. O usuário **autorizou** (13/11/2026) resolver questões na conta TEC dele apenas para ler o
    gabarito oficial, e no Qconcursos pela parceria B2B. Ritmo: **uma questão a cada ≥ 20 s**; se vier
@@ -103,3 +106,19 @@ tiver `essay_prompt`, registre a pendência e avise.
    12/11). Nunca gravar dados pessoais na memória.
 2. Mensagem final curta ao usuário: o que foi publicado por curso, o que falta e qualquer bloqueio.
 3. Nada destrutivo no banco, nada de e-mail, não alterar metas, não mostrar grupo ao aluno.
+
+## 8. Notas técnicas do TEC (descobertas em 14/11/2026, pelo próprio cliente do site)
+- Na página `/questoes/filtrar`, o serviço Angular `tec` (`angular.element(document.querySelector('[ng-controller]')).injector().get('tec')`)
+  expõe `apiGet`/`apiPost`. Listas de filtros: `/enums/areas`, `/bancas`, `/materias`, `/assuntos` (com `materia`),
+  `/anos`, `/enums/filtros-questao` (parâmetros `universo='CONCURSOS'`, `formato='OBJETIVA'`).
+- O componente do gerador tem `vm.adicionarFiltro(item)` / `vm.limparFiltros()` e `vm.numeroQuestoesEncontradas`;
+  os itens vêm de `injector.get('tecDadosBuscadores')` (`areas`, `bancas`, `materias`, `anos`, `filtrosQuestao`).
+- IDs úteis: área `POLICIAL`; bancas `106` Instituto AOCP, `79` AOCP, `95` IDECAN, `171` CEV UECE,
+  `4` CEBRASPE; matérias `3` Português, `2` Constitucional, `217` Raciocínio Lógico, `4` Informática,
+  `183` Direitos Humanos, `172` Legislação Penal e Processual Penal Especial, `99` História;
+  opções `REMOVER_ANULADAS`, `REMOVER_DESATUALIZADAS`, `REMOVER_AS_QUE_RESOLVI`.
+  Exemplo (14/11): RLM + Instituto AOCP + Policial + 2019–2026 sem anuladas/desatualizadas/resolvidas = 63 questões.
+- Gabarito: na página `/questoes/<id>`, marcar uma alternativa e clicar "Resolver questão" (POST
+  `/api/questoes/<id>/resolucao`); o texto mostra "alternativa correta" ou indica a certa. Ritmo ≥ 20 s.
+- O botão "RESOLVER" do gerador posta o formulário e recarrega a página; com a janela minimizada o caderno
+  não foi criado. Com a janela visível, conferir em "Meus cadernos".
